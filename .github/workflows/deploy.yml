@@ -1,0 +1,89 @@
+name: talearnt-server-actions
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Github Repository 파일 불러오기
+        uses: actions/checkout@v4
+
+      - name: JDK 17 설치
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: resources 디렉토리 생성
+        run: mkdir -p ./src/main/resources
+
+      - name: application.properties 생성
+        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
+
+      - name: Gradle 실행 권한 생성
+        run: chmod +x ./gradlew
+
+      - name: 테스트 및 빌드하기
+        run: ./gradlew clean build
+
+      - name: GitHub Actions Public IP 얻기
+        id: ip
+        uses: haythem/public-ip@v1.3
+
+      - name: AWS Resource에 접근할 수 있게 AWS credentials 설정
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_IAM_GITHUB_ACTIONS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_IAM_GITHUB_ACTIONS_SECRET_KEY }}
+
+      - name: GitHub Actions IP 추가
+        run: |
+          aws ec2 authorize-security-group-ingress \
+              --group-id ${{ secrets.AWS_IAM_GITHUB_ACTIONS_SECURITY_GROUP_ID }} \
+              --protocol tcp \
+              --port 22 \
+              --cidr ${{ steps.ip.outputs.ipv4 }}/32
+
+
+      # AWS ECR 관련
+      - name: Docker 설정 초기화
+        run: echo "{}" > ~/.docker/config.json
+
+      - name: ECR에 로그인하기
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Docker 이미지 생성
+        run: docker build -t talearnt-server .
+
+      - name: Docker 이미지에 Tag 붙이기
+        run: docker tag talearnt-server ${{ steps.login-ecr.outputs.registry }}/talearnt-server:latest
+
+      - name: ECR에 Docker 이미지 Push하기
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/talearnt-server:latest
+
+      - name: SSH로 EC2에 접속하기
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.TALEARNT_HOST }}
+          username: ${{ secrets.TALEARNT_USERNAME }}
+          key: ${{ secrets.TALEARNT_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            docker stop talearnt-server || true
+            docker rm talearnt-server || true
+            docker pull ${{ steps.login-ecr.outputs.registry }}/talearnt-server:latest
+            docker run -d --name talearnt-server -p 80:80 ${{ steps.login-ecr.outputs.registry }}/talearnt-server:latest
+
+      - name: GitHub Actions IP 삭제
+        run: |
+          aws ec2 revoke-security-group-ingress \
+              --group-id ${{ secrets.AWS_IAM_GITHUB_ACTIONS_SECURITY_GROUP_ID }} \
+              --protocol tcp \
+              --port 22 \
+              --cidr ${{ steps.ip.outputs.ipv4 }}/32      
