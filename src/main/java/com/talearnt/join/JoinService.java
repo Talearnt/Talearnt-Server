@@ -1,10 +1,12 @@
 package com.talearnt.join;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class JoinService {
@@ -16,11 +18,20 @@ public class JoinService {
 
     // 회원가입 서비스 메서드
     public User registerUser(JoinReqDTO joinReqDTO) {
-
+        log.info("{},{},{}",joinReqDTO.getUserId(),joinReqDTO.getNickname(),joinReqDTO.getPhone());
         String encodedPassword = passwordEncoder.encode(joinReqDTO.getPw());
-        joinReqDTO.setPw(encodedPassword);
-        joinReqDTO.setNickname("닉네임4");
-        User user = mapper.map(joinReqDTO,User.class);
+
+        JoinReqDTO changedDto = new JoinReqDTO.JoinReqDTOBuilder()
+                .userId(joinReqDTO.getUserId())
+                .pw(encodedPassword)
+                .phone(joinReqDTO.getPhone())
+                .joinType(joinReqDTO.getJoinType())
+                .nickname("예시닉넴")
+                .authority(joinReqDTO.getAuthority())
+                .gender(joinReqDTO.getGender())
+                .build();
+
+        User user = mapper.map(changedDto,User.class);
 
         return userRepository.save(user);
     }
