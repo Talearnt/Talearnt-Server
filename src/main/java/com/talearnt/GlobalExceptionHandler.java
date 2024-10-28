@@ -19,9 +19,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // 현재 객체의 상태에서 해당 작업을 수행할 수 없습니다.
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<CommonResponse<ErrorCode>> handleIllegalStateException(IllegalStateException e) {
+        return CommonResponse.error(ErrorCode.ILLEGAL_STATE_EXCEPTION);
+    }
+
     // Custom Exception
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<CommonResponse<ErrorCode>> handleInvalidCredentialsException(CustomException e) {
+    public ResponseEntity<CommonResponse<ErrorCode>> handleCustomException(CustomException e) {
         return CommonResponse.error(e.getErrorCode());
     }
 

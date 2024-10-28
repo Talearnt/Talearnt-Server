@@ -1,16 +1,24 @@
 package com.talearnt.join;
 
+import com.talearnt.enums.ErrorCode;
+import com.talearnt.exception.CustomException;
+import com.talearnt.util.CommonResponse;
 import com.talearnt.util.RestControllerV1;
 import com.talearnt.verification.VerificationReqDTO;
 import com.talearnt.verification.VerificationService;
 import com.talearnt.verification.VerifyCodeReqDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
+@Tag(name = "JoinController : 회원가입", description = "회원가입 관련")
+@Log4j2
 @RestControllerV1
 @RequiredArgsConstructor
 public class JoinController {
@@ -18,20 +26,21 @@ public class JoinController {
     private final JoinService joinService;
     private final VerificationService verificationService;
 
-    @PostMapping("/join")   // 회원 등록
-    public ResponseEntity<String> addUser(@RequestBody JoinReqDTO joinReqDTO){
-
-        try {
-            if(verificationService.isVerifiedCheck(joinReqDTO)){
-                joinService.registerUser(joinReqDTO);
-                return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
-            }else {
-                return new ResponseEntity<>("User not verified", HttpStatus.BAD_REQUEST);
-            }
-        } catch (IllegalStateException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    @Operation(summary = "휴대폰 인증까지 마치고 회원 가입 완료 단계",
+            description = "회원가입 인증과 모든 것을 마치고 회원가입 완료를 눌렀을 때 호출",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "회원가입 성공"),
+                    @ApiResponse(responseCode = "400", ref = "BAD_REQUEST"),
+            })
+    @PostMapping("/join")
+    // 회원 등록
+    public ResponseEntity<CommonResponse<String>> addUser(@RequestBody JoinReqDTO joinReqDTO) throws CustomException {
+        if(verificationService.isVerifiedCheck(joinReqDTO)){
+            joinService.registerUser(joinReqDTO);
+            return CommonResponse.success(new String("회원가입 성공"));
+        }else {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
         }
-
     }
 
     @PostMapping("/sendSMS")    // 인증 문자메세지 발송
