@@ -27,9 +27,9 @@ public class ExampleController {
     @Operation(summary = "내용에 관한 요약은 여기에 적습니다",
             description = "내용에 대한 설명은 여기에 적습니다.",
             responses = {
-
-                    @ApiResponse(responseCode = "500", description = "git-01"),
-                    @ApiResponse(responseCode = "200", description = "성공적")
+                    @ApiResponse(responseCode = "200", description = "성공적"),
+                    @ApiResponse(responseCode = "400", description = "실패 로맨틱"),
+                    @ApiResponse(responseCode = "500", description = "git-01")
             })
 
     public ResponseEntity<CommonResponse<List<ExamResDTO>>> getExams(){
