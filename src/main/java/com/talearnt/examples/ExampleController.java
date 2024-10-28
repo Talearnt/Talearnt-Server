@@ -50,7 +50,8 @@ public class ExampleController {
             @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND"),
             @ApiResponse(responseCode = "403", ref = "USER_SUSPENDED"),
             @ApiResponse(responseCode = "400", ref = "DUPLICATE_USER_ID"),
-            @ApiResponse(responseCode = "500", ref = "DB_CONNECTION_ERROR")
+            @ApiResponse(responseCode = "500", ref = "DB_CONNECTION_ERROR"),
+            @ApiResponse(responseCode = "400", ref = "BAD_REQUEST")
     })
     public ResponseEntity<CommonResponse<ExamResDTO>> updateExam(@RequestBody ExamReqDTO dto){
         Exam exam = mapper.map(dto, Exam.class);
