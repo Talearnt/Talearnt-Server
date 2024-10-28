@@ -27,8 +27,7 @@ public class ExampleController {
     @Operation(summary = "내용에 관한 요약은 여기에 적습니다",
             description = "내용에 대한 설명은 여기에 적습니다.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "로맨틱 성공적"),
-                    @ApiResponse(responseCode = "400", description = "로맨틱 실패적")
+                    @ApiResponse(responseCode = "200", description = "성공적")
             })
 
     public ResponseEntity<CommonResponse<List<ExamResDTO>>> getExams(){
