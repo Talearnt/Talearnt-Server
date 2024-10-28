@@ -48,7 +48,7 @@ public class User {
     private LocalDateTime lastLogin;
 
     @Column(nullable = false, length = 10)
-    private String JoinType;
+    private String joinType;
 
     @Column(nullable = false, length = 10)
     @Enumerated(EnumType.STRING)
