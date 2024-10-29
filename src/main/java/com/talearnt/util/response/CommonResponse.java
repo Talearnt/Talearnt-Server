@@ -1,4 +1,4 @@
-package com.talearnt.util;
+package com.talearnt.util.response;
 
 import com.talearnt.enums.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;

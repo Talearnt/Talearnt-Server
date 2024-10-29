@@ -1,4 +1,4 @@
-package com.talearnt.util;
+package com.talearnt.util.database;
 
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
