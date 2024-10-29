@@ -1,8 +1,8 @@
 package com.talearnt;
 
 import com.talearnt.enums.ErrorCode;
-import com.talearnt.exception.CustomException;
-import com.talearnt.util.CommonResponse;
+import com.talearnt.util.exception.CustomException;
+import com.talearnt.util.response.CommonResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -1,4 +1,4 @@
-package com.talearnt.exception;
+package com.talearnt.util.exception;
 
 import com.talearnt.enums.ErrorCode;
 

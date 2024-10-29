@@ -1,4 +1,4 @@
-package com.talearnt.util;
+package com.talearnt.util.version;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
