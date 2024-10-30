@@ -20,7 +20,7 @@ import java.util.List;
 public class ExchangePost {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
-     private int id;
+     private long id;
 
      @Column(nullable = false, length = 30)
      private String userId;
