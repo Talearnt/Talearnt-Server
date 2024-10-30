@@ -1,6 +1,7 @@
 package com.talearnt.login;
 
 import com.talearnt.util.version.RestControllerV1;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,20 @@ public class LoginController {
         response.addCookie(cookie);
 
         return jwt;
+    }
+    @PostMapping("/getUserId")
+    @ResponseBody
+    public String getUserId(String jwt) {
+
+        // JWT에서 Claims 추출
+        Claims claims = JwtTokenUtil.extractToken(jwt);
+
+        // 각 정보 가져오기
+        String userId = claims.get("userId", String.class);
+//        String nickname = claims.get("nickname", String.class);
+//        String authority = claims.get("authority", String.class);
+
+        return userId;
     }
 
 
