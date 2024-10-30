@@ -2,6 +2,7 @@ package com.talearnt;
 
 import com.talearnt.enums.ErrorCode;
 import com.talearnt.util.exception.CustomException;
+import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.CommonResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<CommonResponse<ErrorCode>> handleIllegalStateException(IllegalStateException e) {
         return CommonResponse.error(ErrorCode.ILLEGAL_STATE_EXCEPTION);
+    }
+
+    // Custom Runtime Exception
+    @ExceptionHandler(CustomRuntimeException.class)
+    public ResponseEntity<CommonResponse<ErrorCode>> handleCustomRuntimeException(CustomRuntimeException e) {
+        return CommonResponse.error(e.getErrorCode());
     }
 
     // Custom Exception
