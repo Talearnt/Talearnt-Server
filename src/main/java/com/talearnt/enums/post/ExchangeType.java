@@ -21,6 +21,7 @@ public enum ExchangeType {
         return type;
     }
 
+    @JsonCreator
     public static ExchangeType fromFE(String value){
         for (ExchangeType exchangeType : ExchangeType.values()){
             if(exchangeType.type.equals(value)){

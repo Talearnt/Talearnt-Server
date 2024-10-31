@@ -2,6 +2,7 @@ package com.talearnt.post.exchange.entity;
 
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
+import com.talearnt.join.User;
 import com.talearnt.util.converter.post.ExchangePostStatusConverter;
 import com.talearnt.util.converter.post.ExchangeTypeConverter;
 import jakarta.persistence.*;
@@ -22,10 +23,10 @@ public class ExchangePost {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      private long id;
-     //외래키 거는거 시작
 
-     @Column(nullable = false, length = 30)
-     private String userId;
+     @ManyToOne
+     @JoinColumn(name = "user_no") // 내일 User Entity id 를 userNo로 변경 요청
+     private User user;
 
      @ElementCollection
      private List<PostTalentCategory> giveTalent;
