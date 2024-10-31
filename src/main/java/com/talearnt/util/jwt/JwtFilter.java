@@ -1,6 +1,5 @@
-package com.talearnt.login;
+package com.talearnt.util.jwt;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -23,37 +22,44 @@ public class JwtFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         Cookie[] cookies = request.getCookies();
-        if (cookies == null){
-            filterChain.doFilter(request, response);
-            return;
-        }
+        String jwtCookie = null;
 
-        var jwtCookie = "";
-        for (int i = 0; i < cookies.length; i++){
-            if (cookies[i].getName().equals("jwt")){
-                jwtCookie = cookies[i].getValue();
+        // 쿠키가 존재하는지 확인 후 jwt 쿠키 값 설정
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("jwt".equals(cookie.getName())) {
+                    jwtCookie = cookie.getValue();
+                    break;
+                }
             }
         }
-        System.out.println(jwtCookie);
 
-        Claims claim;
-        try {
-            claim = JwtTokenUtil.extractToken(jwtCookie);
-        } catch (Exception e) {
-            System.out.println("유효기간 만료되거나 이상함");
+        // jwt 쿠키가 없다면 필터 체인 계속 진행
+        if (jwtCookie == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        var authToken = new UsernamePasswordAuthenticationToken(
-                claim.get("username").toString(),
-                null
+        UserInfo userInfo;
+        try {
+            // jwtCookie를 UserInfo로 변환
+            userInfo = JwtTokenUtil.extractToken(jwtCookie);
+        } catch (Exception e) {
+            //유효기간 만료되거나 이상할 경우
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                userInfo, // 인증 주체
+                null,
+                userInfo.getAuthorities() // 권한 정보
         );
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
 
-        //요청들어올때마다 실행할코드~~
+        //요청들어올때마다 실행
         filterChain.doFilter(request, response);
     }
 

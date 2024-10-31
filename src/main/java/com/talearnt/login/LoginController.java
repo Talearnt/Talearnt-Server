@@ -1,10 +1,12 @@
 package com.talearnt.login;
 
+import com.talearnt.util.jwt.JwtTokenUtil;
 import com.talearnt.util.version.RestControllerV1;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -12,6 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+
 
 @RestControllerV1
 @RequiredArgsConstructor
@@ -31,7 +35,9 @@ public class LoginController {
 
         // JWT 생성
         String jwt = JwtTokenUtil.createToken(auth);
-        System.out.println(jwt);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + jwt);
 
         // 쿠키 설정 및 추가
         Cookie cookie = new Cookie("jwt", jwt);
@@ -43,20 +49,5 @@ public class LoginController {
 
         return jwt;
     }
-    @PostMapping("/getUserId")
-    @ResponseBody
-    public String getUserId(String jwt) {
-
-        // JWT에서 Claims 추출
-        Claims claims = JwtTokenUtil.extractToken(jwt);
-
-        // 각 정보 가져오기
-        String userId = claims.get("userId", String.class);
-//        String nickname = claims.get("nickname", String.class);
-//        String authority = claims.get("authority", String.class);
-
-        return userId;
-    }
-
 
 }
