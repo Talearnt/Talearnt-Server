@@ -1,7 +1,6 @@
 package com.talearnt.post.exchange;
 
 import com.talearnt.enums.post.ExchangeType;
-import com.talearnt.post.exchange.entity.TalentCategory;
 import com.talearnt.util.common.RequestDTO;
 import lombok.*;
 
@@ -13,14 +12,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequestDTO
-public class ExchangeAddReqDTO {
-    private long id;
+public class ExchangePostCreateReqDTO {
     private String userId;
-    private List<TalentCategory> giveTalent;
-    private List<TalentCategory> receiveTalent;
+    private List<PostTalentCategoryDTO> giveTalent;
+    private List<PostTalentCategoryDTO> receiveTalent;
     private String title;
     private String content;
     private ExchangeType exchangeType;
     private boolean badgeRequired;
-    private String endDate;
+    private String duration;
 }

@@ -1,17 +1,15 @@
-package com.talearnt.post.exchange.entity;
+package com.talearnt.post.exchange;
 
-import jakarta.persistence.Embeddable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
 
-@Embeddable
 @Getter
 @Builder
 @ToString
-public class TalentCategory {
+public class PostTalentCategoryDTO {
     private String categoryName;
     private List<String> talentName;
 }

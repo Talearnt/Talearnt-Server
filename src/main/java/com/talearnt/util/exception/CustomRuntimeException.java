@@ -2,7 +2,7 @@ package com.talearnt.util.exception;
 
 import com.talearnt.enums.ErrorCode;
 
-public class CustomRuntimeException extends Exception{
+public class CustomRuntimeException extends RuntimeException{
     private final ErrorCode errorCode;
 
     public CustomRuntimeException(ErrorCode errorCode){
