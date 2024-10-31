@@ -35,7 +35,7 @@ public class JwtTokenUtil {
 
         String jwt = Jwts.builder()
                 .claim("userId", user.getUserId())
-                .claim("nickName", user.getNickname())
+                .claim("nickname", user.getNickname())
                 .claim("authority",user.getAuthority())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 86400000)) //유효기간 24시간
