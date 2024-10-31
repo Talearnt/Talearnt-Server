@@ -30,9 +30,9 @@ public class RequestDtoArgumentResolver implements HandlerMethodArgumentResolver
         if (userInfo != null) {
             // DTO의 필드 중 "userId"가 있는 경우 CustomDetails의 userId 값 주입
             for (Field field : dto.getClass().getDeclaredFields()) {
-                if (field.getName().equals("userId")) {
+                if (field.getName().equals("userInfo")) {
                     field.setAccessible(true);
-                    field.set(dto, userInfo.getUserId());
+                    field.set(dto, userInfo);
                 }
             }
         }
