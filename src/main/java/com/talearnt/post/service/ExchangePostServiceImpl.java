@@ -29,7 +29,7 @@ public class ExchangePostServiceImpl implements PostService {
         log.info("DTO -> Entity로 변환된 값 : {}",entity);
 
         //Data 저장
-        log.info("값 저장 : ",exchangePostRepository.save(entity));
+        exchangePostRepository.save(entity);
 
 
         return null;
