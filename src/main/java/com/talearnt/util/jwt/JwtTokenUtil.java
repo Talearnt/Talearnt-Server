@@ -1,5 +1,6 @@
-package com.talearnt.login;
+package com.talearnt.util.jwt;
 
+import com.talearnt.enums.UserRole;
 import com.talearnt.join.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -35,6 +36,7 @@ public class JwtTokenUtil {
 
         String jwt = Jwts.builder()
                 .claim("userId", user.getUserId())
+                .claim("profileImg",user.getProfileImg())
                 .claim("nickname", user.getNickname())
                 .claim("authority",user.getAuthority())
                 .issuedAt(new Date(System.currentTimeMillis()))
@@ -44,11 +46,21 @@ public class JwtTokenUtil {
         return jwt;
     }
 
-    // JWT 까주는 함수
-    public static Claims extractToken(String token) {
-        Claims claims = Jwts.parser().verifyWith(key).build()
-                .parseSignedClaims(token).getPayload();
-        return claims;
+
+
+    public static UserInfo extractToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        String userId = claims.get("userId", String.class);
+        String nickname = claims.get("nickname", String.class);
+        String profileImg = claims.get("profileImg", String.class);
+        UserRole authority = UserRole.valueOf(claims.get("authority", String.class)); // String을 UserRole로 변환
+
+        return new UserInfo(userId, nickname, profileImg, authority);
     }
 
 }

@@ -2,6 +2,7 @@ package com.talearnt.login;
 
 import com.talearnt.join.User;
 import com.talearnt.join.UserRepository;
+import com.talearnt.util.jwt.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

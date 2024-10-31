@@ -24,6 +24,9 @@ public class User {
     @Column(nullable = false, updatable = false,unique = true)
     private String userId;
 
+    @Column //S3에 있는 이미지 기본 경로 입력
+    private String profileImg;
+
     //Beta 시 해싱 데이터값 길이 검증, 막아야 함.
     @Column(nullable = false,length = 100)
     private String pw;
