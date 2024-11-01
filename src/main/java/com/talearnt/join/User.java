@@ -19,7 +19,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private long userNo;
 
     @Column(nullable = false, updatable = false,unique = true)
     private String userId;

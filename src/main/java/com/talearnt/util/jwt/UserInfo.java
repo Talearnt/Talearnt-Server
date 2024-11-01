@@ -8,12 +8,14 @@ import java.util.Collection;
 import java.util.List;
 
 public class UserInfo implements UserDetails {
+    private long userNo;
     private String userId;
     private String nickname;
     private String profileImg;
     private UserRole authority;;
     // 생성자
-    public UserInfo(String userId, String nickname, String profileImg, UserRole authority) {
+    public UserInfo(long userNo, String userId, String nickname, String profileImg, UserRole authority) {
+        this. userNo = userNo;
         this.userId = userId;
         this.nickname = nickname;
         this.profileImg = profileImg;
@@ -57,6 +59,10 @@ public class UserInfo implements UserDetails {
     }
 
     // Getter 추가
+    public long getUserNo() {
+        return userNo;
+    }
+
     public String getUserId() {
         return userId;
     }
