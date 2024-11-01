@@ -1,4 +1,4 @@
-package com.talearnt.post.exchange;
+package com.talearnt.post.exchange.dto;
 
 import lombok.Builder;
 import lombok.Getter;
