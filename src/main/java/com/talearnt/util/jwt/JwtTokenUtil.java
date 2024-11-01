@@ -35,6 +35,7 @@ public class JwtTokenUtil {
                 .collect(Collectors.joining(","));
 
         String jwt = Jwts.builder()
+                .claim("userNo",user.getUserNo())
                 .claim("userId", user.getUserId())
                 .claim("profileImg",user.getProfileImg())
                 .claim("nickname", user.getNickname())
@@ -55,12 +56,13 @@ public class JwtTokenUtil {
                 .parseClaimsJws(token)
                 .getBody();
 
+        long userNo = claims.get("userNo", Long.class);
         String userId = claims.get("userId", String.class);
         String nickname = claims.get("nickname", String.class);
         String profileImg = claims.get("profileImg", String.class);
         UserRole authority = UserRole.valueOf(claims.get("authority", String.class)); // String을 UserRole로 변환
 
-        return new UserInfo(userId, nickname, profileImg, authority);
+        return new UserInfo(userNo, userId, nickname, profileImg, authority);
     }
 
 }
