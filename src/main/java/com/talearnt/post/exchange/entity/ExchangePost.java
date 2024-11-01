@@ -22,9 +22,9 @@ import java.util.List;
 public class ExchangePost {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
-     private long id;
+     private long exchangePostNo;
 
-     @ManyToOne
+     @ManyToOne(fetch = FetchType.LAZY)
      @JoinColumn(name = "user_no") // 내일 User Entity id 를 userNo로 변경 요청
      private User user;
 

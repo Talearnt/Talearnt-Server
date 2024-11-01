@@ -1,6 +1,6 @@
 package com.talearnt.util.resolver;
 
-import com.talearnt.util.common.RequestDTO;
+import com.talearnt.util.common.RequiredJwtValueDTO;
 import com.talearnt.util.jwt.UserInfo;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -15,7 +15,7 @@ public class RequestDtoArgumentResolver implements HandlerMethodArgumentResolver
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         // DTO 어노테이션 단 것들만 추적
-        return parameter.getParameterType().isAnnotationPresent(RequestDTO.class);
+        return parameter.getParameterType().isAnnotationPresent(RequiredJwtValueDTO.class);
     }
 
     @Override
