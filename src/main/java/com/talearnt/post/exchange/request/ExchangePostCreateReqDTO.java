@@ -16,7 +16,7 @@ import java.util.List;
 @RequestDTO
 public class ExchangePostCreateReqDTO {
     @Schema(hidden = true)
-    private UserInfo userInfo; // 이거 내일 실험
+    private UserInfo userInfo;
     private List<PostTalentCategoryDTO> giveTalent;
     private List<PostTalentCategoryDTO> receiveTalent;
     private String title;
