@@ -1,5 +1,6 @@
 package com.talearnt.login;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,9 @@ import org.springframework.stereotype.Component;
 @ToString
 public class LoginReqDTO {
 
+    @Schema(example = "test@test.com")
     private String userId;
+    @Schema(example = "test")
     private String pw;
 
 }
