@@ -1,16 +1,13 @@
 package com.talearnt.login;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.stereotype.Component;
 
 @Builder
-@Component
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class LoginReqDTO {
 
     private String userId;

@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -14,55 +15,40 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
+    private final JwtTokenUtil jwtTokenUtil;
+    private final UserInfoService userInfoService;
+
+
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String header = request.getHeader("Authorization");
 
-        Cookie[] cookies = request.getCookies();
-        String jwtCookie = null;
+        String jwtToken = null;
+        String userId = null;
 
-        // 쿠키가 존재하는지 확인 후 jwt 쿠키 값 설정
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("jwt".equals(cookie.getName())) {
-                    jwtCookie = cookie.getValue();
-                    break;
-                }
+
+        //Bearer 에서 토큰 값 추출 후 userId 셋팅
+        if (header != null && header.startsWith("Bearer ")) {
+            jwtToken = header.substring(7);
+            userId = jwtTokenUtil.extractUserId(jwtToken);
+        }
+
+        // Jwt 토큰은 있지만 JWT Context에 등록이 되어있지 않은 경우
+        if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserInfo userInfo = (UserInfo) userInfoService.loadUserByUsername(userId);
+
+            //Jwt 토큰이 유효할 경우 등록
+            if (jwtTokenUtil.isTokenValid(jwtToken, userInfo)) {
+                UsernamePasswordAuthenticationToken authenticationToken =
+                        new UsernamePasswordAuthenticationToken(userInfo, null, userInfo.getAuthorities());
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }
 
-        // jwt 쿠키가 없다면 필터 체인 계속 진행
-        if (jwtCookie == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        UserInfo userInfo;
-        try {
-            // jwtCookie를 UserInfo로 변환
-            userInfo = JwtTokenUtil.extractToken(jwtCookie);
-        } catch (Exception e) {
-            //유효기간 만료되거나 이상할 경우
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                userInfo, // 인증 주체
-                null,
-                userInfo.getAuthorities() // 권한 정보
-        );
-        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-
-        //요청들어올때마다 실행
         filterChain.doFilter(request, response);
     }
-
 }
