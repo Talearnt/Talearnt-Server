@@ -39,11 +39,13 @@ public class SecurityConfig {
         /* Resolves 상태로 Github에 업로드하지 않아 Login 관련 JWT Filter가 없습니다.
         * Login 관련도 완벽히 완성될 경우에 해당 주석과 밑 주석을 제거하고 import 부분 주석도 삭제해주시길 바랍니다. */
         // JwtFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         // 권한 설정 어떻게 분기 시킬지 논의 필요
         http.authorizeHttpRequests((authorize) ->
                 authorize.requestMatchers("/**").permitAll()
         );
+
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 //        http.formLogin((formLogin) -> formLogin.loginPage("/login")
 //                .defaultSuccessUrl("/")
