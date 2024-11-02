@@ -4,6 +4,7 @@ package com.talearnt.post.exchange;
 import com.talearnt.examples.RestControllerV1;
 import com.talearnt.post.exchange.request.ExchangePostCreateReqDTO;
 import com.talearnt.post.service.PostService;
+import com.talearnt.util.common.RequiredJwtValueDTO;
 import com.talearnt.util.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
