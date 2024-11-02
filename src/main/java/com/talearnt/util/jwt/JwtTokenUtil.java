@@ -4,12 +4,14 @@ import com.talearnt.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Component
+@Log4j2
 public class JwtTokenUtil {
 
     @Value("${jwt.secret}")
@@ -27,7 +29,7 @@ public class JwtTokenUtil {
                 .claim("userNo",userInfo.getUserNo())
                 .claim("profileImg",userInfo.getProfileImg())
                 .claim("nickname", userInfo.getNickname())
-                .claim("authority",userInfo.getAuthority())
+                .claim("authority",userInfo.getAuthority().name())
                 .setSubject(userInfo.getUserId()) // 토큰의 주체(사용자 이름)
                 .setIssuedAt(new Date(System.currentTimeMillis())) // 토큰 발행 시간
                 .setExpiration(new Date(System.currentTimeMillis() + jwtTokenMilliseconds)) // 토큰 만료 시간
@@ -39,6 +41,7 @@ public class JwtTokenUtil {
     public String createRefreshToken(UserInfo userInfo) {
         return Jwts.builder()
                 .setSubject(userInfo.getUserId())
+                .claim("authority",userInfo.getAuthority().name())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + refreshTokenMilliseconds))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -62,6 +65,7 @@ public class JwtTokenUtil {
     // 권한 추출
     public UserRole extractAuthority(String token) {
         String role = extractClaims(token).get("authority", String.class);
+
         return UserRole.valueOf(role);
     }
 
@@ -69,6 +73,7 @@ public class JwtTokenUtil {
     public boolean isTokenValid(String token, UserInfo userInfo) {
         String userId = extractUserId(token);
         UserRole authority = extractAuthority(token);
+
         return (userId.equals(userInfo.getUserId()) && authority.equals(userInfo.getAuthority()) && !isTokenExpired(token));
     }
 

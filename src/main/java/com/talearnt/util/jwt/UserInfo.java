@@ -2,12 +2,14 @@ package com.talearnt.util.jwt;
 
 import com.talearnt.enums.UserRole;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
+@ToString
 @NoArgsConstructor
 public class UserInfo implements UserDetails {
     private long userNo;

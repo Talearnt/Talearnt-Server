@@ -23,12 +23,13 @@ public class UserInfoService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         User user = userRepository.findByUserId(userId);
-        log.info("loadUserByUsername User : {}",user);
+
         if (user == null){
             throw new CustomRuntimeException(ErrorCode.USER_NOT_FOUND);
         }
+        
         UserInfo userInfo = mapper.map(user,UserInfo.class);
-        log.info("loadUserByUsername userInfo : {}",userInfo);
+
         return userInfo;
     }
 }
