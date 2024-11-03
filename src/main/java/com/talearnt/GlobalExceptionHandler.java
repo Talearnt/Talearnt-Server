@@ -6,6 +6,7 @@ import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.CommonResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -19,6 +20,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Log4j2
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+
+    // 지원하지 않는 메소드 타입으로 보냈을 경우 생기는 Exception
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<CommonResponse<ErrorCode>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        return CommonResponse.error(ErrorCode.METHOD_NOT_SUPPORTED);
+    }
 
     // 현재 객체의 상태에서 해당 작업을 수행할 수 없습니다.
     @ExceptionHandler(IllegalStateException.class)
