@@ -6,7 +6,9 @@ import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.CommonResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -21,6 +23,20 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @Log4j2
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CommonResponse<Object>> handleValidationExceptions(MethodArgumentNotValidException e) {
+        FieldError fieldError = e.getBindingResult().getFieldErrors().stream().findFirst().orElse(null);
+
+        if (fieldError != null) {
+
+            ErrorCode errorCode = ErrorCode.getErrorCode(fieldError.getDefaultMessage());
+            return CommonResponse.error(errorCode);
+        }
+
+        return CommonResponse.error(ErrorCode.UNKNOWN_ERROR);
+    }
 
 
     @ExceptionHandler(NoResourceFoundException.class)
