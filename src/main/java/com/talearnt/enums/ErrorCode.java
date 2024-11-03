@@ -54,7 +54,11 @@ public enum ErrorCode {
     POST_REQUEST_MISSING("400-POST-05", "필수 항목을 입력해 주세요."),
 
     //서버 오류
-    ILLEGAL_ARGUMENT_EXCEPTION("400-SERVER-01", "잘못된 값을 입력하셨습니다. \n 입력값을 확인해보세요.");
+    ILLEGAL_ARGUMENT_EXCEPTION("400-SERVER-01", "잘못된 값을 입력하셨습니다. \n 입력값을 확인해보세요."),
+
+    //이미 만들어져 공통으로 사용되는 오류
+    METHOD_NOT_SUPPORTED("405-COMMON-01", "지원하지 않는 HTTP 메서드입니다.");
+
 
     private final String code;
     private final String message;
