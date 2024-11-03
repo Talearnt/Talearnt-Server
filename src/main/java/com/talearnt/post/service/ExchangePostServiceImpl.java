@@ -33,7 +33,7 @@ public class ExchangePostServiceImpl implements PostService {
         log.info("DTO -> Entity로 변환된 값 : {}",entity);
 
         //User Entity에 UserNo 설정
-        entity.setUser(UserUtil.createUser(exchangePostReqDTO.getUserInfo().getUserNo()));
+        entity.setUser(UserUtil.createUser(exchangePostReqDTO.getUserInfo()));
 
         log.info("UserNo 주입 후 값 : {}",entity);
 
