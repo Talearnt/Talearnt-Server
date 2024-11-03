@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
  * 연관된 Class = /Enums/ErrorCode,
@@ -21,6 +22,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<CommonResponse<ErrorCode>> handleHttpRequestMethodNotSupportedException(NoResourceFoundException e) {
+        return CommonResponse.error(ErrorCode.RESOURCE_NOT_FOUND);
+    }
 
     // 지원하지 않는 메소드 타입으로 보냈을 경우 생기는 Exception
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
