@@ -52,9 +52,11 @@ public enum ErrorCode {
     POST_CONTENT_MISSING("400-POST-03", "내용을 입력해주세요."),
     POST_CONTENT_MIN_LENGTH("400-POST-04", "내용 20글자 이상 필수 입력입니다!"),
     POST_REQUEST_MISSING("400-POST-05", "필수 항목을 입력해 주세요."),
+    POST_BAD_REQUEST("400-POST-06", "잘못된 값이 넘어왔습니다. \n 입력 값을 확인하세요."),
+    POST_OVER_REQUEST_LENGTH("400-POST-06", "최대 5개의 재능만 선택하실 수 있습니다"),
 
     //서버 오류
-    ILLEGAL_ARGUMENT_EXCEPTION("400-SERVER-01", "잘못된 값을 입력하셨습니다. \n 입력값을 확인하세요."),
+    ILLEGAL_ARGUMENT_EXCEPTION("400-SERVER-01", "잘못된 값을 입력하셨습니다. \n 입력 값을 확인하세요."),
 
     //이미 만들어져 공통으로 사용되는 오류
     METHOD_NOT_SUPPORTED("405-COMMON-01", "지원하지 않는 HTTP 메서드입니다."),
@@ -77,4 +79,20 @@ public enum ErrorCode {
                                         "\n\t \"success\": false" +
                                         "\n}"))));
     }
+
+    /**
+     * @param code : Error 코드
+     *             ex) 400-USER-03
+     * Dynamic Valid ErrorCode 반환.
+     * */
+    public static ErrorCode getErrorCode(String code) {
+        for (ErrorCode e : values()) {
+            if (e.getCode().equals(code)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("Invalid error code: " + code);
+    }
+
+
 }
