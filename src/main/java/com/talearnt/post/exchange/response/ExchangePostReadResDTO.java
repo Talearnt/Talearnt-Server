@@ -3,7 +3,6 @@ package com.talearnt.post.exchange.response;
 import com.talearnt.enums.UserRole;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.post.exchange.PostTalentCategoryDTO;
-import com.talearnt.util.jwt.UserInfo;
 import lombok.*;
 
 import java.util.List;
