@@ -15,6 +15,7 @@ public enum ErrorCode {
     EXPIRED_TOKEN("401-AUTH-02", "인증 토큰이 만료되었습니다."),
     INVALID_CREDENTIALS("401-AUTH-03", "아이디 또는 비밀번호를 확인해주세요!"),
     ACCESS_DENIED("403-AUTH-04", "접근이 거부되었습니다."),
+    INVALID_AUTH_CODE("400-AUTH-05","인증 번호가 틀립니다. 확인 후 다시 입력해주세요"),
 
     // 사용자 관련 오류
     USER_NOT_FOUND("404-USER-01", "해당 회원을 찾을 수 없습니다."),
@@ -22,6 +23,8 @@ public enum ErrorCode {
     INVALID_USER_INPUT("400-USER-03", "입력된 사용자 정보가 유효하지 않습니다."),
     USER_SUSPENDED("403-USER-04", "이 계정은 정지 상태입니다."),
     DUPLICATE_USER_NICKNAME("400-USER-05", "해당 닉네임은 이미 존재합니다."),
+    USER_ID_NOT_EMAIL_FORMAT("400-USER-06","올바른 이메일 형식으로 입력해 주세요!"),
+    USER_PHONE_NUMBER_FORMAT_MISMATCH("400-USER-07","휴대폰 번호를 정확히 입력해 주세요!"),
 
     // 데이터베이스 관련 오류
     DB_CONNECTION_ERROR("500-DB-01", "데이터 베이스에 연결 실패했습니다."),
@@ -41,8 +44,14 @@ public enum ErrorCode {
     // 시스템 및 알 수 없는 오류
     SERVICE_UNAVAILABLE("503-SYSTEM-01", "서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요."),
     INTERNAL_SERVER_ERROR("500-SYSTEM-02", "서버 내부 오류가 발생했습니다."),
-    UNKNOWN_ERROR("500-UNKNOWN-01", "알 수 없는 오류가 발생했습니다. 관리자에게 문의하세요."),
+     UNKNOWN_ERROR("500-UNKNOWN-01", "알 수 없는 오류가 발생했습니다. 관 리자에게 문의하세요."),
 
+    //게시글 관련 오류
+    POST_TITLE_OVER_LENGTH("400-POST-01","제목 글자 수 제한을 확인해주세요."),
+    POST_TITLE_MISSING("400-POST-02", "제목을 입력해주세요."),
+    POST_CONTENT_MISSING("400-POST-03", "내용을 입력해주세요."),
+    POST_CONTENT_MIN_LENGTH("400-POST-04", "내용 20글자 이상 필수 입력입니다!"),
+    POST_REQUEST_MISSING("400-POST-05", "필수 항목을 입력해 주세요."),
 
     //서버 오류
     ILLEGAL_ARGUMENT_EXCEPTION("400-SERVER-01", "잘못된 값을 입력하셨습니다. \n 입력값을 확인해보세요.");
