@@ -30,7 +30,6 @@ public class GlobalExceptionHandler {
         FieldError fieldError = e.getBindingResult().getFieldErrors().stream().findFirst().orElse(null);
 
         if (fieldError != null) {
-
             ErrorCode errorCode = ErrorCode.getErrorCode(fieldError.getDefaultMessage());
             return CommonResponse.error(errorCode);
         }

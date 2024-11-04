@@ -37,7 +37,9 @@ public class SwaggerConfig {
     private Info apiInfo() {
         return new Info()
                 .title("Talearnt API")
-                .description("Talearnt 개발자의 API 소통구간 \n JWT 토큰 발급 ID test@test.com\n PWD : test")
+                .description("Talearnt 개발자의 API 소통구간" +
+                        " JWT 토큰 발급 ID test@test.com" +
+                        " PWD : test")
                 .version("1.0.0");
 
     }
