@@ -5,6 +5,7 @@ import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.post.exchange.PostTalentCategoryDTO;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -30,4 +31,5 @@ public class ExchangePostReadResDTO {
     private ExchangeType exchangeType;
     private boolean badgeRequired;
     private String duration;
+    private LocalDateTime createdAt;
 }

@@ -1,14 +1,14 @@
 package com.talearnt.post.exchange;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Builder
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class PostTalentCategoryDTO {
     private String categoryName;
     private List<String> talentName;
