@@ -20,11 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-
+import org.springframework.web.bind.annotation.*;
 
 
 @RestControllerV1
@@ -46,7 +42,7 @@ public class LoginController {
     }
 
     //리프레시 토큰
-    @PostMapping("/auth/refresh")
+    @GetMapping("/auth/refresh")
     @Operation(summary = "새로운 JWT 토큰 발급 받기",
             description = "Refresh 토큰을 받아서 새로운 JWT 토큰 발급 받기",
             responses = {

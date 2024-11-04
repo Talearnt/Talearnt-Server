@@ -4,5 +4,5 @@ import com.talearnt.util.response.CommonResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface UpdateService<T, R> {
-    ResponseEntity<CommonResponse<R>> update(T updateDTO);
+    ResponseEntity<CommonResponse<R>> update(T updateDTO, Long id);
 }
