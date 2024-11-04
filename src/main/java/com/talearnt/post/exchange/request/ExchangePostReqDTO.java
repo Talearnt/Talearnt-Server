@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredJwtValueDTO
-public class ExchangePostCreateReqDTO{
+public class ExchangePostReqDTO {
     @Schema(hidden = true)
     private UserInfo userInfo;
 
