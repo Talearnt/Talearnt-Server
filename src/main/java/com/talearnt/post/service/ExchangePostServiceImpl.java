@@ -55,6 +55,8 @@ public class ExchangePostServiceImpl implements PostService<ExchangePostReqDTO>{
         // 해당 게시글 조회
         Optional<ExchangePost> exchangePost = exchangePostRepository.findById(id);
         // 게시글 조회 실패 시 Exception 발생
+        // if else문 안쓰고 할 수 있는 지 클린 코딩 고민 stream.
+        // isPresent 말고, elseThrow 사용법 확인
         if (!exchangePost.isPresent()){
             throw new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
         }
