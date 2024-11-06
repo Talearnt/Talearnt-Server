@@ -49,7 +49,7 @@ public class ExchangePostController {
 
     @Operation(summary = "재능 교환 게시글 수정")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "재능 교환 게시글을 등록했습니다."),
+            @ApiResponse(responseCode = "200", description = "재능 교환 게시글을 수정했습니다."),
             @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
             @ApiResponse(responseCode = "400-1", ref = "POST_REQUEST_MISSING"),
             @ApiResponse(responseCode = "400-2", ref = "POST_OVER_REQUEST_LENGTH"),
@@ -58,6 +58,7 @@ public class ExchangePostController {
             @ApiResponse(responseCode = "400-5", ref = "POST_CONTENT_MIN_LENGTH"),
             @ApiResponse(responseCode = "400-6", ref = "POST_CONTENT_MISSING"),
             @ApiResponse(responseCode = "400-7", ref = "POST_BAD_REQUEST"),
+            @ApiResponse(responseCode = "400-8", ref = "POST_NOT_FOUND")
     })
     @PutMapping("/exchange-posts/{exchangePostNo}")
     public ResponseEntity<CommonResponse<String>> updatePost(@RequestBody @Valid ExchangePostReqDTO dto, @PathVariable Long exchangePostNo){
