@@ -7,7 +7,6 @@ import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,18 +24,16 @@ public class VerificationService {
 
     private final  DefaultMessageService messageService;
     private final  VerificationCodeRepository verificationCodeRepository;
-    private final  ModelMapper mapper;
 
     public VerificationService(@Value("${coolsms.apiKey}") String apiKey,
                                @Value("${coolsms.secretKey}") String apiSecret,
                                @Value("${coolsms.fromNumber}") String fromNumber,
-                               VerificationCodeRepository verificationCodeRepository,
-                               ModelMapper mapper) {
+                               VerificationCodeRepository verificationCodeRepository)
+            {
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
         this.fromNumber = fromNumber;
         this.verificationCodeRepository = verificationCodeRepository;
-        this.mapper = mapper;
         // 여기서 messageService 초기화
         this.messageService = NurigoApp.INSTANCE.initialize(apiKey, apiSecret, "https://api.coolsms.co.kr");
     }
@@ -49,7 +46,7 @@ public class VerificationService {
         message.setTo(verificationReqDTO.getPhone());
         message.setText("Talearnt 인증번호는 [" + verificationReqDTO.getVerificationCode() + "] 입니다.");
         verificationReqDTO.setIsPhoneVerified(false);
-        PhoneVerification phoneVerification = mapper.map(verificationReqDTO,PhoneVerification.class);
+        PhoneVerification phoneVerification = VerificationMapper.INSTANCE.toPhoneVerification(verificationReqDTO);
         verificationCodeRepository.save(phoneVerification);
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));

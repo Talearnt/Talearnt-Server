@@ -1,8 +1,8 @@
 package com.talearnt.join;
 
+import com.talearnt.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,32 +13,21 @@ public class JoinService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ModelMapper mapper;
 
 
     // 회원가입 서비스 메서드
     public User registerUser(JoinReqDTO joinReqDTO) {
-        log.info("{},{},{}",joinReqDTO.getUserId(),joinReqDTO.getNickname(),joinReqDTO.getPhone());
+        log.info("Register User 시작");
         String encodedPassword = passwordEncoder.encode(joinReqDTO.getPw());
 
-        JoinReqDTO changedDto = new JoinReqDTO.JoinReqDTOBuilder()
-                .userId(joinReqDTO.getUserId())
-                .pw(encodedPassword)
-                .phone(joinReqDTO.getPhone())
-                .joinType(joinReqDTO.getJoinType())
-                .nickname("예시닉넴")
-                .authority(joinReqDTO.getAuthority())
-                .gender(joinReqDTO.getGender())
-                .build();
-
-        User user = mapper.map(changedDto,User.class);
-
+        User user = JoinMapper.INSTANCE.toEntity(joinReqDTO);
+        user.setPw(encodedPassword);
+        user.setNickname("");
+        user.setJoinType("자사");
+        user.setAuthority(UserRole.ROLE_USER);
+        log.info("Register User 끝");
         return userRepository.save(user);
     }
 
-
-//    public boolean existsByUserId(String userId) {
-//        return joinRepository.existsByUserId(userId);
-//    }
 
 }

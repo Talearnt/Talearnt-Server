@@ -17,6 +17,10 @@ import java.time.LocalDateTime;
 @ToString
 public class Agree {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long agreeNo;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_no")
     private User user;
