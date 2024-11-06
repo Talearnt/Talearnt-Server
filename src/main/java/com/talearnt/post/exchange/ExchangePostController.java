@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "재능 교환 게시글")
@@ -41,6 +42,12 @@ public class ExchangePostController {
         return exchangePostServiceImpl.create(dto);
     }
 
+
+    @Operation(summary = "재능 교환 게시글 상세보기")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "재능 교환 게시글 상세보기."),
+            @ApiResponse(responseCode = "404", ref = "POST_NOT_FOUND")
+    })
     @GetMapping("/exchange-posts/{exchangePostNo}")
     public ResponseEntity<CommonResponse<ExchangePostReadResDTO>> readPost(@PathVariable Long exchangePostNo){
         return exchangePostServiceImpl.read(exchangePostNo);
@@ -58,10 +65,24 @@ public class ExchangePostController {
             @ApiResponse(responseCode = "400-5", ref = "POST_CONTENT_MIN_LENGTH"),
             @ApiResponse(responseCode = "400-6", ref = "POST_CONTENT_MISSING"),
             @ApiResponse(responseCode = "400-7", ref = "POST_BAD_REQUEST"),
-            @ApiResponse(responseCode = "400-8", ref = "POST_NOT_FOUND")
+            @ApiResponse(responseCode = "400-8", ref = "POST_NOT_FOUND"),
+            @ApiResponse(responseCode = "400-9", ref = "POST_ACCESS_DENIED")
     })
     @PutMapping("/exchange-posts/{exchangePostNo}")
     public ResponseEntity<CommonResponse<String>> updatePost(@RequestBody @Valid ExchangePostReqDTO dto, @PathVariable Long exchangePostNo){
         return exchangePostServiceImpl.update(dto,exchangePostNo);
+    }
+
+
+    @Operation(summary = "재능 교환 게시글 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "재능 교환 게시글 상세보기."),
+            @ApiResponse(responseCode = "404", ref = "POST_NOT_FOUND"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
+            @ApiResponse(responseCode = "403", ref = "POST_ACCESS_DENIED")
+    })
+    @DeleteMapping("/exchange-posts/{exchangePostNo}")
+    public ResponseEntity<CommonResponse<String>> deletePost(@PathVariable Long exchangePostNo, Authentication authentication){
+        return exchangePostServiceImpl.delete(exchangePostNo,authentication);
     }
 }
