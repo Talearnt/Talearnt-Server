@@ -8,6 +8,7 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ExchangePostMapper {
+
     ExchangePostMapper INSTANCE = Mappers.getMapper(ExchangePostMapper.class);
 
     @Mappings({
