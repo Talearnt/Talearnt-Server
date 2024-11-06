@@ -6,8 +6,8 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-11-06T18:27:47+0900",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.0.1 (Oracle Corporation)"
+    date = "2024-11-06T21:40:22+0900",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.9 (Oracle Corporation)"
 )
 public class LoginMapperImpl implements LoginMapper {
 
@@ -17,8 +17,14 @@ public class LoginMapperImpl implements LoginMapper {
             return null;
         }
 
-        UserInfo userInfo = new UserInfo();
+        UserInfo.UserInfoBuilder userInfo = UserInfo.builder();
 
-        return userInfo;
+        userInfo.userNo( user.getUserNo() );
+        userInfo.userId( user.getUserId() );
+        userInfo.nickname( user.getNickname() );
+        userInfo.profileImg( user.getProfileImg() );
+        userInfo.authority( user.getAuthority() );
+
+        return userInfo.build();
     }
 }

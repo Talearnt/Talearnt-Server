@@ -1,8 +1,7 @@
 package com.talearnt.util.jwt;
 
 import com.talearnt.enums.UserRole;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,20 +10,16 @@ import java.util.List;
 
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Builder
 public class UserInfo implements UserDetails {
     private long userNo;
     private String userId;
     private String nickname;
     private String profileImg;
     private UserRole authority;;
-    // 생성자
-    public UserInfo(long userNo, String userId, String nickname, String profileImg, UserRole authority) {
-        this.userNo = userNo;
-        this.userId = userId;
-        this.nickname = nickname;
-        this.profileImg = profileImg;
-        this.authority = authority;
-    }
+
 
     // UserDetails 인터페이스 메서드 구현
     @Override
@@ -62,24 +57,4 @@ public class UserInfo implements UserDetails {
         return true;
     }
 
-    // Getter 추가
-    public long getUserNo() {
-        return userNo;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getProfileImg() {
-        return profileImg;
-    }
-
-    public UserRole getAuthority() {
-        return authority;
-    }
 }

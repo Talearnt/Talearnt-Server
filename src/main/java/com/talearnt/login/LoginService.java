@@ -34,6 +34,7 @@ public class LoginService {
     public TokenResDTO authenticateUser(LoginReqDTO loginReqDTO, HttpServletResponse response) {
         // DB에서 사용자 조회
         User user = userRepository.findByUserId(loginReqDTO.getUserId());
+        log.info("user : {}",user);
         // passwordEncoder 막아놈
 //        if (user == null || !passwordEncoder.matches(loginReqDTO.getPw(), user.getPw())) {
 //            throw new CustomRuntimeException(ErrorCode.INVALID_CREDENTIALS);
@@ -50,6 +51,8 @@ public class LoginService {
 
         //인증 작업 완료 후 UserInfo로 변환
         UserInfo userInfo = LoginMapper.INSTANCE.toUserInfo(user);
+
+        log.info("userInfo : {}", userInfo);
 
         //리프레시 토큰 생성
         String refreshToken = jwtTokenUtil.createRefreshToken(userInfo);
