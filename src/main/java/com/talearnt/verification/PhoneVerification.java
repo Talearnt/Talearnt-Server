@@ -26,7 +26,7 @@ public class PhoneVerification {
     private String verificationCode;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
-    private Boolean isPhoneVerified;
+    private boolean isPhoneVerified;
 
     @Column(nullable = true, updatable = false)
     @CreationTimestamp //insert 쿼리가 발생했을 때 현재 시간값 적용
