@@ -1,24 +1,17 @@
 package com.talearnt.post.service;
 
 import com.talearnt.enums.ErrorCode;
-import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.post.exchange.ExchangePostMapper;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.ExchangePostRepository;
 import com.talearnt.post.exchange.entity.ExchangePost;
 import com.talearnt.post.exchange.response.ExchangePostReadResDTO;
-import com.talearnt.util.common.UserUtil;
-import com.talearnt.util.exception.CustomException;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-
 
 @Service
 @RequiredArgsConstructor
@@ -26,13 +19,12 @@ import java.util.Optional;
 public class ExchangePostServiceImpl implements PostService<ExchangePostReqDTO>{
 
     private final ExchangePostRepository exchangePostRepository;
-    private final ModelMapper mapper;
-
 
     @Override
     public ResponseEntity<CommonResponse<String>> create(ExchangePostReqDTO createDTO) {
         log.info("Exchange Post Create 시작 : {}",createDTO);
-        //DTO -> Server Data로 변환
+
+        //DTO -> Entity로 변환
         ExchangePost entity = ExchangePostMapper.INSTANCE.toEntity(createDTO);
 
         //Data 저장
