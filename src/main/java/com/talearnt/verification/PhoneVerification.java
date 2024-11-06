@@ -32,11 +32,11 @@ public class PhoneVerification {
     @CreationTimestamp //insert 쿼리가 발생했을 때 현재 시간값 적용
     private LocalDateTime createdAt;
 
-    @Builder
-    public PhoneVerification(String userId, String phone, String verificationCode, Boolean isPhoneVerified) {
-        this.userId = userId;
-        this.phone = phone;
-        this.verificationCode = verificationCode;
-        this.isPhoneVerified = isPhoneVerified;
+    public void setIsPhoneVerified(boolean b) {
+        this.isPhoneVerified = b;
+    }
+
+    public boolean getIsPhoneVerified() {
+        return this.isPhoneVerified;
     }
 }

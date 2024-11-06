@@ -12,7 +12,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,7 +30,6 @@ public class LoginService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
-    private final ModelMapper mapper;
 
     public TokenResDTO authenticateUser(LoginReqDTO loginReqDTO, HttpServletResponse response) {
         // DB에서 사용자 조회
@@ -51,7 +49,7 @@ public class LoginService {
                 new UsernamePasswordAuthenticationToken(loginReqDTO.getUserId(), loginReqDTO.getPw());
 
         //인증 작업 완료 후 UserInfo로 변환
-        UserInfo userInfo = mapper.map(user, UserInfo.class);
+        UserInfo userInfo = LoginMapper.INSTANCE.toUserInfo(user);
 
         //리프레시 토큰 생성
         String refreshToken = jwtTokenUtil.createRefreshToken(userInfo);
@@ -72,7 +70,7 @@ public class LoginService {
     public TokenResDTO refreshJwtToken(String refreshToken) throws CustomException {
         String userId = jwtTokenUtil.extractUserId(refreshToken);
         User user = userRepository.findByUserId(userId);
-        UserInfo userInfo = mapper.map(user, UserInfo.class);
+        UserInfo userInfo = LoginMapper.INSTANCE.toUserInfo(user);
         if (jwtTokenUtil.isTokenValid(refreshToken,userInfo)){
             return TokenResDTO.builder().accessToken(jwtTokenUtil.createJwtToken(userInfo)).build();
         }

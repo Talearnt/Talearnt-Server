@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +17,6 @@ import java.util.List;
 @RestControllerV1
 @RequiredArgsConstructor
 public class ExampleController {
-
-    private final ModelMapper mapper;
 
     @GetMapping("/exam")
     @Operation(summary = "내용에 관한 요약은 여기에 적습니다",
@@ -54,14 +51,8 @@ public class ExampleController {
             @ApiResponse(responseCode = "402", ref = "?????")
     })
     public ResponseEntity<CommonResponse<ExamResDTO>> updateExam(@RequestBody ExamReqDTO dto){
-        Exam exam = mapper.map(dto, Exam.class);
-        exam.setNickname("예제 닉네임4");
-        ExamResDTO resDto = mapper.map(exam,ExamResDTO.class);
-        if (resDto.getNickname().equals(dto.getNickname())){
-            return CommonResponse.success(resDto);
-        }else{
-            return CommonResponse.error(ErrorCode.USER_NOT_FOUND);
-        }
+
+        return null;
     }
 
 }
