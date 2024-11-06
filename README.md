@@ -6,7 +6,7 @@
 
 ## Tech Stack (❁´◡`❁)
 FE : React, Typescript  
-BE : Java-17, Spring boot, Swagger, Spring Security, ModelMapper, JPA, Query DSL  
+BE : Java-17, Spring boot, Swagger, Spring Security, MapStruct, JPA, Query DSL  
 DevOps : AWS(S3,EC2,RDS), Azure Database(Devlop전용), Docker, GtiHub Action, Gradle, Git, Jira  
 
 ```text
@@ -17,7 +17,6 @@ DevOps : AWS(S3,EC2,RDS), Azure Database(Devlop전용), Docker, GtiHub Action, G
   - 같이 일하는 동료가 내 코드를 보고 쉽게 이해할 수 있을 것 인가?
   - 일관성 있는 코드인가?
   - 의존성이 너무 심하여 확장에 문제가 있는 것은 아닌가?
-  - SOLID 법칙을 최대한 지켰는가?
 ```
 
 <details>
@@ -35,9 +34,12 @@ DevOps : AWS(S3,EC2,RDS), Azure Database(Devlop전용), Docker, GtiHub Action, G
   - **Spring Security**
     - JWT 인증
     - 보안 관련한 기능을 비교적 쉽게 적용할 수 있음
-  - **ModelMapper**
-    - DTO Builder 패턴 사용
-    - DTO <-> Entity 변환 과정 반복 코드 감소
+  - **ModelMapper -> MapStruct로 변경(Updated at 2024-11-06)**
+    - ModelMapper 사용 X
+      - DTO Builder 패턴 사용
+      - DTO <-> Entity 변환 과정 반복 코드 감소
+    - MapStruct 사용 O
+      - 복잡한 DTO 관계 Mapping 편의성 향상
   - **JPA**
     - 반복적인 CRUD 쿼리를 제거할 수 있음
     - 유지 보수에 좋음
@@ -167,13 +169,13 @@ ex) examDTO
 ex 1) examReqDTO 만 생성
 ex 2) examResDTO 만 생성
 
-Entity <-> DTO 변환 과정은 ModelMapper를 사용합니다.
+Entity <-> DTO 변환 과정은 MapStruct를 사용합니다.
 변환 과정은 Service레이어에서 진행합니다.
 
 이렇게 관리하면 아래와 같은 효과를 기대할 수 있습니다.
 - 직관적인 이름으로 사용법을 쉽게 파악할 수 있습니다.
 - 데이터 불변성으로 인해 데이터 신뢰성이 올라갑니다.
-- 반복적인 코드를 ModelMapper로 줄일 수 있습니다.
+- 반복적인 코드를 MapStruct로 줄일 수 있습니다.
 - 유지 보수를 좀 더 쉽게 할 수 있게 됩니다.
 ```
 </details>
@@ -314,11 +316,49 @@ public ResponseEntity<CommonResponse<ExamResDTO>> updateExam(@RequestBody ExamRe
 ![Error 예시 적용 후](./documents/imgs/swagger-error-exam-after.png)
 </details>
 
+<details>
+    <summary>Custom Validation6️⃣ </summary>
 
+    @Valid 을 사용하면서 DTO에 들어오는 값에 대한 유효성 검사는 기존의 Vaild 어노테이션만으로도 충분했습니다.
+    하지만, 우리는 ErrorCode를 작성하면서 Exception에 대한 내용이 모든 코드에 동일하게 적용되어야 하는 규칙이 있었습니다.
+   
+    이 문제를 해결하기 위하여 우리는, Custom Valid 어노테이션을 정의하고 사용하여, ErrorCode 통일화와 가독성을 챙기기로 하였습니다.
+    
+![Dynamic Valid Annotation 사용 예제](./documents/imgs/dynamic-valid-exam.png)
+</details>
 
+<details>
+    <summary>JPA Optional 올바르게 사용하기</summary>
+
+[JPA - Optional 참고 문서](https://dev-coco.tistory.com/178)
+
+    JPA를 사용하면서 Optional<Entity> 로 받아 if(isPresent()).get() 형태는 반복적으로 나오는 코드였습니다.
+    orElseThrow를 사용하여, Optional을 피하고, 명시적으로 Exception을 발생시켜 가독성을 향상 시켰습니다.
+
+orElseThrow 사용 예제
+![JPA - orElseThrow 예제](./documents/imgs/jpa-orElseThrow-exam.png)
+</details>
+<details>
+    <summary>ModelMapper 에서 MapStruct로 변경한 이유</summary>
+
+    변경한 이유 : 단순한 Field 1:1인 경우 ModelMapper로 손 쉽게 매핑이 가능했으나, 복잡한 구조를 가진 Builder 패턴의 DTO가 만들어지면서
+    ModelMapper만으로는 복잡한 코드가 증가하고, 가독성이 떨어졌습니다.
+    UserInfo에 대한 값을 User Entity에 주입하기 위하여 UserUtil이라는 Class를 별도로 만들어서 사용한 부분이 Mapper의 기능을 제대로 못한다고 느꼈습니다.
+    매핑 관계를 따로 정의하는 부분을 별도로 빼서 관리하도록 변경하여 코드를 개선하였습니다.
+
+ModelMapper 사용 했을 떄 코드
+![ModelMapper 사용 했을 떄 코드](./documents/imgs/before-mapper-exam-01.png)
+UserUtil 코드
+![UserUtil 코드](./documents/imgs/before-mapper-exam-02.png)
+
+Map Struct를 사용했을 때 코드
+![Map Struct를 사용했을 때 코드](./documents/imgs/after-mapper-exam-01.png)
+Map Struct 정의 Interface
+![Map Struct 정의 Interface](./documents/imgs/after-mapper-exam-02.png)
+</details>
 
 ## GIT Convention 📃
-😊 [GITHUB Flow](https://inpa.tistory.com/entry/GIT-%E2%9A%A1%EF%B8%8F-github-flow-git-flow-%F0%9F%93%88-%EB%B8%8C%EB%9E%9C%EC%B9%98-%EC%A0%84%EB%9E%B5) 브랜치 전략을 따릅니다.   
+😊 [GIT Flow](https://inpa.tistory.com/entry/GIT-%E2%9A%A1%EF%B8%8F-github-flow-git-flow-%F0%9F%93%88-%EB%B8%8C%EB%9E%9C%EC%B9%98-%EC%A0%84%EB%9E%B5) 브랜치 전략을 따릅니다.   
 
 <details>
   <summary>📑양식📑 및 작성 예제 1️⃣</summary>
