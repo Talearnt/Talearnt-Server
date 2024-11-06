@@ -4,8 +4,8 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-11-06T18:27:48+0900",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.0.1 (Oracle Corporation)"
+    date = "2024-11-06T20:18:10+0900",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.9 (Oracle Corporation)"
 )
 public class VerificationMapperImpl implements VerificationMapper {
 
