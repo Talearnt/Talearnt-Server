@@ -2,9 +2,12 @@ package com.talearnt.post.exchange;
 
 import com.talearnt.post.exchange.entity.ExchangePost;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
+import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.post.exchange.response.ExchangePostReadResDTO;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ExchangePostMapper {
@@ -25,4 +28,16 @@ public interface ExchangePostMapper {
 
     @Mapping(source = "userInfo", target = "user")
     ExchangePost toUpdateEntity(ExchangePostReqDTO exchangePostReqDTO, @MappingTarget ExchangePost exchangePost);
+
+    @Mappings({
+            @Mapping(source = "user.nickname",target = "nickname"),
+            @Mapping(source = "user.authority",target = "authority"),
+    })
+    ExchangePostListResDTO toExchangePostListResDTO(ExchangePost exchangePosts);
+
+    @Mappings({
+            @Mapping(source = "user.nickname",target = "nickname"),
+            @Mapping(source = "user.authority",target = "authority"),
+    })
+    List<ExchangePostListResDTO> toListWithExchangePostListResDTOList(List<ExchangePost> exchangePosts);
 }
