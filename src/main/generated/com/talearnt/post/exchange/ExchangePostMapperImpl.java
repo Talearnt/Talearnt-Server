@@ -5,6 +5,7 @@ import com.talearnt.join.User;
 import com.talearnt.post.exchange.entity.ExchangePost;
 import com.talearnt.post.exchange.entity.PostTalentCategory;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
+import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.post.exchange.response.ExchangePostReadResDTO;
 import com.talearnt.util.jwt.UserInfo;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-11-06T22:19:58+0900",
+    date = "2024-11-08T03:36:57+0900",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.9 (Oracle Corporation)"
 )
 public class ExchangePostMapperImpl implements ExchangePostMapper {
@@ -118,6 +119,40 @@ public class ExchangePostMapperImpl implements ExchangePostMapper {
         exchangePost.setDuration( exchangePostReqDTO.getDuration() );
 
         return exchangePost;
+    }
+
+    @Override
+    public ExchangePostListResDTO toExchangePostListResDTO(ExchangePost exchangePosts) {
+        if ( exchangePosts == null ) {
+            return null;
+        }
+
+        ExchangePostListResDTO.ExchangePostListResDTOBuilder exchangePostListResDTO = ExchangePostListResDTO.builder();
+
+        exchangePostListResDTO.nickname( exchangePostUserNickname( exchangePosts ) );
+        exchangePostListResDTO.authority( exchangePostUserAuthority( exchangePosts ) );
+        exchangePostListResDTO.giveTalent( postTalentCategoryListToPostTalentCategoryDTOList( exchangePosts.getGiveTalent() ) );
+        exchangePostListResDTO.receiveTalent( postTalentCategoryListToPostTalentCategoryDTOList( exchangePosts.getReceiveTalent() ) );
+        exchangePostListResDTO.title( exchangePosts.getTitle() );
+        exchangePostListResDTO.content( exchangePosts.getContent() );
+        exchangePostListResDTO.status( exchangePosts.getStatus() );
+        exchangePostListResDTO.createdAt( exchangePosts.getCreatedAt() );
+
+        return exchangePostListResDTO.build();
+    }
+
+    @Override
+    public List<ExchangePostListResDTO> toListWithExchangePostListResDTOList(List<ExchangePost> exchangePosts) {
+        if ( exchangePosts == null ) {
+            return null;
+        }
+
+        List<ExchangePostListResDTO> list = new ArrayList<ExchangePostListResDTO>( exchangePosts.size() );
+        for ( ExchangePost exchangePost : exchangePosts ) {
+            list.add( toExchangePostListResDTO( exchangePost ) );
+        }
+
+        return list;
     }
 
     private long exchangePostUserUserNo(ExchangePost exchangePost) {
