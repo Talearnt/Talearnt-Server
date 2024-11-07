@@ -57,6 +57,10 @@ public enum ErrorCode {
     POST_NOT_FOUND("404-POST-08", "해당 게시글을 찾을 수 없습니다."),
     POST_ACCESS_DENIED("403-POST-09","해당 게시글에 대한 권한이 없습니다."),
 
+    // 페이지 관련 오류
+    PAGE_MIN_NUMBER("400-PAGE-01","페이지 번호는 0보다 작을 수 없습니다."),
+    PAGE_OVER_MAX_NUMBER("400-PAGE-02","해당 페이지 번호는 유효하지 않는 번호입니다."),
+
 
     //서버 오류
     ILLEGAL_ARGUMENT_EXCEPTION("400-SERVER-01", "잘못된 값을 입력하셨습니다. 입력 값을 확인하세요."),
