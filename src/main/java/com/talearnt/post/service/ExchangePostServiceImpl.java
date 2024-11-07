@@ -5,15 +5,24 @@ import com.talearnt.post.exchange.ExchangePostMapper;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.ExchangePostRepository;
 import com.talearnt.post.exchange.entity.ExchangePost;
+import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.post.exchange.response.ExchangePostReadResDTO;
+import com.talearnt.util.common.PageUtil;
+import com.talearnt.util.common.Pagination;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.response.CommonResponse;
+import com.talearnt.util.response.PaginatedResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +30,27 @@ import org.springframework.stereotype.Service;
 public class ExchangePostServiceImpl implements PostService<ExchangePostReqDTO> {
 
     private final ExchangePostRepository exchangePostRepository;
+
+    @Override
+    public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> showList(Integer page) {
+        log.info("재능교 교환 게시글 목록 가져오기 시작 : {}", page);
+        //페이지 번호가 0보다 작을 경우 PAGE_MIN_NUMBER 발생
+        PageUtil.validateMinPageNo(page);
+
+        //페이지된 리스트 항목 가져오기
+        Page<ExchangePost> exchangePostList = exchangePostRepository
+                .findPageBy(PageRequest.of(page - 1, 20, Sort.by(Sort.Direction.DESC, "createdAt")));
+
+        //Pagination으로 변환
+        Pagination pagination = PageUtil.separatePaginationFromEntity(exchangePostList);
+
+        //페이지 번호가 최대 페이지 번호를 초과할 경우 PAGE_OVER_MAX_NUMBER Exception 발생
+        PageUtil.validateMaxPageNo(pagination);
+
+        log.info("재능교 교환 게시글 목록 가져오기 끝");
+        //List<ExchangePostListResDTO> 형태로 변환하여 반환
+        return PaginatedResponse.success(ExchangePostMapper.INSTANCE.toListWithExchangePostListResDTOList(exchangePostList.getContent()), pagination);
+    }
 
     @Override
     public ResponseEntity<CommonResponse<String>> create(ExchangePostReqDTO createDTO) {

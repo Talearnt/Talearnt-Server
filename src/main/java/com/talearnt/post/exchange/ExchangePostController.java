@@ -3,9 +3,11 @@ package com.talearnt.post.exchange;
 
 import com.talearnt.examples.RestControllerV1;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
+import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.post.exchange.response.ExchangePostReadResDTO;
 import com.talearnt.post.service.PostService;
 import com.talearnt.util.response.CommonResponse;
+import com.talearnt.util.response.PaginatedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -17,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "재능 교환 게시글")
 @RestControllerV1
 @Log4j2
@@ -24,6 +28,18 @@ import org.springframework.web.bind.annotation.*;
 public class ExchangePostController {
 
     private final PostService exchangePostServiceImpl;
+
+    @Operation(summary = "재능 교환 게시글 목록 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "@Param page : 페이지 번호, 기획서에는 몇 개의 Row를 조회하는 지 정의하지 않아 임의로 20개로 정해둔 상태."),
+            @ApiResponse(responseCode = "400-1", ref = "PAGE_MIN_NUMBER"),
+            @ApiResponse(responseCode = "400-2", ref = "PAGE_OVER_MAX_NUMBER"),
+    })
+    @GetMapping("/exchange-posts")
+    public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getPostList(@RequestParam int page){
+        return exchangePostServiceImpl.showList(page);
+    }
+
 
     @Operation(summary = "재능 교환 게시글 등록")
     @ApiResponses(value = {
