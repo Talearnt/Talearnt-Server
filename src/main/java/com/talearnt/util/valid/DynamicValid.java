@@ -1,6 +1,7 @@
 package com.talearnt.util.valid;
 
 import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.Regex;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -25,7 +26,7 @@ public @interface DynamicValid {
     boolean notEmpty() default false;
     boolean notBlank() default false;
     boolean email() default false;
-    String pattern() default "";
+    Regex pattern() default Regex.NOT_USE_REGEX;
 
     //Number Types Valid
     int minLength() default -1;

@@ -1,6 +1,7 @@
 package com.talearnt.util.valid;
 
 import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.Regex;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
@@ -17,7 +18,7 @@ public class DynamicFieldValidator implements ConstraintValidator<DynamicValid, 
     private boolean notEmpty; // 비어 있지 않은지 검사
     private boolean notBlank; // 공백 검사
     private boolean email; // 이메일 형식 검사
-    private String pattern; // 정규식 패턴 검사
+    private Regex pattern; // 정규식 패턴 검사
     private int minLength; // 최소 길이 제한
     private int maxLength; // 최대 길이 제한
     private int minValue; // 최소 값 제한
@@ -81,7 +82,7 @@ public class DynamicFieldValidator implements ConstraintValidator<DynamicValid, 
             if (email && !strValue.matches("^[\\w.%+-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
                 return buildViolation(context, "이메일 형식이 올바르지 않습니다.");
             }
-            if (!pattern.isEmpty() && !strValue.matches(pattern)) {
+            if (!pattern.getPattern().equals("") && !strValue.matches(pattern.getPattern())) {
                 return buildViolation(context, "값이 지정된 패턴과 일치하지 않습니다.");
             }
             if (minLength > -1 && strValue.length() < minLength) {
