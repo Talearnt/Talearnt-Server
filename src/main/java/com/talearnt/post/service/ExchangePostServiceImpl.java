@@ -2,17 +2,20 @@ package com.talearnt.post.service;
 
 import com.talearnt.enums.ErrorCode;
 import com.talearnt.post.exchange.ExchangePostMapper;
+import com.talearnt.post.exchange.repository.ExchangePostCustomRepository;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
-import com.talearnt.post.exchange.ExchangePostRepository;
+import com.talearnt.post.exchange.repository.ExchangePostRepository;
 import com.talearnt.post.exchange.entity.ExchangePost;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.post.exchange.response.ExchangePostReadResDTO;
 import com.talearnt.util.common.PageUtil;
 import com.talearnt.util.common.Pagination;
+import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -30,6 +33,7 @@ import java.util.List;
 public class ExchangePostServiceImpl implements PostService<ExchangePostReqDTO> {
 
     private final ExchangePostRepository exchangePostRepository;
+    private final ExchangePostCustomRepository exchangePostCustomRepository;
 
     @Override
     public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> showList(Integer page) {
@@ -57,7 +61,7 @@ public class ExchangePostServiceImpl implements PostService<ExchangePostReqDTO> 
         log.info("Exchange Post Create 시작 : {}", createDTO);
 
         //유저 정보 확인 ( JWT 토큰을 가지고 있지 않은데 생성하려는 경우 막음 )
-        validateUserInfo(createDTO.getUserInfo());
+        UserUtil.validateUserInfo(createDTO.getUserInfo());
 
         //DTO -> Entity로 변환
         ExchangePost entity = ExchangePostMapper.INSTANCE.toEntity(createDTO);
@@ -70,12 +74,16 @@ public class ExchangePostServiceImpl implements PostService<ExchangePostReqDTO> 
     }
 
     @Override
+    @Transactional
     public ResponseEntity<CommonResponse<ExchangePostReadResDTO>> read(Long id) {
         log.info("Exchagne Post Read 시작 : {}", id);
 
         // 해당 게시글 조회
         ExchangePost exchangePost = exchangePostRepository.findByExchangePostNoAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.POST_NOT_FOUND));
+
+        //조회 수 +1 업데이트
+        exchangePost.setCount(exchangePost.getCount()+1);
 
         log.info("Exchagne Post Read 끝");
         return CommonResponse.success(ExchangePostMapper.INSTANCE.toExchangePostReadResDTO(exchangePost));
@@ -110,7 +118,7 @@ public class ExchangePostServiceImpl implements PostService<ExchangePostReqDTO> 
 
         //JWT 인증 정보 확인
         UserInfo userInfo = (UserInfo) authentication.getPrincipal();
-        validateUserInfo(userInfo);
+        UserUtil.validateUserInfo(userInfo);
 
         // 게시글 존재 여부 확인
         if (!exchangePostRepository.existsById(targetId)) {
@@ -124,12 +132,6 @@ public class ExchangePostServiceImpl implements PostService<ExchangePostReqDTO> 
 
         log.info("Exchange Post Delete 끝");
         return CommonResponse.success("재능 교환 게시글을 삭제했습니다.");
-    }
-
-    private void validateUserInfo(UserInfo userInfo) {
-        if (userInfo == null || userInfo.getUserId() == null || userInfo.getUserId() == null) {
-            throw new CustomRuntimeException(ErrorCode.INVALID_TOKEN);
-        }
     }
 
 }
