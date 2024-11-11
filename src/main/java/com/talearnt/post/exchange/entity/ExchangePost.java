@@ -28,12 +28,6 @@ public class ExchangePost {
     @JoinColumn(name = "user_no") // 내일 User Entity id 를 userNo로 변경 요청
     private User user;
 
-    @ElementCollection
-    private List<PostTalentCategory> giveTalent;
-
-    @ElementCollection
-    private List<PostTalentCategory> receiveTalent;
-
     @Column(nullable = false, length = 255)
     private String title;
 
