@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.nio.file.AccessDeniedException;
+
 /**
  * 연관된 Class = /Enums/ErrorCode,
  *              /Util/CommonResponse
@@ -24,7 +26,12 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
+    //접근 권한이 없는 상태로 다른 페이지에 접근하면 발생하는 Exception
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<CommonResponse<Object>> handleValidationExceptions(AccessDeniedException e) {
+       return CommonResponse.error(ErrorCode.ACCESS_DENIED);
+    }
+    //Valid에서 Exception이 발생했을 경우 이 메소드를 사용합니다.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CommonResponse<Object>> handleValidationExceptions(MethodArgumentNotValidException e) {
         FieldError fieldError = e.getBindingResult().getFieldErrors().stream().findFirst().orElse(null);
@@ -37,7 +44,7 @@ public class GlobalExceptionHandler {
         return CommonResponse.error(ErrorCode.UNKNOWN_ERROR);
     }
 
-
+    // 지원하지 않은 URL로 요청했을 때 발생하는 Exception
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<CommonResponse<ErrorCode>> handleHttpRequestMethodNotSupportedException(NoResourceFoundException e) {
         return CommonResponse.error(ErrorCode.RESOURCE_NOT_FOUND);
