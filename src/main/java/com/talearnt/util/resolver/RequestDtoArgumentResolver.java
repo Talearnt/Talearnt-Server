@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 public class RequestDtoArgumentResolver {
     @InitBinder
     public void initBinder(WebDataBinder binder, NativeWebRequest webRequest) {
+
         if (binder.getTarget() != null && binder.getTarget().getClass().isAnnotationPresent(RequiredJwtValueDTO.class)) {
             Object principal = webRequest.getUserPrincipal();
             // UserInfo 타입으로 변환
@@ -31,13 +32,19 @@ public class RequestDtoArgumentResolver {
                 }
             }
 
+            if (userInfo == null){
+                log.error(ErrorCode.EXPIRED_TOKEN);
+                throw new CustomRuntimeException(ErrorCode.EXPIRED_TOKEN);
+            }
+
             if (userInfo != null) {
+
                 try {
                     Field field = binder.getTarget().getClass().getDeclaredField("userInfo");
                     field.setAccessible(true);
                     field.set(binder.getTarget(), userInfo);
                 } catch (NoSuchFieldException | IllegalAccessException e) {
-                    throw new RuntimeException(ErrorCode.INVALID_TOKEN.getMessage());
+                    throw new CustomRuntimeException(ErrorCode.INVALID_TOKEN);
                 }
             }
 

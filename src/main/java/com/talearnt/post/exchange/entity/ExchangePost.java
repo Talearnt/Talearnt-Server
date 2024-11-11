@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 public class ExchangePost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long exchangePostNo;
+    private Long exchangePostNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_no") // 내일 User Entity id 를 userNo로 변경 요청
@@ -59,6 +59,7 @@ public class ExchangePost {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
     private LocalDateTime deletedAt;
 
 

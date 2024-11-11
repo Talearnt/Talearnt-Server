@@ -1,6 +1,7 @@
 package com.talearnt.post.exchange.request;
 
 import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.Regex;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.post.exchange.PostTalentCategoryDTO;
 import com.talearnt.util.common.RequiredJwtValueDTO;
@@ -38,14 +39,14 @@ public class ExchangePostReqDTO {
     @DynamicValid(errorCode = ErrorCode.POST_CONTENT_MISSING,notBlank = true)
     private String content;
 
-    @DynamicValid(errorCode = ErrorCode.POST_BAD_REQUEST,pattern = "^(온라인|오프라인|온/오프라인)$"
+    @DynamicValid(errorCode = ErrorCode.POST_BAD_REQUEST,pattern = Regex.EXCHANGE_TPYE
             , notBlank = true)
     private ExchangeType exchangeType;
 
     @DynamicValid(errorCode = ErrorCode.POST_BAD_REQUEST, notBlank = true)
     private boolean badgeRequired;
 
-    @DynamicValid(errorCode = ErrorCode.POST_BAD_REQUEST,pattern = "^(기간 미정|1개월|2개월|3개월|3개월 이상)$"
+    @DynamicValid(errorCode = ErrorCode.POST_BAD_REQUEST,pattern = Regex.EXCHANGE_DURATION
             , notBlank = true)
     private String duration;
 }

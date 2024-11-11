@@ -14,9 +14,15 @@ public enum ErrorCode {
     INVALID_TOKEN("401-AUTH-01", "올바르지 않은 인증 토큰입니다."),
     EXPIRED_TOKEN("401-AUTH-02", "로그인 후 다시 이용해주세요."),
     INVALID_CREDENTIALS("401-AUTH-03", "아이디 또는 비밀번호를 확인해주세요!"),
-    ACCESS_DENIED("403-AUTH-04", "접근이 거부되었습니다."),
+    ACCESS_DENIED("403-AUTH-04", "접근 권한이 없습니다."),
     INVALID_AUTH_CODE("400-AUTH-05","인증 번호가 틀립니다. 확인 후 다시 입력해주세요"),
     UNVERIFIED_AUTH_CODE("400-AUTH-06", "인증되지 않은 인증 번호입니다. 인증 절차를 완료해 주세요."),
+
+
+    // 이용약관 관련 오류
+    TERMS_TITLE_MISSING("400-TERMS-01","이용 약관의 제목을 입력해주세요."),
+    TERMS_INVALID_VERSION("400-TERMS-02", "이용약관 버전이 유효하지 않습니다."),
+    TERMS_CONTENT_MISSING("400-TERMS-03","이용 약관 내용을 15자 이상 입력해주세요."),
 
     // 사용자 관련 오류
     USER_NOT_FOUND("404-USER-01", "해당 회원을 찾을 수 없습니다."),
@@ -29,6 +35,9 @@ public enum ErrorCode {
     USER_PASSWORD_PATTERN_MISMATCH("400-USER-08","영문,숫자,특수 문자를 반드시 포함한 비밀번호를 입력해 주세요!"),
     USER_PASSWORD_MISSING("400-USER-09","비밀번호는 8자 이상으로 입력해 주세요"),
     USER_GENDER_MISSMATCH("400-USER-10","성별은 남자,여자만 가능합니다."),
+    USER_REQUIRED_NOT_AGREE("400-USER-11","필수 약관에 대한 동의가 필요합니다."),
+    USER_NOTHING_AGREE("400-USER-12","약관 동의를 하지 않았습니다."),
+    USER_NOT_FOUND_AGREE("404-USER-13","약관 동의에 실패하였습니다. 반복적으로 발생할 경우 관리자에게 문의하세요."),
 
 
     // 데이터베이스 관련 오류
