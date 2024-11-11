@@ -12,7 +12,7 @@ public class LoginReqDTO {
 
     @Schema(example = "test@test.com")
     private String userId;
-    @Schema(example = "test")
+    @Schema(example = "!1q2w3e4r")
     private String pw;
 
 }
