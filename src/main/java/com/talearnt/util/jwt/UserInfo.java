@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Builder
 public class UserInfo implements UserDetails {
-    private long userNo;
+    private Long userNo;
     private String userId;
     private String nickname;
     private String profileImg;

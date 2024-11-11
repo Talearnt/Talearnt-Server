@@ -82,7 +82,7 @@ public class DynamicFieldValidator implements ConstraintValidator<DynamicValid, 
             if (email && !strValue.matches("^[\\w.%+-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
                 return buildViolation(context, "이메일 형식이 올바르지 않습니다.");
             }
-            if (!pattern.getPattern().equals("") && !strValue.matches(pattern.getPattern())) {
+            if (!pattern.getPattern().isEmpty() && !strValue.matches(pattern.getPattern())) {
                 return buildViolation(context, "값이 지정된 패턴과 일치하지 않습니다.");
             }
             if (minLength > -1 && strValue.length() < minLength) {

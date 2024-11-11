@@ -26,16 +26,9 @@ public class CommonResponse<T> {
     private String errorCode;
     @Schema(description = "에러 메시지", example = "null")
     private String errorMessage;
-    @Schema(description = "페이지에 대한 정보")
-    private Pagination pagination;
-
 
     public static <T> ResponseEntity<CommonResponse<T>> success(T data){
-       return ResponseEntity.ok(new CommonResponse<T>(true, data,null,null,null));
-    }
-
-    public static <T> ResponseEntity<CommonResponse<T>> success(T data, Pagination pagination){
-        return ResponseEntity.ok(new CommonResponse<T>(true, data,null,null,pagination));
+       return ResponseEntity.ok(new CommonResponse<T>(true, data,null,null));
     }
 
     public static <T> ResponseEntity<CommonResponse<T>> error(ErrorCode errorCode) {
@@ -44,7 +37,7 @@ public class CommonResponse<T> {
                 errorCode.name(),
                 errorCode.getCode(),
                 errorCode.getMessage());
-        return ResponseEntity.status(status).body(new CommonResponse<>(false, null, errorCode.getCode(),errorCode.getMessage(),null));
+        return ResponseEntity.status(status).body(new CommonResponse<>(false, null, errorCode.getCode(),errorCode.getMessage()));
     }
 
 }

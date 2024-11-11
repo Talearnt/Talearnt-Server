@@ -1,13 +1,17 @@
 package com.talearnt.verification;
 
 
-import com.talearnt.join.JoinReqDTO;
+import com.talearnt.enums.ErrorCode;
+import com.talearnt.join.request.JoinReqDTO;
+import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.response.CommonResponse;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -39,40 +43,39 @@ public class VerificationService {
     }
 
     // coolsms 인증 문자 보내기
-    public SingleMessageSentResponse sendVerificationMessage(@RequestBody VerificationReqDTO verificationReqDTO) {
+    public ResponseEntity<CommonResponse<String>> sendVerificationMessage(@RequestBody VerificationReqDTO verificationReqDTO) {
+        //인증 코드 설정
+        String verificationCode = Integer.toString((int)(Math.random() * (9999 - 1000 + 1)) + 1000);
+        verificationReqDTO.setVerificationCode(verificationCode);
+
         Message message = new Message();
 
         message.setFrom(fromNumber);
         message.setTo(verificationReqDTO.getPhone());
-        message.setText("Talearnt 인증번호는 [" + verificationReqDTO.getVerificationCode() + "] 입니다.");
+        message.setText("Talearnt 인증번호는 [ " + verificationReqDTO.getVerificationCode() + " ] 입니다.");
         verificationReqDTO.setIsPhoneVerified(false);
         PhoneVerification phoneVerification = VerificationMapper.INSTANCE.toPhoneVerification(verificationReqDTO);
         verificationCodeRepository.save(phoneVerification);
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
-        System.out.println(response);
+        System.out.println(response.getStatusMessage());
 
-        return response;
+        return CommonResponse.success(response.getStatusMessage());
     }
 
     // phone_verification table의 code 검증
-    public boolean verifyCode(@RequestBody VerifyCodeReqDTO verifyCodeReqDTO) {
+    public ResponseEntity<CommonResponse<Boolean>> verifyCode(@RequestBody VerifyCodeReqDTO verifyCodeReqDTO) {
         // DB에서 userId에 해당하는 VerificationCodeEntity를 가져옴
         PhoneVerification phoneVerification = verificationCodeRepository.findByUserId(verifyCodeReqDTO.getUserId());
 
         // 검증: 클라이언트가 입력한 코드와 DB의 코드 비교
-        if (phoneVerification != null && phoneVerification.getVerificationCode().equals(verifyCodeReqDTO.getInputCode())) {
-            // 인증 성공
-            System.out.println("인증 성공");
-            // 인증 성공하면 isPhoneVerified를 true로 변경
-            phoneVerification.setIsPhoneVerified(true);
-            verificationCodeRepository.save(phoneVerification);
-            return true;
-        } else {
-            // 인증 실패
-            System.out.println("인증 실패");
-            return false;
+        if (phoneVerification == null && !phoneVerification.getVerificationCode().equals(verifyCodeReqDTO.getInputCode())) {
+            throw new CustomRuntimeException(ErrorCode.INVALID_AUTH_CODE);
         }
+        //인증 성공하면 isPhoneVerified를 true로 변경
+        phoneVerification.setIsPhoneVerified(true);
+        verificationCodeRepository.save(phoneVerification);
+        return CommonResponse.success(true);
     }
 
     // 해당 userId에 본인 인증이 된 상태인지 check

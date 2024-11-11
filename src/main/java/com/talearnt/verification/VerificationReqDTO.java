@@ -13,11 +13,11 @@ import lombok.Setter;
 @Builder
 public class VerificationReqDTO {
 
-    @Schema(required = true, example = "example@example.com")
+    @Schema(required = true, example = "test@test.com")
     @DynamicValid(errorCode = ErrorCode.USER_ID_NOT_EMAIL_FORMAT, pattern = Regex.EMAIL, notBlank = true)
     private String userId;
 
-    @Schema(required = true, example = "01012345678")
+    @Schema(required = true, example = "01029089421")
     @DynamicValid(errorCode = ErrorCode.USER_PHONE_NUMBER_FORMAT_MISMATCH, pattern = Regex.PHONE_NUMBER, notBlank = true)
     private String phone;
 

@@ -13,15 +13,15 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @ToString
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long userNo;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userNo;
 
     @Column(nullable = false, updatable = false,unique = true)
     private String userId;
@@ -58,4 +58,5 @@ public class User {
     @Column(nullable = false, length = 10)
     @Enumerated(EnumType.STRING)
     private UserRole authority;
+    
 }
