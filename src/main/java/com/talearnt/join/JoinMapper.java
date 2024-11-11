@@ -1,5 +1,6 @@
 package com.talearnt.join;
 
+import com.talearnt.user.entity.User;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 

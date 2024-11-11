@@ -1,8 +1,10 @@
 package com.talearnt.login;
 
 import com.talearnt.enums.ErrorCode;
-import com.talearnt.join.User;
-import com.talearnt.join.UserRepository;
+import com.talearnt.login.company.LoginMapper;
+import com.talearnt.login.company.LoginReqDTO;
+import com.talearnt.user.entity.User;
+import com.talearnt.user.repository.UserRepository;
 import com.talearnt.util.exception.CustomException;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.JwtTokenUtil;
@@ -13,13 +15,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Log4j2
 @Service
