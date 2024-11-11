@@ -1,13 +1,13 @@
 package com.talearnt.post.exchange;
 
 
-import com.talearnt.examples.RestControllerV1;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.post.exchange.response.ExchangePostReadResDTO;
 import com.talearnt.post.service.PostService;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
+import com.talearnt.util.version.RestControllerV1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
