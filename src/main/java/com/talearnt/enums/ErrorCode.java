@@ -16,6 +16,7 @@ public enum ErrorCode {
     INVALID_CREDENTIALS("401-AUTH-03", "아이디 또는 비밀번호를 확인해주세요!"),
     ACCESS_DENIED("403-AUTH-04", "접근이 거부되었습니다."),
     INVALID_AUTH_CODE("400-AUTH-05","인증 번호가 틀립니다. 확인 후 다시 입력해주세요"),
+    UNVERIFIED_AUTH_CODE("400-AUTH-06", "인증되지 않은 인증 번호입니다. 인증 절차를 완료해 주세요."),
 
     // 사용자 관련 오류
     USER_NOT_FOUND("404-USER-01", "해당 회원을 찾을 수 없습니다."),
@@ -25,6 +26,10 @@ public enum ErrorCode {
     DUPLICATE_USER_NICKNAME("400-USER-05", "해당 닉네임은 이미 존재합니다."),
     USER_ID_NOT_EMAIL_FORMAT("400-USER-06","올바른 이메일 형식으로 입력해 주세요!"),
     USER_PHONE_NUMBER_FORMAT_MISMATCH("400-USER-07","휴대폰 번호를 정확히 입력해 주세요!"),
+    USER_PASSWORD_PATTERN_MISMATCH("400-USER-08","영문,숫자,특수 문자를 반드시 포함한 비밀번호를 입력해 주세요!"),
+    USER_PASSWORD_MISSING("400-USER-09","비밀번호는 8자 이상으로 입력해 주세요"),
+    USER_GENDER_MISSMATCH("400-USER-10","성별은 남자,여자만 가능합니다."),
+
 
     // 데이터베이스 관련 오류
     DB_CONNECTION_ERROR("500-DB-01", "데이터 베이스에 연결 실패했습니다."),
