@@ -1,5 +1,8 @@
 package com.talearnt.verification;
 
+import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.Regex;
+import com.talearnt.util.valid.DynamicValid;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,14 +14,16 @@ import lombok.Setter;
 public class VerificationReqDTO {
 
     @Schema(required = true, example = "example@example.com")
+    @DynamicValid(errorCode = ErrorCode.USER_ID_NOT_EMAIL_FORMAT, pattern = Regex.EMAIL, notBlank = true)
     private String userId;
 
     @Schema(required = true, example = "01012345678")
+    @DynamicValid(errorCode = ErrorCode.USER_PHONE_NUMBER_FORMAT_MISMATCH, pattern = Regex.PHONE_NUMBER, notBlank = true)
     private String phone;
 
-    @Schema(description = "서버에서 4자리 인증번호 생성")
+    @Schema(hidden = true)
     private String verificationCode;
 
-    @Schema(description = "default = false, 인증 후 true")
+    @Schema(hidden = true)
     private Boolean isPhoneVerified;
 }
