@@ -368,3 +368,6 @@ out/production
 
 ### Docker Compose.yml 서버에 이미 존재 ###
 compose.yml
+
+## GENERATED
+/src/main/generated
