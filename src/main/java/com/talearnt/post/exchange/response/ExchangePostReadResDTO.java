@@ -28,6 +28,7 @@ public class ExchangePostReadResDTO {
     private List<PostTalentCategoryDTO> receiveTalent;
     private String title;
     private String content;
+    private int count;
     private ExchangeType exchangeType;
     private boolean badgeRequired;
     private String duration;
