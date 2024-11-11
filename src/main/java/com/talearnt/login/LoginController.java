@@ -1,25 +1,16 @@
 package com.talearnt.login;
 
-import com.talearnt.enums.ErrorCode;
+import com.talearnt.login.company.LoginReqDTO;
 import com.talearnt.util.exception.CustomException;
-import com.talearnt.util.jwt.JwtTokenUtil;
 import com.talearnt.util.jwt.TokenResDTO;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.version.RestControllerV1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 

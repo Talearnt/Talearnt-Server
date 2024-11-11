@@ -1,4 +1,4 @@
-package com.talearnt.login;
+package com.talearnt.login.kakao;
 
 import com.talearnt.enums.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;

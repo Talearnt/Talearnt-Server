@@ -1,6 +1,6 @@
 package com.talearnt.join.agree;
 
-import com.talearnt.join.User;
+import com.talearnt.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

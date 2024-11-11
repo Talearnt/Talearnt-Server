@@ -1,8 +1,7 @@
-package com.talearnt.login;
+package com.talearnt.login.company;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.springframework.stereotype.Component;
 
 @Builder
 @Getter

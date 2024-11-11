@@ -1,4 +1,4 @@
-package com.talearnt.join;
+package com.talearnt.user.entity;
 
 import com.talearnt.enums.Gender;
 import com.talearnt.enums.UserRole;

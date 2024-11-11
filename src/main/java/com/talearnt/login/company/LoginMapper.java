@@ -1,6 +1,6 @@
-package com.talearnt.login;
+package com.talearnt.login.company;
 
-import com.talearnt.join.User;
+import com.talearnt.user.entity.User;
 import com.talearnt.util.jwt.UserInfo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

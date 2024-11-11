@@ -1,6 +1,8 @@
 package com.talearnt.join;
 
 import com.talearnt.enums.UserRole;
+import com.talearnt.user.entity.User;
+import com.talearnt.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;

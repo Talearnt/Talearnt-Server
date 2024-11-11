@@ -1,7 +1,6 @@
     package com.talearnt.user.entity;
 
     import com.talearnt.admin.category.entity.TalentCategory;
-    import com.talearnt.join.User;
     import jakarta.persistence.*;
 
     import java.time.LocalDateTime;
