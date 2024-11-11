@@ -78,12 +78,7 @@ public class VerificationService {
     // 해당 userId에 본인 인증이 된 상태인지 check
     public Boolean isVerifiedCheck(@RequestBody JoinReqDTO joinReqDTO){
         PhoneVerification phoneVerification = verificationCodeRepository.findByUserId(joinReqDTO.getUserId());
-        if(phoneVerification.getIsPhoneVerified()==true){
-            return true;
-        }else {
-            return false;
-        }
-
+        return phoneVerification.getIsPhoneVerified();
     }
 
 }
