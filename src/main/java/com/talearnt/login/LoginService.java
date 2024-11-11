@@ -30,18 +30,14 @@ public class LoginService {
     private final JwtTokenUtil jwtTokenUtil;
 
     public TokenResDTO authenticateUser(LoginReqDTO loginReqDTO, HttpServletResponse response) {
+        log.info("User authenticateUser 시작 : {}",loginReqDTO);
         // DB에서 사용자 조회
         User user = userRepository.findByUserId(loginReqDTO.getUserId());
-        log.info("user : {}",user);
-        // passwordEncoder 막아놈
-//        if (user == null || !passwordEncoder.matches(loginReqDTO.getPw(), user.getPw())) {
-//            throw new CustomRuntimeException(ErrorCode.INVALID_CREDENTIALS);
-//        }
-
-        if (user == null || !loginReqDTO.getPw().equals(user.getPw())) {
-            throw new CustomRuntimeException(ErrorCode.USER_NOT_FOUND);
+        log.info("Login User : {}",user);
+        // passwordEncoder
+        if (user == null || !passwordEncoder.matches(loginReqDTO.getPw(), user.getPw())) {
+            throw new CustomRuntimeException(ErrorCode.INVALID_CREDENTIALS);
         }
-
 
         // 인증 객체 생성 및 인증 수행
         UsernamePasswordAuthenticationToken authToken =
