@@ -1,5 +1,6 @@
-package com.talearnt.verification;
+package com.talearnt.verification.repository;
 
+import com.talearnt.verification.Entity.PhoneVerification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

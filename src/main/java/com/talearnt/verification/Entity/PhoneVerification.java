@@ -1,7 +1,6 @@
-package com.talearnt.verification;
+package com.talearnt.verification.Entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
