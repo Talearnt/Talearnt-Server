@@ -1,6 +1,7 @@
 package com.talearnt.join;
 
 import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.Regex;
 import com.talearnt.enums.UserRole;
 import com.talearnt.admin.agree.entity.Agree;
 import com.talearnt.admin.agree.entity.AgreeCode;
@@ -31,6 +32,11 @@ public class JoinService {
     private final AgreeCodeRepository agreeCodeRepository;
     private final VerificationService verificationService;
     private final PasswordEncoder passwordEncoder;
+
+    public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedUserId(String userId){
+
+        return CommonResponse.success(userRepository.existsByUserId(userId));
+    }
 
     // 회원가입 서비스 메서드
     @Transactional
