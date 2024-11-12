@@ -16,6 +16,9 @@ import java.time.LocalDateTime;
 public class PhoneVerification {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long phoneVerificationNo;
+
     @Column(nullable = false)
     private String userId;
 
