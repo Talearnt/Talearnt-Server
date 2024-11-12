@@ -7,13 +7,15 @@ import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.version.RestControllerV1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
+@Tag(name = "2. 로그인",description = "카카오톡 로그인 아직 미구현")
 @RestControllerV1
 @RequiredArgsConstructor
 @Log4j2
@@ -26,9 +28,9 @@ public class LoginController {
             description = "로그인 성공 시 jwt 발급, 실패시 error",
             responses = {
                     @ApiResponse(responseCode = "200", description = "로그인 성공"),
-                    @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND")
+                    @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND"),
             })
-    public ResponseEntity<CommonResponse<TokenResDTO>> login(@RequestBody LoginReqDTO loginReqDTO, HttpServletResponse response) {
+    public ResponseEntity<CommonResponse<TokenResDTO>> login(@RequestBody @Valid LoginReqDTO loginReqDTO, HttpServletResponse response) {
         return CommonResponse.success(loginService.authenticateUser(loginReqDTO,response));
     }
 
