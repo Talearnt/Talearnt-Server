@@ -17,6 +17,9 @@ public enum ErrorCode {
     ACCESS_DENIED("403-AUTH-04", "접근 권한이 없습니다."),
     INVALID_AUTH_CODE("400-AUTH-05","인증 번호가 틀립니다. 확인 후 다시 입력해주세요"),
     UNVERIFIED_AUTH_CODE("400-AUTH-06", "인증되지 않은 인증 번호입니다. 인증 절차를 완료해 주세요."),
+    AUTH_CODE_FORMAT_MISMATCH("400-AUTH-07", "인증 번호 코드를 제대로 입력해주세요."),
+    AUTH_NOT_FOUND_PHONE_CODE("404-AUTH-08","10분 이내로 해당 휴대 번호로 발송된 인증 번호가 없습니다."),
+    AUTH_TOO_MANY_REQUEST("429-AUTH-09","5회 연속 인증에 실패하였습니다. 잠시 후 다시 시도해주세요."),
 
 
     // 이용약관 관련 오류
@@ -38,7 +41,7 @@ public enum ErrorCode {
     USER_REQUIRED_NOT_AGREE("400-USER-11","필수 약관에 대한 동의가 필요합니다."),
     USER_NOTHING_AGREE("400-USER-12","약관 동의를 하지 않았습니다."),
     USER_NOT_FOUND_AGREE("404-USER-13","약관 동의에 실패하였습니다. 반복적으로 발생할 경우 관리자에게 문의하세요."),
-
+    USER_NOT_FOUND_PHONE_NUMBER("404-USER-14","해당 휴대폰 번호에 해당하는 회원이 없습니다."),
 
     // 데이터베이스 관련 오류
     DB_CONNECTION_ERROR("500-DB-01", "데이터 베이스에 연결 실패했습니다."),

@@ -4,6 +4,8 @@ import com.talearnt.enums.ErrorCode;
 import com.talearnt.util.exception.CustomException;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.CommonResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -31,6 +33,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<CommonResponse<Object>> handleValidationExceptions(AccessDeniedException e) {
        return CommonResponse.error(ErrorCode.ACCESS_DENIED);
     }
+    // Validated를 사용하는 메서드에서 발생한 유효성 검사 Exception
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<CommonResponse<Object>> handleConstraintViolationExceptions(ConstraintViolationException e) {
+        ConstraintViolation<?> violation = e.getConstraintViolations().stream().findFirst().orElse(null);
+
+        if (violation != null) {
+            String errorMessage = violation.getMessage();
+            ErrorCode errorCode = ErrorCode.getErrorCode(errorMessage);
+            return CommonResponse.error(errorCode);
+        }
+        return CommonResponse.error(ErrorCode.UNKNOWN_ERROR);
+    }
+
     //Valid에서 Exception이 발생했을 경우 이 메소드를 사용합니다.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CommonResponse<Object>> handleValidationExceptions(MethodArgumentNotValidException e) {
