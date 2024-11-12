@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "재능 교환 게시글 : 잠시 보류", description = "추후에 다시 보완해야해서 이 구조로 만드시면 다시 만드셔야합니다.")
+@Tag(name = "5. 재능 교환 게시글 : 잠시 보류", description = "추후에 다시 보완해야해서 이 구조로 만드시면 다시 만드셔야합니다.")
 @RestControllerV1
 @Log4j2
 @RequiredArgsConstructor

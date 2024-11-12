@@ -21,11 +21,8 @@ public class UserInfoService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        User user = userRepository.findByUserId(userId);
-
-        if (user == null){
-            throw new CustomRuntimeException(ErrorCode.USER_NOT_FOUND);
-        }
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));;
         
         UserInfo userInfo = LoginMapper.INSTANCE.toUserInfo(user);
 
