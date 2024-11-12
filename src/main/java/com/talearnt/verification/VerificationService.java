@@ -3,9 +3,12 @@ package com.talearnt.verification;
 
 import com.talearnt.enums.ErrorCode;
 import com.talearnt.join.request.JoinReqDTO;
+import com.talearnt.util.common.VerificationUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.CommonResponse;
-import net.nurigo.sdk.NurigoApp;
+import com.talearnt.verification.Entity.PhoneVerification;
+import com.talearnt.verification.repository.VerificationCodeRepository;
+import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
@@ -16,36 +19,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
+@RequiredArgsConstructor
 public class VerificationService {
-    @Value("${coolsms.apiKey}")
-    private String apiKey;
-
-    @Value("${coolsms.secretKey}")
-    private String apiSecret;
-
+    /**개선 할 부분, User Service에서도 동일한 코드가 발견되고 있음.*/
     @Value("${coolsms.fromNumber}")
     private String fromNumber;
 
-    private final  DefaultMessageService messageService;
-    private final  VerificationCodeRepository verificationCodeRepository;
-
-    public VerificationService(@Value("${coolsms.apiKey}") String apiKey,
-                               @Value("${coolsms.secretKey}") String apiSecret,
-                               @Value("${coolsms.fromNumber}") String fromNumber,
-                               VerificationCodeRepository verificationCodeRepository)
-            {
-        this.apiKey = apiKey;
-        this.apiSecret = apiSecret;
-        this.fromNumber = fromNumber;
-        this.verificationCodeRepository = verificationCodeRepository;
-        // 여기서 messageService 초기화
-        this.messageService = NurigoApp.INSTANCE.initialize(apiKey, apiSecret, "https://api.coolsms.co.kr");
-    }
+    private final DefaultMessageService messageService;
+    private final VerificationCodeRepository verificationCodeRepository;
 
     // coolsms 인증 문자 보내기
     public ResponseEntity<CommonResponse<String>> sendVerificationMessage(@RequestBody VerificationReqDTO verificationReqDTO) {
         //인증 코드 설정
-        String verificationCode = Integer.toString((int)(Math.random() * (9999 - 1000 + 1)) + 1000);
+        String verificationCode = VerificationUtil.makeRandomVerificationNumber();
         verificationReqDTO.setVerificationCode(verificationCode);
 
         Message message = new Message();
@@ -58,7 +44,6 @@ public class VerificationService {
         verificationCodeRepository.save(phoneVerification);
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
-        System.out.println(response.getStatusMessage());
 
         return CommonResponse.success(response.getStatusMessage());
     }

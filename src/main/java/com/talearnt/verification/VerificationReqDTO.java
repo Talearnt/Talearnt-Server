@@ -17,7 +17,7 @@ public class VerificationReqDTO {
     @DynamicValid(errorCode = ErrorCode.USER_ID_NOT_EMAIL_FORMAT, pattern = Regex.EMAIL, notBlank = true)
     private String userId;
 
-    @Schema(required = true, example = "01029089421")
+    @Schema(required = true, example = "01022223333")
     @DynamicValid(errorCode = ErrorCode.USER_PHONE_NUMBER_FORMAT_MISMATCH, pattern = Regex.PHONE_NUMBER, notBlank = true)
     private String phone;
 
