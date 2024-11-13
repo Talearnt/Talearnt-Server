@@ -8,5 +8,4 @@ public class TalearntApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TalearntApplication.class, args);
 	}
-
 }
