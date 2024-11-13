@@ -21,6 +21,8 @@ public enum ErrorCode {
     AUTH_NOT_FOUND_PHONE_CODE("404-AUTH-08","10분 이내로 해당 휴대 번호로 발송된 인증 번호가 없습니다."),
     AUTH_TOO_MANY_REQUEST("429-AUTH-09","5회 연속 인증에 실패하였습니다. 잠시 후 다시 시도해주세요."),
 
+    //메세지 관련 오류,
+    MESSAGE_NOT_RESPONSE("500-MESSAGE-01","메세지 전송에 실패했습니다. 잠시 후 다시 시도해 주세요."),
 
     // 이용약관 관련 오류
     TERMS_TITLE_MISSING("400-TERMS-01","이용 약관의 제목을 입력해주세요."),
@@ -41,7 +43,7 @@ public enum ErrorCode {
     USER_REQUIRED_NOT_AGREE("400-USER-11","필수 약관에 대한 동의가 필요합니다."),
     USER_NOTHING_AGREE("400-USER-12","약관 동의를 하지 않았습니다."),
     USER_NOT_FOUND_AGREE("404-USER-13","약관 동의에 실패하였습니다. 반복적으로 발생할 경우 관리자에게 문의하세요."),
-    USER_NOT_FOUND_PHONE_NUMBER("404-USER-14","해당 휴대폰 번호에 해당하는 회원이 없습니다."),
+    USER_NOT_FOUND_PHONE_NUMBER("404-USER-14","해당 휴대폰 번호로 가입한 회원이 없습니다."),
 
     // 데이터베이스 관련 오류
     DB_CONNECTION_ERROR("500-DB-01", "데이터 베이스에 연결 실패했습니다."),
