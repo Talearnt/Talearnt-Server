@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -46,6 +47,22 @@ public class VerificationCodeQueryRepository {
                         ).orderBy(trace.createdAt.desc())
                         .fetchOne()
         ).orElse(0L);
+    }
+
+    //코드가 인증이 되었는지 확인하는 쿼리
+    public Optional<Boolean> checkIsPhoneVerified(String phone, String code){
+        QPhoneVerification phoneVerification = QPhoneVerification.phoneVerification;
+        return Optional.ofNullable(
+                queryFactory
+                        .select(phoneVerification.isPhoneVerified)
+                        .from(phoneVerification)
+                        .where(phoneVerification.phone.eq(phone)
+                                        .and(phoneVerification.verificationCode.eq(code))
+                                        .and(phoneVerification.createdAt.after(LocalDateTime.now().minusMinutes(10)))
+                                )
+                        .orderBy(phoneVerification.createdAt.desc())
+                        .fetchFirst()
+        );
     }
 
 
