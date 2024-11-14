@@ -4,6 +4,7 @@ import com.talearnt.enums.ErrorCode;
 import com.talearnt.util.exception.CustomException;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.CommonResponse;
+import jakarta.mail.MessagingException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
@@ -27,6 +28,12 @@ import java.nio.file.AccessDeniedException;
 @Log4j2
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    //메일 전송 실패 Exception
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<CommonResponse<Object>> handleMessagingException(MessagingException e) {
+        return CommonResponse.error(ErrorCode.MAIL_FAILED_RESPONSE);
+    }
 
     //접근 권한이 없는 상태로 다른 페이지에 접근하면 발생하는 Exception
     @ExceptionHandler(AccessDeniedException.class)

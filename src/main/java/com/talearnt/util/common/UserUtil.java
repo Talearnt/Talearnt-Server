@@ -3,12 +3,13 @@ package com.talearnt.util.common;
 import com.talearnt.enums.ErrorCode;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
+@Log4j2
 public class UserUtil {
 
     /**
@@ -19,6 +20,20 @@ public class UserUtil {
     public static void validateUserInfo(UserInfo userInfo) {
         if (userInfo == null || userInfo.getUserId() == null || userInfo.getUserId() == null) {
             throw new CustomRuntimeException(ErrorCode.INVALID_TOKEN);
+        }
+    }
+
+
+    /** 유저의 권한이 정지 또는 탈퇴인지 확인하는 메소드
+     * @param authority getAuthority().name()에 대한 값
+     * */
+    public static void validateUserAuthority(String authority){
+        if (authority.equals("ROLE_SUSPENDED")){
+            log.error("유저 아이디 찾기 문자 전송 실패 - 정지된 회원 : {}",ErrorCode.USER_SUSPENDED);
+            throw new CustomRuntimeException(ErrorCode.USER_SUSPENDED);
+        } else if (authority.equals("ROLE_WITHDRAWN")) {
+            log.error("유저 아이디 찾기 문자 전송 실패 - 탈퇴한 회원 : {}",ErrorCode.USER_NOT_FOUND);
+            throw new CustomRuntimeException(ErrorCode.USER_NOT_FOUND);
         }
     }
 

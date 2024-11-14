@@ -20,9 +20,13 @@ public enum ErrorCode {
     AUTH_CODE_FORMAT_MISMATCH("400-AUTH-07", "인증 번호 코드를 제대로 입력해주세요."),
     AUTH_NOT_FOUND_PHONE_CODE("404-AUTH-08","10분 이내로 해당 휴대 번호로 발송된 인증 번호가 없습니다."),
     AUTH_TOO_MANY_REQUEST("429-AUTH-09","5회 연속 인증에 실패하였습니다. 잠시 후 다시 시도해주세요."),
+    AUTH_NOT_FOUND_EMAIL_USER("404-AUTH-08","10분이 지나 회원의 비밀번호를 변경할 수 없습니다. 다시 시도해주세요."),
 
     //메세지 관련 오류,
     MESSAGE_NOT_RESPONSE("500-MESSAGE-01","메세지 전송에 실패했습니다. 잠시 후 다시 시도해 주세요."),
+
+    //메일 관룐 오류
+    MAIL_FAILED_RESPONSE("500-MAIL-01","메일 전송이 실패하였습니다. 잠시 후 다시 시도해 주세요."),
 
     // 이용약관 관련 오류
     TERMS_TITLE_MISSING("400-TERMS-01","이용 약관의 제목을 입력해주세요."),
@@ -44,6 +48,8 @@ public enum ErrorCode {
     USER_NOTHING_AGREE("400-USER-12","약관 동의를 하지 않았습니다."),
     USER_NOT_FOUND_AGREE("404-USER-13","약관 동의에 실패하였습니다. 반복적으로 발생할 경우 관리자에게 문의하세요."),
     USER_NOT_FOUND_PHONE_NUMBER("404-USER-14","해당 휴대폰 번호로 가입한 회원이 없습니다."),
+    USER_WITH_DRAWN("403-USER-15","해당 아이디는 탈퇴한 회원입니다."),
+    USER_PASSWROD_FAILED_DOUBLE_CHECK("400-USER-16","두 개의 비밀번호가 일치하지 않습니다."),
 
     // 데이터베이스 관련 오류
     DB_CONNECTION_ERROR("500-DB-01", "데이터 베이스에 연결 실패했습니다."),
@@ -63,7 +69,7 @@ public enum ErrorCode {
     // 시스템 및 알 수 없는 오류
     SERVICE_UNAVAILABLE("503-SYSTEM-01", "서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요."),
     INTERNAL_SERVER_ERROR("500-SYSTEM-02", "서버 내부 오류가 발생했습니다."),
-     UNKNOWN_ERROR("500-UNKNOWN-01", "알 수 없는 오류가 발생했습니다. 관 리자에게 문의하세요."),
+     UNKNOWN_ERROR("500-UNKNOWN-01", "알 수 없는 오류가 발생했습니다. 관리자에게 문의하세요."),
 
     //게시글 관련 오류
     POST_TITLE_OVER_LENGTH("400-POST-01","제목 글자 수 제한을 확인해주세요."),
