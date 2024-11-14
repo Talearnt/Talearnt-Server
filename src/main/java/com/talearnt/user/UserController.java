@@ -3,7 +3,8 @@ package com.talearnt.user;
 
 import com.talearnt.enums.ErrorCode;
 import com.talearnt.enums.Regex;
-import com.talearnt.user.reponse.UserFindIdResDTO;
+import com.talearnt.user.reponse.UserFindResDTO;
+import com.talearnt.user.request.CheckUserPwdReqDTO;
 import com.talearnt.user.request.CheckUserVerificationCodeReqDTO;
 import com.talearnt.user.request.TestChangePwdReqDTO;
 import com.talearnt.util.response.CommonResponse;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,8 +24,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
 
 @Tag(name = "3. 유저",description = "아이디/비밀번호 찾기")
 @RestControllerV1
@@ -68,7 +68,6 @@ public class UserController {
     }
 
     @Operation(summary = "아이디 찾기 3. 성공",description = "여기 페이지에서 뒤로 가기 버튼 클릭 시 API 작동 안하도록 막기 아니면 로그인 페이지로 이동")
-    @PostMapping("/users/user-id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "404", ref = "AUTH_NOT_FOUND_PHONE_CODE"),
@@ -78,8 +77,38 @@ public class UserController {
             @ApiResponse(responseCode = "400-4", ref = "USER_NOT_FOUND_PHONE_NUMBER"),
             @ApiResponse(responseCode = "400-5", ref = "MESSAGE_NOT_RESPONSE"),
     })
-    public ResponseEntity<CommonResponse<UserFindIdResDTO>> sendUserIds(@RequestBody @Valid CheckUserVerificationCodeReqDTO checkUserVerificationCodeReqDTO){
+    @PostMapping("/users/user-id")
+    public ResponseEntity<CommonResponse<UserFindResDTO>> sendUserIds(@RequestBody @Valid CheckUserVerificationCodeReqDTO checkUserVerificationCodeReqDTO){
         return findService.findUserIds(checkUserVerificationCodeReqDTO);
     }
 
+    @Operation(summary = "비밀번호 찾기 1. 비밀 번호 이메일 전송", description = "아이디가 있는지 검증하고, 있으면 해당 이메일로 비밀번호 변경 주소 보냅니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400-1", ref = "USER_ID_NOT_EMAIL_FORMAT"),
+            @ApiResponse(responseCode = "400-2", ref = "USER_NOT_FOUND"),
+            @ApiResponse(responseCode = "400-3", ref = "USER_SUSPENDED"),
+            @ApiResponse(responseCode = "500", ref = "MAIL_FAILED_RESPONSE"),
+    })
+    @GetMapping("/users/{userId}/email")
+    public ResponseEntity<CommonResponse<UserFindResDTO>> chekcUserIdAndSendEmail(@PathVariable
+                                                                                        @DynamicValid(errorCode = ErrorCode.USER_ID_NOT_EMAIL_FORMAT,pattern = Regex.EMAIL)
+                                                                                        String userId) throws MessagingException {
+        return findService.sendEmailForPwd(userId);
+    }
+
+
+    @Operation(summary = "비밀번호 찾기 2. 비밀번호 변경", description = "10분 내로 인증하지 않으면 변경 불가, No와uuid를 param으로 받고 있습니다.<br> FE는 URL에서 얻을 수 있습니다.<br> Flutter는 테스트가 어렵습니다.<br> 이메일 전송까지가 완성으로 하겠습니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400-1", ref = "USER_PASSWORD_PATTERN_MISMATCH"),
+            @ApiResponse(responseCode = "400-2", ref = "USER_PASSWROD_FAILED_DOUBLE_CHECK"),
+            @ApiResponse(responseCode = "400-3", ref = "AUTH_NOT_FOUND_EMAIL_USER"),
+            @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND"),
+    })
+    @PostMapping("users/{no}/password/{uuid}")
+    public ResponseEntity<CommonResponse<String>> changeUserPwd(@PathVariable Long no, @PathVariable String uuid,
+                                                                @RequestBody @Valid CheckUserPwdReqDTO checkUserPwdReqDTO){
+        return findService.changeUserPassword(no,uuid,checkUserPwdReqDTO);
+    }
 }

@@ -1,24 +1,23 @@
-package com.talearnt.user.reponse;
+package com.talearnt.user.query.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
+import com.talearnt.enums.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Builder
 @ToString
 @NoArgsConstructor
-public class UserFindResDTO {
+public class UserFindQueryDTO {
     private String userId;
-    private LocalDateTime createdAt;
+    private UserRole authority;
 
     @QueryProjection
-    public UserFindResDTO(String userId, LocalDateTime createdAt) {
+    public UserFindQueryDTO(String userId, UserRole authority) {
         this.userId = userId;
-        this.createdAt = createdAt;
+        this.authority = authority;
     }
 }
