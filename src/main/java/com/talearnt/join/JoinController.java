@@ -3,6 +3,7 @@ package com.talearnt.join;
 import com.talearnt.enums.ErrorCode;
 import com.talearnt.enums.Regex;
 import com.talearnt.join.request.JoinReqDTO;
+import com.talearnt.join.request.KakaoJoinReqDTO;
 import com.talearnt.util.exception.CustomException;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.valid.DynamicValid;
@@ -43,7 +44,7 @@ public class JoinController {
     }
 
     @Operation(summary = "휴대폰 인증까지 마치고 회원 가입 완료 단계, 자사 회원 가입",
-            description = "회원가입 인증과 모든 것을 마치고 회원가입 완료를 눌렀을 때 호출")
+            description = "회원가입 인증과 모든 것을 마치고 회원가입 완료를 눌렀을 때 호출<br> 필수 이용약관은 true로 보내셔야 합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원가입 성공"),
             @ApiResponse(responseCode = "400-1", ref = "UNVERIFIED_AUTH_CODE"),
@@ -61,10 +62,21 @@ public class JoinController {
         return joinService.registerUser(joinReqDTO);
     }
 
+
+    @Operation(summary = "카카오톡 회원가입",description = "필수 이용약관은 true로 보내셔야 합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "카카오톡 회원가입 성공"),
+            @ApiResponse(responseCode = "400-1", ref = "UNVERIFIED_AUTH_CODE"),
+            @ApiResponse(responseCode = "400-2", ref = "USER_ID_NOT_EMAIL_FORMAT"),
+            @ApiResponse(responseCode = "400-3", ref = "USER_GENDER_MISSMATCH"),
+            @ApiResponse(responseCode = "400-4", ref = "USER_PHONE_NUMBER_FORMAT_MISMATCH"),
+            @ApiResponse(responseCode = "400-5", ref = "DUPLICATE_USER_ID"),
+            @ApiResponse(responseCode = "400-6", ref = "USER_REQUIRED_NOT_AGREE"),
+            @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND_AGREE"),
+    })
     @PostMapping("/join/kakao")
-    @Operation(summary = "카카오톡 회원가입 아직 미구현")
-    public ResponseEntity<CommonResponse<String>> addKakaoUser(@RequestBody JoinReqDTO joinReqDTO) throws CustomException {
-        return null;
+    public ResponseEntity<CommonResponse<String>> addKakaoUser(@RequestBody KakaoJoinReqDTO kakaoJoinReqDTO) throws CustomException {
+        return joinService.addKakaoUser(kakaoJoinReqDTO);
     }
 
     @Operation(summary = "인증 문자 메세지 발송",
