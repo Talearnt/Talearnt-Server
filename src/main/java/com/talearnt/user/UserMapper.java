@@ -21,6 +21,5 @@ public interface UserMapper {
     })
     FindPasswrodUrl toFindPasswordUrlEntity(String userId, String uuid);
 
-
     UserFindResDTO toUserFindResDTO(FindPasswrodUrl findPasswrodUrl);
 }
