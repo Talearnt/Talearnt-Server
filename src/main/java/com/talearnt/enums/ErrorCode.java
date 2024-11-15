@@ -20,8 +20,8 @@ public enum ErrorCode {
     AUTH_CODE_FORMAT_MISMATCH("400-AUTH-07", "인증 번호 코드를 제대로 입력해주세요."),
     AUTH_NOT_FOUND_PHONE_CODE("404-AUTH-08","10분 이내로 해당 휴대 번호로 발송된 인증 번호가 없습니다."),
     AUTH_TOO_MANY_REQUEST("429-AUTH-09","5회 연속 인증에 실패하였습니다. 잠시 후 다시 시도해주세요."),
-    AUTH_NOT_FOUND_EMAIL_USER("404-AUTH-08","10분이 지나 회원의 비밀번호를 변경할 수 없습니다. 다시 시도해주세요."),
-
+    AUTH_NOT_FOUND_EMAIL_USER("404-AUTH-10","10분이 지나 회원의 비밀번호를 변경할 수 없습니다. 다시 시도해주세요."),
+    AUTH_METHOD_CONFLICT("400-AUTH-11", "이미 다른 SNS 혹은 TALEARNT 계정으로 가입된 아이디입니다. 다른 방법으로 로그인을 시도해주세요."),
     //메세지 관련 오류,
     MESSAGE_NOT_RESPONSE("500-MESSAGE-01","메세지 전송에 실패했습니다. 잠시 후 다시 시도해 주세요."),
 
@@ -92,8 +92,9 @@ public enum ErrorCode {
 
     //이미 만들어져 공통으로 사용되는 오류
     METHOD_NOT_SUPPORTED("405-COMMON-01", "지원하지 않는 HTTP 메서드입니다."),
-    RESOURCE_NOT_FOUND("404-COMMON-02", "요청한 리소스를 찾을 수 없습니다. 경로를 확인하세요.");
-
+    RESOURCE_NOT_FOUND("404-COMMON-02", "요청한 리소스를 찾을 수 없습니다. 경로를 확인하세요."),
+    BAD_PARAMETER("400-COMMON-03","잘못된 값이 넘어왔습니다. 입력하신 내용을 확인해주세요."),
+    BAD_NULL_PARAMETER("400-COMMON-04","입력한 값이 NULL입니다. 입력하신 내용을 확인해주세요.");
 
     private final String code;
     private final String message;
