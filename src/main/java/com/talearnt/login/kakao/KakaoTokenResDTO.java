@@ -1,5 +1,6 @@
 package com.talearnt.login.kakao;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.talearnt.enums.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -9,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class KakaoLoginResDTO {
 
     @Schema(example = "test@test.com")
