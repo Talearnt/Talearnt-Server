@@ -30,7 +30,7 @@ public class User {
     private String profileImg;
 
     //Beta 시 해싱 데이터값 길이 검증, 막아야 함.
-    @Column(nullable = false,length = 100)
+    @Column(length = 100)
     private String pw;
 
     @Column(nullable = false, unique = true, length = 30)

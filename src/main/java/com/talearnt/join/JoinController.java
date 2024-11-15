@@ -75,7 +75,7 @@ public class JoinController {
             @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND_AGREE"),
     })
     @PostMapping("/join/kakao")
-    public ResponseEntity<CommonResponse<String>> addKakaoUser(@RequestBody KakaoJoinReqDTO kakaoJoinReqDTO) throws CustomException {
+    public ResponseEntity<CommonResponse<String>> addKakaoUser(@RequestBody @Valid KakaoJoinReqDTO kakaoJoinReqDTO) throws CustomException {
         return joinService.addKakaoUser(kakaoJoinReqDTO);
     }
 
