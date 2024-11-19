@@ -1,6 +1,6 @@
 package com.talearnt.util.exception;
 
-import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.common.ErrorCode;
 
 public class CustomException extends Exception{
     private final ErrorCode errorCode;

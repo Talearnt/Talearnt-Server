@@ -1,8 +1,8 @@
 package com.talearnt.join.request;
 
-import com.talearnt.enums.ErrorCode;
-import com.talearnt.enums.Gender;
-import com.talearnt.enums.Regex;
+import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.user.Gender;
+import com.talearnt.enums.common.Regex;
 import com.talearnt.util.valid.DynamicValid;
 import com.talearnt.util.valid.ListValid;
 import io.swagger.v3.oas.annotations.media.Schema;

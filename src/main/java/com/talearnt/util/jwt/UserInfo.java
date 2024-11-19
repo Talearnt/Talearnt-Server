@@ -1,6 +1,6 @@
 package com.talearnt.util.jwt;
 
-import com.talearnt.enums.UserRole;
+import com.talearnt.enums.user.UserRole;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

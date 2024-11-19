@@ -208,7 +208,7 @@ Entity <-> DTO 변환 과정은 MapStruct를 사용합니다.
  * 내부 코드
  * RuntimeException, Exception 모두 내부 코드는 동일합니다.
  * */
-import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.common.ErrorCode;
 
 public class ExceptionName extends RuntimeException{
     private final ErrorCode errorCode;

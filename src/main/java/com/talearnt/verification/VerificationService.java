@@ -1,7 +1,7 @@
 package com.talearnt.verification;
 
 
-import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.join.request.JoinReqDTO;
 import com.talearnt.util.common.VerificationUtil;
 import com.talearnt.util.exception.CustomRuntimeException;

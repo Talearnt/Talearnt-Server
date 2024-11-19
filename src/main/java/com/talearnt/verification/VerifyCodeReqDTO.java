@@ -1,7 +1,7 @@
 package com.talearnt.verification;
 
-import com.talearnt.enums.ErrorCode;
-import com.talearnt.enums.Regex;
+import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.common.Regex;
 import com.talearnt.util.valid.DynamicValid;
 import lombok.Builder;
 import lombok.Getter;

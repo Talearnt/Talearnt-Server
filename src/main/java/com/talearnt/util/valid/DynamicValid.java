@@ -1,7 +1,7 @@
 package com.talearnt.util.valid;
 
-import com.talearnt.enums.ErrorCode;
-import com.talearnt.enums.Regex;
+import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.common.Regex;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

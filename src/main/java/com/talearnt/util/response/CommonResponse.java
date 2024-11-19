@@ -1,7 +1,6 @@
 package com.talearnt.util.response;
 
-import com.talearnt.enums.ErrorCode;
-import com.talearnt.util.common.Pagination;
+import com.talearnt.enums.common.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

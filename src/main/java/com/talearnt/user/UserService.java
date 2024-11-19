@@ -1,6 +1,6 @@
 package com.talearnt.user;
 
-import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.user.entity.User;
 import com.talearnt.user.repository.UserRepository;
 import com.talearnt.user.request.TestChangePwdReqDTO;

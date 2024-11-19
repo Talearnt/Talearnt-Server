@@ -1,7 +1,7 @@
 package com.talearnt.user.entity;
 
-import com.talearnt.enums.Gender;
-import com.talearnt.enums.UserRole;
+import com.talearnt.enums.user.Gender;
+import com.talearnt.enums.user.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

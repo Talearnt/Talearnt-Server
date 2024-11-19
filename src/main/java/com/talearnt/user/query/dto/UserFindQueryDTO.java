@@ -1,7 +1,7 @@
 package com.talearnt.user.query.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import com.talearnt.enums.UserRole;
+import com.talearnt.enums.user.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

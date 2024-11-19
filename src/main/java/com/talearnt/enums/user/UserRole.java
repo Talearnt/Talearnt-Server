@@ -1,4 +1,4 @@
-package com.talearnt.enums;
+package com.talearnt.enums.user;
 
 
 public enum UserRole {

@@ -1,6 +1,6 @@
 package com.talearnt.post.service;
 
-import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.post.exchange.ExchangePostMapper;
 import com.talearnt.post.exchange.repository.ExchangePostCustomRepository;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;

@@ -1,7 +1,6 @@
 package com.talearnt.login;
 
-import com.talearnt.enums.ErrorCode;
-import com.talearnt.login.company.LoginMapper;
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.login.kakao.KakaoLoginResDTO;
 import com.talearnt.login.kakao.KakaoTokenResDTO;
 import com.talearnt.login.kakao.KakaoUserInfoResDTO;
@@ -11,23 +10,17 @@ import com.talearnt.util.common.LoginUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.JwtTokenUtil;
 import com.talearnt.util.jwt.UserInfo;
-import com.talearnt.util.response.CommonResponse;
 import io.netty.handler.codec.http.HttpHeaderValues;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Optional;
 
 /** 자사 로그인과 Kakao 로그인에 JWT 설정에서 중복 코드가 발생했습니다.

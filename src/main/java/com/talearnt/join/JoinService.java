@@ -1,8 +1,7 @@
 package com.talearnt.join;
 
-import com.talearnt.enums.ErrorCode;
-import com.talearnt.enums.Regex;
-import com.talearnt.enums.UserRole;
+import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.user.UserRole;
 import com.talearnt.admin.agree.entity.Agree;
 import com.talearnt.admin.agree.entity.AgreeCode;
 import com.talearnt.admin.agree.repository.AgreeCodeRepository;
@@ -11,7 +10,6 @@ import com.talearnt.join.request.AgreeJoinReqDTO;
 import com.talearnt.join.request.JoinReqDTO;
 import com.talearnt.join.request.KakaoJoinReqDTO;
 import com.talearnt.login.KakaoLoginService;
-import com.talearnt.user.UserMapper;
 import com.talearnt.user.entity.User;
 import com.talearnt.user.repository.UserRepository;
 import com.talearnt.util.common.UserUtil;

@@ -1,6 +1,6 @@
 package com.talearnt.util.jwt;
 
-import com.talearnt.enums.UserRole;
+import com.talearnt.enums.user.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
