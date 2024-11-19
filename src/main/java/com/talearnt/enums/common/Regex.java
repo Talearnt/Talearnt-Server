@@ -1,4 +1,4 @@
-package com.talearnt.enums;
+package com.talearnt.enums.common;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,8 @@ public enum Regex {
     EXCHANGE_TPYE("^(온라인|오프라인|온/오프라인)$"),
     EXCHANGE_DURATION("^(기간 미정|1개월|2개월|3개월|3개월 이상)$"),
     VERSION("^[0-9]+\\.[0-9]+$"),
-    AUTH_CODE("^[0-9]{4}$");
+    AUTH_CODE("^[0-9]{4}$"),
+    CATEGORY_CODE("^[0-9]{4,}$"),
+    CATEGORY_NAME("^[a-zA-Z0-9/ 가-힣]{2,}$");
     private final String pattern;
 }

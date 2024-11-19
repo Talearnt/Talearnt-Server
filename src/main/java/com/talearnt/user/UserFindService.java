@@ -1,6 +1,6 @@
 package com.talearnt.user;
 
-import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.service.common.MailService;
 import com.talearnt.user.entity.FindPasswrodUrl;
 import com.talearnt.user.entity.User;

@@ -1,6 +1,6 @@
 package com.talearnt.login;
 
-import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.login.company.LoginMapper;
 import com.talearnt.login.company.LoginReqDTO;
 import com.talearnt.user.entity.User;

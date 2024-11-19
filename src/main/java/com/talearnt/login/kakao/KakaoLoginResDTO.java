@@ -1,7 +1,6 @@
 package com.talearnt.login.kakao;
 
-import com.talearnt.enums.Gender;
-import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.enums.user.Gender;
 import lombok.*;
 
 @Getter

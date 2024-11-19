@@ -1,6 +1,6 @@
 package com.talearnt.util.common;
 
-import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.util.exception.CustomRuntimeException;
 import org.springframework.data.domain.Page;
 

@@ -1,6 +1,6 @@
 package com.talearnt.util.converter.post;
 
-import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.util.exception.CustomRuntimeException;
 import jakarta.persistence.AttributeConverter;

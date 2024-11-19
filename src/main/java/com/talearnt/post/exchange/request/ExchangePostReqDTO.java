@@ -1,7 +1,7 @@
 package com.talearnt.post.exchange.request;
 
-import com.talearnt.enums.ErrorCode;
-import com.talearnt.enums.Regex;
+import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.common.Regex;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.post.exchange.PostTalentCategoryDTO;
 import com.talearnt.util.common.RequiredJwtValueDTO;

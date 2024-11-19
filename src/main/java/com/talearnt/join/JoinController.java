@@ -1,7 +1,7 @@
 package com.talearnt.join;
 
-import com.talearnt.enums.ErrorCode;
-import com.talearnt.enums.Regex;
+import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.common.Regex;
 import com.talearnt.join.request.JoinReqDTO;
 import com.talearnt.join.request.KakaoJoinReqDTO;
 import com.talearnt.util.exception.CustomException;

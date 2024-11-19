@@ -2,7 +2,7 @@ package com.talearnt.enums.post;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.talearnt.enums.ErrorCode;
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.util.exception.CustomRuntimeException;
 
 public enum ExchangePostStatus {

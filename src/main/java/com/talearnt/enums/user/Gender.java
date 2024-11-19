@@ -1,5 +1,6 @@
-package com.talearnt.enums;
+package com.talearnt.enums.user;
 
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.util.exception.CustomRuntimeException;
 import lombok.extern.log4j.Log4j2;
 

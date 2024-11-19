@@ -1,8 +1,8 @@
 package com.talearnt.user;
 
 
-import com.talearnt.enums.ErrorCode;
-import com.talearnt.enums.Regex;
+import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.common.Regex;
 import com.talearnt.user.reponse.UserFindResDTO;
 import com.talearnt.user.request.CheckUserPwdReqDTO;
 import com.talearnt.user.request.CheckUserVerificationCodeReqDTO;

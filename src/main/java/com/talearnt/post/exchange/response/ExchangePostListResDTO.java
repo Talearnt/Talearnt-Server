@@ -1,7 +1,7 @@
 package com.talearnt.post.exchange.response;
 
 import com.querydsl.core.annotations.QueryProjection;
-import com.talearnt.enums.UserRole;
+import com.talearnt.enums.user.UserRole;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.post.exchange.PostTalentCategoryDTO;
 import lombok.*;
