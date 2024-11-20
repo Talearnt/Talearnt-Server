@@ -1,5 +1,6 @@
-package com.talearnt.admin.category;
+package com.talearnt.admin.category.service;
 
+import com.talearnt.admin.category.CategoryMapper;
 import com.talearnt.admin.category.entity.BigCategory;
 import com.talearnt.admin.category.repository.BigCategoryRepository;
 import com.talearnt.admin.category.request.BigCategoryReqDTO;

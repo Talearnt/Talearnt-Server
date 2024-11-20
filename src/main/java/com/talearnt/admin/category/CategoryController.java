@@ -1,12 +1,16 @@
 package com.talearnt.admin.category;
 
 import com.talearnt.admin.category.request.BigCategoryReqDTO;
+import com.talearnt.admin.category.request.TalentCategoryReqDTO;
+import com.talearnt.admin.category.service.CategoryService;
+import com.talearnt.admin.category.service.TalentCategoryService;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.version.RestAdminControllerV1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final TalentCategoryService talentCategoryService;
 
     @Operation(summary = "대분류 1. 키워드 추가", description = "대분류 키워드를 추가합니다. (관리자 권한 - 아직 미구현)")
     @ApiResponses(value = {
@@ -28,9 +33,14 @@ public class CategoryController {
             @ApiResponse(responseCode = "400-4", ref = "KEYWORD_NAME_DUPLICATION"),
     })
     @PostMapping("/big-categories")
-    public ResponseEntity<CommonResponse<String>> addBigCategoryKeyword(@RequestBody BigCategoryReqDTO bigCategoryReqDTO){
+    public ResponseEntity<CommonResponse<String>> addBigCategoryKeyword(@RequestBody @Valid BigCategoryReqDTO bigCategoryReqDTO){
         return CommonResponse.success(categoryService.addBigCategory(bigCategoryReqDTO));
     }
 
+
+
+    public ResponseEntity<CommonResponse<String>> addTalenrtCategoryKeyword(@RequestBody @Valid TalentCategoryReqDTO talentCategoryReqDTO){
+        return CommonResponse.success(talentCategoryService.addTalentCategoryKeyword(talentCategoryReqDTO));
+    }
 
 }
