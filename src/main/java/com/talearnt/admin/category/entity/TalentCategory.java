@@ -25,7 +25,7 @@ public class TalentCategory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_code")
-    private BigCategory categoryCode; // 대분류 Code
+    private BigCategory bigCategory; // 대분류 Code
 
     @Column(length = 20, nullable = false)
     private String talentName; // 재능 이름

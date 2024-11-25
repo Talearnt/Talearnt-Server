@@ -28,17 +28,26 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "400-1", ref = "KEYWORD_CODE_MISMATCH"),
-            @ApiResponse(responseCode = "400-2", ref = "KEyWORD_NAME_MISMATCH"),
+            @ApiResponse(responseCode = "400-2", ref = "KEYWORD_NAME_MISMATCH"),
             @ApiResponse(responseCode = "400-3", ref = "KEYWORD_CODE_DUPLICATION"),
             @ApiResponse(responseCode = "400-4", ref = "KEYWORD_NAME_DUPLICATION"),
     })
-    @PostMapping("/big-categories")
+    @PostMapping("/keywords/big-categories")
     public ResponseEntity<CommonResponse<String>> addBigCategoryKeyword(@RequestBody @Valid BigCategoryReqDTO bigCategoryReqDTO){
         return CommonResponse.success(categoryService.addBigCategory(bigCategoryReqDTO));
     }
 
 
-
+    @Operation(summary = "재능 분류 1. 키워드 추가", description = "재능 분류 키워드를 추가합니다. (관리자 권한 - 미구현)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400-1", ref = "KEYWORD_CODE_MISMATCH"),
+            @ApiResponse(responseCode = "400-2", ref = "KEYWORD_NAME_MISMATCH"),
+            @ApiResponse(responseCode = "400-3", ref = "KEYWORD_CATEGORY_CODE_MISMATCH"),
+            @ApiResponse(responseCode = "400-4", ref = "KEYWORD_TALENT_CODE_DUPLICATION"),
+            @ApiResponse(responseCode = "400-5", ref = "KEYWORD_TALENT_NAME_DUPLICATION"),
+    })
+    @PostMapping("/keywords/talent-categories")
     public ResponseEntity<CommonResponse<String>> addTalenrtCategoryKeyword(@RequestBody @Valid TalentCategoryReqDTO talentCategoryReqDTO){
         return CommonResponse.success(talentCategoryService.addTalentCategoryKeyword(talentCategoryReqDTO));
     }

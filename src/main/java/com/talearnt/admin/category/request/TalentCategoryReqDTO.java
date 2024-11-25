@@ -1,6 +1,10 @@
 package com.talearnt.admin.category.request;
 
+import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.common.Regex;
+import com.talearnt.util.common.RequiredJwtValueDTO;
 import com.talearnt.util.jwt.UserInfo;
+import com.talearnt.util.valid.DynamicValid;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -16,10 +20,14 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredJwtValueDTO
 public class TalentCategoryReqDTO {
     @Schema(hidden = true)
     private UserInfo userInfo;
+    @DynamicValid(errorCode = ErrorCode.KEYWORD_CODE_MISMATCH, pattern = Regex.CATEGORY_CODE)
     private Integer talentCode;
+    @DynamicValid(errorCode = ErrorCode.KEYWORD_CODE_MISMATCH, pattern = Regex.CATEGORY_CODE)
     private Integer categoryCode;
+    @DynamicValid(errorCode = ErrorCode.KEYWORD_NAME_MISMATCH, pattern = Regex.CATEGORY_NAME)
     private String talentName;
 }

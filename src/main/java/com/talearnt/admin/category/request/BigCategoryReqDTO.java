@@ -25,6 +25,6 @@ public class BigCategoryReqDTO {
     private UserInfo userInfo;
     @DynamicValid(errorCode = ErrorCode.KEYWORD_CODE_MISMATCH, pattern = Regex.CATEGORY_CODE)
     private Integer categoryCode;
-    @DynamicValid(errorCode = ErrorCode.KEyWORD_NAME_MISMATCH, pattern = Regex.CATEGORY_NAME)
+    @DynamicValid(errorCode = ErrorCode.KEYWORD_NAME_MISMATCH, pattern = Regex.CATEGORY_NAME)
     private String categoryName;
 }
