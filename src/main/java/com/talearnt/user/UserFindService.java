@@ -4,7 +4,7 @@ import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.service.common.MailService;
 import com.talearnt.user.entity.FindPasswrodUrl;
 import com.talearnt.user.entity.User;
-import com.talearnt.user.query.dto.UserFindQueryDTO;
+import com.talearnt.user.query.UserFindQueryDTO;
 import com.talearnt.user.reponse.UserFindResDTO;
 import com.talearnt.user.repository.FindPasswordUrlRepository;
 import com.talearnt.user.repository.UserQueryRepository;

@@ -33,6 +33,9 @@ public class User {
     @Column(length = 100)
     private String pw;
 
+    @Column(length = 30,nullable = false) //외국인 이름의 길이도 포함하여 넉넉히 30자
+    private String name;
+
     @Column(nullable = false, unique = true, length = 30)
     private String nickname;
 
