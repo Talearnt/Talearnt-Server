@@ -1,4 +1,4 @@
-package com.talearnt.user.query.dto;
+package com.talearnt.user.query;
 
 import com.querydsl.core.annotations.QueryProjection;
 import com.talearnt.enums.user.UserRole;

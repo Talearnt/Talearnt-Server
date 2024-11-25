@@ -5,7 +5,7 @@ import com.talearnt.user.entity.QFindPasswrodUrl;
 import com.talearnt.user.entity.QUser;
 import com.talearnt.user.entity.User;
 import com.talearnt.user.query.dto.QUserFindQueryDTO;
-import com.talearnt.user.query.dto.UserFindQueryDTO;
+import com.talearnt.user.query.UserFindQueryDTO;
 import com.talearnt.user.reponse.QUserFindResDTO;
 import com.talearnt.user.reponse.UserFindResDTO;
 import lombok.RequiredArgsConstructor;

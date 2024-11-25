@@ -26,6 +26,9 @@ public class JoinReqDTO {
     @DynamicValid(errorCode = ErrorCode.USER_PASSWORD_MISSING,notBlank = true)
     private String pw;
 
+    @Schema(example = "홍길동")
+    private String name;
+
     @Schema(required = true, example = "남자")
     @DynamicValid(errorCode = ErrorCode.USER_GENDER_MISSMATCH,pattern = Regex.GENDER)
     private Gender gender;

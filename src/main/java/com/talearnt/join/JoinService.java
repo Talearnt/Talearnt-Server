@@ -42,13 +42,17 @@ public class JoinService {
         return CommonResponse.success(userRepository.existsByUserId(userId));
     }
 
-    // 회원가입 서비스 메서드
+    /** 최신 업데이트 일자 : 2024-11-25, 담당자 : 정운만
+     * 업데이트 내용 : 회원가입 시 이미 존재하는 휴대폰 번호를 입력했을 경우 Exception 발생
+     * */
     @Transactional
     public ResponseEntity<CommonResponse<String>> registerUser(JoinReqDTO joinReqDTO) {
         log.info("Register User 시작");
         //해당 UserId에 본인 인증이 완료되지 않은 상태일 경우 발생
         if (!verificationService.isVerifiedCheck(joinReqDTO)) {
             new CustomRuntimeException(ErrorCode.UNVERIFIED_AUTH_CODE);
+        }else if(!userRepository.existsByPhone(joinReqDTO.getPhone())){ // 해당 휴대폰으로 가입한 이력이 있으면 발생
+            new CustomRuntimeException(ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
         }
 
         //비밀번호 암호화

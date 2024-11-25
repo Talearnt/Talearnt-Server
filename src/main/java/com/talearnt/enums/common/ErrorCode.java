@@ -50,6 +50,7 @@ public enum ErrorCode {
     USER_NOT_FOUND_PHONE_NUMBER("404-USER-14", "해당 휴대폰 번호로 가입한 회원이 없습니다."),
     USER_WITH_DRAWN("403-USER-15", "해당 아이디는 탈퇴한 회원입니다."),
     USER_PASSWROD_FAILED_DOUBLE_CHECK("400-USER-16", "두 개의 비밀번호가 일치하지 않습니다."),
+    USER_PHONE_NUMBER_DUPLICATION("400-USER-17","이미 해당 휴대폰 번호로 가입한 회원이 존재합니다."),
 
     // 데이터베이스 관련 오류
     DB_CONNECTION_ERROR("500-DB-01", "데이터 베이스에 연결 실패했습니다."),
