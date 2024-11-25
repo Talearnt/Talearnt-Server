@@ -73,10 +73,13 @@ public enum ErrorCode {
     UNKNOWN_ERROR("500-UNKNOWN-01", "알 수 없는 오류가 발생했습니다. 관리자에게 문의하세요."),
 
     // 키워드 관련 오류
-    KEYWORD_CODE_DUPLICATION("400-KEYWORD-01","키워드 코드가 중복되었습니다. 다른 번호를 입력하세요."),
-    KEYWORD_NAME_DUPLICATION("400-KEYWORD-02","키워드 이름이 중복되었습니다. 다른 이름을 입력하세요."),
+    KEYWORD_CODE_DUPLICATION("400-KEYWORD-01","대분류 키워드 코드가 중복되었습니다. 다른 번호를 입력하세요."),
+    KEYWORD_NAME_DUPLICATION("400-KEYWORD-02","대분류 키워드 이름이 중복되었습니다. 다른 이름을 입력하세요."),
     KEYWORD_CODE_MISMATCH("400-KEYWORD-03","키워드 코드가 잘못 입력되었습니다. 코드를 확인하세요! (최소 단위 1,000)"),
-    KEyWORD_NAME_MISMATCH("400-KEYWORD-03","키워드 이름이 잘못 입력되었습니다. 이름를 확인하세요! (최소 2자 이상)"),
+    KEYWORD_NAME_MISMATCH("400-KEYWORD-04","키워드 이름이 잘못 입력되었습니다. 이름를 확인하세요! (최소 2자 이상)"),
+    KEYWORD_CATEGORY_CODE_MISMATCH("400-KEYWORD-05","대분류 키워드 코드가 없습니다."),
+    KEYWORD_TALENT_CODE_DUPLICATION("400-KEYWORD-06","재능 분류 키워드 코드가 중복됩니다."),
+    KEYWORD_TALENT_NAME_DUPLICATION("400-KEYWORD-07","재능 분류 키워드 이름이 중복되었습니다. 다른 이름을 입력하세요."),
 
     //게시글 관련 오류
     POST_TITLE_OVER_LENGTH("400-POST-01", "제목 글자 수 제한을 확인해주세요."),
