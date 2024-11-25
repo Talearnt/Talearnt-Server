@@ -30,7 +30,7 @@ public class VerificationCodeQueryRepository {
                         .where(phoneVerification.createdAt.after(LocalDateTime.now().minusMinutes(10))
                                 .and(phoneVerification.phone.eq(phone)))
                         .orderBy(phoneVerification.createdAt.desc())
-                        .fetchOne()
+                        .fetchFirst()
         );
     }
 

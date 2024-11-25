@@ -70,7 +70,7 @@ public class UserFindService {
         UserFindQueryDTO userQueryDTO = userQueryRepository.selectUserByPhoneNumber(phoneNumber)
                 .orElseThrow(()->new CustomRuntimeException(ErrorCode.USER_NOT_FOUND_PHONE_NUMBER));
 
-        //정지된 회원이나, 탈퇴한 회원일 경우
+        //정지된 회원이나, 탈퇴한 회원일 경우 Exception
         UserUtil.validateUserAuthority(userQueryDTO.getAuthority().name());
 
         //랜덤 인증 코드 생성.
