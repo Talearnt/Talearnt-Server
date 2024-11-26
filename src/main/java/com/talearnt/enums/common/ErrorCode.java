@@ -50,14 +50,15 @@ public enum ErrorCode {
     USER_NOT_FOUND_PHONE_NUMBER("404-USER-14", "해당 휴대폰 번호로 가입한 회원이 없습니다."),
     USER_WITH_DRAWN("403-USER-15", "해당 아이디는 탈퇴한 회원입니다."),
     USER_PASSWROD_FAILED_DOUBLE_CHECK("400-USER-16", "두 개의 비밀번호가 일치하지 않습니다."),
-    USER_PHONE_NUMBER_DUPLICATION("400-USER-17","이미 해당 휴대폰 번호로 가입한 회원이 존재합니다."),
+    USER_PHONE_NUMBER_DUPLICATION("409-USER-17","이미 해당 휴대폰 번호로 가입한 회원이 존재합니다."),
+    USER_NAME_MISMATCH("400-USER-18","이름은 최소 2자, 최대 5자까지 입력 가능합니다."),
 
     // 데이터베이스 관련 오류
     DB_CONNECTION_ERROR("500-DB-01", "데이터 베이스에 연결 실패했습니다."),
     DB_QUERY_ERROR("500-DB-02", "데이터 베이스에 잘못된 쿼리 입력되었습니다."),
     DB_TIMEOUT_ERROR("504-DB-03", "데이터베이스 응답 시간이 초과되었습니다."),
     DATA_INTEGRITY_VIOLATION("500-DB-04", "데이터 무결성 위반 오류가 발생했습니다."),
-
+    DB_INCORRECT_RESULT_SIZE("500-DB-05", "결과 데이터 크기가 예상과 다릅니다. 1개만 반환해야하는데 2개 이상이 반환되었습니다."),
     // 파일 및 네트워크 관련 오류
     FILE_NOT_FOUND("404-FILE-01", "요청된 파일을 찾을 수 없습니다."),
     NETWORK_ERROR("503-NETWORK-01", "네트워크 오류로 인해 요청을 처리할 수 없습니다."),

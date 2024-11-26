@@ -8,6 +8,7 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -29,6 +30,11 @@ import java.nio.file.AccessDeniedException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    //DB 반환 값이 1개여야 하는데 2개 이상 가져올 경우 발생
+    @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
+    public ResponseEntity<CommonResponse<Object>> handleIncorrectResultSizeDataAccessException(IncorrectResultSizeDataAccessException e) {
+        return CommonResponse.error(ErrorCode.DB_INCORRECT_RESULT_SIZE);
+    }
     //메일 전송 실패 Exception
     @ExceptionHandler(MessagingException.class)
     public ResponseEntity<CommonResponse<Object>> handleMessagingException(MessagingException e) {
