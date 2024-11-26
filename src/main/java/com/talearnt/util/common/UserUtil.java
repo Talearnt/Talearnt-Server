@@ -1,6 +1,7 @@
 package com.talearnt.util.common;
 
 import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.user.repository.UserRepository;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
 import lombok.extern.log4j.Log4j2;
@@ -13,7 +14,7 @@ import java.util.List;
 public class UserUtil {
 
     /**
-     * 회원 정보를 검증하는 메소드입니다.
+     * 회원 정보를 검증하는 메소드입니다.<br>
      * UserInfo의 객체 검증이 필요한 곳에서 사용하면 됩니다.
      * @param userInfo JWT 토큰 안에 있는 유저의 정보입니다.
      * */
@@ -36,6 +37,25 @@ public class UserUtil {
             throw new CustomRuntimeException(ErrorCode.USER_NOT_FOUND);
         }
     }
+
+
+    /**휴대폰 번호 중복 확인하는 메소드*/
+    public static void validatePhoneDuplication(UserRepository userRepository, String phone){
+        if(userRepository.existsByPhone(phone)){ // 해당 휴대폰으로 가입한 이력이 있으면 발생
+            log.error("휴대폰 번호 중복으로 인한 문자 전송 실패 : {} ",ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
+            throw new CustomRuntimeException(ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
+        }
+    }
+
+    /** 회원 가입 시 아이디 중복 체크*/
+    public static void validateDuplicateUserId(UserRepository userRepository,String userId){
+        //유저 ID가 있을 경우에 회원 가입 실패
+        if (userRepository.existsByUserId(userId)) {
+            log.error("아이디 중복으로 인한 회원 가입 실패 : {} ",ErrorCode.DUPLICATE_USER_ID);
+            throw new CustomRuntimeException(ErrorCode.DUPLICATE_USER_ID);
+        }
+    }
+
 
     /**
      * User의 닉네임을 랜덤하게 만들어 반환하는 메소드입니다.

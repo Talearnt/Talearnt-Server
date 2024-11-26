@@ -20,9 +20,14 @@ public class KakaoJoinReqDTO {
     @DynamicValid(errorCode = ErrorCode.USER_ID_NOT_EMAIL_FORMAT, pattern = Regex.EMAIL, notBlank = true)
     private String userId;
 
+    @Schema(example = "홍길동")
+    @DynamicValid(errorCode = ErrorCode.USER_NAME_MISMATCH,pattern = Regex.NAME)
+    private String name;
+
     @Schema(required = true, example = "남자")
     @DynamicValid(errorCode = ErrorCode.USER_GENDER_MISSMATCH,pattern = Regex.GENDER)
     private Gender gender;
+
 
     @Schema(required = true, example = "01029089421")
     @DynamicValid(errorCode = ErrorCode.USER_PHONE_NUMBER_FORMAT_MISMATCH, pattern = Regex.PHONE_NUMBER, notBlank = true)

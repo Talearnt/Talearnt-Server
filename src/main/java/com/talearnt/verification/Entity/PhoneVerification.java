@@ -18,9 +18,6 @@ public class PhoneVerification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long phoneVerificationNo;
 
-    @Column(nullable = false)
-    private String userId;
-
     @Column(nullable = false, length = 20)
     private String phone;
 

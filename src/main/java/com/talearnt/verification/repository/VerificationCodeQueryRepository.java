@@ -49,7 +49,7 @@ public class VerificationCodeQueryRepository {
         ).orElse(0L);
     }
 
-    //코드가 인증이 되었는지 확인하는 쿼리
+    /** 아이디 찾기 인증 문자 검증에서 사용하는 메소드, 회원가입 X*/
     public Optional<Boolean> checkIsPhoneVerified(String phone, String code){
         QPhoneVerification phoneVerification = QPhoneVerification.phoneVerification;
         return Optional.ofNullable(
@@ -60,6 +60,20 @@ public class VerificationCodeQueryRepository {
                                         .and(phoneVerification.verificationCode.eq(code))
                                         .and(phoneVerification.createdAt.after(LocalDateTime.now().minusMinutes(10)))
                                 )
+                        .orderBy(phoneVerification.createdAt.desc())
+                        .fetchFirst()
+        );
+    }
+
+    /** 회원가입 인증 문자 검증에서 사용하는 메소드*/
+    public Optional<Boolean> checkIsPhoneVerified(String phone){
+        QPhoneVerification phoneVerification = QPhoneVerification.phoneVerification;
+        return Optional.ofNullable(
+                queryFactory
+                        .select(phoneVerification.isPhoneVerified)
+                        .from(phoneVerification)
+                        .where(phoneVerification.phone.eq(phone)
+                                .and(phoneVerification.createdAt.after(LocalDateTime.now().minusMinutes(10))))
                         .orderBy(phoneVerification.createdAt.desc())
                         .fetchFirst()
         );
