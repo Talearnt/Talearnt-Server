@@ -17,6 +17,9 @@ public enum Regex {
     AUTH_CODE("^[0-9]{4}$"),
     CATEGORY_CODE("^[0-9]{4,}$"),
     CATEGORY_NAME("^[a-zA-Z0-9/ 가-힣]{2,}$"),
-    NAME("^[가-힣]{2,5}$");
+    NICKNAME("^[a-zA-Z0-9가-힣#]{2,12}$"),
+    NAME("^[가-힣]{2,5}$"),
+    //인증 문자 전송 타입 : 회원 가입 전용, 아이디 찾기 전용
+    SMS_TYPE("^[가-힣]{2,10}$");
     private final String pattern;
 }

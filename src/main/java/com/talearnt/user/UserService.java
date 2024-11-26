@@ -23,6 +23,7 @@ public class UserService {
     //Repositories
     private final UserRepository userRepository;
 
+    /** 테스트용 비밀번호 변경*/
     public ResponseEntity<CommonResponse<String>> changeTestPwd(TestChangePwdReqDTO testChangePwdReqDTO){
         User user = userRepository.findByUserId(testChangePwdReqDTO.getUserId())
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
