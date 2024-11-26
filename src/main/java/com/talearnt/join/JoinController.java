@@ -56,6 +56,7 @@ public class JoinController {
             @ApiResponse(responseCode = "400-7", ref = "DUPLICATE_USER_ID"),
             @ApiResponse(responseCode = "400-8", ref = "USER_REQUIRED_NOT_AGREE"),
             @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND_AGREE"),
+            @ApiResponse(responseCode = "409", ref = "USER_PHONE_NUMBER_DUPLICATION"),
     })
     @PostMapping("/join")
     public ResponseEntity<CommonResponse<String>> addUser(@RequestBody @Valid JoinReqDTO joinReqDTO) throws CustomException {
@@ -73,6 +74,7 @@ public class JoinController {
             @ApiResponse(responseCode = "400-5", ref = "DUPLICATE_USER_ID"),
             @ApiResponse(responseCode = "400-6", ref = "USER_REQUIRED_NOT_AGREE"),
             @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND_AGREE"),
+            @ApiResponse(responseCode = "409", ref = "USER_PHONE_NUMBER_DUPLICATION"),
     })
     @PostMapping("/join/kakao")
     public ResponseEntity<CommonResponse<String>> addKakaoUser(@RequestBody @Valid KakaoJoinReqDTO kakaoJoinReqDTO) throws CustomException {

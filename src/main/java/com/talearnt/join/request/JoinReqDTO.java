@@ -27,6 +27,7 @@ public class JoinReqDTO {
     private String pw;
 
     @Schema(example = "홍길동")
+    @DynamicValid(errorCode = ErrorCode.USER_NAME_MISMATCH,pattern = Regex.NAME)
     private String name;
 
     @Schema(required = true, example = "남자")

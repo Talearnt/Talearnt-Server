@@ -33,7 +33,7 @@ public class User {
     @Column(length = 100)
     private String pw;
 
-    @Column(length = 30,nullable = false) //외국인 이름의 길이도 포함하여 넉넉히 30자
+    @Column(length = 5,nullable = false) //한국인 이름은 최대 5자 까지가 법으로 지정
     private String name;
 
     @Column(nullable = false, unique = true, length = 30)

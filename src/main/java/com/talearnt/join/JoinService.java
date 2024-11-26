@@ -37,22 +37,23 @@ public class JoinService {
     private final PasswordEncoder passwordEncoder;
     private final KakaoLoginService kakaoLoginService;
 
-    /**회원 가입 단계에서 아이디 중복체크*/
-    public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedUserId(String userId){
+    /**
+     * 회원 가입 단계에서 아이디 중복체크
+     */
+    public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedUserId(String userId) {
         return CommonResponse.success(userRepository.existsByUserId(userId));
     }
 
-    /** 최신 업데이트 일자 : 2024-11-25, 담당자 : 정운만
-     * 업데이트 내용 : 회원가입 시 이미 존재하는 휴대폰 번호를 입력했을 경우 Exception 발생
-     * */
+    /**
+     * 최신 업데이트 일자 : 2024-11-26, 담당자 : 정운만 <br>
+     * 업데이트 내용 : 회원가입 시 이미 존재하는 휴대폰 번호를 입력했을 경우 Exception 발생<br>
+     */
     @Transactional
     public ResponseEntity<CommonResponse<String>> registerUser(JoinReqDTO joinReqDTO) {
         log.info("Register User 시작");
         //해당 UserId에 본인 인증이 완료되지 않은 상태일 경우 발생
         if (!verificationService.isVerifiedCheck(joinReqDTO)) {
             new CustomRuntimeException(ErrorCode.UNVERIFIED_AUTH_CODE);
-        }else if(!userRepository.existsByPhone(joinReqDTO.getPhone())){ // 해당 휴대폰으로 가입한 이력이 있으면 발생
-            new CustomRuntimeException(ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
         }
 
         //비밀번호 암호화
@@ -63,7 +64,7 @@ public class JoinService {
         user.setPw(encodedPassword);
 
         //유저 회원가입 절차, 중복,
-        user = saveUser(user,"자사");
+        user = saveUser(user, "자사");
 
         //이용 약관 저장
         saveTerms(joinReqDTO.getAgreeReqDTOS(), user);
@@ -75,35 +76,40 @@ public class JoinService {
     /**
      * 카카오톡 회원 가입은 본인인증을 이미 Kakao에서 거친 것과 다름이 없기 때문에<br>
      * verificationService.isVerifiedCheck(joinReqDTO)을 따로 하지 않는다.<br>
+     *
      * @param kakaoJoinReqDTO 카카오 회원가입에서 넘어온 값
      */
     @Transactional
     public ResponseEntity<CommonResponse<String>> addKakaoUser(KakaoJoinReqDTO kakaoJoinReqDTO) {
-        log.info("카카오톡 회원가입 시작 : {}",kakaoJoinReqDTO);
+        log.info("카카오톡 회원가입 시작 : {}", kakaoJoinReqDTO);
+
 
         //카카오 회원가입에서 넘어온 값 Entity로 변경
         User user = JoinMapper.INSTANCE.toUserEntityFromKakaoJoinReqDTO(kakaoJoinReqDTO);
 
-        user = saveUser(user,"카카오톡");
+        user = saveUser(user, "카카오톡");
 
         //이용 약관 저장
-        saveTerms(kakaoJoinReqDTO.getAgreeReqDTOS(),user);
+        saveTerms(kakaoJoinReqDTO.getAgreeReqDTOS(), user);
 
         log.info("카카오톡 회원가입 끝");
         return CommonResponse.success("카카오톡 회원 가입 성공");
     }
 
-    /** 유저 회원가입 메소드<br>
+    /**
+     * 유저 회원가입 메소드<br>
      * 조건<br>
      * - 중복된 아이디가 없어야 한다.<br>
      * - 중복된 닉네임이 없어야 한다.
-     * @param user DTO에서 변환된 Entity
+     *
+     * @param user     DTO에서 변환된 Entity
      * @param joinType 카카오,네이버,자사
-     * - */
-    private User saveUser(User user,String joinType){
+     */
+    private User saveUser(User user, String joinType) {
+        //이미 가입한 휴대폰 번호가 있는 지 검증 Exception 409
+        UserUtil.validatePhoneDuplication(userRepository, user.getPhone());
         //유저 ID가 있을 경우에 회원 가입 실패
-        validateDuplicateUserId(user.getUserId());
-
+        UserUtil.validateDuplicateUserId(userRepository, user.getUserId());
         //닉네임 존재 유무 확인
         String nickname = UserUtil.makeRandomNickName();
         while (userRepository.existsByNickname(nickname)) {
@@ -119,16 +125,10 @@ public class JoinService {
         return user;
     }
 
-    /** 아이디 중복 체크*/
-    private void validateDuplicateUserId(String userId){
-        //유저 ID가 있을 경우에 회원 가입 실패
-        if (!userRepository.existsByUserId(userId)) {
-            new CustomRuntimeException(ErrorCode.DUPLICATE_USER_ID);
-        }
-    }
-
-    /**이용약관 등록*/
-    private void saveTerms(List<AgreeJoinReqDTO> agreeJoinReqDTOS, User user){
+    /**
+     * 이용약관 등록
+     */
+    private void saveTerms(List<AgreeJoinReqDTO> agreeJoinReqDTOS, User user) {
         //이용 약관 저장
         for (AgreeJoinReqDTO agreeReqDTO : agreeJoinReqDTOS) {
             //약관 코드 ID가 없을 경우 Exception
@@ -136,8 +136,8 @@ public class JoinService {
                     .orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND_AGREE));
 
             //필수 약관을 동의하지 않았을 경우
-            if(agreeCode.isMandatory()==true && !agreeReqDTO.isAgree()){
-                log.error("약관 동의 여부 : {}",agreeReqDTO);
+            if (agreeCode.isMandatory() == true && !agreeReqDTO.isAgree()) {
+                log.error("약관 동의 여부 : {}", agreeReqDTO);
                 throw new CustomRuntimeException(ErrorCode.USER_REQUIRED_NOT_AGREE);
             }
 
@@ -147,5 +147,6 @@ public class JoinService {
             agreeRepository.save(agree);
         }
     }
+
 
 }

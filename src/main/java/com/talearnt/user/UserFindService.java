@@ -86,7 +86,7 @@ public class UserFindService {
         phoneVerification.setIsPhoneVerified(false);
         phoneVerification.setVerificationCode(verificationCode);
         phoneVerification.setPhone(phoneNumber);
-        phoneVerification.setUserId(userQueryDTO.getUserId());
+        //phoneVerification.setUserId(userQueryDTO.getUserId());
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         log.info("휴대폰 문자 전송 후 데이터 : {}",response);

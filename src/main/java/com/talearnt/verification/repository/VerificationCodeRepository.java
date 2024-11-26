@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VerificationCodeRepository extends JpaRepository<PhoneVerification, String> {
-    PhoneVerification findByUserId(String userId);
+    PhoneVerification findByPhone(String phone);
 }
