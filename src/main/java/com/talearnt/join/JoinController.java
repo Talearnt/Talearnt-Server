@@ -82,7 +82,11 @@ public class JoinController {
     }
 
     @Operation(summary = "인증 문자 메세지 발송",
-            description = "UserId와 휴대폰 번호를 입력하면, 인증 문자 발송")
+            description = "휴대폰 번호를 입력하면, 인증 문자 발송")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "409", ref = "USER_PHONE_NUMBER_DUPLICATION")
+    })
     @PostMapping("/join/sms")    // 인증 문자메세지 발송
     public ResponseEntity<CommonResponse<String>> sendSMS(@RequestBody VerificationReqDTO verificationReqDTO){
         return verificationService.sendVerificationMessage(verificationReqDTO);
@@ -90,6 +94,12 @@ public class JoinController {
 
     @Operation(summary = "발송된 인증 메세지의 코드 확인",
             description = "인증 번호를 검증합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400-1", ref = "USER_PHONE_NUMBER_FORMAT_MISMATCH"),
+            @ApiResponse(responseCode = "400-2", ref = "INVALID_AUTH_CODE"),
+            @ApiResponse(responseCode = "404", ref = "AUTH_NOT_FOUND_PHONE_CODE"),
+    })
     @PostMapping("/join/verifyCode")    // User가 입력한 code 검증
     public ResponseEntity<CommonResponse<Boolean>> verifyCode(@RequestBody VerifyCodeReqDTO verifyCodeReqDTO){
         return verificationService.verifyCode(verifyCodeReqDTO);

@@ -59,9 +59,6 @@ public enum ErrorCode {
     DB_TIMEOUT_ERROR("504-DB-03", "데이터베이스 응답 시간이 초과되었습니다."),
     DATA_INTEGRITY_VIOLATION("500-DB-04", "데이터 무결성 위반 오류가 발생했습니다."),
     DB_INCORRECT_RESULT_SIZE("500-DB-05", "결과 데이터 크기가 예상과 다릅니다. 1개만 반환해야하는데 2개 이상이 반환되었습니다."),
-    // 파일 및 네트워크 관련 오류
-    FILE_NOT_FOUND("404-FILE-01", "요청된 파일을 찾을 수 없습니다."),
-    NETWORK_ERROR("503-NETWORK-01", "네트워크 오류로 인해 요청을 처리할 수 없습니다."),
 
     // 요청 관련 오류
     BAD_REQUEST("400-REQ-01", "잘못된 요청입니다."),

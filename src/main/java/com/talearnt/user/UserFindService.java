@@ -64,11 +64,11 @@ public class UserFindService {
      * - 휴대폰 문자 메세지 전송이 성공적으로 이루어졌는가?<br>
      * @param phoneNumber 회원의 휴대폰 번호
      * */
-    public ResponseEntity<CommonResponse<String>> sendAuthenticationCode(String phoneNumber){
+    public ResponseEntity<CommonResponse<String>> sendAuthenticationCode(String phoneNumber, String name){
         log.info("유저 아이디 찾기 문자 전송 시작 : {}",phoneNumber);
-        //유저의 아이디가 없기 때문에, 휴대폰 번호에 해당하는 유저를 가져오는 쿼리.
-        UserFindQueryDTO userQueryDTO = userQueryRepository.selectUserByPhoneNumber(phoneNumber)
-                .orElseThrow(()->new CustomRuntimeException(ErrorCode.USER_NOT_FOUND_PHONE_NUMBER));
+        //유저의 아이디가 없기 때문에, 휴대폰 번호와 이름에 해당하는 유저를 가져오는 쿼리.
+        UserFindQueryDTO userQueryDTO = userQueryRepository.selectUserByPhoneNumber(phoneNumber,name)
+                .orElseThrow(()->new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
 
         //정지된 회원이나, 탈퇴한 회원일 경우 Exception
         UserUtil.validateUserAuthority(userQueryDTO.getAuthority().name());
@@ -86,7 +86,6 @@ public class UserFindService {
         phoneVerification.setIsPhoneVerified(false);
         phoneVerification.setVerificationCode(verificationCode);
         phoneVerification.setPhone(phoneNumber);
-        //phoneVerification.setUserId(userQueryDTO.getUserId());
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         log.info("휴대폰 문자 전송 후 데이터 : {}",response);
@@ -202,10 +201,10 @@ public class UserFindService {
      * @return userFindResDTO
      * */
     @Transactional
-    public ResponseEntity<CommonResponse<UserFindResDTO>> sendEmailForPwd(String userId) throws MessagingException {
+    public ResponseEntity<CommonResponse<UserFindResDTO>> sendEmailForPwd(String userId, String phone) throws MessagingException {
         log.info("비밀번호 찾기 시작 : {}",userId);
         //아이디가 존재하는 지 확인
-        UserFindQueryDTO checkAuth = userQueryRepository.findUserIdAndAuthorityByUserId(userId)
+        UserFindQueryDTO checkAuth = userQueryRepository.findUserIdAndAuthorityByUserId(userId, phone)
                 .orElseThrow(()->{
                     log.error("비밀 번호 찾기 이메일 전송 실패 - 해당 회원을 찾을 수 없음 : {}",ErrorCode.USER_NOT_FOUND);
                     return new CustomRuntimeException(ErrorCode.USER_NOT_FOUND);
@@ -219,6 +218,7 @@ public class UserFindService {
 
         //데이터 베이스에 저장
         FindPasswrodUrl pwdUrl = UserMapper.INSTANCE.toFindPasswordUrlEntity(checkAuth.getUserId(), uuid);
+
         //저장한 후 값 추출
         pwdUrl = findPasswordUrlRepository.save(pwdUrl);
 

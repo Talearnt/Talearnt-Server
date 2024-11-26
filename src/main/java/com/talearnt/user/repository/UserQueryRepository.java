@@ -28,14 +28,15 @@ public class UserQueryRepository {
      * Old 유저는 어떻게 찾나요?<br>
      * Pass를 도입하기 전까지는 고객 문의로 찾아야 함.
      * */
-    public Optional<UserFindQueryDTO> selectUserByPhoneNumber(String phoneNumber){
+    public Optional<UserFindQueryDTO> selectUserByPhoneNumber(String phoneNumber, String name){
         QUser user = QUser.user;
         QUserFindQueryDTO res = new QUserFindQueryDTO(user.userId, user.authority);
         return Optional.ofNullable(
                 factory
                 .select(res)
                 .from(user)
-                .where(user.phone.eq(phoneNumber))
+                .where(user.phone.eq(phoneNumber)
+                        .and(user.name.eq(name)))
                 .orderBy(user.registeredAt.desc())
                 .fetchFirst()
         );
@@ -62,14 +63,15 @@ public class UserQueryRepository {
      * 찾은 아이디와 권한을 리턴한다.<br>
      * 비즈니스 로직에서 권한을 검사하여, 정지,탈퇴를 판별한다.
      * */
-    public Optional<UserFindQueryDTO> findUserIdAndAuthorityByUserId(String userId){
+    public Optional<UserFindQueryDTO> findUserIdAndAuthorityByUserId(String userId, String phone){
         QUser user = QUser.user;
         QUserFindQueryDTO queryDTO = new QUserFindQueryDTO(user.userId, user.authority);
         return Optional.ofNullable(
                 factory
                         .select(queryDTO)
                         .from(user)
-                        .where(user.userId.eq(userId))
+                        .where(user.userId.eq(userId)
+                                .and(user.phone.eq(phone)))
                         .orderBy(user.registeredAt.desc())
                         .fetchFirst()
         );
