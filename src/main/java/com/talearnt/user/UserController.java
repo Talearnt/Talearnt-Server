@@ -6,6 +6,7 @@ import com.talearnt.enums.common.Regex;
 import com.talearnt.user.reponse.UserFindResDTO;
 import com.talearnt.user.request.CheckUserPwdReqDTO;
 import com.talearnt.user.request.CheckUserVerificationCodeReqDTO;
+import com.talearnt.user.request.FindByPhoneReqDTO;
 import com.talearnt.user.request.TestChangePwdReqDTO;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.valid.DynamicValid;
@@ -44,13 +45,15 @@ public class UserController {
     @Operation(summary = "아이디 찾기 1. 인증 번호 전송" ,description = "유저의 번호를 가지고, 인증 번호를 만들어 문자 전송")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상 접수(이통사로 접수 예정)"),
-            @ApiResponse(responseCode = "400", ref = "USER_PHONE_NUMBER_FORMAT_MISMATCH"),
-            @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND_PHONE_NUMBER"),
+            @ApiResponse(responseCode = "400-1", ref = "USER_PHONE_NUMBER_FORMAT_MISMATCH"),
+            @ApiResponse(responseCode = "400-2", ref = "USER_NAME_MISMATCH"),
+            @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND"),
     })
-    @GetMapping("/users/{phone}/verification-code")
-    public ResponseEntity<CommonResponse<String>> sendAuthenticationCode(@PathVariable @DynamicValid(errorCode = ErrorCode.USER_PHONE_NUMBER_FORMAT_MISMATCH,pattern = Regex.PHONE_NUMBER)
-                                                                             String phone){
-        return findService.sendAuthenticationCode(phone);
+    @PostMapping("/users/{name}/verification-code")
+    public ResponseEntity<CommonResponse<String>> sendAuthenticationCode(@RequestBody @Valid FindByPhoneReqDTO phoneReqDTO,
+                                                                         @PathVariable @DynamicValid(errorCode = ErrorCode.USER_NAME_MISMATCH, pattern = Regex.NAME)
+                                                                         String name){
+        return findService.sendAuthenticationCode(phoneReqDTO.getPhone(), name);
     }
 
     @Operation(summary = "아이디 찾기 2. 인증 번호 검증",description = "휴대폰 번호와 인증 번호를 넘기면 검증 시작")
@@ -90,11 +93,12 @@ public class UserController {
             @ApiResponse(responseCode = "400-3", ref = "USER_SUSPENDED"),
             @ApiResponse(responseCode = "500", ref = "MAIL_FAILED_RESPONSE"),
     })
-    @GetMapping("/users/{userId}/email")
-    public ResponseEntity<CommonResponse<UserFindResDTO>> chekcUserIdAndSendEmail(@PathVariable
-                                                                                        @DynamicValid(errorCode = ErrorCode.USER_ID_NOT_EMAIL_FORMAT,pattern = Regex.EMAIL)
-                                                                                        String userId) throws MessagingException {
-        return findService.sendEmailForPwd(userId);
+    @PostMapping("/users/{userId}/email")
+    public ResponseEntity<CommonResponse<UserFindResDTO>> chekcUserIdAndSendEmail(@RequestBody @Valid FindByPhoneReqDTO phoneReqDTO,
+                                                                                  @PathVariable
+                                                                                  @DynamicValid(errorCode = ErrorCode.USER_ID_NOT_EMAIL_FORMAT,pattern = Regex.EMAIL)
+                                                                                  String userId) throws MessagingException {
+        return findService.sendEmailForPwd(userId, phoneReqDTO.getPhone());
     }
 
 
