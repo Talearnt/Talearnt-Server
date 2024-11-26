@@ -16,6 +16,7 @@ public enum Regex {
     VERSION("^[0-9]+\\.[0-9]+$"),
     AUTH_CODE("^[0-9]{4}$"),
     CATEGORY_CODE("^[0-9]{4,}$"),
-    CATEGORY_NAME("^[a-zA-Z0-9/ 가-힣]{2,}$");
+    CATEGORY_NAME("^[a-zA-Z0-9/ 가-힣]{2,}$"),
+    NAME("^[가-힣]{2,5}$");
     private final String pattern;
 }
