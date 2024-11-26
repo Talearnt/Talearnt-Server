@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @RestController
-@RequestMapping("/v1/api/admin/*")
+@RequestMapping("/v1/admin/*")
 public @interface RestAdminControllerV1 {
 }
