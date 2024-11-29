@@ -2,6 +2,7 @@ package com.talearnt.admin.category;
 
 import com.talearnt.admin.category.request.BigCategoryReqDTO;
 import com.talearnt.admin.category.request.TalentCategoryReqDTO;
+import com.talearnt.admin.category.response.CategoryListResDTO;
 import com.talearnt.admin.category.service.CategoryService;
 import com.talearnt.admin.category.service.TalentCategoryService;
 import com.talearnt.util.response.CommonResponse;
@@ -13,8 +14,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 @RestAdminControllerV1
 @RequiredArgsConstructor
@@ -38,7 +42,7 @@ public class CategoryController {
     }
 
 
-    @Operation(summary = "재능 분류 1. 키워드 추가", description = "재능 분류 키워드를 추가합니다. (관리자 권한 - 미구현)")
+    @Operation(summary = "재능 분류 1. 키워드 추가", description = "재능 분류 키워드를 추가합니다. (관리자 권한 - 미구현) 디자인에 따라서 대분류 키워드 추가 부분에 통합될 수 있음")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "400-1", ref = "KEYWORD_CODE_MISMATCH"),
@@ -50,6 +54,11 @@ public class CategoryController {
     @PostMapping("/keywords/talent-categories")
     public ResponseEntity<CommonResponse<String>> addTalenrtCategoryKeyword(@RequestBody @Valid TalentCategoryReqDTO talentCategoryReqDTO){
         return CommonResponse.success(talentCategoryService.addTalentCategoryKeyword(talentCategoryReqDTO));
+    }
+
+    @GetMapping("/keywords")
+    public ResponseEntity<CommonResponse<List<CategoryListResDTO>>> getAllCategories(){
+        return CommonResponse.success(talentCategoryService.getAllCategories());
     }
 
 }

@@ -3,14 +3,18 @@ package com.talearnt.admin.category.service;
 import com.talearnt.admin.category.CategoryMapper;
 import com.talearnt.admin.category.entity.TalentCategory;
 import com.talearnt.admin.category.repository.BigCategoryRepository;
+import com.talearnt.admin.category.repository.CategoryQueryRepository;
 import com.talearnt.admin.category.repository.TalentCategoryRepository;
 import com.talearnt.admin.category.request.TalentCategoryReqDTO;
+import com.talearnt.admin.category.response.CategoryListResDTO;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.util.exception.CustomRuntimeException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Log4j2
@@ -19,6 +23,7 @@ public class TalentCategoryService {
 
     private final BigCategoryRepository bigCategoryRepository;
     private final TalentCategoryRepository talentCategoryRepository;
+    private final CategoryQueryRepository categoryQueryRepository;
 
     /** 재능 분류 키워드 추가<br>
      * 조건 <br>
@@ -51,6 +56,20 @@ public class TalentCategoryService {
         talentCategoryRepository.save(talentCategoryEntity);
         log.info("재능 키워드 추가 끝");
         return "재능 키워드 코드 : "+talentCategoryReqDTO.getTalentCode()+", 재능 분류 키워드 이름 : "+talentCategoryReqDTO.getTalentName()+" 이 추가 되었습니다.";
+    }
+
+    /** 모든 키워드 목록을 불러온다.<br>
+     * 조건<br>
+     * 1. 대분류 키워드가 활성화되어 있는가?<br>
+     * 2. 대분류에 속한 재능 키워드가 활성화 되어있는가?<br>
+     * */
+    public List<CategoryListResDTO> getAllCategories(){
+        log.info("모든 카테고리 가져오기 시작");
+
+        List<CategoryListResDTO> result = categoryQueryRepository.getAllCategories();
+
+        log.info("모든 카테고리 가져오기 끝");
+        return result;
     }
 
 }
