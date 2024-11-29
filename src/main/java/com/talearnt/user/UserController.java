@@ -1,8 +1,11 @@
 package com.talearnt.user;
 
 
+import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.user.request.MyTalentsReqDTO;
 import com.talearnt.user.request.TestChangePwdReqDTO;
 import com.talearnt.util.response.CommonResponse;
+import com.talearnt.util.valid.ListValid;
 import com.talearnt.util.version.RestControllerV1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 @Tag(name = "Users",description = "유저 관련")
 @RestControllerV1
@@ -28,11 +33,12 @@ public class UserController {
         return userService.changeTestPwd(testChangePwdReqDTO);
     }
 
-
-
-
-
-
-
+    @PostMapping("/users/talents")
+    public ResponseEntity<CommonResponse<String>> addMyTalents(@RequestBody
+                                                                   @ListValid(errorCode = ErrorCode.POST_REQUEST_MISSING, minLength = 1)
+                                                                   @ListValid(errorCode = ErrorCode.POST_OVER_REQUEST_LENGTH, maxLength = 5)
+                                                                   List<MyTalentsReqDTO> talents){
+        return CommonResponse.success(userService.addMyTalents(talents));
+    }
 
 }

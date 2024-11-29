@@ -4,12 +4,12 @@ import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.service.common.MailService;
 import com.talearnt.auth.find.entity.FindPasswrodUrl;
 import com.talearnt.user.entity.User;
-import com.talearnt.user.query.UserFindQueryDTO;
+import com.talearnt.auth.find.query.AuthFindQueryDTO;
 import com.talearnt.auth.find.reponse.AuthFindResDTO;
 import com.talearnt.user.repository.FindPasswordUrlRepository;
 import com.talearnt.auth.find.repository.AuthFindQueryRepository;
 import com.talearnt.user.repository.UserRepository;
-import com.talearnt.user.request.CheckUserPwdReqDTO;
+import com.talearnt.auth.find.request.CheckUserPwdReqDTO;
 import com.talearnt.auth.find.request.CheckUserVerificationCodeReqDTO;
 import com.talearnt.util.common.MailUtil;
 import com.talearnt.util.common.UserUtil;
@@ -75,7 +75,7 @@ public class AuthFindService {
         }
 
         //유저의 아이디가 없기 때문에, 휴대폰 번호와 이름에 해당하는 유저를 가져오는 쿼리.
-        UserFindQueryDTO userQueryDTO = authFindQueryRepository.selectUserByPhoneNumber(phoneNumber,name)
+        AuthFindQueryDTO userQueryDTO = authFindQueryRepository.selectUserByPhoneNumber(phoneNumber,name)
                 .orElseThrow(()->{
                     log.error("유저 아이디 찾기 문자 전송 실패 - 해당 번호와 이름에 해당하는 유저 없음: {}",ErrorCode.USER_NOT_FOUND);
                     return new CustomRuntimeException(ErrorCode.USER_NOT_FOUND);
@@ -214,7 +214,7 @@ public class AuthFindService {
     public ResponseEntity<CommonResponse<AuthFindResDTO>> sendEmailForPwd(String userId, String phone) throws MessagingException {
         log.info("비밀번호 찾기 시작 : {}",userId);
         //아이디가 존재하는 지 확인
-        UserFindQueryDTO checkAuth = authFindQueryRepository.findUserIdAndAuthorityByUserId(userId, phone)
+        AuthFindQueryDTO checkAuth = authFindQueryRepository.findUserIdAndAuthorityByUserId(userId, phone)
                 .orElseThrow(()->{
                     log.error("비밀 번호 찾기 이메일 전송 실패 - 해당 회원을 찾을 수 없음 : {}",ErrorCode.USER_NOT_FOUND);
                     return new CustomRuntimeException(ErrorCode.USER_NOT_FOUND);

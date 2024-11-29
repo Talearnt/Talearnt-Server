@@ -28,7 +28,7 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final TalentCategoryService talentCategoryService;
 
-    @Operation(summary = "대분류 1. 키워드 추가", description = "대분류 키워드를 추가합니다. (관리자 권한 - 아직 미구현)")
+    @Operation(summary = "대분류 - 키워드 추가", description = "대분류 키워드를 추가합니다. (관리자 권한 - 아직 미구현)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "400-1", ref = "KEYWORD_CODE_MISMATCH"),
@@ -42,7 +42,7 @@ public class CategoryController {
     }
 
 
-    @Operation(summary = "재능 분류 1. 키워드 추가", description = "재능 분류 키워드를 추가합니다. (관리자 권한 - 미구현) 디자인에 따라서 대분류 키워드 추가 부분에 통합될 수 있음")
+    @Operation(summary = "재능 분류 - 키워드 추가", description = "재능 분류 키워드를 추가합니다. (관리자 권한 - 미구현) 디자인에 따라서 대분류 키워드 추가 부분에 통합될 수 있음")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "400-1", ref = "KEYWORD_CODE_MISMATCH"),
@@ -56,6 +56,7 @@ public class CategoryController {
         return CommonResponse.success(talentCategoryService.addTalentCategoryKeyword(talentCategoryReqDTO));
     }
 
+    @Operation(summary = "재능 분류 - 모든 키워드 목록 불러오기", description = "키워드 목록을 불러옵니다. Error가 없습니다.")
     @GetMapping("/keywords")
     public ResponseEntity<CommonResponse<List<CategoryListResDTO>>> getAllCategories(){
         return CommonResponse.success(talentCategoryService.getAllCategories());

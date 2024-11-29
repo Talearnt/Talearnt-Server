@@ -11,7 +11,7 @@ import com.talearnt.auth.login.company.LoginReqDTO;
 import com.talearnt.auth.login.kakao.KakaoLoginResDTO;
 import com.talearnt.auth.find.AuthFindService;
 import com.talearnt.auth.find.reponse.AuthFindResDTO;
-import com.talearnt.user.request.CheckUserPwdReqDTO;
+import com.talearnt.auth.find.request.CheckUserPwdReqDTO;
 import com.talearnt.auth.find.request.CheckUserVerificationCodeReqDTO;
 import com.talearnt.auth.find.request.FindByPhoneReqDTO;
 import com.talearnt.util.exception.CustomException;

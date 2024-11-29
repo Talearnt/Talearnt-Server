@@ -1,4 +1,4 @@
-package com.talearnt.user.query;
+package com.talearnt.auth.find.query;
 
 import com.querydsl.core.annotations.QueryProjection;
 import com.talearnt.enums.user.UserRole;
@@ -11,12 +11,12 @@ import lombok.ToString;
 @Builder
 @ToString
 @NoArgsConstructor
-public class UserFindQueryDTO {
+public class AuthFindQueryDTO {
     private String userId;
     private UserRole authority;
 
     @QueryProjection
-    public UserFindQueryDTO(String userId, UserRole authority) {
+    public AuthFindQueryDTO(String userId, UserRole authority) {
         this.userId = userId;
         this.authority = authority;
     }

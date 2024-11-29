@@ -1,4 +1,4 @@
-package com.talearnt.user.request;
+package com.talearnt.auth.find.request;
 
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.common.Regex;
