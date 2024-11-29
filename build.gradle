@@ -46,7 +46,8 @@ dependencies {
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 	// Dynamic Qeury를 위한 Query DSL
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-	implementation 'com.querydsl:querydsl-apt:5.0.0'
+	implementation 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+	implementation "com.querydsl:querydsl-collections:5.0.0"//GroupBy를 사용하기위함
 
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
@@ -64,7 +65,7 @@ sourceSets {
 
 
 compileJava {
-	options.compilerArgs << '-Aquerydsl.generatedAnnotationClass=javax.annotation.Generated'
+	options.compilerArgs << '-Aquerydsl.generatedAnnotationClass=jakarta.annotation.Generated'
 }
 
 tasks.withType(JavaCompile) {
