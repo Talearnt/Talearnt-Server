@@ -5,8 +5,8 @@ import com.talearnt.auth.find.entity.QFindPasswrodUrl;
 import com.talearnt.auth.find.reponse.QAuthFindResDTO;
 import com.talearnt.user.entity.QUser;
 import com.talearnt.user.entity.User;
+import com.talearnt.auth.find.query.AuthFindQueryDTO;
 import com.talearnt.user.query.QUserFindQueryDTO;
-import com.talearnt.user.query.UserFindQueryDTO;
 import com.talearnt.auth.find.reponse.AuthFindResDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -28,7 +28,7 @@ public class AuthFindQueryRepository {
      * Old 유저는 어떻게 찾나요?<br>
      * Pass를 도입하기 전까지는 고객 문의로 찾아야 함.
      * */
-    public Optional<UserFindQueryDTO> selectUserByPhoneNumber(String phoneNumber, String name){
+    public Optional<AuthFindQueryDTO> selectUserByPhoneNumber(String phoneNumber, String name){
         QUser user = QUser.user;
         QUserFindQueryDTO res = new QUserFindQueryDTO(user.userId, user.authority);
         return Optional.ofNullable(
@@ -63,7 +63,7 @@ public class AuthFindQueryRepository {
      * 찾은 아이디와 권한을 리턴한다.<br>
      * 비즈니스 로직에서 권한을 검사하여, 정지,탈퇴를 판별한다.
      * */
-    public Optional<UserFindQueryDTO> findUserIdAndAuthorityByUserId(String userId, String phone){
+    public Optional<AuthFindQueryDTO> findUserIdAndAuthorityByUserId(String userId, String phone){
         QUser user = QUser.user;
         QUserFindQueryDTO queryDTO = new QUserFindQueryDTO(user.userId, user.authority);
         return Optional.ofNullable(
