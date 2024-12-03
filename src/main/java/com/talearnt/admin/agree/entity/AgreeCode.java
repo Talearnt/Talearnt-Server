@@ -1,6 +1,6 @@
 package com.talearnt.admin.agree.entity;
 
-import com.talearnt.user.entity.User;
+import com.talearnt.user.infomation.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

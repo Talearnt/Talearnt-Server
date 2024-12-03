@@ -4,7 +4,7 @@ package com.talearnt.auth.verification;
 import com.talearnt.auth.verification.repository.VerificationCodeQueryRepository;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.auth.join.request.JoinReqDTO;
-import com.talearnt.user.repository.UserRepository;
+import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.auth.find.request.CheckUserVerificationCodeReqDTO;
 import com.talearnt.auth.find.request.FindByPhoneReqDTO;
 import com.talearnt.util.common.UserUtil;

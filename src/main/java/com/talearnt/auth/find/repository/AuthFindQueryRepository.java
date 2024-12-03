@@ -2,11 +2,11 @@ package com.talearnt.auth.find.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.auth.find.entity.QFindPasswrodUrl;
+import com.talearnt.auth.find.query.QAuthFindQueryDTO;
 import com.talearnt.auth.find.reponse.QAuthFindResDTO;
-import com.talearnt.user.entity.QUser;
-import com.talearnt.user.entity.User;
+import com.talearnt.user.infomation.entity.QUser;
+import com.talearnt.user.infomation.entity.User;
 import com.talearnt.auth.find.query.AuthFindQueryDTO;
-import com.talearnt.user.query.QUserFindQueryDTO;
 import com.talearnt.auth.find.reponse.AuthFindResDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -30,7 +30,7 @@ public class AuthFindQueryRepository {
      * */
     public Optional<AuthFindQueryDTO> selectUserByPhoneNumber(String phoneNumber, String name){
         QUser user = QUser.user;
-        QUserFindQueryDTO res = new QUserFindQueryDTO(user.userId, user.authority);
+        QAuthFindQueryDTO res = new QAuthFindQueryDTO(user.userId, user.authority);
         return Optional.ofNullable(
                 factory
                 .select(res)
@@ -65,7 +65,7 @@ public class AuthFindQueryRepository {
      * */
     public Optional<AuthFindQueryDTO> findUserIdAndAuthorityByUserId(String userId, String phone){
         QUser user = QUser.user;
-        QUserFindQueryDTO queryDTO = new QUserFindQueryDTO(user.userId, user.authority);
+        QAuthFindQueryDTO queryDTO = new QAuthFindQueryDTO(user.userId, user.authority);
         return Optional.ofNullable(
                 factory
                         .select(queryDTO)

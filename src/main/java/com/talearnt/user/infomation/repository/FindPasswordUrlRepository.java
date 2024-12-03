@@ -1,4 +1,4 @@
-package com.talearnt.user.repository;
+package com.talearnt.user.infomation.repository;
 
 import com.talearnt.auth.find.entity.FindPasswrodUrl;
 import org.springframework.data.jpa.repository.JpaRepository;

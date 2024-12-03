@@ -1,7 +1,7 @@
 package com.talearnt.util.common;
 
 import com.talearnt.enums.common.ErrorCode;
-import com.talearnt.user.repository.UserRepository;
+import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
 import lombok.extern.log4j.Log4j2;
