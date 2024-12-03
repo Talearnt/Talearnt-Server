@@ -1,8 +1,8 @@
 package com.talearnt.util.jwt;
 
 import com.talearnt.enums.common.ErrorCode;
-import com.talearnt.user.entity.User;
-import com.talearnt.user.repository.UserRepository;
+import com.talearnt.user.infomation.entity.User;
+import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.auth.login.company.LoginMapper;
 import com.talearnt.util.exception.CustomRuntimeException;
 import lombok.RequiredArgsConstructor;

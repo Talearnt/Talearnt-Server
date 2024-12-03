@@ -1,6 +1,6 @@
 package com.talearnt.post.exchange.entity;
 
-import com.talearnt.user.entity.MyTalent;
+import com.talearnt.user.talent.entity.MyTalent;
 import jakarta.persistence.*;
 import lombok.*;
 

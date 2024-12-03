@@ -4,7 +4,7 @@ import com.talearnt.admin.agree.entity.Agree;
 import com.talearnt.auth.join.request.AgreeJoinReqDTO;
 import com.talearnt.auth.join.request.JoinReqDTO;
 import com.talearnt.auth.join.request.KakaoJoinReqDTO;
-import com.talearnt.user.entity.User;
+import com.talearnt.user.infomation.entity.User;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 

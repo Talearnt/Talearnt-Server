@@ -79,6 +79,7 @@ public enum ErrorCode {
     KEYWORD_CATEGORY_CODE_MISMATCH("400-KEYWORD-05","대분류 키워드 코드가 없습니다."),
     KEYWORD_TALENT_CODE_DUPLICATION("400-KEYWORD-06","재능 분류 키워드 코드가 중복됩니다."),
     KEYWORD_TALENT_NAME_DUPLICATION("400-KEYWORD-07","재능 분류 키워드 이름이 중복되었습니다. 다른 이름을 입력하세요."),
+    KEYWORD_CATEGORY_NOT_FOUND("404-KEYWORD-08","존재하지 않은 키워드입니다."),
 
     //게시글 관련 오류
     POST_TITLE_OVER_LENGTH("400-POST-01", "제목 글자 수 제한을 확인해주세요."),

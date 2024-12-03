@@ -1,6 +1,6 @@
-package com.talearnt.user.repository;
+package com.talearnt.user.talent.repository;
 
-import com.talearnt.user.entity.MyTalent;
+import com.talearnt.user.talent.entity.MyTalent;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MyTalentRepository extends JpaRepository<MyTalent, Long> {

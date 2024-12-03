@@ -2,7 +2,7 @@ package com.talearnt.post.exchange.entity;
 
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
-import com.talearnt.user.entity.User;
+import com.talearnt.user.infomation.entity.User;
 import com.talearnt.util.converter.post.ExchangePostStatusConverter;
 import com.talearnt.util.converter.post.ExchangeTypeConverter;
 import jakarta.persistence.*;
