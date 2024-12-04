@@ -1,6 +1,8 @@
 package com.talearnt.auth.verification;
 
 
+import com.talearnt.auth.verification.Entity.IpTrace;
+import com.talearnt.auth.verification.repository.IpTraceRepository;
 import com.talearnt.auth.verification.repository.VerificationCodeQueryRepository;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.auth.join.request.JoinReqDTO;
@@ -24,6 +26,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -32,10 +38,78 @@ public class VerificationService {
     @Value("${coolsms.fromNumber}")
     private String fromNumber;
 
+
+    //인증 Repo,Services
     private final DefaultMessageService messageService;
     private final VerificationCodeRepository verificationCodeRepository;
     private final VerificationCodeQueryRepository verificationCodeQueryRepository;
     private final UserRepository userRepository;
+    private final IpTraceRepository ipTraceRepository;
+
+    /**1분 이내 5번 요청했을 경우에 아이피 10분간 차단하는 METHOD
+     * */
+    public boolean isAllowedIp(String ip){
+        log.info("SMS 요청 아이피 5회 이하 요청 검증 시작 : {}",ip);
+        //DB에 아이피 값 가져오기
+        Optional<IpTrace> optional = ipTraceRepository.findByIp(ip);
+
+        //시간 값 설정
+        LocalDateTime currentTime = LocalDateTime.now();//현재 시간
+        long limitMinutes = 1; // 1분 이내 6번 이상 요청했을 경우 검증하기 위한 변수
+        long blockMinutes = 10; //10분이 지났을 경우 차단 해제 하기 위한 변수
+
+        //아이피가 있을 경우 Update
+        if (optional.isPresent()){
+            IpTrace ipEntity = optional.get();
+
+            // 현재 시간과 마지막 요청 시간의 사이 값을 구한 변수
+            long betweenMintues = Duration.between(ipEntity.getLastRequestTime(), currentTime).toMinutes();
+
+            //횟수 6번 이상인 IP가 요청을 10분이 지나기 전에 요청을 하면 차단
+            if ( ipEntity.getRequestCount() > 5 && betweenMintues > blockMinutes ){
+                log.info("SMS 요청 아이피 5회 이하 요청 검증 실패 - 10분이 지나기 전에 요청이 들어옴");
+                return false;
+            }
+
+            //10분이 지났을 경우 차단 해제
+            if (betweenMintues > blockMinutes){
+                ipEntity.setRequestCount(1);
+                ipTraceRepository.save(ipEntity);
+                log.info("SMS 요청 아이피 5회 이하 요청 검증 끝 - 10분이 지나 차단 해제");
+                return true;
+            }
+
+            //1분 내로
+            if (betweenMintues <= limitMinutes){
+                //요청횟수가 6번 이상일 경우 차단
+                if(ipEntity.getRequestCount() > 5){
+                    log.info("SMS 요청 아이피 5회 이하 요청 검증 실패 - 1분 내로 6번 이상 요청이 들어옴");
+                    return false;
+                }
+
+                //아닐 경우 요청 횟수 증가
+                ipEntity.setRequestCount(ipEntity.getRequestCount()+1);
+            } else { //1분이 지났다면
+                //요청 횟수 초기화
+                ipEntity.setRequestCount(1);
+            }
+            
+            //요청할 수 있음
+            log.info("SMS 요청 아이피 5회 이하 요청 검증 끝 - 기존에 있던 아이피에서 요청이 들어옴");
+            ipTraceRepository.save(ipEntity);
+            return true;
+
+        }
+        //아이피가 없을 경우 새롭게 IP추가
+        IpTrace newIp = new IpTrace();
+        newIp.setIp(ip);
+        newIp.setRequestCount(1);
+        ipTraceRepository.save(newIp);
+        
+        log.info("SMS 요청 아이피 5회 이하 요청 검증 끝 - 새로운 아이피에서 요청이 들어옴");
+        return true;
+    }
+
 
     // coolsms 인증 문자 보내기
     @Transactional
