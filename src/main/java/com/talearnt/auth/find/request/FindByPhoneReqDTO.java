@@ -3,6 +3,7 @@ package com.talearnt.auth.find.request;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.common.Regex;
 import com.talearnt.util.valid.DynamicValid;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Builder
@@ -15,4 +16,6 @@ public class FindByPhoneReqDTO {
     private String type;
     @DynamicValid(errorCode = ErrorCode.USER_PHONE_NUMBER_FORMAT_MISMATCH,pattern = Regex.PHONE_NUMBER)
     private String phone;
+
+    private String name;
 }
