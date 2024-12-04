@@ -37,11 +37,13 @@ public class JoinService {
 
     /**아이디 중복 체크*/
     public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedUserId(String userId) {
+        log.info("아이디 중복 체크 시작과 동시에 끝 : {} ",userId);
         return CommonResponse.success(userRepository.existsByUserId(userId));
     }
 
     /**닉네임 중복 체크*/
     public Boolean checkDuplicatedNickname(String nickname){
+        log.info("닉네임 중복 체크 시작과 동시에 끝 : {} ",nickname);
         return userRepository.existsByNickname(nickname);
     }
 

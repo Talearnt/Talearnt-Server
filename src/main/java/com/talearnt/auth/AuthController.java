@@ -55,13 +55,13 @@ public class AuthController implements AuthApi{
     private final AuthFindService findService;
 
     /*000000000000000000000000000000 회원가입 관련 시작 000000000000000000000000000000*/
-    @GetMapping("/auth/users/{userId}")
+    @GetMapping("/auth/users/id/{userId}")
     public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedUserID(@PathVariable @DynamicValid(errorCode = ErrorCode.USER_ID_NOT_EMAIL_FORMAT, pattern = Regex.EMAIL)
                                                                          String userId){
         return joinService.checkDuplicatedUserId(userId);
     }
 
-    @GetMapping("/auth/users/{nickname}")
+    @GetMapping("/auth/users/nickname/{nickname}")
     public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedNickname(@PathVariable @DynamicValid(errorCode = ErrorCode.DUPLICATE_USER_NICKNAME,pattern = Regex.NICKNAME)
                                                                            String nickname){
         return CommonResponse.success(joinService.checkDuplicatedNickname(nickname));
