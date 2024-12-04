@@ -66,14 +66,15 @@ public class VerificationService {
             long betweenMintues = Duration.between(ipEntity.getLastRequestTime(), currentTime).toMinutes();
 
             //횟수 6번 이상인 IP가 요청을 10분이 지나기 전에 요청을 하면 차단
-            if ( ipEntity.getRequestCount() > 5 && betweenMintues > blockMinutes ){
+            if ( ipEntity.getRequestCount() >= 5 && betweenMintues <= blockMinutes ){
                 log.info("SMS 요청 아이피 5회 이하 요청 검증 실패 - 10분이 지나기 전에 요청이 들어옴");
                 return false;
             }
 
-            //10분이 지났을 경우 차단 해제
+            //10분이 지났을 경우 차단 해제 및 초기화
             if (betweenMintues > blockMinutes){
                 ipEntity.setRequestCount(1);
+                ipEntity.setLastRequestTime(currentTime);
                 ipTraceRepository.save(ipEntity);
                 log.info("SMS 요청 아이피 5회 이하 요청 검증 끝 - 10분이 지나 차단 해제");
                 return true;
@@ -81,14 +82,14 @@ public class VerificationService {
 
             //1분 내로
             if (betweenMintues <= limitMinutes){
+                //요청 횟수 증가
+                ipEntity.setRequestCount(ipEntity.getRequestCount()+1);
+
                 //요청횟수가 6번 이상일 경우 차단
                 if(ipEntity.getRequestCount() > 5){
                     log.info("SMS 요청 아이피 5회 이하 요청 검증 실패 - 1분 내로 6번 이상 요청이 들어옴");
                     return false;
                 }
-
-                //아닐 경우 요청 횟수 증가
-                ipEntity.setRequestCount(ipEntity.getRequestCount()+1);
             } else { //1분이 지났다면
                 //요청 횟수 초기화
                 ipEntity.setRequestCount(1);
@@ -96,6 +97,7 @@ public class VerificationService {
             
             //요청할 수 있음
             log.info("SMS 요청 아이피 5회 이하 요청 검증 끝 - 기존에 있던 아이피에서 요청이 들어옴");
+            ipEntity.setLastRequestTime(currentTime);
             ipTraceRepository.save(ipEntity);
             return true;
 
@@ -104,6 +106,7 @@ public class VerificationService {
         IpTrace newIp = new IpTrace();
         newIp.setIp(ip);
         newIp.setRequestCount(1);
+        newIp.setLastRequestTime(currentTime);
         ipTraceRepository.save(newIp);
         
         log.info("SMS 요청 아이피 5회 이하 요청 검증 끝 - 새로운 아이피에서 요청이 들어옴");
