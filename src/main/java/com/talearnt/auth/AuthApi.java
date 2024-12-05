@@ -153,7 +153,7 @@ public interface AuthApi {
                     "</ul>" +
                     "<hr />" +
                     "<p>회원가입의 경우 name 값이 없어도 됩니다.</p>" +
-                    "<p>문자 인증 1분 안에 5회 이상 요청할 경우 10분간 요청을 막습니다.(구현중)</p>")
+                    "<p>문자 인증 1분 안에 5회 이상 요청할 경우 10분간 요청을 막습니다.</p>")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상 접수(이통사로 접수 예정)"),
             @ApiResponse(responseCode = "400-1", ref = "USER_PHONE_NUMBER_FORMAT_MISMATCH"),
@@ -205,11 +205,10 @@ public interface AuthApi {
             description = "<h2>설명</h2>" +
                     "<p>아이디와 휴대폰 번호가 일치하는 회원이 있을 경우 이메일이 전송됩니다.</p>" +
                     "<hr/>" +
-                    "<h3>수정 예정</h3>" +
-                    "<p>각 이메일마다 <strong>style</strong> 적용 및 <strong>javascript</strong> 적용 기준이 다른 것을 확인했습니다.</p>" +
-                    "<p>Gmail 에서는 style이 제대로 적용되지 않습니다.</p>" +
-                    "<p>naver에서는 style이 적용됩니다.</p>" +
-                    "<p>이메일에서 스타일이 파괴되지 않는 규칙을 찾아 수정하겠습니다.</p>")
+                    "<h3>수정할 내용</h3>" +
+                    "<p>현재 로고 이미지와 고객센터 주소가 입력되어 있지 않습니다.</p>" +
+                    "<p>로고가 깨지고, 고객센터가 작동하지 않는 것이 정상입니다.</p>" +
+                    "<p>추후 URL 등록과 로고 업로드 후 적용시키겠습니다.</p>")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "400-1", ref = "USER_ID_NOT_EMAIL_FORMAT"),
@@ -226,6 +225,9 @@ public interface AuthApi {
             description = "<h2>내용</h2>\n" +
                     "<p>10분 이내로 비밀번호를 변경하지 않을 경우 변경이 불가합니다.</p>\n" +
                     "<p><code>no</code>와<code>uuid</code>를 Path로 보내주시면 됩니다.</p>\n" +
+                    "<p><strong>a 태그에 등록된 URL :</strong> http://localhost:5173/{no}/password/{uuid}</p>" +
+                    "<p>URL에 대해 경로 변경을 원하시면 말씀주세요.</p>" +
+                    "<p>localhost는 도메인 등록하면 변경할 내용입니다.</p>" +
                     "<h3>Body</h3>\n" +
                     "<ul>\n" +
                     "    <li>pw: 변경할 비밀번호</li>\n" +

@@ -8,24 +8,63 @@ public class MailUtil {
      * 나중에는 폰트와 크기 색상 변경 필요
      * */
     public static String MakeFindPasswrodMailForm(Long findPasswordUrlNo, String uuid){
-        String html = "<div style='padding: 0px 20px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 628px; height: 504px; '>\n" +
-                "    <div style='display: flex; align-items: center; justify-content: space-between; width: 100%; border-bottom: 1px solid #d0d5d8;'>\n" +
-                "        <img src='로고 주소'>\n" +
-                "        <a href='#' style='font-weight: 600; font-size: 20px; color:#000; text-decoration: none;'>고객 센터</a>\n" +
-                "    </div>\n" +
-                "    <div style='display: flex; flex-direction: column; align-items: center; justify-content: center;'>\n" +
-                "        <p style='font-size: 20px; font-weight: 600; margin:0px;'>비밀번호 재설정 인증 안내</h4>\n" +
-                "        <p style='font-size: 17px; font-weight: 550; margin:0px;'>비밀번호 재설정을 위한 인증 이메일입니다.</p>\n" +
-                "    </div>\n" +
-                "    <div style='width: 100%;display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #d0d5d8; background-color: #f7f8f8; width: 100%; height: 129px; border-radius: 10px; box-shadow: #d0d5d8 1px 3px 1px;'>\n" +
-                "        <p style='font-size: 15px; font-weight: 600; padding-bottom: 5px; margin: 0px;'>안녕하세요. talearnt입니다.</p>\n" +
-                "        <p style='margin: 0px;'>요청하신 <span style='color: #1b76ff; margin: 0px;'>비밀번호 재설정</span>을 위한 본인확인 메일입니다.</p>\n" +
-                "        <p style='margin: 0px;'><span style='color: #1b76ff; margin: 0px;'>비밀번호 재설정</span>을 하시려면 아래의 버튼을 클릭해 주세요.</p>\n" +
-                "    </div>\n" +
-                "   <div style='border:#1b76ff; width:580px; padding: 20px 20px; display: flex; align-items: center; justify-content: center; color: #fff; background-color: #1b76ff; text-decoration: none; border-radius: 10px;'>\n" +
-                "        <a href='http://localhost:5173/"+findPasswordUrlNo+"/password/"+uuid+"' style='color: #fff;text-decoration: none;'>비밀번호 재설정하러 가기</a>\n" +
-                "    </div>" +
-                "</div>";
+        //로고, 고객센터 주소 추가해야함.
+        String html = "<table role=\"presentation\" style=\"width: 100%; max-width: 628px; margin: 0 auto; border-spacing: 0; font-family: Arial, sans-serif;\">\n" +
+                "    <!-- Header -->\n" +
+                "    <tr>\n" +
+                "        <td style=\"padding: 20px; border-bottom: 1px solid #d0d5d8;\">\n" +
+                "            <table role=\"presentation\" style=\"width: 100%; border-spacing: 0;\">\n" +
+                "                <tr>\n" +
+                "                    <td>\n" +
+                "                        <img src=\"로고 주소\" alt=\"로고\" style=\"max-height: 50px; display: block;\">\n" +
+                "                    </td>\n" +
+                "                    <td style=\"text-align: right;\">\n" +
+                "                        <a href=\"#\" style=\"font-weight: 600; font-size: 20px; color: #000; text-decoration: none;\">고객 센터</a>\n" +
+                "                    </td>\n" +
+                "                </tr>\n" +
+                "            </table>\n" +
+                "        </td>\n" +
+                "    </tr>\n" +
+                "\n" +
+                "    <!-- Title Section -->\n" +
+                "    <tr>\n" +
+                "        <td style=\"padding: 20px; text-align: center;\">\n" +
+                "            <p style=\"font-size: 20px; font-weight: 600; margin: 0;\">비밀번호 재설정 인증 안내</p>\n" +
+                "            <p style=\"font-size: 17px; font-weight: 500; margin: 10px 0;\">비밀번호 재설정을 위한 인증 이메일입니다.</p>\n" +
+                "        </td>\n" +
+                "    </tr>\n" +
+                "\n" +
+                "    <!-- Message Box -->\n" +
+                "    <tr>\n" +
+                "        <td style=\"padding: 20px;\">\n" +
+                "            <table role=\"presentation\" style=\"width: 100%; border-spacing: 0; border: 1px solid #d0d5d8; background-color: #f7f8f8; border-radius: 10px;\">\n" +
+                "                <tr>\n" +
+                "                    <td style=\"padding: 20px; text-align: center;\">\n" +
+                "                        <p style=\"font-size: 15px; font-weight: 600; margin: 0;\">안녕하세요. talearnt입니다.</p>\n" +
+                "                        <p style=\"margin: 10px 0;\">요청하신 <span style=\"color: #1b76ff;\">비밀번호 재설정</span>을 위한 본인확인 메일입니다.</p>\n" +
+                "                        <p style=\"margin: 0;\">비밀번호 재설정을 하시려면 아래의 버튼을 클릭해 주세요.</p>\n" +
+                "                    </td>\n" +
+                "                </tr>\n" +
+                "            </table>\n" +
+                "        </td>\n" +
+                "    </tr>\n" +
+                "\n" +
+                "    <!-- Button -->\n" +
+                "    <tr>\n" +
+                "        <td style=\"padding: 20px; text-align: center;\">\n" +
+                "            <table role=\"presentation\" style=\"width: 100%; margin: 0 auto; border-spacing: 0;\">\n" +
+                "                <tr>\n" +
+                "                    <td style=\"background-color: #1b76ff; border-radius: 10px; text-align: center;\">\n" +
+                "                        <a href=\"http://localhost:5173/"+findPasswordUrlNo+"/password/"+uuid+"\"\n" +
+                "                           style=\"display: inline-block; padding: 15px; color: #fff; background-color: #1b76ff; text-decoration: none; border-radius: 10px; font-size: 16px; text-align: center; font-weight: bold;\">\n" +
+                "                            비밀번호 재설정하러 가기\n" +
+                "                        </a>\n" +
+                "                    </td>\n" +
+                "                </tr>\n" +
+                "            </table>\n" +
+                "        </td>\n" +
+                "    </tr>\n" +
+                "</table>";
         return html;
     }
 }
