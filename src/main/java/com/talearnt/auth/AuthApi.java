@@ -66,8 +66,11 @@ public interface AuthApi {
             description = "<h2>내용</h2>\n" +
                     "<p>휴대폰 번호 인증이 완료된 후에 가입이 가능합니다.</p>\n" +
                     "<hr>\n" +
-                    "<p>필수 이용 약관은 true로 보내야합니다.</p>\n" +
-                    "<p>이용 약관 코드는 <code>관리자 2. 이용약관</code> 에서 활성화된 이용 약관을 호출하여 설정해주시길 바랍니다.</p>")
+                    "<p>필수 이용 약관도 true 로 반드시 보내주셔야 합니다.</p>" +
+                    "<p>이용 약관 코드 ID는 <code>관리자 페이지 : 관리자 전용 - 활성화된 이용 약관</code> 에서 활성화된 이용 약관 내용을 참고하여 주시길 바랍니다.</p>" +
+                    "<p><code>관리자 페이지 : 관리자 전용 - 활성화된 이용 약관</code> 은 따로 호출 하지 않고, 하드 코딩으로 작업해주시길 바랍니다.</p>" +
+                    "<p>이용 약관 제목, 버전, 내용, 등록 일시는 문제 발생 시 증빙서류로 가지고 있어야 한다고 합니다.</p>" +
+                    "<p><strong>DB 에는 존재하지만, 회원가입 시 호출하여 등록하지 않고 하드코딩으로 작업해주시길 바랍니다.</strong></p>")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원가입 성공"),
             @ApiResponse(responseCode = "400-1", ref = "UNVERIFIED_AUTH_CODE"),
@@ -88,8 +91,11 @@ public interface AuthApi {
 
     @Operation(summary = "카카오톡 회원가입",
             description = "<h2>내용</h2>\n" +
-                    "<p>필수 이용 약관은 true로 보내야합니다.</p>\n" +
-                    "<p>이용 약관 코드는 <code>관리자 2. 이용약관</code> 에서 활성화된 이용 약관을 호출하여 설정해주시길 바랍니다.</p>")
+                    "<p>필수 이용 약관도 true 로 반드시 보내주셔야 합니다.</p>" +
+                    "<p>이용 약관 코드 ID는 <code>관리자 페이지 : 관리자 전용 - 활성화된 이용 약관</code> 에서 활성화된 이용 약관 내용을 참고하여 주시길 바랍니다.</p>" +
+                    "<p><code>관리자 페이지 : 관리자 전용  활성화된 이용 약관</code> 은 따로 호출 하지 않고, 하드 코딩으로 작업합니다.</p>" +
+                    "<p>이용 약관 제목, 버전, 내용은 문제 발생 시 증빙서류로 가지고 있어야 한다고 합니다.</p>" +
+                    "<p><strong>DB 에는 존재하지만, 회원가입 시 호출하여 등록하지 않고 하드코딩으로 작업해주시길 바랍니다.</strong></p>")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "카카오톡 회원가입 성공"),
             @ApiResponse(responseCode = "400-1", ref = "UNVERIFIED_AUTH_CODE"),

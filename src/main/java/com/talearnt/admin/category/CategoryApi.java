@@ -26,7 +26,7 @@ public interface CategoryApi {
                     "</ul>"
     )
     @Tags(
-            @Tag(name = "관리자 1. 재능 키워드", description = "대분류,재능 키워드 추가 O")
+            @Tag(name = "관리자 페이지")
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
@@ -55,7 +55,7 @@ public interface CategoryApi {
                     "<p>디자인 페이지에 따라, 키워드 추가 부분은 수정될 수 있습니다.</p>"
     )
     @Tags(
-            @Tag(name = "관리자 1. 재능 키워드")
+            @Tag(name = "관리자 페이지")
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),

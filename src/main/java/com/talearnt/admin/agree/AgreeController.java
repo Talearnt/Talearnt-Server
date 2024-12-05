@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@Tag(name = "관리자 2. 이용약관", description = "추가,목록 : O, 보기,수정,삭제 : X")
+@Tag(name = "관리자 페이지")
 @RestAdminControllerV1
 @RequiredArgsConstructor
 public class AgreeController implements AgreeApi {
