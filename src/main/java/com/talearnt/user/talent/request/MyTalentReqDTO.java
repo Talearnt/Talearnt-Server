@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredJwtValueDTO
-public class MyTalentDTO {
+public class MyTalentReqDTO {
 
     @Schema(hidden = true)
     private UserInfo userInfo;

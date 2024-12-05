@@ -1,14 +1,13 @@
 package com.talearnt.user;
 
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
-import com.talearnt.user.talent.request.MyTalentDTO;
+import com.talearnt.user.talent.request.MyTalentReqDTO;
 import com.talearnt.util.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 public interface UserApi {
@@ -33,6 +32,6 @@ public interface UserApi {
             @ApiResponse(responseCode = "400-2", ref = "POST_OVER_REQUEST_LENGTH"),
             @ApiResponse(responseCode = "404", ref = "KEYWORD_CATEGORY_NOT_FOUND"),
     })
-    public ResponseEntity<CommonResponse<String>> addMyTalents(@RequestBody @Valid MyTalentDTO talents);
+    public ResponseEntity<CommonResponse<String>> addMyTalents(@RequestBody @Valid MyTalentReqDTO talents);
 
 }
