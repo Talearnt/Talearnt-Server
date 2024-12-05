@@ -83,6 +83,7 @@ public interface AuthApi {
             @ApiResponse(responseCode = "400-8", ref = "USER_REQUIRED_NOT_AGREE"),
             @ApiResponse(responseCode = "400-9", ref = "USER_NICKNAME_MISMATCH"),
             @ApiResponse(responseCode = "400-10", ref = "USER_NAME_MISMATCH"),
+            @ApiResponse(responseCode = "400-11", ref = "TERMS_INVALID_VERSION"),
             @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND_AGREE"),
             @ApiResponse(responseCode = "409", ref = "USER_PHONE_NUMBER_DUPLICATION"),
     })
@@ -105,6 +106,7 @@ public interface AuthApi {
             @ApiResponse(responseCode = "400-5", ref = "DUPLICATE_USER_ID"),
             @ApiResponse(responseCode = "400-6", ref = "USER_REQUIRED_NOT_AGREE"),
             @ApiResponse(responseCode = "400-7", ref = "USER_NICKNAME_MISMATCH"),
+            @ApiResponse(responseCode = "400-8", ref = "TERMS_INVALID_VERSION"),
             @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND_AGREE"),
             @ApiResponse(responseCode = "409", ref = "USER_PHONE_NUMBER_DUPLICATION"),
     })

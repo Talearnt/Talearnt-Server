@@ -134,18 +134,28 @@ public class JoinService {
     }
 
     /**
-     * 이용약관 등록
+     * 이용약관 등록<br>
+     * 개선 점 for문을 돌면서 Save를 하고 있는데,<br>
+     * 나중에는 모든 활성화된 이용약관을 가져오고, For문으로 유효성 검사를 거친다음<br>
+     * DB에 저장하는 것으로 변경
      */
     private void saveTerms(List<AgreeJoinReqDTO> agreeJoinReqDTOS, User user) {
+        log.info("이용 약관 동의 등록 시작 : {}, {}",agreeJoinReqDTOS,user);
         //이용 약관 저장
         for (AgreeJoinReqDTO agreeReqDTO : agreeJoinReqDTOS) {
             //약관 코드 ID가 없을 경우 Exception
             AgreeCode agreeCode = agreeCodeRepository.findById(agreeReqDTO.getAgreeCodeId())
                     .orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND_AGREE));
 
+            //등록 또는 활성화 되지 않은 이용약관 ID가 넘어왔을 경우
+            if(!agreeCode.isActive()){
+                log.error("이용 약관 동의 등록 실패 - 유효하지 않은 이용약관 ID가 넘어옴 : {}",ErrorCode.TERMS_INVALID_VERSION);
+                throw new CustomRuntimeException(ErrorCode.TERMS_INVALID_VERSION);
+            }
+
             //필수 약관을 동의하지 않았을 경우
             if (agreeCode.isMandatory() && !agreeReqDTO.isAgree()) {
-                log.error("약관 동의 여부 : {}", agreeReqDTO);
+                log.error("이용 약관 동의 등록 실패 - 필수 약관 동의 안함 : {}", agreeReqDTO);
                 throw new CustomRuntimeException(ErrorCode.USER_REQUIRED_NOT_AGREE);
             }
 
@@ -153,6 +163,7 @@ public class JoinService {
             Agree agree = JoinMapper.INSTANCE.toAgreeEntity(agreeReqDTO);
             agree.setUser(user);
             agreeRepository.save(agree);
+            log.info("이용 약관 동의 등록 끝");
         }
     }
 
