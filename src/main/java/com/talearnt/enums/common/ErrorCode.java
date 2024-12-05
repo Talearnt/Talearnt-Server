@@ -40,7 +40,7 @@ public enum ErrorCode {
     DUPLICATE_USER_ID("400-USER-02", "해당 아이디는 이미 존재합니다."),
     INVALID_USER_INPUT("400-USER-03", "입력된 사용자 정보가 유효하지 않습니다."),
     USER_SUSPENDED("403-USER-04", "이 계정은 정지 상태입니다."),
-    DUPLICATE_USER_NICKNAME("400-USER-05", "해당 닉네임은 이미 존재합니다."),
+    DUPLICATE_USER_NICKNAME("400-USER-05", "이미 등록된 닉네임입니다."),
     USER_ID_NOT_EMAIL_FORMAT("400-USER-06", "올바른 이메일 형식으로 입력해 주세요!"),
     USER_PHONE_NUMBER_FORMAT_MISMATCH("400-USER-07", "휴대폰 번호를 정확히 입력해 주세요!"),
     USER_PASSWORD_PATTERN_MISMATCH("400-USER-08", "영문,숫자,특수 문자를 반드시 포함한 비밀번호를 입력해 주세요!"),
@@ -52,7 +52,7 @@ public enum ErrorCode {
     USER_NOT_FOUND_PHONE_NUMBER("404-USER-14", "해당 휴대폰 번호로 가입한 회원이 없습니다."),
     USER_WITH_DRAWN("403-USER-15", "해당 아이디는 탈퇴한 회원입니다."),
     USER_PASSWROD_FAILED_DOUBLE_CHECK("400-USER-16", "두 개의 비밀번호가 일치하지 않습니다."),
-    USER_PHONE_NUMBER_DUPLICATION("409-USER-17","이미 해당 휴대폰 번호로 가입한 회원이 존재합니다."),
+    USER_PHONE_NUMBER_DUPLICATION("409-USER-17","이미 가입된 휴대폰 번호입니다."),
     USER_NAME_MISMATCH("400-USER-18","이름은 최소 2자, 최대 5자까지 입력 가능합니다."),
     USER_NICKNAME_MISMATCH("400-USER-19","닉네임은 최소 2자, 최대 12자까지 입력 가능합니다."),
 

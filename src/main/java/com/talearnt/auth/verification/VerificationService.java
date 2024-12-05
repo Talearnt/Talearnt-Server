@@ -57,6 +57,7 @@ public class VerificationService {
         LocalDateTime currentTime = LocalDateTime.now();//현재 시간
         long limitMinutes = 1; // 1분 이내 6번 이상 요청했을 경우 검증하기 위한 변수
         long blockMinutes = 10; //10분이 지났을 경우 차단 해제 하기 위한 변수
+        int limitCount = 5;
 
         //아이피가 있을 경우 Update
         if (optional.isPresent()){
@@ -66,7 +67,7 @@ public class VerificationService {
             long betweenMintues = Duration.between(ipEntity.getLastRequestTime(), currentTime).toMinutes();
 
             //횟수 6번 이상인 IP가 요청을 10분이 지나기 전에 요청을 하면 차단
-            if ( ipEntity.getRequestCount() >= 5 && betweenMintues <= blockMinutes ){
+            if ( ipEntity.getRequestCount() >= limitCount && betweenMintues <= blockMinutes ){
                 log.info("SMS 요청 아이피 5회 이하 요청 검증 실패 - 10분이 지나기 전에 요청이 들어옴");
                 return false;
             }
@@ -86,7 +87,7 @@ public class VerificationService {
                 ipEntity.setRequestCount(ipEntity.getRequestCount()+1);
 
                 //요청횟수가 6번 이상일 경우 차단
-                if(ipEntity.getRequestCount() > 5){
+                if(ipEntity.getRequestCount() > limitCount){
                     log.info("SMS 요청 아이피 5회 이하 요청 검증 실패 - 1분 내로 6번 이상 요청이 들어옴");
                     return false;
                 }
