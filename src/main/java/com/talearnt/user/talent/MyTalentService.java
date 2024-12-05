@@ -4,16 +4,17 @@ import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.user.talent.entity.MyTalent;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
 import com.talearnt.user.talent.repository.MyTalentRepository;
-import com.talearnt.user.talent.request.MyTalentCodesReqDTO;
-import com.talearnt.user.talent.request.MyTalentDTO;
+import com.talearnt.user.talent.request.MyTalentReqDTO;
+import com.talearnt.user.talent.response.MyTalentsResDTO;
+import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -35,7 +36,7 @@ public class MyTalentService {
      *                true : 받고 싶은
      * */
     @Transactional
-    public String addMyTalents(MyTalentDTO talents){
+    public String addMyTalents(MyTalentReqDTO talents){
         log.info("나의 재능, 관심 있는 재능들 추가 시작 : {}",talents);
 
         //등록된 재능 코드인지 확인 : 모두 있을 경우 False, 없을 경우 True
@@ -57,5 +58,20 @@ public class MyTalentService {
         myTalentRepository.saveAll(giveTalents);
         log.info("나의 재능, 관심 있는 재능들 추가 끝");
         return "성공적으로 나의 재능 및 관심 재능 키워드가 등록되었습니다.";
+    }
+
+    /** 나의 재능 키워드 목록 보여주기 <br>
+     * 조건<br>
+     * - 로그인 되어 있을 것<br>
+     * - 유저 이상의 권한을 가지고 있을 것<br>
+     * - 재능 키워드에서 활성화 된 것들만 제공<br>
+     * */
+    public List<MyTalentsResDTO> getMyGiveTalents(Authentication authentication){
+        //로그인 여부 확인
+        UserUtil.validateAuthentication("나의 재능 키워드 목록 가져오기" , authentication);
+        log.info("나의 재능 키워드 목록 가져오기 시작 :  {} ",authentication.getPrincipal());
+
+        log.info("나의 재능 키워드 목록 가져오기 끝");
+        return null;
     }
 }

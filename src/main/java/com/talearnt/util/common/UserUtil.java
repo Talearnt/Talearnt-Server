@@ -5,6 +5,7 @@ import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.Authentication;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,6 +14,17 @@ import java.util.List;
 @Log4j2
 public class UserUtil {
 
+
+    /** Authentication 검증 하는 메소드,
+     * Controller에서 Authenticatin 으로 가져올 경우 이걸로 검증합니다.
+     * */
+    public static void validateAuthentication(String location ,Authentication authentication){
+        if (authentication.getPrincipal() == null){
+            log.error("{} 실패 - 로그인이 되어 있지 않음 : {}",location, ErrorCode.EXPIRED_TOKEN);
+            throw new CustomRuntimeException(ErrorCode.EXPIRED_TOKEN);
+        }
+    }
+
     /**
      * 회원 정보를 검증하는 메소드입니다.<br>
      * UserInfo의 객체 검증이 필요한 곳에서 사용하면 됩니다.
@@ -20,7 +32,7 @@ public class UserUtil {
      * */
     public static void validateUserInfo(UserInfo userInfo) {
         if (userInfo == null || userInfo.getUserId() == null || userInfo.getUserId() == null) {
-            throw new CustomRuntimeException(ErrorCode.INVALID_TOKEN);
+            throw new CustomRuntimeException(ErrorCode.EXPIRED_TOKEN);
         }
     }
 

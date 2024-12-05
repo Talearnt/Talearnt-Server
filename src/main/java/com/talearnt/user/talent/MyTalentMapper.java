@@ -1,7 +1,6 @@
 package com.talearnt.user.talent;
 
 import com.talearnt.user.talent.entity.MyTalent;
-import com.talearnt.user.talent.request.MyTalentCodesReqDTO;
 import com.talearnt.util.jwt.UserInfo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
