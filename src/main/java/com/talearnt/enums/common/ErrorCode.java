@@ -90,7 +90,7 @@ public enum ErrorCode {
     POST_CONTENT_MIN_LENGTH("400-POST-04", "내용 20글자 이상 필수 입력입니다!"),
     POST_REQUEST_MISSING("400-POST-05", "필수 항목을 입력해 주세요."),
     POST_BAD_REQUEST("400-POST-06", "잘못된 값이 넘어왔습니다. 입력 값을 확인하세요."),
-    POST_OVER_REQUEST_LENGTH("400-POST-07", "최대 5개의 재능만 선택하실 수 있습니다"),
+    POST_OVER_REQUEST_LENGTH("400-POST-07", "1개 이상, 5개 이하로 키워드를 설정해주세요"),
     POST_NOT_FOUND("404-POST-08", "해당 게시글을 찾을 수 없습니다."),
     POST_ACCESS_DENIED("403-POST-09", "해당 게시글에 대한 권한이 없습니다."),
 

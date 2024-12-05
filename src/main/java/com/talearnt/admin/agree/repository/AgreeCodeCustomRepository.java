@@ -20,10 +20,9 @@ public class AgreeCodeCustomRepository {
         return queryFactory.select(new QAgreeCodeListResDTO(
                 agreeCode.agreeCodeId,
                 agreeCode.title,
+                agreeContent.content,
                 agreeCode.version,
-                agreeCode.mandatory,
-                agreeContent.agreeContentId,
-                agreeContent.content
+                agreeCode.mandatory
         ))
                 .from(agreeCode)
                 .join(agreeContent)
