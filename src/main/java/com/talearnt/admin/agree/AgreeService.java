@@ -40,6 +40,8 @@ public class AgreeService {
         return CommonResponse.success("이용 약관 등록에 성공하였습니다.");
     }
 
+
+    /** 활성화된 이용약관 가져오기*/
     public ResponseEntity<CommonResponse<List<AgreeCodeListResDTO>>> getAcivatedAgreeCodeList(){
         return CommonResponse.success(agreeCodeCustomRepository.getActivatedAgreeCodeList());
     }
