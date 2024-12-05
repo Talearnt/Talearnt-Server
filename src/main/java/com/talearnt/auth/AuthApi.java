@@ -36,25 +36,31 @@ public interface AuthApi {
                 "<li>false : 중복 아님</li>" +
             "</ul>")
     @ApiResponse(responseCode = "400", ref = "USER_ID_NOT_EMAIL_FORMAT")
-    public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedUserID(@PathVariable @DynamicValid(errorCode = ErrorCode.USER_ID_NOT_EMAIL_FORMAT, pattern = Regex.EMAIL)
+    public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedUserID(@RequestParam @DynamicValid(errorCode = ErrorCode.USER_ID_NOT_EMAIL_FORMAT, pattern = Regex.EMAIL)
                                                                          String userId);
 
-    @Operation(summary = "닉네임 중복 확인",
-            description = "<p>닉네임 중복을 체크하는 API입니다.</p>" +
-            "<ul>" +
-                "<li>true : 중복임</li>" +
-                "<li>false : 중복 아님</li>" +
-            "</ul>")
-    public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedNickname(@PathVariable @DynamicValid(errorCode = ErrorCode.DUPLICATE_USER_NICKNAME,pattern = Regex.NICKNAME)
-                                                                           String nickname);
-
-    @Operation(summary = "랜덤한 닉네임 생성, 회원가입 닉네임 입력창으로 이동 시 호출",
-            description = "<h3>랜덤한 닉네임을 생성합니다. 중복 검사를 거친 닉네임입니다.</h3>" +
-                    "<h4>랜덤 닉네임 구성은 아래와 같습니다</h4>" +
-                    "<p>형용사(4글자) + 명사(2~3글자) + # + 1~100</p>" +
+    @Operation(summary = "랜덤 닉네임 생성, 닉네임 중복 확인",
+            description = "<p><strong>닉네임 생성과 중복 확인을 합쳤습니다.</strong></p>" +
+                    "<p>닉네임 중복 확인은 <code>query parameter</code> 로 <code>닉네임</code>을 보내주시면 <strong>닉네임 중복 확인</strong>입니다.</p>" +
+                    "<p>랜덤 닉네임 생성은 <code>query parameter</code> 를 입력 안하면 <strong>랜덤 닉네임 생성</strong>입니다.</p>" +
+                    "<hr>" +
+                    "<h2>닉네임 중복 내용</h2>" +
+                    "<p>닉네임 중복을 체크하는 API입니다.</p>" +
+                    "<h2>Response</h2>" +
+                    "<ul>" +
+                        "<li>true : 중복임</li>" +
+                        "<li>false : 중복 아님</li>" +
+                    "</ul>" +
+                    "<hr>" +
+                    "<h2>랜덤 닉네임 생성 내용</h2>" +
+                    "<p>랜덤한 닉네임을 생성합니다. 중복 검사를 거친 닉네임입니다.</p>" +
+                    "<h2>Response</h2>" +
+                    "<p>ex) <strong>유쾌한범고래#46</strong></p>" +
+                    "<p>형용사(3~4글자) + 명사(2~3글자) + # + 1~100</p>" +
                     "<p>최대 11자로 생성됩니다.</p>" +
                     "<p>기획서에 입력된 내용처럼 닉네임은 최소 2자~12자로 보내주셔야 합니다.</p>")
-    public ResponseEntity<CommonResponse<String>> MakeRandomNickname();
+    public ResponseEntity<CommonResponse<Object>> MakeRandomNickname(@RequestParam @DynamicValid(errorCode = ErrorCode.DUPLICATE_USER_NICKNAME,pattern = Regex.NICKNAME)
+                                                                           String nickname);
 
     @Operation(summary = "휴대폰 인증까지 마치고 회원 가입 완료 단계, 자사 회원 가입",
             description = "<h2>내용</h2>\n" +
