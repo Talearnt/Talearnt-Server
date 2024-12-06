@@ -7,6 +7,7 @@ import com.talearnt.auth.login.kakao.KakaoUserInfoResDTO;
 import com.talearnt.user.infomation.entity.User;
 import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.util.common.LoginUtil;
+import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.JwtTokenUtil;
 import com.talearnt.util.jwt.UserInfo;
@@ -98,7 +99,10 @@ public class KakaoLoginService {
 
         //회원가입을 이미 했지만, 카카오톡이 아닌 네이버나 자사로 회원가입을 했을 경우
         LoginUtil.validateJoinType(user,"카카오톡");
-        
+
+        // 정지 또는 탈퇴 회원 인지 유저 권환 확인
+        UserUtil.validateUserRole("자사 로그인 서비스 시작",user);
+
         //인증 후 RefreshToken 발급
         UserInfo userInfo = loginService.checkLoginValueAndSetRefreshToekn(user,response);
 
