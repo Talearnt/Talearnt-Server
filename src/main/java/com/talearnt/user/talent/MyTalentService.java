@@ -1,6 +1,7 @@
 package com.talearnt.user.talent;
 
 import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.user.UserRole;
 import com.talearnt.user.talent.entity.MyTalent;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
 import com.talearnt.user.talent.repository.MyTalentRepository;
@@ -8,12 +9,14 @@ import com.talearnt.user.talent.request.MyTalentReqDTO;
 import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.jwt.UserInfo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -68,8 +71,11 @@ public class MyTalentService {
      * */
     public List<MyTalentsResDTO> getMyGiveTalents(Authentication authentication){
         //로그인 여부 확인
-        UserUtil.validateAuthentication("나의 재능 키워드 목록 가져오기" , authentication);
+        UserInfo userInfo = UserUtil.validateAuthentication("나의 재능 키워드 목록 가져오기" , authentication);
         log.info("나의 재능 키워드 목록 가져오기 시작 :  {} ",authentication.getPrincipal());
+
+        //유저 권한 확인
+
 
         log.info("나의 재능 키워드 목록 가져오기 끝");
         return null;
