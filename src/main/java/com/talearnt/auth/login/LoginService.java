@@ -6,6 +6,7 @@ import com.talearnt.auth.login.company.LoginReqDTO;
 import com.talearnt.user.infomation.entity.User;
 import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.util.common.LoginUtil;
+import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomException;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.JwtTokenUtil;
@@ -50,6 +51,9 @@ public class LoginService {
             log.info("자사 로그인 서비스 실패 - 비밀번호 불일치 : {}",ErrorCode.INVALID_CREDENTIALS);
             throw new CustomRuntimeException(ErrorCode.INVALID_CREDENTIALS);
         }
+
+        // 정지 또는 탈퇴 회원 인지 유저 권환 확인
+        UserUtil.validateUserRole("자사 로그인 서비스 시작",user);
 
         //인증 후 RefreshToken 발급
         UserInfo userInfo = checkLoginValueAndSetRefreshToekn(user,response);

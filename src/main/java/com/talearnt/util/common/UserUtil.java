@@ -1,6 +1,8 @@
 package com.talearnt.util.common;
 
 import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.user.UserRole;
+import com.talearnt.user.infomation.entity.User;
 import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
@@ -15,14 +17,32 @@ import java.util.List;
 public class UserUtil {
 
 
+
+    /** 정지, 탈퇴 회원 인지 판단하는 메소드 입니다.
+     * */
+    public static void validateUserRole(String errorLocation, User user){
+        if (user.getAuthority().equals(UserRole.ROLE_SUSPENDED)){
+            log.error("{} 실패 - 정지된 회원입니다 : {}",ErrorCode.USER_SUSPENDED);
+            throw new CustomRuntimeException(ErrorCode.USER_SUSPENDED);
+        } else if (user.getAuthority().equals(UserRole.ROLE_WITHDRAWN) ) {
+            log.error("{} 실패 - 탈퇴한 회원입니다 : {}",ErrorCode.USER_WITH_DRAWN);
+            throw new CustomRuntimeException(ErrorCode.USER_WITH_DRAWN);
+        }
+    }
+
+
     /** Authentication 검증 하는 메소드,
      * Controller에서 Authenticatin 으로 가져올 경우 이걸로 검증합니다.
+     * @param errorLocation 에러 발생시 위치
+     * @param authentication JWT
      * */
-    public static void validateAuthentication(String location ,Authentication authentication){
+    public static UserInfo validateAuthentication(String errorLocation ,Authentication authentication){
         if (authentication.getPrincipal() == null){
-            log.error("{} 실패 - 로그인이 되어 있지 않음 : {}",location, ErrorCode.EXPIRED_TOKEN);
+            log.error("{} 실패 - 로그인이 되어 있지 않음 : {}",errorLocation, ErrorCode.EXPIRED_TOKEN);
             throw new CustomRuntimeException(ErrorCode.EXPIRED_TOKEN);
         }
+
+        return (UserInfo) authentication.getPrincipal();
     }
 
     /**
