@@ -12,13 +12,5 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface ExchangePostRepository extends JpaRepository<ExchangePost, Long> {
-    Optional<ExchangePost> findByExchangePostNoAndDeletedAtIsNull(@Param("id") Long id);
-
-    @Modifying
-    @Transactional
-    @Query("DELETE FROM ExchangePost ep WHERE ep.exchangePostNo = :exchangePostNo AND ep.user.userNo = :userNo")
-    int deleteByPostIdAndUserNo(@Param("exchangePostNo") Long exchangePostNo, @Param("userNo") long userNo);
-
-    Page<ExchangePost> findPageBy(Pageable page);
 
 }

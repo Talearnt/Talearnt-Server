@@ -1,7 +1,7 @@
 package com.talearnt.auth.find;
 
 import com.talearnt.enums.common.ErrorCode;
-import com.talearnt.service.common.MailService;
+import com.talearnt.service.MailService;
 import com.talearnt.auth.find.entity.FindPasswrodUrl;
 import com.talearnt.user.infomation.entity.User;
 import com.talearnt.auth.find.query.AuthFindQueryDTO;

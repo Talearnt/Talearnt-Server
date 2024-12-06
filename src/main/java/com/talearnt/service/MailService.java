@@ -1,4 +1,4 @@
-package com.talearnt.service.common;
+package com.talearnt.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

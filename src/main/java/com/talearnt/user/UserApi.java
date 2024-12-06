@@ -2,13 +2,18 @@ package com.talearnt.user;
 
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
 import com.talearnt.user.talent.request.MyTalentReqDTO;
+import com.talearnt.user.talent.response.MyTalentsListResDTO;
+import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.util.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 public interface UserApi {
     @Operation(summary = "테스트용 비밀번호 바꾸기, 실 구현 X", description = "비번은 암호화가 걸려있어 변경이 어렵습니다. 이것으로 비번은 자유롭게 바꿀 수 있지만, Login은 Valid를 하기에 규칙은 지켜서 생성하세요.")
