@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,11 +37,14 @@ public class UserController implements UserApi{
         return userService.changeTestPwd(testChangePwdReqDTO);
     }
 
+    @PreAuthorize("hasRole('ADMIN','USER','AUTHENTICATED','MANAGER')")
     @PostMapping("/users/my-talents")
     public ResponseEntity<CommonResponse<String>> addMyTalents(@RequestBody @Valid MyTalentReqDTO talents){
         return CommonResponse.success(myTalentService.addMyTalents(talents));
     }
 
+    //최고 관리자, 회원, 인증 회원, 관리자만 접근 가능
+    @PreAuthorize("hasRole('ADMIN','USER','AUTHENTICATED','MANAGER')")
     @GetMapping("/users/my-talents")
     public ResponseEntity<CommonResponse<List<MyTalentsResDTO>>> getMyTalents(Authentication auth){
         return null;
