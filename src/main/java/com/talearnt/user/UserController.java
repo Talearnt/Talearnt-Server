@@ -5,8 +5,10 @@ import com.talearnt.user.infomation.UserService;
 import com.talearnt.user.talent.MyTalentService;
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
 import com.talearnt.user.talent.request.MyTalentReqDTO;
+import com.talearnt.user.talent.response.MyTalentsListResDTO;
 import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.util.response.CommonResponse;
+import com.talearnt.util.role.AllowedUsers;
 import com.talearnt.util.version.RestControllerV1;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -37,17 +39,9 @@ public class UserController implements UserApi{
         return userService.changeTestPwd(testChangePwdReqDTO);
     }
 
-    @PreAuthorize("hasRole('ADMIN','USER','AUTHENTICATED','MANAGER')")
     @PostMapping("/users/my-talents")
     public ResponseEntity<CommonResponse<String>> addMyTalents(@RequestBody @Valid MyTalentReqDTO talents){
         return CommonResponse.success(myTalentService.addMyTalents(talents));
-    }
-
-    //최고 관리자, 회원, 인증 회원, 관리자만 접근 가능
-    @PreAuthorize("hasRole('ADMIN','USER','AUTHENTICATED','MANAGER')")
-    @GetMapping("/users/my-talents")
-    public ResponseEntity<CommonResponse<List<MyTalentsResDTO>>> getMyTalents(Authentication auth){
-        return null;
     }
 
 }

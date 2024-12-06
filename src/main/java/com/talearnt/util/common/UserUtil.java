@@ -37,7 +37,7 @@ public class UserUtil {
      * @param authentication JWT
      * */
     public static UserInfo validateAuthentication(String errorLocation ,Authentication authentication){
-        if (authentication.getPrincipal() == null){
+        if (authentication == null){
             log.error("{} 실패 - 로그인이 되어 있지 않음 : {}",errorLocation, ErrorCode.EXPIRED_TOKEN);
             throw new CustomRuntimeException(ErrorCode.EXPIRED_TOKEN);
         }
