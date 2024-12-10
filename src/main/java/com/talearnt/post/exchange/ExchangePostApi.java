@@ -24,7 +24,7 @@ public interface ExchangePostApi {
                     "<p>List 길이가 0일 수도 있습니다.</p>" +
                     "<h2>Response</h2>" +
                     "<ul>" +
-                        "<li><strong>talentCode :</strong> 재능 코드</li>" +
+                        "<li><strong>myTalentNo :</strong> 나의 재능 번호</li>" +
                         "<li><strong>talentName :</strong> 재능 이름</li>" +
                     "</ul>")
     @ApiResponses(value = {
