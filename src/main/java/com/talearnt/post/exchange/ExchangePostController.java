@@ -21,7 +21,7 @@ public class ExchangePostController implements ExchangePostApi{
 
     private final MyTalentService myTalentService;
 
-    @GetMapping("/post/exchange/provide-talents")
+    @GetMapping("/post/exchange/offered-talents")
     public ResponseEntity<CommonResponse<List<MyTalentsResDTO>>> getWantGiveMyTalentsForPost(Authentication auth){
         return CommonResponse.success(myTalentService.getMyGiveTalents(auth));
     }
