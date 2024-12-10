@@ -61,12 +61,15 @@ public class AuthController implements AuthApi{
         return joinService.checkDuplicatedUserId(userId);
     }
 
-    @GetMapping("/auth/users/nickname")
-    public ResponseEntity<CommonResponse<Object>> MakeRandomNickname(@RequestParam(required = false) @DynamicValid(errorCode = ErrorCode.DUPLICATE_USER_NICKNAME,pattern = Regex.NICKNAME)
-                                                                         String nickname){
-        if (nickname != null){
-            return CommonResponse.success(joinService.checkDuplicatedNickname(nickname));
-        }
+    @GetMapping("/auth/users/nickname/availability")
+    public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedNickname(@RequestParam @DynamicValid(errorCode = ErrorCode.DUPLICATE_USER_NICKNAME,pattern = Regex.NICKNAME)
+                                                                           String nickname){
+        return CommonResponse.success(joinService.checkDuplicatedNickname(nickname));
+    }
+
+
+    @GetMapping("/auth/users/nickname/random")
+    public ResponseEntity<CommonResponse<String>> MakeRandomNickname(){
         return CommonResponse.success(joinService.makeRandomNickname());
     }
 
