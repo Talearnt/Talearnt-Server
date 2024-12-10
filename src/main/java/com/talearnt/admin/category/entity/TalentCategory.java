@@ -39,4 +39,8 @@ public class TalentCategory {
 
     @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean isActive = true; // 사용 여부
+
+    public TalentCategory(Integer talentCode) {
+        this.talentCode = talentCode;
+    }
 }

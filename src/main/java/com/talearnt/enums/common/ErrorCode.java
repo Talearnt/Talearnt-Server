@@ -93,6 +93,7 @@ public enum ErrorCode {
     POST_OVER_REQUEST_LENGTH("400-POST-07", "1개 이상, 5개 이하로 키워드를 설정해주세요"),
     POST_NOT_FOUND("404-POST-08", "해당 게시글을 찾을 수 없습니다."),
     POST_ACCESS_DENIED("403-POST-09", "해당 게시글에 대한 권한이 없습니다."),
+    POST_GIVE_MY_TALENT_NOT_FOUND("404-POST-10", "나의 재능 - 주고 싶은 재능에 존재하지 않은 키워드입니다."),
 
     // 페이지 관련 오류
     PAGE_MIN_NUMBER("400-PAGE-01", "페이지 번호는 0보다 작을 수 없습니다."),

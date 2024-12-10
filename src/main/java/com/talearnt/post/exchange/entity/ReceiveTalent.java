@@ -17,6 +17,7 @@ public class ReceiveTalent {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exchange_post_no")
+    @ToString.Exclude
     private ExchangePost exchangePost;
 
     @ManyToOne(fetch = FetchType.LAZY)
