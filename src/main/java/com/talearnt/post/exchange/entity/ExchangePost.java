@@ -9,10 +9,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,8 +35,18 @@ public class ExchangePost {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @OneToMany(mappedBy = "exchangePost", fetch = FetchType.LAZY)
+    @BatchSize(size = 5) // 한 번에 5개의 연관 엔티티를 가져옴
+    private List<GiveTalent> giveTalents;
+
+    @OneToMany(mappedBy = "exchangePost", fetch = FetchType.LAZY)
+    @BatchSize(size = 5)
+    private List<ReceiveTalent> receiveTalents;
+
+
     @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
     private int count;
+
 
     @Enumerated(EnumType.STRING)
     @Convert(converter = ExchangeTypeConverter.class)
