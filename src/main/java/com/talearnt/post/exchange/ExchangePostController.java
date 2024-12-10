@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -21,9 +22,14 @@ public class ExchangePostController implements ExchangePostApi{
 
     private final MyTalentService myTalentService;
 
-    @GetMapping("/post/exchange/offered-talents")
+    @GetMapping("/posts/exchange/offered-talents")
     public ResponseEntity<CommonResponse<List<MyTalentsResDTO>>> getWantGiveMyTalentsForPost(Authentication auth){
         return CommonResponse.success(myTalentService.getMyGiveTalents(auth));
+    }
+
+    @PostMapping("/posts/exchange")
+    public ResponseEntity<CommonResponse<String>> writeExchangePost(){
+        return null;
     }
 
 }

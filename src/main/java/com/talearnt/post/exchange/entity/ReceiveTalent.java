@@ -10,14 +10,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class ReciveTalent {
+public class ReceiveTalent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long wantReceiveTalentNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exchange_post_no")
-    private ExchangePost exchangePostNo;
+    private ExchangePost exchangePost;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "talent_code")

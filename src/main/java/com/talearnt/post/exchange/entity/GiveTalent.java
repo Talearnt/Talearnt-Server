@@ -17,9 +17,9 @@ public class GiveTalent {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "my_talent_no")
-    private MyTalent myTalentNo; // 나의 재능 번호
+    private MyTalent myTalent; // 나의 재능 번호
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exchange_post_no")
-    private ExchangePost exchangePostNo; // 게시글 번호
+    private ExchangePost exchangePost; // 게시글 번호
 }
