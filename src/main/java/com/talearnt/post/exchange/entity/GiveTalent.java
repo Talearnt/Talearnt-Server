@@ -17,11 +17,11 @@ public class GiveTalent {
     private Long wantGiveTalentNo; // 주고 싶은 재능 번호 (auto_increment)
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "talent_code")
-    private TalentCategory talentCode;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exchange_post_no")
     @ToString.Exclude
     private ExchangePost exchangePost; // 게시글 번호
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "talent_code")
+    private TalentCategory talentCode;
 }

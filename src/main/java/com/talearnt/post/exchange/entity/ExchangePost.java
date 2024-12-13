@@ -35,11 +35,11 @@ public class ExchangePost {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @OneToMany(mappedBy = "exchangePost", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "exchangePost", fetch = FetchType.LAZY, orphanRemoval = true)
     @BatchSize(size = 5) // 한 번에 5개의 연관 엔티티를 가져옴
     private List<GiveTalent> giveTalents;
 
-    @OneToMany(mappedBy = "exchangePost", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "exchangePost", fetch = FetchType.LAZY, orphanRemoval = true)
     @BatchSize(size = 5)
     private List<ReceiveTalent> receiveTalents;
 
