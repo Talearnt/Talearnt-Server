@@ -17,6 +17,14 @@ public class KakaoAccount {
     @JsonProperty("email")
     private String email;
 
+    //이름 제공 동의 여부
+    @JsonProperty("name_needs_agreement")
+    private Boolean isNameAgree;
+
+    //카카오계정 이름
+    @JsonProperty("name")
+    private String name;
+
     //성별 제공 동의 여부
     @JsonProperty("gender_needs_agreement")
     private Boolean isGenderAgree;

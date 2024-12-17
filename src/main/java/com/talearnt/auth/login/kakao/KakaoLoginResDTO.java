@@ -12,6 +12,7 @@ public class KakaoLoginResDTO {
     private boolean isRegistered;
     private String accessToken;
     private String userId;
+    private String name;
     private String phone;
     private Gender gender;
 
@@ -20,10 +21,13 @@ public class KakaoLoginResDTO {
         this.accessToken = accessToken;
     }
 
-    public KakaoLoginResDTO(boolean isRequiredRedirect, String userId, String phone, String gender) {
+    public KakaoLoginResDTO(boolean isRequiredRedirect, String userId, String name, String phone, String gender) {
         this.isRegistered = isRequiredRedirect;
         this.userId = userId;
-        this.phone = phone;
+        this.name = name;
+        if (phone != null){
+            this.phone = phone.replace("+82","0").replaceAll("[^0-9]", "");
+        }
         if (gender == null){
             this.gender = null;
         }else{
