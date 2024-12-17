@@ -84,16 +84,16 @@ public enum ErrorCode {
     KEYWORD_CATEGORY_NOT_FOUND("404-KEYWORD-08","존재하지 않은 키워드입니다."),
 
     //게시글 관련 오류
-    POST_TITLE_OVER_LENGTH("400-POST-01", "제목 글자 수 제한을 확인해주세요."),
-    POST_TITLE_MISSING("400-POST-02", "제목을 입력해주세요."),
-    POST_CONTENT_MISSING("400-POST-03", "내용을 입력해주세요."),
-    POST_CONTENT_MIN_LENGTH("400-POST-04", "내용 20글자 이상 필수 입력입니다!"),
-    POST_REQUEST_MISSING("400-POST-05", "필수 항목을 입력해 주세요."),
-    POST_BAD_REQUEST("400-POST-06", "잘못된 값이 넘어왔습니다. 입력 값을 확인하세요."),
-    POST_OVER_REQUEST_LENGTH("400-POST-07", "1개 이상, 5개 이하로 키워드를 설정해주세요"),
-    POST_NOT_FOUND("404-POST-08", "해당 게시글을 찾을 수 없습니다."),
-    POST_ACCESS_DENIED("403-POST-09", "해당 게시글에 대한 권한이 없습니다."),
-    POST_GIVE_MY_TALENT_NOT_FOUND("404-POST-10", "나의 재능 - 주고 싶은 재능에 존재하지 않은 키워드입니다."),
+    POST_TITLE_LENGTH_MISSING("400-POST-01", "제목을 2글자 이상 입력해 주세요."),
+    POST_CONTENT_MIN_LENGTH("400-POST-02", "내용 20글자 이상 입력해 주세요."),
+    POST_REQUEST_MISSING("400-POST-03", "필수 정보를 입력해 주세요."),
+    POST_BAD_REQUEST("400-POST-04", "잘못된 값이 넘어왔습니다. 입력 값을 확인하세요."),
+    POST_KEYWORD_LENGTH_MISSING("400-POST-05", "재능 키워드를 선택해 주세요."),
+    POST_KEYWORD_LENGTH_OVER("400-POST-06", "재능 키워드는 5개 이하 선택 가능합니다."),
+    POST_NOT_FOUND("404-POST-07", "해당 게시글을 찾을 수 없습니다."),
+    POST_ACCESS_DENIED("403-POST-08", "해당 게시글에 대한 권한이 없습니다."),
+    POST_GIVE_MY_TALENT_NOT_FOUND("404-POST-09", "나의 재능 - 주고 싶은 재능에 존재하지 않은 키워드입니다."),
+    POST_DURATION_MISSING("400-POST-10", "진행 기간을 선택해 주세요."),
 
     // 페이지 관련 오류
     PAGE_MIN_NUMBER("400-PAGE-01", "페이지 번호는 0보다 작을 수 없습니다."),

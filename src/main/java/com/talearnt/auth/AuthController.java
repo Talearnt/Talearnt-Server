@@ -22,10 +22,6 @@ import com.talearnt.util.valid.DynamicValid;
 import com.talearnt.util.version.RestControllerV1;
 import com.talearnt.auth.verification.VerificationReqDTO;
 import com.talearnt.auth.verification.VerificationService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -135,12 +131,9 @@ public class AuthController implements AuthApi{
     /*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 인증 문자 관련 끝 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 비밀번호 찾기 시작 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-    @PostMapping("/auth/password/{userId}/email")
-    public ResponseEntity<CommonResponse<AuthFindResDTO>> chekcUserIdAndSendEmail(@RequestBody @Valid VerificationReqDTO phoneReqDTO,
-                                                                                  @PathVariable
-                                                                                  @DynamicValid(errorCode = ErrorCode.USER_ID_NOT_EMAIL_FORMAT,pattern = Regex.EMAIL)
-                                                                                  String userId) throws MessagingException {
-        return findService.sendEmailForPwd(userId, phoneReqDTO.getPhone());
+    @PostMapping("/auth/password/email")
+    public ResponseEntity<CommonResponse<AuthFindResDTO>> chekcUserIdAndSendEmail(@RequestBody @Valid VerificationReqDTO phoneReqDTO) throws MessagingException {
+        return findService.sendEmailForPwd(phoneReqDTO.getUserId(), phoneReqDTO.getPhone());
     }
 
     @PutMapping("/auth/{no}/password/{uuid}")

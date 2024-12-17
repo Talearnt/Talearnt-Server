@@ -147,7 +147,7 @@ public interface AuthApi {
     @Operation(summary = "카카오톡 로그인", description = "<p>카카오톡 로그인시 첫 로그인일 경우 회원가입 페이지로 넘어갑니다.</p>" +
             "<p>Data에 들어가는 값</p>" +
             "<ul>" +
-            "    <li>isRequiredRedirect : true - 회원가입</li>" +
+            "    <li>isRegistered : true - 회원가입</li>" +
             "    <li>userId : 카카오톡 이메일</li>" +
             "    <li>gender : 남자</li>" +
             "    <li>phone : 카카오톡에 등록된 휴대폰 번호</li>" +
@@ -159,7 +159,7 @@ public interface AuthApi {
             "<hr/>" +
             "<p><strong>카카오톡 로그인 URL :</strong> https://kauth.kakao.com/oauth/authorize?response_type=code&client_id={REST_API_KEY}&redirect_uri={redirectURL} <p>" +
             "<p><strong>REST_API_KEY :</strong> 카카오톡 developers 참고<p>" +
-            "<p><strong>redirectURL :</strong> http://localhost/v1/auth/login/kakao (테스트 전용 URL)<p>" +
+            "<p><strong>redirectURI :</strong> 카카오에 RedirectURI 등록 필요, Code 받아 Server 로 전송 -> /v1/auth/login/kakao (테스트 전용 URL)<p>" +
             "")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
@@ -242,10 +242,7 @@ public interface AuthApi {
             @ApiResponse(responseCode = "400-3", ref = "USER_SUSPENDED"),
             @ApiResponse(responseCode = "500", ref = "MAIL_FAILED_RESPONSE"),
     })
-    public ResponseEntity<CommonResponse<AuthFindResDTO>> chekcUserIdAndSendEmail(@RequestBody @Valid VerificationReqDTO phoneReqDTO,
-                                                                                  @PathVariable
-                                                                                  @DynamicValid(errorCode = ErrorCode.USER_ID_NOT_EMAIL_FORMAT,pattern = Regex.EMAIL)
-                                                                                  String userId) throws MessagingException;
+    public ResponseEntity<CommonResponse<AuthFindResDTO>> chekcUserIdAndSendEmail(@RequestBody @Valid VerificationReqDTO phoneReqDTO) throws MessagingException;
 
     @Operation(summary = "비밀번호 찾기 2. 비밀번호 변경",
             description = "<h2>내용</h2>\n" +

@@ -66,7 +66,12 @@ public class JoinService {
         log.info("Register User 시작 : {}",joinReqDTO);
         //해당 UserId에 본인 인증이 완료되지 않은 상태일 경우 발생
         if (!verificationService.isVerifiedCheck(joinReqDTO)) {
+            log.error("Register User 실패 - 인증번호 불일치 : {} ",ErrorCode.UNVERIFIED_AUTH_CODE);
             throw new CustomRuntimeException(ErrorCode.UNVERIFIED_AUTH_CODE);
+        }
+        if (joinReqDTO.getPw().equals(joinReqDTO.getPwCheck())){
+            log.error("Register User 실패 - 두 개의 비밀번호가 일치하지 않음 : {}",ErrorCode.USER_PASSWROD_FAILED_DOUBLE_CHECK);
+            throw new CustomRuntimeException(ErrorCode.USER_PASSWROD_FAILED_DOUBLE_CHECK);
         }
 
         //비밀번호 암호화

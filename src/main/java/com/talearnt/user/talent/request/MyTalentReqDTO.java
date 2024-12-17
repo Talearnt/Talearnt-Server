@@ -21,11 +21,11 @@ public class MyTalentReqDTO {
     private UserInfo userInfo;
 
     @ListValid(errorCode = ErrorCode.POST_REQUEST_MISSING, minLength = 1)
-    @ListValid(errorCode = ErrorCode.POST_OVER_REQUEST_LENGTH, maxLength = 5)
+    @ListValid(errorCode = ErrorCode.POST_KEYWORD_LENGTH_MISSING, maxLength = 5)
     private List<Integer> giveTalents;
 
     @ListValid(errorCode = ErrorCode.POST_REQUEST_MISSING, minLength = 1)
-    @ListValid(errorCode = ErrorCode.POST_OVER_REQUEST_LENGTH, maxLength = 5)
+    @ListValid(errorCode = ErrorCode.POST_KEYWORD_LENGTH_MISSING, maxLength = 5)
     private List<Integer> interestTalents;
 
 }

@@ -12,8 +12,8 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 public class CheckUserPwdReqDTO {
-    @DynamicValid(errorCode = ErrorCode.USER_PASSWORD_PATTERN_MISMATCH, pattern = Regex.PASSWROD)
+    @DynamicValid(errorCode = ErrorCode.USER_PASSWORD_PATTERN_MISMATCH, pattern = Regex.PASSWORD)
     private String pw;
-    @DynamicValid(errorCode = ErrorCode.USER_PASSWORD_PATTERN_MISMATCH, pattern = Regex.PASSWROD)
+    @DynamicValid(errorCode = ErrorCode.USER_PASSWORD_PATTERN_MISMATCH, pattern = Regex.PASSWORD)
     private String checkedPw;
 }
