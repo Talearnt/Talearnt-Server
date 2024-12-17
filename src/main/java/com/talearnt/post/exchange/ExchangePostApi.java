@@ -42,6 +42,17 @@ public interface ExchangePostApi {
             description = "<h2>내용</h2>" +
                     "<p>재능 게시물 등록입니다. ( S3 미구현 - 추후 구현 )<p>" +
                     "<hr/>"+
+                    "<h2>Request Body</h2>" +
+                    "<ul>" +
+                        "<li><strong>title :</strong> 2자 이상, 50자 이하</li>" +
+                        "<li><strong>content :</strong> 20자 이상</li>" +
+                        "<li><strong>giveTalents :</strong> 1개 이상, 5개 이하</li>" +
+                        "<li><strong>receiveTalents :</strong> 1개 이상, 5개 이하</li>" +
+                        "<li><strong>exchangeType :</strong> 진행 방식(온라인,오프라인,온/오프라인)</li>" +
+                        "<li><strong>badgeRequired :</strong> 인증 뱃지 필수 여부 - 기본 false</li>" +
+                        "<li><strong>duration :</strong> 진행 기간(기간 미정,1개월,2개월,3개월,3개월 이상)</li>" +
+                    "</ul>"+
+                    "<hr/>"+
                     "<h2>선행 필수 내용</h2>"+
                     "<p>로그인을 하지 않으면 오류가 발생합니다.</p>"+
                     "<p>키워드 등록을 하지 않으면 오류가 발생합니다. (나의 주고 싶은 재능 등록 필요)</p>"+
@@ -51,8 +62,8 @@ public interface ExchangePostApi {
                     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
-            @ApiResponse(responseCode = "403", ref = "ACCESS_DENIED"),
+            @ApiResponse(responseCode = "401-1", ref = "EXPIRED_TOKEN"),
+            @ApiResponse(responseCode = "401-2", ref = "INVALID_TOKEN"),
             @ApiResponse(responseCode = "404-1", ref = "POST_GIVE_MY_TALENT_NOT_FOUND"),
             @ApiResponse(responseCode = "404-2", ref = "KEYWORD_CATEGORY_NOT_FOUND"),
             @ApiResponse(responseCode = "400-1", ref = "POST_TITLE_LENGTH_MISSING"),
