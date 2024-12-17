@@ -73,7 +73,7 @@ public class KakaoLoginService {
 
         //카카오톡 유저 정보 추출
         KakaoUserInfoResDTO kakaoUserInfoResDTO = getKakaoUserInfo(tokenResDTO.getAccessToken());
-
+        log.info("KAKAO USER INFO : {} ",kakaoUserInfoResDTO);
         //동일한 휴대폰 번호가 있을 경우 연동할 수 있도록 409 Exception
         /* 연동이 확실해질 경우, KaKaoQueryRepository의 checkConectedKakao()을 완성시키세요.
         if (userRepository.existsByPhone(kakaoUserInfoResDTO.getKakaoAccount().getPhoneNumber())){
@@ -89,6 +89,7 @@ public class KakaoLoginService {
             log.error("카카오톡 로그인 서비스 실패 - 해당 유저는 회원가입 하지 않음: {}", ErrorCode.USER_NOT_FOUND);
             return new KakaoLoginResDTO(true,
                     kakaoUserInfoResDTO.getKakaoAccount().getEmail(),
+                    kakaoUserInfoResDTO.getKakaoAccount().getName(),
                     kakaoUserInfoResDTO.getKakaoAccount().getPhoneNumber(),
                     kakaoUserInfoResDTO.getKakaoAccount().getGender());
         }
