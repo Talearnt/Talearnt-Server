@@ -9,19 +9,19 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class KakaoLoginResDTO {
-    private boolean isRequiredRedirect;
+    private boolean isRegistered;
     private String accessToken;
     private String userId;
     private String phone;
     private Gender gender;
 
     public KakaoLoginResDTO(boolean isRequiredRedirect, String accessToken) {
-        this.isRequiredRedirect = isRequiredRedirect;
+        this.isRegistered = isRequiredRedirect;
         this.accessToken = accessToken;
     }
 
     public KakaoLoginResDTO(boolean isRequiredRedirect, String userId, String phone, String gender) {
-        this.isRequiredRedirect = isRequiredRedirect;
+        this.isRegistered = isRequiredRedirect;
         this.userId = userId;
         this.phone = phone;
         if (gender == null){

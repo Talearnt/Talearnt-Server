@@ -281,7 +281,7 @@ public class AuthFindService {
         findPasswordUrlRepository.deleteById(findPwdUrlNo);
 
         log.info("비밀번호 변경 끝");
-        return CommonResponse.success("성공적으로 비밀번호가 변경되었습니다.");
+        return CommonResponse.success("비밀번호 변경 완료");
     }
 
 

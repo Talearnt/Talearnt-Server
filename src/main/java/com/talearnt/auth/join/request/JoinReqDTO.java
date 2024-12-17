@@ -22,9 +22,14 @@ public class JoinReqDTO {
     private String userId;
 
     @Schema(required = true, example = "!1q2w3e4r", description = "8자 이상, 숫자,문자, 특수기호 각 1개 이상 포함")
-    @DynamicValid(errorCode = ErrorCode.USER_PASSWORD_PATTERN_MISMATCH,pattern = Regex.PASSWROD)
+    @DynamicValid(errorCode = ErrorCode.USER_PASSWORD_PATTERN_MISMATCH,pattern = Regex.PASSWORD)
     @DynamicValid(errorCode = ErrorCode.USER_PASSWORD_MISSING,notBlank = true)
     private String pw;
+
+    @Schema(required = true, example = "!1q2w3e4r", description = "8자 이상, 숫자,문자, 특수기호 각 1개 이상 포함")
+    @DynamicValid(errorCode = ErrorCode.USER_PASSWORD_PATTERN_MISMATCH,pattern = Regex.PASSWORD)
+    @DynamicValid(errorCode = ErrorCode.USER_PASSWORD_MISSING,notBlank = true)
+    private String pwCheck;
 
     @Schema(example = "홍길동")
     @DynamicValid(errorCode = ErrorCode.USER_NAME_MISMATCH,pattern = Regex.NAME)

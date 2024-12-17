@@ -34,7 +34,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "401-1", ref = "EXPIRED_TOKEN"),
             @ApiResponse(responseCode = "401-2", ref = "INVALID_TOKEN"),
             @ApiResponse(responseCode = "400-1", ref = "POST_REQUEST_MISSING"),
-            @ApiResponse(responseCode = "400-2", ref = "POST_OVER_REQUEST_LENGTH"),
+            @ApiResponse(responseCode = "400-2", ref = "POST_KEYWORD_LENGTH_MISSING"),
             @ApiResponse(responseCode = "404", ref = "KEYWORD_CATEGORY_NOT_FOUND"),
     })
     public ResponseEntity<CommonResponse<String>> addMyTalents(@RequestBody @Valid MyTalentReqDTO talents);
