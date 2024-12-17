@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AuthFindResDTO {
     private String userId;
-    private LocalDateTime createdAt;
+    private LocalDateTime sentDate;
 
     @QueryProjection
-    public AuthFindResDTO(String userId, LocalDateTime createdAt) {
+    public AuthFindResDTO(String userId, LocalDateTime sentDate) {
         this.userId = userId;
-        this.createdAt = createdAt;
+        this.sentDate = sentDate;
     }
 }

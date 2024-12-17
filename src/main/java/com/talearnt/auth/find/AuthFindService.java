@@ -35,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -236,7 +237,9 @@ public class AuthFindService {
         mailService.sendFindPasswordHtmlMessage(checkAuth.getUserId(),"[Talearnt] 비밀번호 재설정 인증 안내", MailUtil.MakeFindPasswrodMailForm(pwdUrl.getNo(), uuid));
 
         log.info("비밀번호 찾기 끝");
-        return CommonResponse.success(AuthFindMapper.INSTANCE.toUserFindResDTO(pwdUrl));
+        return CommonResponse.success(AuthFindResDTO.builder()
+                .userId(userId)
+                .sentDate(LocalDateTime.now()).build());
     }
 
     /**비밀번호 변경하는 페이지에서 넘어온 값들로 비밀번호를 변경한다.<br>
