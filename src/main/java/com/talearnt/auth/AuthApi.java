@@ -51,8 +51,8 @@ public interface AuthApi {
                     "<li>true : 중복임</li>" +
                     "<li>false : 중복 아님</li>" +
                     "</ul>")
-
-    public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedNickname(@RequestParam @DynamicValid(errorCode = ErrorCode.DUPLICATE_USER_NICKNAME,pattern = Regex.NICKNAME)
+    @ApiResponse(responseCode = "400", ref = "USER_NICKNAME_MISMATCH")
+    public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedNickname(@RequestParam @DynamicValid(errorCode = ErrorCode.USER_NICKNAME_MISMATCH,pattern = Regex.NICKNAME)
                                                                            String nickname);
 
 

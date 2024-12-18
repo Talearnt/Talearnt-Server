@@ -54,7 +54,7 @@ public enum ErrorCode {
     USER_PASSWROD_FAILED_DOUBLE_CHECK("400-USER-16", "두 개의 비밀번호가 일치하지 않습니다."),
     USER_PHONE_NUMBER_DUPLICATION("409-USER-17","이미 가입된 휴대폰 번호입니다."),
     USER_NAME_MISMATCH("400-USER-18","이름은 최소 2자, 최대 5자까지 입력 가능합니다."),
-    USER_NICKNAME_MISMATCH("400-USER-19","닉네임은 최소 2자, 최대 12자까지 입력 가능합니다."),
+    USER_NICKNAME_MISMATCH("400-USER-19","한글,영문,숫자는 자유롭게 입력 가능하며, 특수문자는 #만 가능해요"),
 
     // 데이터베이스 관련 오류
     DB_CONNECTION_ERROR("500-DB-01", "데이터 베이스에 연결 실패했습니다."),

@@ -55,7 +55,7 @@ public class MailUtil {
                 "            <table role=\"presentation\" style=\"width: 100%; margin: 0 auto; border-spacing: 0;\">\n" +
                 "                <tr>\n" +
                 "                    <td style=\"background-color: #1b76ff; border-radius: 10px; text-align: center;\">\n" +
-                "                        <a href=\"http://localhost:5173/"+findPasswordUrlNo+"/password/"+uuid+"\"\n" +
+                "                        <a href=\"http://localhost:5173/find-account/change?no="+findPasswordUrlNo+"&uuid="+uuid+"\"\n" +
                 "                           style=\"display: inline-block; padding: 15px; color: #fff; background-color: #1b76ff; text-decoration: none; border-radius: 10px; font-size: 16px; text-align: center; font-weight: bold;\">\n" +
                 "                            비밀번호 재설정하러 가기\n" +
                 "                        </a>\n" +

@@ -58,7 +58,7 @@ public class AuthController implements AuthApi{
     }
 
     @GetMapping("/auth/users/nickname/availability")
-    public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedNickname(@RequestParam @DynamicValid(errorCode = ErrorCode.DUPLICATE_USER_NICKNAME,pattern = Regex.NICKNAME)
+    public ResponseEntity<CommonResponse<Boolean>> checkDuplicatedNickname(@RequestParam @DynamicValid(errorCode = ErrorCode.USER_NICKNAME_MISMATCH,pattern = Regex.NICKNAME)
                                                                            String nickname){
         return CommonResponse.success(joinService.checkDuplicatedNickname(nickname));
     }
