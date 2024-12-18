@@ -143,4 +143,9 @@ public class AuthController implements AuthApi{
     }
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 비밀번호 찾기 끝 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+    @DeleteMapping("/test/auth/{userId}")
+    public ResponseEntity<CommonResponse<String>> deleteTestUserId(@PathVariable String userId){
+        return CommonResponse.success(joinService.deleteTestUserId(userId));
+    }
+
 }

@@ -56,6 +56,19 @@ public class JoinService {
         return madeNickname;
     }
 
+    /** 테스트용 아이디 삭제*/
+    @Transactional
+    public String deleteTestUserId(String userId){
+        User entity = userRepository.findByUserId(userId).orElseThrow(()->{
+                log.error("테스트용 회원 삭제 실패 : {}",ErrorCode.USER_NOT_FOUND);
+                throw new CustomRuntimeException(ErrorCode.USER_NOT_FOUND);
+        });
+
+        agreeRepository.deleteByUser_UserNo(entity.getUserNo());
+        userRepository.delete(entity);
+        return userId+" 삭제 완료";
+    }
+
 
     /**
      * 최신 업데이트 일자 : 2024-11-26, 담당자 : 정운만 <br>
@@ -69,7 +82,7 @@ public class JoinService {
             log.error("Register User 실패 - 인증번호 불일치 : {} ",ErrorCode.UNVERIFIED_AUTH_CODE);
             throw new CustomRuntimeException(ErrorCode.UNVERIFIED_AUTH_CODE);
         }
-        if (joinReqDTO.getPw().equals(joinReqDTO.getCheckedPw())){
+        if (!joinReqDTO.getPw().equals(joinReqDTO.getCheckedPw())){
             log.error("Register User 실패 - 두 개의 비밀번호가 일치하지 않음 : {}",ErrorCode.USER_PASSWROD_FAILED_DOUBLE_CHECK);
             throw new CustomRuntimeException(ErrorCode.USER_PASSWROD_FAILED_DOUBLE_CHECK);
         }

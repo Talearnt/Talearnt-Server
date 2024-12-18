@@ -26,7 +26,7 @@ public class Agree {
     private AgreeCode agreeCode;  // 약관 코드 ID (Foreign Key)
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_no", nullable = false)
+    @JoinColumn(name = "user_no", nullable = false, referencedColumnName = "user_no")
     private User user;  // 사용자 아이디 번호
 
     @Column(name = "is_agree",nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
