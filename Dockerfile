@@ -4,6 +4,10 @@ FROM eclipse-temurin:17-jdk-alpine
 # jar 파일, 컨테이너 최상위 경로로 복사
 COPY build/libs/*SNAPSHOT.jar /app.jar
 
+# Docker 시간대 설정
+ENV TZ=Asia/Seoul
+ENV JAVA_OPTS="-Duser.timezone=Asia/Seoul"
+
 # 컨테이너 최초 실행 시에 app.jar 실행
 ENTRYPOINT ["java", "-jar", "/app.jar"]
 

@@ -10,8 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "AWS-ELB", description = "AWS 관련 서버 상태 체크, 개발 사용 X")
 public class HealthController {
 
+    @GetMapping("/")
+    public ResponseEntity superPath(){
+        return ResponseEntity.status(200).build();
+    }
+
     @GetMapping("/health")
     public ResponseEntity checkHealth(){
-        return ResponseEntity.status(200).build();
+        return ResponseEntity.status(200).body("서버가 건강해요~");
     }
 }
