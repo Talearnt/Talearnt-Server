@@ -5,6 +5,7 @@ import com.talearnt.util.exception.CustomException;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.CommonResponse;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
@@ -73,7 +74,11 @@ public class GlobalExceptionHandler {
 
     // 지원하지 않은 URL로 요청했을 때 발생하는 Exception
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<CommonResponse<ErrorCode>> handleHttpRequestMethodNotSupportedException(NoResourceFoundException e) {
+    public ResponseEntity<CommonResponse<ErrorCode>> handleHttpRequestMethodNotSupportedException(HttpServletRequest request) {
+        String method = request.getMethod();
+        String userAgent = request.getHeader("User-Agent");
+        String path = request.getRequestURI();
+        log.info("{} - 지원하지 않는 URL로 요청했음 : {}, {}",method,path, userAgent);
         return CommonResponse.error(ErrorCode.RESOURCE_NOT_FOUND);
     }
 
