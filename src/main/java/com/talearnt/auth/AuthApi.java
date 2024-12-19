@@ -145,27 +145,45 @@ public interface AuthApi {
     public ResponseEntity<CommonResponse<TokenResDTO>> refresh(@CookieValue("refreshToken") String refreshToken) throws CustomException;
 
     @Operation(summary = "카카오톡 로그인", description = "<p>카카오톡 로그인시 첫 로그인일 경우 회원가입 페이지로 넘어갑니다.</p>" +
-            "<p>Data에 들어가는 값</p>" +
-            "<ul>" +
-            "    <li>isRegistered : true - 회원가입</li>" +
-            "    <li>userId : 카카오톡 이메일</li>" +
-            "    <li>gender : 남자</li>" +
-            "    <li>phone : 카카오톡에 등록된 휴대폰 번호</li>" +
-            "</ul>" +
             "<p>닉네임은 랜덤 닉네임 생성 API를 호출해주셔야 합니다.</p>" +
             "<hr/>" +
             "<p>카카오톡으로 로그인이 성공했을 경우에는 성공적으로 정상적으로 AccessToken이 응답 값으로 넘어갑니다.</p>" +
-            "<p>Refresh Token은 Cookie에 셋팅됩니다. (현재 SameSite 문제로 적용 안되고 있음)</p>" +
+            "<p>Refresh Token은 Cookie에 셋팅됩니다.</p>" +
+            "<hr/>" +
+            "<h2>회원 가입으로 넘어가기 전 분기점</h2>" +
+            "<p>카카오 로그인 시도 시, 비회원이고 가입한 휴대폰 번호가 존재할 경우에 409 Exception이 발생합니다.</p>" +
+            "<p>비회원이고 휴대폰 번호 중복도 없으면 카카오에서 제공한 값이 반환됩니다.</p>" +
+            "<hr/>" +
+            "<h2>로그인 성공 시 Response</h2>" +
+            "<ul>" +
+                "<li>isRegistered : true</li>" +
+                "<li>accessToken : 자사 어세스 토큰 반환</li>" +
+                "<li>userId : null</li>" +
+                "<li>name : null</li>" +
+                "<li>phone : null</li>" +
+                "<li>gender : null</li>" +
+            "</ul>" +
+            "<hr/>" +
+            "<h2>로그인 실패시 시 Response</h2>" +
+            "<ul>" +
+            "<li>isRegistered : false</li>" +
+            "<li>accessToken : null</li>" +
+            "<li>userId : 카카오 이메일</li>" +
+            "<li>name : 카카오 이름</li>" +
+            "<li>phone : 카카오 휴대폰 번호</li>" +
+            "<li>gender : 카카오 성별</li>" +
+            "</ul>" +
             "<hr/>" +
             "<p><strong>카카오톡 로그인 URL :</strong> https://kauth.kakao.com/oauth/authorize?response_type=code&client_id={REST_API_KEY}&redirect_uri={redirectURL} <p>" +
             "<p><strong>REST_API_KEY :</strong> 카카오톡 developers 참고<p>" +
-            "<p><strong>redirectURI :</strong> 카카오에 RedirectURI 등록 필요, Code 받아 Server 로 전송 -> /v1/auth/login/kakao (테스트 전용 URL)<p>" +
+            "<p><strong>redirectURI :</strong> 카카오에 RedirectURI 등록 필요, Code 받아 Server 로 전송 -> /v1/auth/login/kakao<p>" +
             "")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "400", ref = "AUTH_METHOD_CONFLICT"),
             @ApiResponse(responseCode = "403-1", ref = "USER_SUSPENDED"),
             @ApiResponse(responseCode = "403-2", ref = "USER_WITH_DRAWN"),
+            @ApiResponse(responseCode = "409", ref = "USER_PHONE_NUMBER_DUPLICATION"),
     })
     public ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakao(@RequestParam("code")String code, HttpServletResponse response);
 

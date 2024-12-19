@@ -1,5 +1,7 @@
 package com.talearnt.auth.login.kakao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.talearnt.enums.user.Gender;
 import lombok.*;
 
@@ -9,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class KakaoLoginResDTO {
+    @JsonProperty("isRegistered")
     private boolean isRegistered;
     private String accessToken;
     private String userId;
@@ -16,13 +19,13 @@ public class KakaoLoginResDTO {
     private String phone;
     private Gender gender;
 
-    public KakaoLoginResDTO(boolean isRequiredRedirect, String accessToken) {
-        this.isRegistered = isRequiredRedirect;
+    public KakaoLoginResDTO(boolean isRegistered, String accessToken) {
+        this.isRegistered = isRegistered;
         this.accessToken = accessToken;
     }
 
-    public KakaoLoginResDTO(boolean isRequiredRedirect, String userId, String name, String phone, String gender) {
-        this.isRegistered = isRequiredRedirect;
+    public KakaoLoginResDTO(boolean isRegistered, String userId, String name, String phone, String gender) {
+        this.isRegistered = isRegistered;
         this.userId = userId;
         this.name = name;
         if (phone != null){
@@ -35,4 +38,11 @@ public class KakaoLoginResDTO {
         }
 
     }
+
+    // registered 필드를 무시
+    @JsonIgnore
+    public boolean getRegistered() {
+        return isRegistered;
+    }
+
 }

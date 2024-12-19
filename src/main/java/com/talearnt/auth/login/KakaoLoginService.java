@@ -86,12 +86,22 @@ public class KakaoLoginService {
 
         //없으면 결과값 리턴
         if (optionalUser.isEmpty()){
-            log.error("카카오톡 로그인 서비스 실패 - 해당 유저는 회원가입 하지 않음: {}", ErrorCode.USER_NOT_FOUND);
-            return new KakaoLoginResDTO(true,
+            //반환할 객체 생성
+            KakaoLoginResDTO resDTO= new KakaoLoginResDTO(false,
                     kakaoUserInfoResDTO.getKakaoAccount().getEmail(),
                     kakaoUserInfoResDTO.getKakaoAccount().getName(),
                     kakaoUserInfoResDTO.getKakaoAccount().getPhoneNumber(),
                     kakaoUserInfoResDTO.getKakaoAccount().getGender());
+
+            // 휴대폰 중복인지 확인
+            if (userRepository.existsByPhone(resDTO.getPhone())){
+                log.error("카카오톡 로그인 서비스 실패 - 동일한 휴대폰 번호 존재 : {}",ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
+                throw new CustomRuntimeException(ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
+            }
+
+
+            log.info("카카오톡 로그인 서비스 실패 - 해당 유저는 회원가입 하지 않음: {}", ErrorCode.USER_NOT_FOUND);
+            return resDTO;
         }
 
         //자사 JWT 토큰 설정
@@ -102,13 +112,13 @@ public class KakaoLoginService {
         LoginUtil.validateJoinType(user,"카카오톡");
 
         // 정지 또는 탈퇴 회원 인지 유저 권환 확인
-        UserUtil.validateUserRole("자사 로그인 서비스 시작",user);
+        UserUtil.validateUserRole("카카오톡 로그인 서비스 시작",user);
 
         //인증 후 RefreshToken 발급
         UserInfo userInfo = loginService.checkLoginValueAndSetRefreshToekn(user,response);
 
         log.info("카카오톡 로그인 서비스 끝");
-        return new KakaoLoginResDTO(false,jwtTokenUtil.createJwtToken(userInfo));
+        return new KakaoLoginResDTO(true,jwtTokenUtil.createJwtToken(userInfo));
     }
 
     /** 카카오톡에서 받아온 AccessToken을 가지고 유저의 정보를 뽑아온다.
