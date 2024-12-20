@@ -47,10 +47,6 @@ public class SecurityConfig {
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-//        http.formLogin((formLogin) -> formLogin.loginPage("/login")
-//                .defaultSuccessUrl("/")
-//                .failureUrl("/fail")
-//        );
 
         return http.build();
     }

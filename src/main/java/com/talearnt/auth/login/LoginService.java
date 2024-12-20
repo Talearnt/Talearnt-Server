@@ -105,10 +105,16 @@ public class LoginService {
         // 리프레시 토큰 쿠키에 설정
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(7 * 24 * 60 * 60); // 유효기간 7일
         // 응답에 쿠키 추가
         response.addCookie(cookie);
+
+        // SameSite 속성을 추가하기 위해 Set-Cookie 헤더 수정
+        response.addHeader("Set-Cookie", "refreshToken=" + refreshToken +
+                "; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=" + (7 * 24 * 60 * 60));
+
         log.info("Refresh Token : {}",refreshToken);
         log.info("Refresh Response : {}",response);
         log.info("Refresh Cookie : {}",cookie);
