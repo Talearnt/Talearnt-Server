@@ -106,15 +106,12 @@ public class LoginService {
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setDomain("talearnt.net");
         cookie.setPath("/");
         cookie.setMaxAge(7 * 24 * 60 * 60); // 유효기간 7일
-        // 응답에 쿠키 추가
-        response.addCookie(cookie);
 
         // SameSite 속성을 추가하기 위해 Set-Cookie 헤더 수정
         response.addHeader("Set-Cookie", "refreshToken=" + refreshToken +
-                "; HttpOnly; Secure; SameSite=None; Path=/; Domain=talearnt.net; Max-Age=" + (7 * 24 * 60 * 60));
+                "; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=" + (7 * 24 * 60 * 60));
 
         log.info("Refresh Token : {}",refreshToken);
         log.info("Refresh Response : {}",response);

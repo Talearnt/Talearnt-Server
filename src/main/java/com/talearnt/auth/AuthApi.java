@@ -124,8 +124,12 @@ public interface AuthApi {
     @Operation(summary = "로그인 요청",
             description = "<h2>내용</h2>\n" +
                     "<p>로그인 성공 시 JWT 토큰 발급</p>\n" +
-                    "<p>Refresh 토큰은 SameStie 문제로 설정되지 않고 있습니다.</p>\n" +
-                    "<p>SSL 인증서를 설치하여 HTTPS로 넘어간뒤 Refresh 토큰 적용을 시작하겠습니다.</p>",
+                    "<p>Refresh 토큰은 SameSite=None으로 설정되었습니다.</p>" +
+                    "<p>모바일 여러분은 SSL 인증서가 필요하면 카톡으로 요청 부탁드리겠습니다.</p>"+
+                    "<p>모바일 적용에 대한 이해도가 낮으므로 필요 시 문서도 같이 보내주시면 감사하겠습니다!</p>" +
+                    "<h2>개선 필요</h2>" +
+                    "<p>SameSite=Strict로 변경</p>" +
+                    "<p>서브 도메인일 경우 같은 도메인으로 인식하지 않은 문제이므로, cookie setDomain 테스트, 같은 도메인으로 변경 등 다양한 시도가 필요</p>",
             responses = {
                     @ApiResponse(responseCode = "200", description = "로그인 성공"),
                     @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND"),
