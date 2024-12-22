@@ -119,4 +119,22 @@ public class ExchangePostService {
         return "재능 교환 게시글 작성 완료";
     }
 
+
+
+    /**게시글 목록 불러오기
+     * 필터 조건
+     * - 대분류 - 없을 경우 모든 키워드
+     * - 재능 키워드 (20개)
+     * - 진행 방식
+     * - 기간
+     * - 인증 배지 여부
+     * - 최신순, 인기순 (정렬)
+     * */
+
+    public String getExchangePostList(){
+
+        return null;
+    }
+
+
 }
