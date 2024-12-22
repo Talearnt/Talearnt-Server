@@ -1,6 +1,7 @@
 package com.talearnt.post.exchange;
 
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
+import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.user.talent.MyTalentService;
 import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.util.response.CommonResponse;
@@ -29,6 +30,10 @@ public class ExchangePostController implements ExchangePostApi{
     @GetMapping("/posts/exchange/talents/offered")
     public ResponseEntity<CommonResponse<List<MyTalentsResDTO>>> getWantGiveMyTalentsForPost(Authentication auth){
         return CommonResponse.success(myTalentService.getMyGiveTalents(auth));
+    }
+
+    public ResponseEntity<CommonResponse<List<ExchangePostListResDTO>>> getExchangePostList(){
+        return null;
     }
 
     @PostMapping("/posts/exchange")

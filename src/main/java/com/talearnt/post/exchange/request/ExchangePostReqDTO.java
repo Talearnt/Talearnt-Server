@@ -38,7 +38,7 @@ public class ExchangePostReqDTO {
     @DynamicValid(errorCode = ErrorCode.POST_BAD_REQUEST, pattern = Regex.EXCHANGE_TPYE)
     private ExchangeType exchangeType;
 
-    private boolean badgeRequired;
+    private boolean requiredBadge;
     @DynamicValid(errorCode = ErrorCode.POST_DURATION_MISSING, pattern = Regex.EXCHANGE_DURATION)
     private String duration;
 }

@@ -59,10 +59,11 @@ public class ExchangePost {
     private ExchangePostStatus status;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
-    private boolean badgeRequired;
+    private boolean requiredBadge;
 
     @Column(nullable = false)
     private String duration;
+
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
