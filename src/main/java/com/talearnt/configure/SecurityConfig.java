@@ -1,5 +1,6 @@
 package com.talearnt.configure;
 
+import com.talearnt.util.filter.FilterExceptionHandler;
 import com.talearnt.util.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -46,7 +47,7 @@ public class SecurityConfig {
         );
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
+        http.addFilterBefore(new FilterExceptionHandler(), jwtFilter.getClass());
 
         return http.build();
     }

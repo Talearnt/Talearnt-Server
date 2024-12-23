@@ -56,7 +56,7 @@ public class LoginService {
         UserUtil.validateUserRole("자사 로그인 서비스 시작",user);
 
         //인증 후 RefreshToken 발급
-        UserInfo userInfo = checkLoginValueAndSetRefreshToekn(user,response);
+        UserInfo userInfo = checkLoginValueAndSetRefreshToekn(user,false,response);
 
         log.info("자사 로그인 서비스 끝");
         return new TokenResDTO(jwtTokenUtil.createJwtToken(userInfo));
@@ -82,7 +82,7 @@ public class LoginService {
      * @param user user의 정보가 담긴 Entity
      * @param response Cookie에 Refresh토큰 셋팅
      */
-    public UserInfo checkLoginValueAndSetRefreshToekn(User user, HttpServletResponse response){
+    public UserInfo checkLoginValueAndSetRefreshToekn(User user,boolean isAutoLogin, HttpServletResponse response){
         user.setLastLogin(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
         userRepository.save(user);
 
@@ -97,21 +97,25 @@ public class LoginService {
         //인증 작업 완료 후 UserInfo로 변환
         UserInfo userInfo = LoginMapper.INSTANCE.toUserInfo(user);
 
-        log.info("로그인 UserInfo : {}", userInfo);
+        //자동 로그인 기간 설정
+        int cookieExpirationMilliseconds = isAutoLogin
+                ? 3 * 60 //7 * 24 * 60 * 60
+                : 60; //3 * 24 * 60 * 60;
+        long refreshTokenMilliseconds = cookieExpirationMilliseconds * 1000L;
 
         //리프레시 토큰 생성
-        String refreshToken = jwtTokenUtil.createRefreshToken(userInfo);
+        String refreshToken = jwtTokenUtil.createRefreshToken(userInfo,refreshTokenMilliseconds);
 
         // 리프레시 토큰 쿠키에 설정
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
-        cookie.setMaxAge(7 * 24 * 60 * 60); // 유효기간 7일
+        cookie.setMaxAge(cookieExpirationMilliseconds); // 유효기간 7일
 
         // SameSite 속성을 추가하기 위해 Set-Cookie 헤더 수정
         response.addHeader("Set-Cookie", "refreshToken=" + refreshToken +
-                "; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=" + (7 * 24 * 60 * 60));
+                "; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=" + cookieExpirationMilliseconds);
 
         log.info("Refresh Token : {}",refreshToken);
         log.info("Refresh Response : {}",response);

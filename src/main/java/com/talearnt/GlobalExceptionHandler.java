@@ -4,6 +4,7 @@ import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.util.exception.CustomException;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.CommonResponse;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
@@ -15,6 +16,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -29,6 +31,18 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @Log4j2
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    //리프레시 토큰이 유효 기간이 지나 쿠키에서 사라졌을 경우에 발생
+    @ExceptionHandler(MissingRequestCookieException.class)
+    public ResponseEntity<CommonResponse<Object>> handleMissingRequestCookieException(MissingRequestCookieException e) {
+        return CommonResponse.error(ErrorCode.EXPIRED_REFRESH_TOKEN);
+    }
+
+    //JWT 토큰이 유효 기간이 지나면 발생
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<CommonResponse<Object>> handleExpiredJwtException(ExpiredJwtException e) {
+        return CommonResponse.error(ErrorCode.INVALID_TOKEN);
+    }
 
     //DB 반환 값이 1개여야 하는데 2개 이상 가져올 경우 발생
     @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
