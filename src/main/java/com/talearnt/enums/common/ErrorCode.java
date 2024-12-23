@@ -23,6 +23,7 @@ public enum ErrorCode {
     AUTH_NOT_FOUND_EMAIL_USER("404-AUTH-10", "10분이 지나 회원의 비밀번호를 변경할 수 없습니다. 다시 시도해주세요."),
     AUTH_METHOD_CONFLICT("400-AUTH-11", "이미 다른 SNS 혹은 TALEARNT 계정으로 가입된 아이디입니다. 다른 방법으로 로그인을 시도해주세요."),
     AUTH_SMS_TOO_MANY_REQUEST("429-AUTH-12","많은 요청이 왔습니다. 10분 후에 다시 시도해주세요."),
+    EXPIRED_REFRESH_TOKEN("401-AUTH-13", "리프레시 토큰의 기간이 만료되었습니다."),
 
     //메세지 관련 오류,
     MESSAGE_NOT_RESPONSE("500-MESSAGE-01", "메세지 전송에 실패했습니다. 잠시 후 다시 시도해 주세요."),

@@ -115,7 +115,7 @@ public class KakaoLoginService {
         UserUtil.validateUserRole("카카오톡 로그인 서비스 시작",user);
 
         //인증 후 RefreshToken 발급
-        UserInfo userInfo = loginService.checkLoginValueAndSetRefreshToekn(user,response);
+        UserInfo userInfo = loginService.checkLoginValueAndSetRefreshToekn(user,true,response);
 
         log.info("카카오톡 로그인 서비스 끝");
         return new KakaoLoginResDTO(true,jwtTokenUtil.createJwtToken(userInfo));

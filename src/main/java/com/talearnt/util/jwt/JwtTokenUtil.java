@@ -20,8 +20,7 @@ public class JwtTokenUtil {
     @Value(("${jwt.jwtTokenMilliseconds}"))
     private long jwtTokenMilliseconds;
 
-    @Value(("${jwt.refreshTokenMilliseconds}"))
-    private long refreshTokenMilliseconds;
+
 
     //JWT 토큰 생성
     public String createJwtToken(UserInfo userInfo) {
@@ -38,7 +37,7 @@ public class JwtTokenUtil {
     }
 
     // Refresh 토큰 생성
-    public String createRefreshToken(UserInfo userInfo) {
+    public String createRefreshToken(UserInfo userInfo, long refreshTokenMilliseconds) {
         return Jwts.builder()
                 .setSubject(userInfo.getUserId())
                 .claim("authority",userInfo.getAuthority().name())
