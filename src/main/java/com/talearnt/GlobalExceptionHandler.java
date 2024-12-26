@@ -19,6 +19,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
@@ -31,6 +32,11 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @Log4j2
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<CommonResponse<Object>> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        return CommonResponse.error(ErrorCode.BAD_PARAMETER);
+    }
 
     //리프레시 토큰이 유효 기간이 지나 쿠키에서 사라졌을 경우에 발생
     @ExceptionHandler(MissingRequestCookieException.class)
