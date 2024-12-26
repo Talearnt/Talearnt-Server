@@ -11,11 +11,15 @@ import com.talearnt.post.exchange.repository.ExchangePostRepository;
 import com.talearnt.post.exchange.repository.GiveTalentRepository;
 import com.talearnt.post.exchange.repository.ReceiveTalentRepository;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
+import com.talearnt.post.exchange.response.ExchangePostListResDTO;
+import com.talearnt.post.exchange.response.TestListDTO;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
+import com.talearnt.util.common.PostUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -122,17 +126,24 @@ public class ExchangePostService {
 
 
     /**게시글 목록 불러오기
-     * 필터 조건
-     * - 대분류 - 없을 경우 모든 키워드
-     * - 재능 키워드 (20개)
-     * - 진행 방식
-     * - 기간
-     * - 인증 배지 여부
-     * - 최신순, 인기순 (정렬)
+     * 필터 조건 ( 커뮤니티에서도 사용할 것은 PostUtil 에서 Validate 정의, 재능 교환에서만 사용하는 것은 QueryDSL 정의) - 검증 완료
+     * - 대분류 : Integer 로 변환 필요 ( length 가 0일 경우 null ) - 검증 완료
+     * - 재능 분류 : Integer 로 변환 필요 ( length 가 0일 경우 null ) - 검증 완료
+     * - 정렬 기준 : 기본 recent, (recent, popular 가 아니라면 recent 로 변경) (커뮤니티 공통) - 검증 완료
+     * - 기간 : 이상한 값(Regex 에 맞지 않는)이 넘어왔을 경우에는 null로 변경 - 검증 완료
+     * - 진행 방식 : ExchangeType 값이 아닐 경우 null - 검증 완료
+     * - 인증 뱃지 필수 여부 : Boolean 값이 아닐 경우 null - 검증 완료
+     * - 모집 상태 : ExchangePostStatus 값이 아닐 경우 null - 검증 완료
+     * - 페이지 번호 : Integer 가 아닐 경우 기본 값 1 (커뮤니티 공통)
      * */
 
-    public String getExchangePostList(){
+    public List<ExchangePostListResDTO> getExchangePostList(List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size){
+        log.info("재능 교환 게시글 목록 불러오기 시작 \n categories : {} \n talents : {} \n order : {} \n duration : {} \n type : {} \n badge : {} \n status : {} \n page : {} \n size : {}",categories,talents,order,duration,type,requiredBadge,status,page,size);
 
+        //Page<ExchangePostListResDTO> result = exchangePostQueryRepository.getFilteredExchangePostList(categories,talents,order,duration,type,requiredBadge,status,PostUtil.filterValidPagination(page,size));
+        Page<TestListDTO> testListDTOS = exchangePostQueryRepository.getTest();
+
+        log.info("재능 교환 게시글 목록 불러오기 끝");
         return null;
     }
 
