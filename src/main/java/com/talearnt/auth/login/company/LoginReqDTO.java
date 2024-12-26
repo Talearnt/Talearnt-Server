@@ -21,4 +21,5 @@ public class LoginReqDTO {
     @DynamicValid(errorCode = ErrorCode.USER_PASSWORD_MISSING, minLength = 8)
     private String pw;
 
+    private boolean autoLogin;
 }
