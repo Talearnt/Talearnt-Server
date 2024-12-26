@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -26,20 +27,23 @@ public class FilterExceptionHandler extends OncePerRequestFilter {
             setErrorResponse(response,ErrorCode.EXPIRED_TOKEN);
         }
     }
-    private void setErrorResponse(
-            HttpServletResponse response,
-            ErrorCode errorCode
-    ){
+    private void setErrorResponse(HttpServletResponse response, ErrorCode errorCode){
+        //JSON 직렬화
         ObjectMapper objectMapper = new ObjectMapper();
+        // HTTP Status 설정
         response.setStatus(Integer.parseInt(errorCode.getCode().substring(0, 3)));
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+
+        //ResponseEntity를 설정할 경우 Header 및 여러가지가 다 담겨서, CommonResponse를 만들어 반환
+        CommonResponse<?> error = new CommonResponse<>(false,null,errorCode.getCode(),errorCode.getMessage());
+
         try{
-            response.getWriter().write(objectMapper.writeValueAsString(CommonResponse.error(errorCode)));
+            //Response에 담아서 반환
+            response.getWriter().write(objectMapper.writeValueAsString(error));
+            response.getWriter().flush();
         }catch (IOException e){
             e.printStackTrace();
         }
     }
-
-
-
 }

@@ -56,7 +56,7 @@ public class LoginService {
         UserUtil.validateUserRole("자사 로그인 서비스 시작",user);
 
         //인증 후 RefreshToken 발급
-        UserInfo userInfo = checkLoginValueAndSetRefreshToekn(user,false,response);
+        UserInfo userInfo = checkLoginValueAndSetRefreshToekn(user,loginReqDTO.isAutoLogin(),response);
 
         log.info("자사 로그인 서비스 끝");
         return new TokenResDTO(jwtTokenUtil.createJwtToken(userInfo));
