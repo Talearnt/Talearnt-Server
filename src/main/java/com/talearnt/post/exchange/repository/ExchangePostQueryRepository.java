@@ -22,6 +22,7 @@ import com.talearnt.user.talent.entity.QMyTalent;
 import com.talearnt.util.common.PostUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.hibernate.sql.ast.tree.expression.SqlSelectionExpression;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -48,9 +49,23 @@ public class ExchangePostQueryRepository {
     //test Query
     public Page<TestListDTO> getTest(){
 
-        // Map the result to List<TestListDTO>
-        return null;
+        List<TestListDTO> res = factory.select(
+                    Projections.constructor(TestListDTO.class,
+                            Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", talentCategory.talentName).as("giveTalents"),
+                            Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", talentCategory.talentName).as("receiveTalents")
+                    )
+                )
+                .from(exchangePost)
+                .leftJoin(giveTalent).on(giveTalent.exchangePost.eq(exchangePost))
+                .leftJoin(receiveTalent).on(receiveTalent.exchangePost.eq(exchangePost))
+                .leftJoin(talentCategory).on(talentCategory.eq(giveTalent.talentCode))
+                .leftJoin(talentCategory).on(talentCategory.eq(receiveTalent.talentCode))
+                .groupBy(exchangePost)
+                .fetch();
 
+        log.info("res : {} ", res);
+
+        return null;
     }
 
 

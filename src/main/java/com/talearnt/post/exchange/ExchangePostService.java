@@ -141,9 +141,8 @@ public class ExchangePostService {
         log.info("재능 교환 게시글 목록 불러오기 시작 \n categories : {} \n talents : {} \n order : {} \n duration : {} \n type : {} \n badge : {} \n status : {} \n page : {} \n size : {}",categories,talents,order,duration,type,requiredBadge,status,page,size);
 
         //Page<ExchangePostListResDTO> result = exchangePostQueryRepository.getFilteredExchangePostList(categories,talents,order,duration,type,requiredBadge,status,PostUtil.filterValidPagination(page,size));
-        Page<TestListDTO> testListDTOS = exchangePostQueryRepository.getTest();
+        exchangePostQueryRepository.getTest();
 
-        log.info("재능 교환 게시글 목록 불러오기 끝");
         return null;
     }
 
