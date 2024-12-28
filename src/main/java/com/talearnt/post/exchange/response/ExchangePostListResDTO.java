@@ -13,12 +13,15 @@ import java.util.List;
 @Getter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class ExchangePostListResDTO {
+
 
     private String profileImg;
     private String nickname;
     private UserRole authority;
 
+    private Long exchangePostNo;
     private ExchangePostStatus status;
     private ExchangeType exchangeType;
     private String duration;
@@ -33,21 +36,6 @@ public class ExchangePostListResDTO {
     private int count;
     private int favoriteCount;
 
-    @QueryProjection
-    public ExchangePostListResDTO(String profileImg, String nickname, UserRole authority, ExchangePostStatus status, ExchangeType exchangeType, String duration, boolean requiredBadge, String title, String content, List<String> giveTalents, List<String> receiveTalents, LocalDateTime createdAt, int count, int favoriteCount) {
-        this.profileImg = profileImg;
-        this.nickname = nickname;
-        this.authority = authority;
-        this.status = status;
-        this.exchangeType = exchangeType;
-        this.duration = duration;
-        this.requiredBadge = requiredBadge;
-        this.title = title;
-        this.content = content;
-        this.giveTalents = giveTalents;
-        this.receiveTalents = receiveTalents;
-        this.createdAt = createdAt;
-        this.count = count;
-        this.favoriteCount = favoriteCount;
-    }
+
+
 }

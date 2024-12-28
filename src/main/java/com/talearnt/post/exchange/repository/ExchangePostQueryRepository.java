@@ -2,6 +2,7 @@ package com.talearnt.post.exchange.repository;
 
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Operator;
@@ -39,7 +40,6 @@ public class ExchangePostQueryRepository {
 
     //QClasses
     private final QExchangePost exchangePost = QExchangePost.exchangePost;
-    private final QTalentCategory talentCategory = QTalentCategory.talentCategory;
     private final QUser user = QUser.user;
     private final QGiveTalent giveTalent = QGiveTalent.giveTalent;
     private final QReceiveTalent receiveTalent = QReceiveTalent.receiveTalent;
@@ -48,22 +48,25 @@ public class ExchangePostQueryRepository {
 
     //test Query
     public Page<TestListDTO> getTest(){
+        QTalentCategory giveTalentCategory = new QTalentCategory("giveTalentCategory");
+        QTalentCategory receiveTalentCategory = new QTalentCategory("receiveTalentCategory");
 
-        List<TestListDTO> res = factory.select(
-                    Projections.constructor(TestListDTO.class,
-                            Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", talentCategory.talentName).as("giveTalents"),
-                            Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", talentCategory.talentName).as("receiveTalents")
-                    )
-                )
+        List<TestListDTO> res = factory
                 .from(exchangePost)
-                .leftJoin(giveTalent).on(giveTalent.exchangePost.eq(exchangePost))
-                .leftJoin(receiveTalent).on(receiveTalent.exchangePost.eq(exchangePost))
-                .leftJoin(talentCategory).on(talentCategory.eq(giveTalent.talentCode))
-                .leftJoin(talentCategory).on(talentCategory.eq(receiveTalent.talentCode))
-                .groupBy(exchangePost)
-                .fetch();
-
-        log.info("res : {} ", res);
+                .leftJoin(giveTalent).on(giveTalent.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
+                .leftJoin(receiveTalent).on(receiveTalent.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
+                .distinct()
+                .transform(GroupBy.groupBy(exchangePost.exchangePostNo).list(
+                        Projections.constructor(TestListDTO.class,
+                                exchangePost.exchangePostNo,
+                                GroupBy.list( Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", JPAExpressions.select(giveTalentCategory.talentName).distinct()
+                                        .from(giveTalentCategory)
+                                        .where(giveTalentCategory.talentCode.eq(giveTalent.talentCode.talentCode)))),
+                                GroupBy.list( GroupBy.list(JPAExpressions.select(receiveTalentCategory.talentName).distinct()
+                                        .from(receiveTalentCategory)
+                                        .where(receiveTalentCategory.talentCode.eq(receiveTalent.talentCode.talentCode))))
+                )));
+        log.info("res{} ", res);
 
         return null;
     }
