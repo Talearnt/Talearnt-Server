@@ -49,7 +49,7 @@ public interface ExchangePostApi {
                     "<li><strong>giveTalents :</strong> 1개 이상, 5개 이하</li>" +
                     "<li><strong>receiveTalents :</strong> 1개 이상, 5개 이하</li>" +
                     "<li><strong>exchangeType :</strong> 진행 방식(온라인,오프라인,온/오프라인)</li>" +
-                    "<li><strong>badgeRequired :</strong> 인증 뱃지 필수 여부 - 기본 false</li>" +
+                    "<li><strong>requiredBadge :</strong> 인증 뱃지 필수 여부 - 기본 false</li>" +
                     "<li><strong>duration :</strong> 진행 기간(기간 미정,1개월,2개월,3개월,3개월 이상)</li>" +
                     "</ul>"+
                     "<hr/>"+
