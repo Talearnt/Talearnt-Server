@@ -11,6 +11,7 @@ import com.talearnt.post.exchange.repository.ExchangePostRepository;
 import com.talearnt.post.exchange.repository.GiveTalentRepository;
 import com.talearnt.post.exchange.repository.ReceiveTalentRepository;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
+import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.post.exchange.response.TestListDTO;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
@@ -140,9 +141,23 @@ public class ExchangePostService {
     public List<ExchangePostListResDTO> getExchangePostList(List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size){
         log.info("재능 교환 게시글 목록 불러오기 시작 \n categories : {} \n talents : {} \n order : {} \n duration : {} \n type : {} \n badge : {} \n status : {} \n page : {} \n size : {}",categories,talents,order,duration,type,requiredBadge,status,page,size);
 
-        //Page<ExchangePostListResDTO> result = exchangePostQueryRepository.getFilteredExchangePostList(categories,talents,order,duration,type,requiredBadge,status,PostUtil.filterValidPagination(page,size));
-        exchangePostQueryRepository.getTest();
+        //DTO로 변환 하면서 값 유효한 값으로 생성자에서 변경
+        ExchangeSearchConditionDTO searchCondition = ExchangeSearchConditionDTO.builder()
+                .categories(categories)
+                .talents(talents)
+                .order(order)
+                .duration(duration)
+                .type(type)
+                .requiredBadge(requiredBadge)
+                .status(status)
+                .page(page)
+                .size(size)
+                .build();
 
+        //Page<ExchangePostListResDTO> result = exchangePostQueryRepository.getFilteredExchangePostList(categories,talents,order,duration,type,requiredBadge,status,PostUtil.filterValidPagination(page,size));
+
+
+        log.info("재능 교환 게시글 목록 불러오기 끝 : {} ", searchCondition);
         return null;
     }
 
