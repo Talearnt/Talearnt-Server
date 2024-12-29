@@ -46,30 +46,6 @@ public class ExchangePostQueryRepository {
     private final QFavoriteExchangePost favoriteExchangePost = QFavoriteExchangePost.favoriteExchangePost;
 
 
-    //test Query
-    public Page<TestListDTO> getTest(){
-        QTalentCategory giveTalentCategory = new QTalentCategory("giveTalentCategory");
-        QTalentCategory receiveTalentCategory = new QTalentCategory("receiveTalentCategory");
-
-        List<TestListDTO> res = factory
-                .from(exchangePost)
-                .leftJoin(giveTalent).on(giveTalent.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
-                .leftJoin(receiveTalent).on(receiveTalent.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
-                .distinct()
-                .transform(GroupBy.groupBy(exchangePost.exchangePostNo).list(
-                        Projections.constructor(TestListDTO.class,
-                                exchangePost.exchangePostNo,
-                                GroupBy.list( Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", JPAExpressions.select(giveTalentCategory.talentName).distinct()
-                                        .from(giveTalentCategory)
-                                        .where(giveTalentCategory.talentCode.eq(giveTalent.talentCode.talentCode)))),
-                                GroupBy.list( GroupBy.list(JPAExpressions.select(receiveTalentCategory.talentName).distinct()
-                                        .from(receiveTalentCategory)
-                                        .where(receiveTalentCategory.talentCode.eq(receiveTalent.talentCode.talentCode))))
-                )));
-        log.info("res{} ", res);
-
-        return null;
-    }
 
 
     /**활성화된 나의 주고 싶은 재능들 가져오기*/
@@ -89,7 +65,7 @@ public class ExchangePostQueryRepository {
 
 
     /**재능 교환 목록 불러오기 (Filter 조건)<br>*/
-    public Page<ExchangePostListResDTO> getFilteredExchangePostList(List<String> categories,
+    public List<ExchangePostListResDTO> getFilteredExchangePostList(List<String> categories,
                                                                     List<String> talents,
                                                                     String order,
                                                                     String duration,
@@ -98,31 +74,49 @@ public class ExchangePostQueryRepository {
                                                                     String status,
                                                                     Pageable page){
 
-//        List<ExchangePostListResDTO> result = factory.select(
-//                new QExchangePostListResDTO(user.profileImg,
-//                        user.nickname,
-//                        user.authority,
-//                        exchangePost.status,
-//                        exchangePost.exchangeType,
-//                        exchangePost.duration,
-//                        exchangePost.requiredBadge,
-//                        exchangePost.title,
-//                        exchangePost.content,
-//                        Expressions.
-//                        JPAExpressions.select(giveTalent.talentCode.talentName)
-//                                .from(giveTalent),
-//                        exchangePost.receiveTalents.any().talentCode.talentName,
-//                        exchangePost.createdAt,
-//                        exchangePost.count,
-//                        favoriteExchangePost.exchangePostNo.count().intValue())
-//        ).from(exchangePost)
-//                .innerJoin(user)
-//                .on(exchangePost.user.userNo.eq(user.userNo))
-//                .fetch();
-//
-//        log.info("Select 문 : {} ", result);
+        QTalentCategory talentCategory = QTalentCategory.talentCategory;
+        List<ExchangePostListResDTO> result = factory
+                .select(Projections.constructor(
+                        ExchangePostListResDTO.class,
+                        user.profileImg,
+                        user.nickname,
+                        user.authority,
+                        exchangePost.exchangePostNo,
+                        exchangePost.status,
+                        exchangePost.exchangeType,
+                        exchangePost.duration,
+                        exchangePost.requiredBadge,
+                        exchangePost.title,
+                        exchangePost.content,
+                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",JPAExpressions
+                                .select(talentCategory.talentName)
+                                .from(talentCategory)
+                                .where(talentCategory.talentCode.eq(giveTalent.talentCode.talentCode))
+                                .groupBy(giveTalent.exchangePost.exchangePostNo)
+                        ),
+                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",JPAExpressions
+                                .select(talentCategory.talentName)
+                                .from(talentCategory)
+                                .where(talentCategory.talentCode.eq(receiveTalent.talentCode.talentCode))
+                                .groupBy(receiveTalent.exchangePost.exchangePostNo)
+                        ),
+                        exchangePost.createdAt,
+                        exchangePost.count,
+                        favoriteExchangePost.count().intValue()
+                )).from(exchangePost)
+                        .leftJoin(user).on(exchangePost.user.userNo.eq(user.userNo))
+                        .leftJoin(favoriteExchangePost).on(exchangePost.exchangePostNo.eq(favoriteExchangePost.exchangePostNo))
+                        .leftJoin(giveTalent).on(exchangePost.exchangePostNo.eq(giveTalent.exchangePost.exchangePostNo))
+                        .leftJoin(receiveTalent).on(exchangePost.exchangePostNo.eq(receiveTalent.exchangePost.exchangePostNo))
+                        .groupBy(exchangePost.exchangePostNo)
+                                .fetch();
 
-        return null;
+
+
+
+        log.info("Select 문 : {} ", result);
+
+        return result;
     }
 
     /** 재능 교환 게시글의 주고 싶은 재능의 대분류가 매개변수 값과 같은 조건 탐색*/
@@ -136,7 +130,5 @@ public class ExchangePostQueryRepository {
         List<Integer> result = PostUtil.filterValidIntegers(talents);
         return !result.isEmpty() ? exchangePost.giveTalents.any().talentCode.talentCode.in(result): null;
     }
-
-
 
 }
