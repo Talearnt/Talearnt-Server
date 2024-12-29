@@ -13,14 +13,11 @@ import com.talearnt.post.exchange.repository.ReceiveTalentRepository;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
-import com.talearnt.post.exchange.response.TestListDTO;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
-import com.talearnt.util.common.PostUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -138,11 +135,12 @@ public class ExchangePostService {
      * - 페이지 번호 : Integer 가 아닐 경우 기본 값 1 (커뮤니티 공통)
      * */
 
-    public List<ExchangePostListResDTO> getExchangePostList(List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size){
-        log.info("재능 교환 게시글 목록 불러오기 시작 \n categories : {} \n talents : {} \n order : {} \n duration : {} \n type : {} \n badge : {} \n status : {} \n page : {} \n size : {}",categories,talents,order,duration,type,requiredBadge,status,page,size);
+    public List<ExchangePostListResDTO> getExchangePostList(List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String title){
+        log.info("재능 교환 게시글 목록 불러오기 시작");
 
         //DTO로 변환 하면서 값 유효한 값으로 생성자에서 변경
         ExchangeSearchConditionDTO searchCondition = ExchangeSearchConditionDTO.builder()
+                .title(title)
                 .categories(categories)
                 .talents(talents)
                 .order(order)
@@ -154,8 +152,7 @@ public class ExchangePostService {
                 .size(size)
                 .build();
 
-        List<ExchangePostListResDTO> result = exchangePostQueryRepository.getFilteredExchangePostList(categories,talents,order,duration,type,requiredBadge,status,PostUtil.filterValidPagination(page,size));
-
+        List<ExchangePostListResDTO> result = exchangePostQueryRepository.getFilteredExchangePostList(searchCondition);
 
         log.info("재능 교환 게시글 목록 불러오기 끝 : {} ", searchCondition);
         return result;

@@ -45,8 +45,9 @@ public class ExchangePostController implements ExchangePostApi{
                                                                                             @RequestParam(value = "badge",required = false) String requiredBadge, // Boolean 값으로 넘어오지 않을 경우 null로 변환
                                                                                             @RequestParam(value = "status",required = false) String status, //ExchangePostStatus으로 변환 필요, ExchangePostStatus 으로 변환 실패시  으로 변환 실패 시 null로 변환
                                                                                             @RequestParam(value = "page",required = false,defaultValue = "1") String page,
-                                                                                            @RequestParam(value = "size",required = false,defaultValue = "15") String size){
-        return CommonResponse.success(exchangePostService.getExchangePostList(categories,talents,order,duration,type,requiredBadge,status,page,size));
+                                                                                            @RequestParam(value = "size",required = false,defaultValue = "15") String size,
+                                                                                            @RequestParam(value = "title",required = false) String title){
+        return CommonResponse.success(exchangePostService.getExchangePostList(categories,talents,order,duration,type,requiredBadge,status,page,size,title));
     }
 
     @PostMapping("/posts/exchanges")

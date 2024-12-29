@@ -12,18 +12,20 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class ExchangeSearchConditionDTO {
-    List<Integer> categories; //Integer로 변환 필요
-    List<Integer> talents; //Integer로 변환 필요
-    String order; //recent,popular 로 변환 필요
-    String duration; // 이상한 값이 넘어올 경우 duration 없이 조건
-    ExchangeType type; //ExchangeType으로 변환 필요, ExchangeType 으로 변환 실패 시 null로 변환
-    Boolean requiredBadge; // Boolean 값으로 넘어오지 않을 경우 null로 변환
-    ExchangePostStatus status; //ExchangePostStatus으로 변환 필요, ExchangePostStatus 으로 변환 실패시  으로 변환 실패 시 null로 변환
-    Pageable page;
+    private String title;
+    private List<Integer> categories; //Integer로 변환 필요
+    private List<Integer> talents; //Integer로 변환 필요
+    private String order; //recent,popular 로 변환 필요
+    private String duration; // 이상한 값이 넘어올 경우 duration 없이 조건
+    private ExchangeType type; //ExchangeType으로 변환 필요, ExchangeType 으로 변환 실패 시 null로 변환
+    private Boolean requiredBadge; // Boolean 값으로 넘어오지 않을 경우 null로 변환
+    private ExchangePostStatus status; //ExchangePostStatus으로 변환 필요, ExchangePostStatus 으로 변환 실패시  으로 변환 실패 시 null로 변환
+    private Pageable page;
 
 
     @Builder
-    public ExchangeSearchConditionDTO(List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size) {
+    public ExchangeSearchConditionDTO(String title,List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size) {
+        this.title = title;
         this.categories = PostUtil.filterValidIntegers(categories);
         this.talents = PostUtil.filterValidIntegers(talents);
         this.order = PostUtil.filterValidOrderValue(order);
