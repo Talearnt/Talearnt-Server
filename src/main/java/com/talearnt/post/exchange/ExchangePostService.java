@@ -154,11 +154,11 @@ public class ExchangePostService {
                 .size(size)
                 .build();
 
-        //Page<ExchangePostListResDTO> result = exchangePostQueryRepository.getFilteredExchangePostList(categories,talents,order,duration,type,requiredBadge,status,PostUtil.filterValidPagination(page,size));
+        List<ExchangePostListResDTO> result = exchangePostQueryRepository.getFilteredExchangePostList(categories,talents,order,duration,type,requiredBadge,status,PostUtil.filterValidPagination(page,size));
 
 
         log.info("재능 교환 게시글 목록 불러오기 끝 : {} ", searchCondition);
-        return null;
+        return result;
     }
 
 
