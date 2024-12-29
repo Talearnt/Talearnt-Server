@@ -1,6 +1,7 @@
 package com.talearnt.user;
 
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
+import com.talearnt.user.infomation.response.UserHeaderResDTO;
 import com.talearnt.user.talent.request.MyTalentReqDTO;
 import com.talearnt.user.talent.response.MyTalentsListResDTO;
 import com.talearnt.user.talent.response.MyTalentsResDTO;
@@ -20,13 +21,29 @@ public interface UserApi {
     public ResponseEntity<CommonResponse<String>> changePassword(@RequestBody TestChangePwdReqDTO testChangePwdReqDTO);
 
 
+
+    @Operation(summary = "사용자 기본 정보 (Keyword 설정 여부)",
+    description = "<h2>내용</h2>" +
+            "<p>디자인 페이지의 Header에서 사용할 유저의 기본 정보입니다.</p>"+
+            "<p><strong>로그인 후 이용 가능합니다.</strong></p>" +
+            "<h2>Response</h2>" +
+            "<ul>" +
+                "<li>userNo : 로그인한 유저 번호 - 본인 게시글 판단 여부 및 API 호출 용도</li>" +
+                "<li>profileImg : 유저의 프로필 이미지 경로</li>" +
+                "<li>nickname : 유저의 닉네임</li>" +
+                "<li>isKeywordSet : 유저의 키워드 설정 여부</li>" +
+            "</ul>"
+    )
+    public ResponseEntity<CommonResponse<UserHeaderResDTO>> getHeaderUserInfo(Authentication authentication);
+
+
     @Operation(summary = "나의 재능, 관심 키워드 추가 (권한 : 유저 이상 - 미구현)",
             description = "<h2>내용</h2>" +
                     "<p>나의 재능 키워드와 관심 키워드를 동시에 입력하는 API입니다.</p>" +
                     "<h2>Body</h2>" +
                     "<ul>" +
                         "<li><strong>giveTalents :</strong> 주고 싶은 키워드 코드들 <strong>조건) 최소 1개 이상, 최대 5개 이하</strong></li>" +
-                        "<li><strong>interestTalents :</strong> 관심 있는 키워드 코드들 <strong>조건) 최소 1개 이상, 최대 5개 이하</strong></li>" +
+                        "<li><strong>receiveTalents :</strong> 관심 있는 키워드 코드들 <strong>조건) 최소 1개 이상, 최대 5개 이하</strong></li>" +
                     "</ul>" +
                     "<p>DB에 존재하지 않은 키워드나 사용하지 않은 과거 키워드를 입력했을 경우 Exception 발생</p>")
     @ApiResponses(value = {

@@ -8,7 +8,7 @@ import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.user.talent.response.QMyTalentsResDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
+import static com.talearnt.user.talent.entity.QMyTalent.myTalent;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +16,21 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MyTalentQueryRepository {
     private final JPAQueryFactory factory;
+
+
+
+    /** 나의재능 키워드가 설정되어 있는지 확인하는 메소드
+     * return boolean isKeywordSet*/
+    public Boolean isKeywordSetByUserNo(Long userNo){
+        return factory.selectFrom(myTalent)
+                .where(
+                        myTalent.isActive.eq(true)//나의 재능을 사용하고 있는지 판단.
+                                .and(
+                                        myTalent.user.userNo.eq(userNo) //회원 번호가 가지고 있는
+                                )
+                ).fetch().size() >= 2; //주고싶은 재능 1개, 받고 싶은 재능 1개가 필수이므로 그 이하일 경우 False, 이상일 경우 True
+    }
+
 
     /** 등록하는 혹은 수정하는 모든 재능 키워드가 있는 지 확인, Exception 발생용 <br>
      * 조건 <br>

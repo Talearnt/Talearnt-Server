@@ -46,14 +46,14 @@ public class MyTalentService {
 
         //등록된 재능 코드인지 확인 : 모두 있을 경우 False, 없을 경우 True
         if(myTalentQueryRepository.validateIsCategory(talents.getGiveTalents())
-        && myTalentQueryRepository.validateIsCategory(talents.getInterestTalents())) {
+        && myTalentQueryRepository.validateIsCategory(talents.getReceiveTalents())) {
             log.error("나의 재능, 관심있는 재능들 추가 실패 - 존재하지 않은 키워드 : {}", ErrorCode.KEYWORD_CATEGORY_NOT_FOUND);
             throw new CustomRuntimeException(ErrorCode.KEYWORD_CATEGORY_NOT_FOUND);
         }
 
         //키워드 등록 전 변환
         List<MyTalent> giveTalents = MyTalentMapper.INSTANCE.toGiveEntities(talents.getGiveTalents(), talents.getUserInfo());
-        List<MyTalent> interestTalents = MyTalentMapper.INSTANCE.toInterestEntities(talents.getInterestTalents(), talents.getUserInfo());
+        List<MyTalent> interestTalents = MyTalentMapper.INSTANCE.toInterestEntities(talents.getReceiveTalents(), talents.getUserInfo());
         
         //키워드 합치기
         giveTalents.addAll(interestTalents);

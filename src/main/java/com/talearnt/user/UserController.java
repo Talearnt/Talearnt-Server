@@ -2,6 +2,7 @@ package com.talearnt.user;
 
 
 import com.talearnt.user.infomation.UserService;
+import com.talearnt.user.infomation.response.UserHeaderResDTO;
 import com.talearnt.user.talent.MyTalentService;
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
 import com.talearnt.user.talent.request.MyTalentReqDTO;
@@ -15,14 +16,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
 
 @Tag(name = "Users",description = "유저 관련")
 @RestControllerV1
@@ -34,11 +32,19 @@ public class UserController implements UserApi{
     private final UserService userService;
     private final MyTalentService myTalentService;
 
+
+    //회원의 기본 정보를 가져오는 API
+    @GetMapping("/users/header/profile")
+    public ResponseEntity<CommonResponse<UserHeaderResDTO>> getHeaderUserInfo(Authentication authentication){
+        return CommonResponse.success(userService.getHeaderUserInfomation(authentication));
+    }
+
     @PostMapping("/users/password/test")
     public ResponseEntity<CommonResponse<String>> changePassword(@RequestBody TestChangePwdReqDTO testChangePwdReqDTO){
         return userService.changeTestPwd(testChangePwdReqDTO);
     }
 
+    //나의 재능 키워드 등록
     @PostMapping("/users/my-talents")
     public ResponseEntity<CommonResponse<String>> addMyTalents(@RequestBody @Valid MyTalentReqDTO talents){
         return CommonResponse.success(myTalentService.addMyTalents(talents));

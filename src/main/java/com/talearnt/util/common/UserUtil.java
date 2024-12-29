@@ -18,6 +18,8 @@ public class UserUtil {
 
 
 
+
+
     /** 정지, 탈퇴 회원 인지 판단하는 메소드 입니다.
      * */
     public static void validateUserRole(String errorLocation, User user){
@@ -32,9 +34,11 @@ public class UserUtil {
 
 
     /** Authentication 검증 하는 메소드,
+     * 검증이 완료될 경우 UserInfo를 반환합니다.
      * Controller에서 Authenticatin 으로 가져올 경우 이걸로 검증합니다.
      * @param errorLocation 에러 발생시 위치
      * @param authentication JWT
+     * @return UserInfo
      * */
     public static UserInfo validateAuthentication(String errorLocation ,Authentication authentication){
         if (authentication == null){

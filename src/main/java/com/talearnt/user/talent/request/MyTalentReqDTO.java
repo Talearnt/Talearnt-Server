@@ -26,6 +26,6 @@ public class MyTalentReqDTO {
 
     @ListValid(errorCode = ErrorCode.POST_REQUEST_MISSING, minLength = 1)
     @ListValid(errorCode = ErrorCode.POST_KEYWORD_LENGTH_MISSING, maxLength = 5)
-    private List<Integer> interestTalents;
+    private List<Integer> receiveTalents;
 
 }
