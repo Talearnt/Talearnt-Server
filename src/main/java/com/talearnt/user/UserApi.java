@@ -34,6 +34,9 @@ public interface UserApi {
                 "<li>isKeywordSet : 유저의 키워드 설정 여부</li>" +
             "</ul>"
     )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
+    })
     public ResponseEntity<CommonResponse<UserHeaderResDTO>> getHeaderUserInfo(Authentication authentication);
 
 

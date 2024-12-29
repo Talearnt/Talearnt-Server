@@ -49,7 +49,7 @@ public class PostUtil {
     /** 교환 기간 Regex에 맞지 않으면 null 반환 Method<br>*/
     public static String filterValidDurationValue(String value){
         //REGEX에 일치하면 해당 값 반환
-        if(value.matches(Regex.EXCHANGE_DURATION.getPattern())) return value;
+        if(value != null && value.matches(Regex.EXCHANGE_DURATION.getPattern())) return value;
         //아닐 경우 null
         return null;
     }
@@ -59,7 +59,7 @@ public class PostUtil {
         try {
             //온라인,오프라인,온_오프라인 값에 해당하는 거 가져오기.
             return ExchangeType.valueOf(value);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             //해당 값 없으면 null 반환
             return null;
         }
@@ -81,7 +81,7 @@ public class PostUtil {
     public static ExchangePostStatus filterValidExchangePostStatus(String value){
         try {
             return ExchangePostStatus.valueOf(value);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             return null;
         }
     }
