@@ -108,14 +108,14 @@ public class PostUtil {
             //무한한 값이 들어오거나 음수값이 들어올 경우 최대값, 최소값 설정.
             if(defaultSize > 50){
                 defaultSize = 50;
-            } else if (defaultSize < 15) {
+            } else if (defaultSize < 1) {
                 defaultSize =15;
             }
         }catch (NumberFormatException e){
-            defaultSize = 1;
+            defaultSize = 15;
         }
 
-        return PageRequest.of(defaultPage,defaultSize);
+        return PageRequest.of(defaultPage-1,defaultSize);
     }
 
 }

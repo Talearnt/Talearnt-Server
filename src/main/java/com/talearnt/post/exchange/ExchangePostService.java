@@ -14,10 +14,15 @@ import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
+import com.talearnt.util.common.PageUtil;
+import com.talearnt.util.common.Pagination;
 import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.response.PaginatedResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -135,7 +140,7 @@ public class ExchangePostService {
      * - 페이지 번호 : Integer 가 아닐 경우 기본 값 1 (커뮤니티 공통)
      * */
 
-    public List<ExchangePostListResDTO> getExchangePostList(List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String title){
+    public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String title){
         log.info("재능 교환 게시글 목록 불러오기 시작");
 
         //DTO로 변환 하면서 값 유효한 값으로 생성자에서 변경
@@ -152,10 +157,12 @@ public class ExchangePostService {
                 .size(size)
                 .build();
 
-        List<ExchangePostListResDTO> result = exchangePostQueryRepository.getFilteredExchangePostList(searchCondition);
+        //조회하는 Query 실행
+        Page<ExchangePostListResDTO> result = exchangePostQueryRepository.getFilteredExchangePostList(searchCondition);
 
-        log.info("재능 교환 게시글 목록 불러오기 끝 : {} ", searchCondition);
-        return result;
+        log.info("재능 교환 게시글 목록 불러오기 끝");
+        //데이터 넣고, Pagination으로 변환 -> 데이터와 Page 분리하여 보내기
+        return PaginatedResponse.success(result.getContent(),PageUtil.separatePaginationFromEntity(result));
     }
 
 
