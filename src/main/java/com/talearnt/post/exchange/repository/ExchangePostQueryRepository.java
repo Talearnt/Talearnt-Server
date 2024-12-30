@@ -101,6 +101,7 @@ public class ExchangePostQueryRepository {
                 .where(
                         favoriteExchangePost.deletedAt.isNull(), // 찜 게시글이 삭제되지 않았고, -> favoriteExchangePost를 위함
                         exchangePost.deletedAt.isNull(), //게시글이 삭제되지 않았고,
+                        titleLike(searchConditionDTO.getSearch()), //검색 키워드가 존재하고
                         categoriesEq(searchConditionDTO.getCategories()),//대분류 코드가 일치하고,
                         talentCodesEq(searchConditionDTO.getTalents()),//재능 분류의 코드가 일치할 경우
                         durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
@@ -120,6 +121,7 @@ public class ExchangePostQueryRepository {
                         .from(exchangePost)
                         .where(
                                 exchangePost.deletedAt.isNull(), //게시글이 삭제되지 않았고,
+                                titleLike(searchConditionDTO.getSearch()), //검색 키워드가 존재하고
                                 categoriesEq(searchConditionDTO.getCategories()),//대분류 코드가 일치하고,
                                 talentCodesEq(searchConditionDTO.getTalents()),//재능 분류의 코드가 일치할 경우
                                 durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
@@ -131,6 +133,18 @@ public class ExchangePostQueryRepository {
 
 
         return new PageImpl<>(data,searchConditionDTO.getPage(),total);
+    }
+
+    /** 재능 교환 제목 검색(title)가 searchTitle과 같은 값만 조건 탐색.*/
+    private BooleanExpression titleLike(String searchKeyword){
+        if(searchKeyword == null || searchKeyword.isEmpty()) return null;
+        final String formattedSearchKeyword = "\"" + searchKeyword + "\"";
+
+        return  Expressions.numberTemplate(Double.class,
+                "function('match',{0},{1})",
+                QExchangePost.exchangePost.title,
+                formattedSearchKeyword
+        ).gt(0);
     }
 
     /** 재능 교환 게시글 대분류(categories)가 매개변수 값과 같은 조건 탐색<br>

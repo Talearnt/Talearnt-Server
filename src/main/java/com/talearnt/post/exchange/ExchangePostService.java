@@ -140,12 +140,12 @@ public class ExchangePostService {
      * - 페이지 번호 : Integer 가 아닐 경우 기본 값 1 (커뮤니티 공통)
      * */
 
-    public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String title){
+    public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String search){
         log.info("재능 교환 게시글 목록 불러오기 시작");
 
         //DTO로 변환 하면서 값 유효한 값으로 생성자에서 변경
         ExchangeSearchConditionDTO searchCondition = ExchangeSearchConditionDTO.builder()
-                .title(title)
+                .search(search)
                 .categories(categories)
                 .talents(talents)
                 .order(order)

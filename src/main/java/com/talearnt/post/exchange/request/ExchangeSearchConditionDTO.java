@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class ExchangeSearchConditionDTO {
-    private String title;
+    private String search;
     private List<Integer> categories; //Integer로 변환 필요
     private List<Integer> talents; //Integer로 변환 필요
     private String order; //recent,popular 로 변환 필요
@@ -24,8 +24,8 @@ public class ExchangeSearchConditionDTO {
 
 
     @Builder
-    public ExchangeSearchConditionDTO(String title,List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size) {
-        this.title = title;
+    public ExchangeSearchConditionDTO(String search,List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size) {
+        this.search = search;
         this.categories = PostUtil.filterValidIntegers(categories);
         this.talents = PostUtil.filterValidIntegers(talents);
         this.order = PostUtil.filterValidOrderValue(order);
