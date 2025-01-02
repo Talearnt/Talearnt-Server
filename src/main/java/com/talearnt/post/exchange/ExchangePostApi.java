@@ -107,6 +107,11 @@ public interface ExchangePostApi {
                 "<li>createdAt : 게시글 작성일</li>" +
                 "<li>count : 게시글 조회수 -> 추후 채팅방 갯수로 변경</li>" +
                 "<li>favoriteCount : 게시글 찜 갯수</li>" +
+                "<br>" +
+                "<li>hasNext : 다음 버튼 여부</li>" +
+                "<li>hasPrevious : 이전 버튼 여부</li>" +
+                "<li>totalPages : 총 페이지 수 </li>" +
+                "<li>currentPage : 현재 페이지</li>" +
             "</ul>"
     )
     public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(@RequestParam(value = "categories",required = false,defaultValue = "") @Schema(description = "대분류 - 대분류 코드") List<String> categories,//Integer로 변환 필요
