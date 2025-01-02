@@ -64,6 +64,8 @@ public class ExchangePostQueryRepository {
     /**재능 교환 목록 불러오기 (Filter 조건)<br>*/
     public Page<ExchangePostListResDTO> getFilteredExchangePostList(ExchangeSearchConditionDTO searchConditionDTO){
 
+        log.info("search keyword : {} ",searchConditionDTO.getSearch());
+
         QTalentCategory talentCategory = QTalentCategory.talentCategory;
         List<ExchangePostListResDTO> data = factory
                 .select(Projections.constructor(
@@ -77,7 +79,7 @@ public class ExchangePostQueryRepository {
                         exchangePost.duration,
                         exchangePost.requiredBadge,
                         exchangePost.title,
-                        exchangePost.content,
+                        Expressions.stringTemplate("SUBSTRING(CAST(REGEXP_REPLACE({0}, '<[^>]*>', '') AS STRING), 1, 100)",exchangePost.content),
                         Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",JPAExpressions
                                 .select(talentCategory.talentName)
                                 .from(talentCategory)

@@ -3,6 +3,7 @@ package com.talearnt.post.exchange.request;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.util.common.PostUtil;
+import com.talearnt.util.common.SplitUtil;
 import lombok.*;
 import org.springframework.data.domain.Pageable;
 
@@ -25,7 +26,7 @@ public class ExchangeSearchConditionDTO {
 
     @Builder
     public ExchangeSearchConditionDTO(String search,List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size) {
-        this.search = search;
+        this.search = SplitUtil.createSearchKeywordForBooleanMode(search);
         this.categories = PostUtil.filterValidIntegers(categories);
         this.talents = PostUtil.filterValidIntegers(talents);
         this.order = PostUtil.filterValidOrderValue(order);

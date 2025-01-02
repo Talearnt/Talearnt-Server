@@ -9,6 +9,7 @@ import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.version.RestControllerV1;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class ExchangePostController implements ExchangePostApi{
 
 
     @GetMapping("/posts/exchanges")
-    public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(@RequestParam(value = "categories",required = false,defaultValue = "") List<String> categories,//Integer로 변환 필요
+    public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(@RequestParam(value = "categories",required = false,defaultValue = "")  List<String> categories,//Integer로 변환 필요
                                                                                                @RequestParam(value = "talents",required = false,defaultValue = "") List<String> talents,//Integer로 변환 필요
                                                                                                @RequestParam(value = "order", required = false,defaultValue = "recent") String order,//recent,popular 로 변환 필요
                                                                                                @RequestParam(value = "duration",required = false) String duration,// 이상한 값이 넘어올 경우 duration 없이 조건
