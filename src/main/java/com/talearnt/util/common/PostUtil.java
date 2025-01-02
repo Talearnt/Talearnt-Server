@@ -10,11 +10,20 @@ import java.util.List;
 
 public class PostUtil {
 
+    /** 100글자일 경우 ...을 붙이고 아닐 경우 붙이지 않는 메소드<br>
+     * 주로 Content에 사용할 예정*/
+    public static String addThreeDotForContent(String content){
+        if (content == null) return null;
+        if (content.length() >= 100) return content+"...";
+
+        return content;
+    }
+
 
     /** String 에서 Integer 로 유효한 값만 변환하는 Method <br>
      * List<Integer> 반환*/
     public static List<Integer> filterValidIntegers(List<String> strings){
-        return strings.stream().filter(value -> PostUtil.isInteger(value))
+        return strings.stream().filter(PostUtil::isInteger)
                 .map(Integer::valueOf).toList();
     }
 
@@ -42,7 +51,7 @@ public class PostUtil {
      * - 재능 교환 게시글 목록 불러오기*/
     public static String filterValidOrderValue(String value){
         //Recent,Popular가 아니라면 recent 반환
-        if ("recent".equals(value.toLowerCase()) || "popular".equals(value.toLowerCase())) return value;
+        if ("recent".equalsIgnoreCase(value) || "popular".equalsIgnoreCase(value)) return value;
         return "recent";
     }
 
@@ -98,10 +107,7 @@ public class PostUtil {
             if (defaultPage < 1){
                 defaultPage = 1;
             }
-        } catch (NumberFormatException e) {
-            //정수 변환 실패 시 기본 값 설정.
-           defaultPage = 1;
-        }
+        } catch (NumberFormatException ignored) {}
         // Page Size에 대한 Try-catch문
         try {
             defaultSize = Integer.parseInt(size);
@@ -111,9 +117,7 @@ public class PostUtil {
             } else if (defaultSize < 1) {
                 defaultSize =15;
             }
-        }catch (NumberFormatException e){
-            defaultSize = 15;
-        }
+        }catch (NumberFormatException ignored){}
 
         return PageRequest.of(defaultPage-1,defaultSize);
     }

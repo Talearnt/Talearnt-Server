@@ -4,6 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.enums.user.UserRole;
+import com.talearnt.util.common.PostUtil;
 import com.talearnt.util.common.SplitUtil;
 import lombok.*;
 
@@ -46,7 +47,7 @@ public class ExchangePostListResDTO {
         this.duration = duration;
         this.requiredBadge = requiredBadge;
         this.title = title;
-        this.content = content;
+        this.content = PostUtil.addThreeDotForContent(content);
         this.giveTalents = SplitUtil.splitStringToList(giveTalents);
         this.receiveTalents = SplitUtil.splitStringToList(receiveTalents);
         this.createdAt = createdAt;
