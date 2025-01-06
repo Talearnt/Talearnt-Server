@@ -1,19 +1,27 @@
 package com.talearnt.s3;
 
+import com.talearnt.s3.request.S3FilesReqDTO;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.version.RestControllerV1;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 @RestControllerV1
 @Log4j2
+@RequiredArgsConstructor
 public class S3Controller {
 
+    private final S3Service s3Service;
 
-    public ResponseEntity<CommonResponse<String>> generatePresignedUrl(@RequestParam String fileName){ //파일 이름은 인코딩해서 보낼 것
 
-        return null;
+    @PostMapping("/uploads")
+    public ResponseEntity<CommonResponse<List<String>>> generatePresignedUrl(@RequestBody S3FilesReqDTO images){ //파일 이름은 인코딩해서 보낼 것
+        return CommonResponse.success(s3Service.generatePresignedUrls(images));
     }
 
 }

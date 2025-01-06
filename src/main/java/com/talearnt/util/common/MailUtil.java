@@ -16,7 +16,7 @@ public class MailUtil {
                 "            <table role=\"presentation\" style=\"width: 100%; border-spacing: 0;\">\n" +
                 "                <tr>\n" +
                 "                    <td>\n" +
-                "                        <img src=\"로고 주소\" alt=\"로고\" style=\"max-height: 50px; display: block;\">\n" +
+                "                        <img src=\"https://talearnt-sever-images-upload-bucket.s3.ap-northeast-2.amazonaws.com/talearnt_logo.png\" alt=\"로고\" style=\"max-height: 50px; display: block;\">\n" +
                 "                    </td>\n" +
                 "                    <td style=\"text-align: right;\">\n" +
                 "                        <a href=\"#\" style=\"font-weight: 600; font-size: 20px; color: #000; text-decoration: none;\">고객 센터</a>\n" +
