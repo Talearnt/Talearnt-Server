@@ -1,5 +1,6 @@
 package com.talearnt.s3;
 
+import com.talearnt.s3.request.S3FilesReqDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,26 +24,26 @@ import java.util.UUID;
 @Service
 @Log4j2
 @RequiredArgsConstructor
-public class S3ImageService {
+public class S3Service {
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
     private final S3Presigner s3Presigner;
 
     /**여러 이미지 파일 업로드*/
-    public List<String> generatePresignedUrls(List<String> fileNames){
-        return fileNames
+    public List<String> generatePresignedUrls(S3FilesReqDTO dto){
+        log.info("S3 : {}",dto);
+        return dto.getFileNames()
                 .stream()
-                .map(this::generatePresignedURL)
+                .map( fileName -> this.generatePresignedURL(fileName, dto.getFileType()))
                 .toList();
     }
 
-
     /** Presigned URL 이름을 생성하고 권한을 설정한 뒤 보내준다.*/
-    public String generatePresignedURL(String fileName){
+    public String generatePresignedURL(String fileName,String fileType){
         PutObjectRequest putObjectAclRequest = PutObjectRequest.builder()
                 .bucket(bucket)
-                .key("exchange/images/"+createFileName(fileName))
+                .key(fileType+"/"+createFileName(fileName))
                 .build();
 
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()

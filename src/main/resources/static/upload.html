@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<input type="file" onchange="getURL(this);">
+<img/>
+<script>
+    async function getURL(e){
+      let file = e.files[0]
+      let name = encodeURIComponent(file.name)
+      let result = await fetch('/v1/uploads',{
+            method : 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body : JSON.stringify(
+                {
+                    fileNames : [name],
+                    fileType : "images"
+                }
+            )
+           })
+      result = await result.json()
+      console.log(result.data[0])
+
+      let 결과 = await fetch(result.data[0], {
+        method: 'PUT',
+        body: e.files[0]
+      })
+
+      console.log(결과.url.split("?")[0])
+      if (결과.ok) {
+        document.querySelector('img').src = 결과.url.split("?")[0]
+      }
+    }
+</script>
+</body>
+</html>
