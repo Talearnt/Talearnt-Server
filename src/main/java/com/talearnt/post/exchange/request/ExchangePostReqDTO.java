@@ -41,4 +41,6 @@ public class ExchangePostReqDTO {
     private boolean requiredBadge;
     @DynamicValid(errorCode = ErrorCode.POST_DURATION_MISSING, pattern = Regex.EXCHANGE_DURATION)
     private String duration;
+
+    private List<String> urls;// S3에 업로드된 파일 경로 urls
 }
