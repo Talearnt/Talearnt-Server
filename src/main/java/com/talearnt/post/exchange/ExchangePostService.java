@@ -3,19 +3,19 @@ package com.talearnt.post.exchange;
 import com.talearnt.admin.category.entity.TalentCategory;
 import com.talearnt.admin.category.repository.TalentCategoryRepository;
 import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.upload.PostType;
 import com.talearnt.post.exchange.entity.ExchangePost;
 import com.talearnt.post.exchange.entity.GiveTalent;
 import com.talearnt.post.exchange.entity.ReceiveTalent;
 import com.talearnt.post.exchange.repository.ExchangePostQueryRepository;
 import com.talearnt.post.exchange.repository.ExchangePostRepository;
-import com.talearnt.post.exchange.repository.GiveTalentRepository;
-import com.talearnt.post.exchange.repository.ReceiveTalentRepository;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
+import com.talearnt.s3.entity.FileUpload;
+import com.talearnt.s3.repository.FileUploadRepository;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
 import com.talearnt.util.common.PageUtil;
-import com.talearnt.util.common.Pagination;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.PaginatedResponse;
 import jakarta.transaction.Transactional;
@@ -45,9 +45,8 @@ public class ExchangePostService {
     private final ExchangePostQueryRepository exchangePostQueryRepository;
     private final MyTalentQueryRepository myTalentQueryRepository;
     private final ExchangePostRepository exchangePostRepository;
-    private final ReceiveTalentRepository receiveTalentRepository;
-    private final GiveTalentRepository giveTalentRepository;
     private final TalentCategoryRepository talentCategoryRepository;
+    private final FileUploadRepository fileUploadRepository;
 
     /** 재능 교환 게시글 작성 <br>
      * 조건<br>
@@ -122,6 +121,17 @@ public class ExchangePostService {
                     ps.setInt(2, entity.getTalentCode().getTalentCode());
                 });
 
+        //이미지를 업로드 했을 경우 DB에 저장
+        if (!exchangePostReqDTO.getUrls().isEmpty() && exchangePostReqDTO.getUrls() !=null){
+            // 파일 업로드 경로 저장
+            List<FileUpload> fileUploads = exchangePostReqDTO.getUrls().stream().map(
+                    url-> new FileUpload(null,savedPostEntity.getExchangePostNo(),exchangePostReqDTO.getUserInfo().getUserNo(), PostType.EXCHANGE,url,null)
+            ).toList();
+
+            // 파일 업로드 경로 모두 저장
+            fileUploadRepository.saveAll(fileUploads);
+        }
+        
         log.info("재능 교환 게시글 작성 끝");
         return "재능 교환 게시글 작성 완료";
     }
