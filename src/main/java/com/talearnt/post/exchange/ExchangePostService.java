@@ -131,7 +131,7 @@ public class ExchangePostService {
             // 파일 업로드 경로 모두 저장
             fileUploadRepository.saveAll(fileUploads);
         }
-        
+
         log.info("재능 교환 게시글 작성 끝");
         return "재능 교환 게시글 작성 완료";
     }

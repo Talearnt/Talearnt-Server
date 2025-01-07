@@ -68,7 +68,8 @@ public enum ErrorCode {
     BAD_REQUEST("400-REQ-01", "잘못된 요청입니다."),
     UNSUPPORTED_MEDIA_TYPE("415-REQ-02", "지원되지 않는 미디어 타입입니다."),
     ILLEGAL_STATE_EXCEPTION("500-REQ-03", "현재 객체의 상태에서 해당 작업을 수행할 수 없습니다."),
-
+    FILE_UPLOAD_TYPE_NOT_MATCH("400-REQ-04","업로드 파일 타입을 확인하세요."),
+    FILE_UPLOAD_LENGTH_MISSING("400-REQ-05","업로드는 한 번에 최대 5개까지 가능합니다."),
     // 시스템 및 알 수 없는 오류
     SERVICE_UNAVAILABLE("503-SYSTEM-01", "서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요."),
     INTERNAL_SERVER_ERROR("500-SYSTEM-02", "서버 내부 오류가 발생했습니다."),
