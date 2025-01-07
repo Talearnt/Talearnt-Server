@@ -55,6 +55,7 @@ public interface ExchangePostApi {
                     "<li><strong>exchangeType :</strong> 진행 방식(온라인,오프라인,온/오프라인)</li>" +
                     "<li><strong>requiredBadge :</strong> 인증 뱃지 필수 여부 - 기본 false</li>" +
                     "<li><strong>duration :</strong> 진행 기간(기간 미정,1개월,2개월,3개월,3개월 이상)</li>" +
+                    "<li><strong>urls :</strong> S3에 저장된 이미지 경로 목록</li>" +
                     "</ul>"+
                     "<hr/>"+
                     "<h2>선행 필수 내용</h2>"+
@@ -62,7 +63,16 @@ public interface ExchangePostApi {
                     "<p>키워드 등록을 하지 않으면 오류가 발생합니다. (나의 주고 싶은 재능 등록 필요)</p>"+
                     "<p>아래는 Enum Class 및 Regex 규칙이 적용되었습니다.</p>"+
                     "<p>ExchangeType : 온라인,오프라인,온/오프라인 이렇게 보내주셔야 합니다.</p>"+
-                    "<p>Duration : 기간 미정,1개월,2개월,3개월,3개월 이상 이렇게 보내주셔야 합니다.</p>"
+                    "<p>Duration : 기간 미정,1개월,2개월,3개월,3개월 이상 이렇게 보내주셔야 합니다.</p>" +
+                    "<hr/>" +
+                    "<h2>업로드할 경우 FE에서 해야 할 업무</h2>" +
+                    "<ol>" +
+                        "<li>파일 이름 인코딩</li>" +
+                        "<li>이미지 업로드 성공 시 urls에 경로 담기</li>" +
+                        "<li>작성 중 이미지 삭제했을 경우 urls에서 제거, 삭제 목록 변수에 담고 게시글 작성 버튼 시 업로드와 S3에서 파일 제거 요청 (METHOD: DELETE)</li>" +
+                        "<li>5MB Byte가 넘을 경우 압축 OR 압축 불가 시 등록 불가</li>" +
+                    "</ol>" +
+                    "<p><strong>웹에서는 CTRL+Z를 누를 경우 이전 작업</strong>으로 이동하는데 그 경우 Delete에 있는 값이 URLS로 이동하는 지 확인 작업 필요!</p>"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
