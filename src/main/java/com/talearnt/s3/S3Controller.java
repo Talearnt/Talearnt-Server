@@ -21,8 +21,9 @@ public class S3Controller implements S3Api {
     private final S3Service s3Service;
 
 
+    //Presigned URL 발급
     @PostMapping("/uploads")
-    public ResponseEntity<CommonResponse<List<String>>> generatePresignedUrl(@RequestBody S3FilesReqDTO images){ //파일 이름은 인코딩해서 보낼 것
+    public ResponseEntity<CommonResponse<List<String>>> generatePresignedUrl(@RequestBody List<S3FilesReqDTO> images){ //파일 이름은 인코딩해서 보낼 것
         return CommonResponse.success(s3Service.generatePresignedUrls(images));
     }
 

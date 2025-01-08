@@ -23,11 +23,13 @@ public interface S3Api {
                     "<ul>" +
                         "<li>fileNames : 파일 이름 </li>" +
                         "<li>fileType : 파일 타입 - images, documents</li>" +
+                        "<li>fileSize : 파일 사이즈 </li>" +
                     "</ul>" +
                     "<p>PDF 파일을 업로드할 경우 파일 타입을 documents로 보내주시길 바랍니다.</p>" +
                     "<p>그 외 이미지 파일은 images로 보내주시면 됩니다.</p>" +
                     "<p>이렇게 구분지은 이유는 S3에서 path로 따로 관리하기 위함입니다.</p>" +
-                    "<p>이미지와 PDF가 같이 있을 경우는 막아주시면 좋겠지만 이 부분은 이야기해서 객체마다 fileType을 받을지 의논 나눠봅시다.</p>" +
+                    "<p>File Size도 같이 보내는 이유는 Server에서도 Presigned URL 만들기 전 한 번 더 검사하기 위함입니다.</p>" +
+                    "<p>PUT 요청을 보낼 때 content-length도 포함해서 보내셔야 합니다.</p>" +
                     "<hr/>" +
                     "<h2>Response</h2>" +
                     "<p>Presigned URLs : 이미지 업로드 할 수 있는 경로 - 유지 기간 3분</p>" +
@@ -40,9 +42,10 @@ public interface S3Api {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "400-1", ref = "FILE_UPLOAD_TYPE_NOT_MATCH"),
-            @ApiResponse(responseCode = "400-2", ref = "FILE_UPLOAD_LENGTH_MISSING")
+            @ApiResponse(responseCode = "400", ref = "FILE_UPLOAD_TYPE_NOT_MATCH"),
+            @ApiResponse(responseCode = "415", ref = "FILE_UPLOAD_EXTENSION_MISMATCH"),
+            @ApiResponse(responseCode = "413", ref = "FILE_UPLOAD_SIZE_OVER"),
     })
-    public ResponseEntity<CommonResponse<List<String>>> generatePresignedUrl(@RequestBody S3FilesReqDTO images);
+    public ResponseEntity<CommonResponse<List<String>>> generatePresignedUrl(@RequestBody List<S3FilesReqDTO> images);
 
 }
