@@ -8,6 +8,25 @@
     <title>Document</title>
 </head>
 <body>
+
+<input id="url" type="text" placeholder="Presigned URL"/>
+<input id="fakeFile" type="file">
+<input type="button" onclick="requestPut(this)" />
+
+<script>
+  async function requestPut(e){
+    let presignedUrl = document.querySelector("#url");
+    let fakeFile = document.querySelector("#fakeFile");
+
+    let result = await fetch(presignedUrl.value,{
+        method:'PUT',
+        body:fakeFile.files[0]
+    })
+  }
+</script>
+
+
+
 <input type="file" onchange="getURL(this);">
 <img/>
 <script>

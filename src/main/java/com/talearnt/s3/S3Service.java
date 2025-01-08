@@ -31,12 +31,8 @@ public class S3Service {
     private final S3Presigner s3Presigner;
 
     /**여러 이미지 파일 업로드*/
-    public List<String> generatePresignedUrls(S3FilesReqDTO dto){
-        log.info("S3 : {}",dto);
-        return dto.getFileNames()
-                .stream()
-                .map( fileName -> this.generatePresignedURL(fileName, dto.getFileType()))
-                .toList();
+    public List<String> generatePresignedUrls(List<S3FilesReqDTO> dtos){
+        return dtos.stream().map(file -> this.generatePresignedURL(file.getFileName(),file.getFileType())).toList();
     }
 
     /** Presigned URL 이름을 생성하고 권한을 설정한 뒤 보내준다.*/
@@ -54,10 +50,7 @@ public class S3Service {
         return s3Presigner.presignPutObject(presignRequest).url().toString();
     }
 
-
     public String createFileName(String filaName){
         return UUID.randomUUID()+filaName;
     }
-
-
 }
