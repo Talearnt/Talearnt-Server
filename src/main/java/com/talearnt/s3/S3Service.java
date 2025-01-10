@@ -32,6 +32,7 @@ public class S3Service {
 
     /**여러 이미지 파일 업로드*/
     public List<String> generatePresignedUrls(List<S3FilesReqDTO> dtos){
+        log.info("S3 이미지 다중 업로드 시작과 끝");
         return dtos.stream().map(file -> this.generatePresignedURL(file.getFileName(),file.getFileType(),file.getFileSize())).toList();
     }
 
@@ -41,6 +42,7 @@ public class S3Service {
                 .bucket(bucket)
                 .key(fileType+"/"+createFileName(fileName))
                 .contentLength(fileSize)
+                .contentType(fileType)
                 .build();
 
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()

@@ -1,10 +1,13 @@
 package com.talearnt.s3;
 
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.s3.request.S3FilesReqDTO;
 import com.talearnt.util.response.CommonResponse;
+import com.talearnt.util.valid.ListValid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -22,14 +25,14 @@ public interface S3Api {
                     "<h2>Request</h2>" +
                     "<ul>" +
                         "<li>fileNames : 파일 이름 </li>" +
-                        "<li>fileType : 파일 타입 - images, documents</li>" +
+                        "<li>fileType : 파일 타입 - image/jpeg, application/pdf 등등</li>" +
                         "<li>fileSize : 파일 사이즈 </li>" +
                     "</ul>" +
-                    "<p>PDF 파일을 업로드할 경우 파일 타입을 documents로 보내주시길 바랍니다.</p>" +
-                    "<p>그 외 이미지 파일은 images로 보내주시면 됩니다.</p>" +
-                    "<p>이렇게 구분지은 이유는 S3에서 path로 따로 관리하기 위함입니다.</p>" +
+                    "<p>fileTyle은 file의 Content-tpye을 보내주시길 바랍니다.</p>" +
+                    "<p>application/pdf, image/jpeg 등등</p>" +
+                    "<p>이렇게 구분지은 이유는 S3에서 path로 따로 관리하고, URL 옵션을 걸기 위함입니다.</p>" +
                     "<p>File Size도 같이 보내는 이유는 Server에서도 Presigned URL 만들기 전 한 번 더 검사하기 위함입니다.</p>" +
-                    "<p>PUT 요청을 보낼 때 content-length도 포함해서 보내셔야 합니다.</p>" +
+                    "<p>PUT 요청을 보낼 때 content-length, content-tpye도 포함해서 보내셔야 합니다.</p>" +
                     "<hr/>" +
                     "<h2>Response</h2>" +
                     "<p>Presigned URLs : 이미지 업로드 할 수 있는 경로 - 유지 기간 3분</p>" +
@@ -46,6 +49,6 @@ public interface S3Api {
             @ApiResponse(responseCode = "415", ref = "FILE_UPLOAD_EXTENSION_MISMATCH"),
             @ApiResponse(responseCode = "413", ref = "FILE_UPLOAD_SIZE_OVER"),
     })
-    public ResponseEntity<CommonResponse<List<String>>> generatePresignedUrl(@RequestBody List<S3FilesReqDTO> images);
+    public ResponseEntity<CommonResponse<List<String>>> generatePresignedUrl(@RequestBody @Valid @ListValid(errorCode = ErrorCode.FILE_UPLOAD_LENGTH_MISSING, maxLength = 5) List<S3FilesReqDTO> images);
 
 }
