@@ -32,14 +32,15 @@ public class S3Service {
 
     /**여러 이미지 파일 업로드*/
     public List<String> generatePresignedUrls(List<S3FilesReqDTO> dtos){
-        return dtos.stream().map(file -> this.generatePresignedURL(file.getFileName(),file.getFileType())).toList();
+        return dtos.stream().map(file -> this.generatePresignedURL(file.getFileName(),file.getFileType(),file.getFileSize())).toList();
     }
 
     /** Presigned URL 이름을 생성하고 권한을 설정한 뒤 보내준다.*/
-    public String generatePresignedURL(String fileName,String fileType){
+    public String generatePresignedURL(String fileName,String fileType, Long fileSize){
         PutObjectRequest putObjectAclRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(fileType+"/"+createFileName(fileName))
+                .contentLength(fileSize)
                 .build();
 
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
