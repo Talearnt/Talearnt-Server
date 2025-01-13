@@ -1,9 +1,12 @@
 package com.talearnt.s3;
 
 import com.talearnt.s3.request.S3FilesReqDTO;
+import com.talearnt.util.common.LoginUtil;
+import com.talearnt.util.common.UserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -31,8 +34,11 @@ public class S3Service {
     private final S3Presigner s3Presigner;
 
     /**여러 이미지 파일 업로드*/
-    public List<String> generatePresignedUrls(List<S3FilesReqDTO> dtos){
-        log.info("S3 이미지 다중 업로드 시작과 끝");
+    public List<String> generatePresignedUrls(List<S3FilesReqDTO> dtos, Authentication auth){
+        log.info("S3 이미지 다중 업로드 시작");
+        //로그인 여부 확인
+        UserUtil.validateAuthentication("S3 이미지 다중 업로드",auth);
+        log.info("S3 이미지 다중 업로드 끝");
         return dtos.stream().map(file -> this.generatePresignedURL(file.getFileName(),file.getFileType(),file.getFileSize())).toList();
     }
 

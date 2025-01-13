@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,8 +29,8 @@ public class S3Controller implements S3Api {
 
     //Presigned URL 발급
     @PostMapping("/uploads")
-    public ResponseEntity<CommonResponse<List<String>>> generatePresignedUrl(@RequestBody @Valid @ListValid(errorCode = ErrorCode.FILE_UPLOAD_LENGTH_MISSING, maxLength = 5) List<S3FilesReqDTO> images){ //파일 이름은 인코딩해서 보낼 것
-        return CommonResponse.success(s3Service.generatePresignedUrls(images));
+    public ResponseEntity<CommonResponse<List<String>>> generatePresignedUrl(@RequestBody @Valid @ListValid(errorCode = ErrorCode.FILE_UPLOAD_LENGTH_MISSING, maxLength = 5) List<S3FilesReqDTO> images, Authentication auth){ //파일 이름은 인코딩해서 보낼 것
+        return CommonResponse.success(s3Service.generatePresignedUrls(images,auth));
     }
 
 }
