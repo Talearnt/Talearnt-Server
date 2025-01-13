@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -48,7 +49,8 @@ public interface S3Api {
             @ApiResponse(responseCode = "400", ref = "FILE_UPLOAD_TYPE_NOT_MATCH"),
             @ApiResponse(responseCode = "415", ref = "FILE_UPLOAD_EXTENSION_MISMATCH"),
             @ApiResponse(responseCode = "413", ref = "FILE_UPLOAD_SIZE_OVER"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
     })
-    public ResponseEntity<CommonResponse<List<String>>> generatePresignedUrl(@RequestBody @Valid @ListValid(errorCode = ErrorCode.FILE_UPLOAD_LENGTH_MISSING, maxLength = 5) List<S3FilesReqDTO> images);
+    public ResponseEntity<CommonResponse<List<String>>> generatePresignedUrl(@RequestBody @Valid @ListValid(errorCode = ErrorCode.FILE_UPLOAD_LENGTH_MISSING, maxLength = 5) List<S3FilesReqDTO> images, Authentication auth);
 
 }
