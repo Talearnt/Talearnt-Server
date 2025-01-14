@@ -29,11 +29,11 @@ public interface S3Api {
                         "<li>fileType : 파일 타입 - image/jpeg, application/pdf 등등</li>" +
                         "<li>fileSize : 파일 사이즈 </li>" +
                     "</ul>" +
-                    "<p>fileTyle은 file의 Content-tpye을 보내주시길 바랍니다.</p>" +
+                    "<p>fileTyle은 file의 Content-type을 보내주시길 바랍니다.</p>" +
                     "<p>application/pdf, image/jpeg 등등</p>" +
                     "<p>이렇게 구분지은 이유는 S3에서 path로 따로 관리하고, URL 옵션을 걸기 위함입니다.</p>" +
                     "<p>File Size도 같이 보내는 이유는 Server에서도 Presigned URL 만들기 전 한 번 더 검사하기 위함입니다.</p>" +
-                    "<p>PUT 요청을 보낼 때 content-length, content-tpye도 포함해서 보내셔야 합니다.</p>" +
+                    "<p>PUT 요청을 보낼 때 content-length, content-type도 포함해서 보내셔야 합니다.</p>" +
                     "<hr/>" +
                     "<h2>Response</h2>" +
                     "<p>Presigned URLs : 이미지 업로드 할 수 있는 경로 - 유지 기간 3분</p>" +
