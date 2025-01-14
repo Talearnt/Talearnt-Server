@@ -41,6 +41,7 @@ public class S3Service {
     private String bucket;
     @Value("${s3.host}")
     private String host;
+
     private final S3Presigner s3Presigner;
     private final S3Client s3Client;
 
@@ -97,11 +98,13 @@ public class S3Service {
             URI uri = new URI(url);
             String path  = uri.getPath().substring(1);
 
+            //삭제할 Object 생성
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucket)
                     .key(path)
                     .build();
 
+            //삭제 요청
             s3Client.deleteObject(deleteObjectRequest);
         }catch (URISyntaxException e){
             log.error("S3 - 잘못된 URI 가 입력되었습니다 : {}",ErrorCode.BAD_REQUEST);
