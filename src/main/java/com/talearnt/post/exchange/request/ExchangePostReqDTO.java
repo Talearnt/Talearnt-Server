@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Builder
@@ -42,5 +43,6 @@ public class ExchangePostReqDTO {
     @DynamicValid(errorCode = ErrorCode.POST_DURATION_MISSING, pattern = Regex.EXCHANGE_DURATION)
     private String duration;
 
-    private List<String> urls;// S3에 업로드된 파일 경로 urls
+    private Set<String> urls; //S3에서 삭제할 파일 경로 PresignedURL 옵션 제거 경로
+    private Set<String> deleteUrls; //S3에서 삭제할 파일 경로 PresignedURL 옵션 제거 경로
 }

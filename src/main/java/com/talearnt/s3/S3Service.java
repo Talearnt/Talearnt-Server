@@ -1,19 +1,27 @@
 package com.talearnt.s3;
 
+import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.common.Regex;
 import com.talearnt.s3.request.S3FilesReqDTO;
 import com.talearnt.util.common.LoginUtil;
 import com.talearnt.util.common.UserUtil;
+import com.talearnt.util.exception.CustomRuntimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 /**
  * 1. Presigned URL 을 생성해서 보내준다
@@ -31,19 +39,28 @@ public class S3Service {
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
+    @Value("${s3.host}")
+    private String host;
     private final S3Presigner s3Presigner;
+    private final S3Client s3Client;
 
     /**여러 이미지 파일 업로드*/
     public List<String> generatePresignedUrls(List<S3FilesReqDTO> dtos, Authentication auth){
         log.info("S3 이미지 다중 업로드 시작");
         //로그인 여부 확인
         UserUtil.validateAuthentication("S3 이미지 다중 업로드",auth);
+
+        if (dtos.isEmpty()){
+            log.error("S3 이미지 다중 업로드 실패 - 목록이 비어 있음 : {}",ErrorCode.FILE_UPLOAD_LENGTH_MISSING);
+            throw new CustomRuntimeException(ErrorCode.FILE_UPLOAD_LENGTH_MISSING);
+        }
+
         log.info("S3 이미지 다중 업로드 끝");
         return dtos.stream().map(file -> this.generatePresignedURL(file.getFileName(),file.getFileType(),file.getFileSize())).toList();
     }
 
     /** Presigned URL 이름을 생성하고 권한을 설정한 뒤 보내준다.*/
-    public String generatePresignedURL(String fileName,String fileType, Long fileSize){
+    private String generatePresignedURL(String fileName,String fileType, Long fileSize){
         PutObjectRequest putObjectAclRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(fileType+"/"+createFileName(fileName))
@@ -59,7 +76,57 @@ public class S3Service {
         return s3Presigner.presignPutObject(presignRequest).url().toString();
     }
 
-    public String createFileName(String filaName){
+    private String createFileName(String filaName){
         return UUID.randomUUID()+filaName;
+    }
+
+
+    /**S3에 업로드된 파일을 삭제하는 메소드*/
+    public void deleteFiles(Set<String> urls){
+        log.info("S3 이미지 다중 삭제 시작");
+        if (!urls.isEmpty()){
+            urls.stream()
+                    .filter(this::isValidPresigendUrl)
+                    .forEach(this::deleteFile);
+        }
+        log.info("S3 이미지 다중 삭제 끝");
+    }
+
+    private void deleteFile(String url) {
+        try {
+            URI uri = new URI(url);
+            String path  = uri.getPath().substring(1);
+
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(path)
+                    .build();
+
+            s3Client.deleteObject(deleteObjectRequest);
+        }catch (URISyntaxException e){
+            log.error("S3 - 잘못된 URI 가 입력되었습니다 : {}",ErrorCode.BAD_REQUEST);
+            throw new CustomRuntimeException(ErrorCode.BAD_REQUEST);
+        }
+    }
+
+    /**Delete를 진행할 때 올바르지 않은 Collection 에서 삭제 조건 필터*/
+    private boolean isValidPresigendUrl(String url){
+        String expectedHost = "";
+        try {
+            URI uri = new URI(url);
+            String path = uri.getPath().substring(1);
+            String fileType = path.substring(0,path.lastIndexOf("/"));
+
+            //Host가 일치하지 않을 경우
+            if (!expectedHost.equals(uri.getHost())) return false;
+            //파일 타입이 맞지 않을 경우
+            if (!fileType.matches(Regex.FILE_TYPE.getPattern())) return false;
+
+        }catch (URISyntaxException e){
+            log.error("URI Syntax가 올바르지 않습니다 : {}",e.getMessage());
+            return false;
+        }
+
+        return true;
     }
 }

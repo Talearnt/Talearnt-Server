@@ -55,7 +55,8 @@ public interface ExchangePostApi {
                     "<li><strong>exchangeType :</strong> 진행 방식(온라인,오프라인,온/오프라인)</li>" +
                     "<li><strong>requiredBadge :</strong> 인증 뱃지 필수 여부 - 기본 false</li>" +
                     "<li><strong>duration :</strong> 진행 기간(기간 미정,1개월,2개월,3개월,3개월 이상)</li>" +
-                    "<li><strong>urls :</strong> S3에 저장된 이미지 경로 목록</li>" +
+                    "<li><strong>urls :</strong> S3에 저장된 이미지 경로 목록 - Presigned URL 에서 ?의 뒷 부분은 제거하고 보내주세요.</li>" +
+                    "<li><strong>deleteUrls :</strong> 삭제할 이미지 경로 목록 - Presigned URL 에서 ?의 뒷 부분은 제거하고 보내주세요.</li>" +
                     "</ul>"+
                     "<hr/>"+
                     "<h2>선행 필수 내용</h2>"+
@@ -64,6 +65,7 @@ public interface ExchangePostApi {
                     "<p>아래는 Enum Class 및 Regex 규칙이 적용되었습니다.</p>"+
                     "<p>ExchangeType : 온라인,오프라인,온/오프라인 이렇게 보내주셔야 합니다.</p>"+
                     "<p>Duration : 기간 미정,1개월,2개월,3개월,3개월 이상 이렇게 보내주셔야 합니다.</p>" +
+                    "<p>urls, deleteUrls : ? 뒤에 옵션들을 제거한 경로를 보내주시면 됩니다.</p>" +
                     "<hr/>" +
                     "<h2>업로드할 경우 FE에서 해야 할 업무</h2>" +
                     "<ol>" +

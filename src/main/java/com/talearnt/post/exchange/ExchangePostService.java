@@ -12,6 +12,7 @@ import com.talearnt.post.exchange.repository.ExchangePostRepository;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
+import com.talearnt.s3.S3Service;
 import com.talearnt.s3.entity.FileUpload;
 import com.talearnt.s3.repository.FileUploadRepository;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
@@ -40,6 +41,7 @@ public class ExchangePostService {
 
     //JdbcTemplate
     private final JdbcTemplate jdbcTemplate;
+    private final S3Service s3Service;
 
     //Repositories
     private final ExchangePostQueryRepository exchangePostQueryRepository;
@@ -122,7 +124,7 @@ public class ExchangePostService {
                 });
 
         //이미지를 업로드 했을 경우 DB에 저장
-        if (!exchangePostReqDTO.getUrls().isEmpty() && exchangePostReqDTO.getUrls() !=null){
+        if (!exchangePostReqDTO.getUrls().isEmpty()){
             // 파일 업로드 경로 저장
             List<FileUpload> fileUploads = exchangePostReqDTO.getUrls().stream().map(
                     url-> new FileUpload(null,savedPostEntity.getExchangePostNo(),exchangePostReqDTO.getUserInfo().getUserNo(), PostType.EXCHANGE,url,null)
@@ -132,22 +134,27 @@ public class ExchangePostService {
             fileUploadRepository.saveAll(fileUploads);
         }
 
+        //삭제할 이미지가 있을 경우에 S3에 삭제 요청
+        if(!exchangePostReqDTO.getDeleteUrls().isEmpty()){
+            s3Service.deleteFiles(exchangePostReqDTO.getDeleteUrls());
+        }
+
         log.info("재능 교환 게시글 작성 끝");
         return "재능 교환 게시글 작성 완료";
     }
 
 
 
-    /**게시글 목록 불러오기
-     * 필터 조건 ( 커뮤니티에서도 사용할 것은 PostUtil 에서 Validate 정의, 재능 교환에서만 사용하는 것은 QueryDSL 정의) - 검증 완료
-     * - 대분류 : Integer 로 변환 필요 ( length 가 0일 경우 null ) - 검증 완료
-     * - 재능 분류 : Integer 로 변환 필요 ( length 가 0일 경우 null ) - 검증 완료
-     * - 정렬 기준 : 기본 recent, (recent, popular 가 아니라면 recent 로 변경) (커뮤니티 공통) - 검증 완료
-     * - 기간 : 이상한 값(Regex 에 맞지 않는)이 넘어왔을 경우에는 null로 변경 - 검증 완료
-     * - 진행 방식 : ExchangeType 값이 아닐 경우 null - 검증 완료
-     * - 인증 뱃지 필수 여부 : Boolean 값이 아닐 경우 null - 검증 완료
-     * - 모집 상태 : ExchangePostStatus 값이 아닐 경우 null - 검증 완료
-     * - 페이지 번호 : Integer 가 아닐 경우 기본 값 1 (커뮤니티 공통)
+    /**재능 교환 게시글 목록 불러오기 <br>
+     * 필터 조건 ( 커뮤니티에서도 사용할 것은 PostUtil 에서 Validate 정의, 재능 교환에서만 사용하는 것은 QueryDSL 정의) - 검증 완료<br>
+     * - 대분류 : Integer 로 변환 필요 ( length 가 0일 경우 null ) - 검증 완료<br>
+     * - 재능 분류 : Integer 로 변환 필요 ( length 가 0일 경우 null ) - 검증 완료<br>
+     * - 정렬 기준 : 기본 recent, (recent, popular 가 아니라면 recent 로 변경) (커뮤니티 공통) - 검증 완료<br>
+     * - 기간 : 이상한 값(Regex 에 맞지 않는)이 넘어왔을 경우에는 null로 변경 - 검증 완료<br>
+     * - 진행 방식 : ExchangeType 값이 아닐 경우 null - 검증 완료<br>
+     * - 인증 뱃지 필수 여부 : Boolean 값이 아닐 경우 null - 검증 완료<br>
+     * - 모집 상태 : ExchangePostStatus 값이 아닐 경우 null - 검증 완료<br>
+     * - 페이지 번호 : Integer 가 아닐 경우 기본 값 1 (커뮤니티 공통)<br>
      * */
     public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String search){
         log.info("재능 교환 게시글 목록 불러오기 시작");
@@ -173,6 +180,11 @@ public class ExchangePostService {
         //데이터 넣고, Pagination으로 변환 -> 데이터와 Page 분리하여 보내기
         return PaginatedResponse.success(result.getContent(),PageUtil.separatePaginationFromEntity(result));
     }
+
+    /** 재능 교환 게시글 상세보기
+     *
+     */
+
 
 
 }
