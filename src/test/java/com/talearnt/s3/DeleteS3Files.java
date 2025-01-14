@@ -3,7 +3,7 @@ package com.talearnt.s3;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.common.Regex;
 import com.talearnt.util.exception.CustomRuntimeException;
-import org.assertj.core.internal.Urls;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
