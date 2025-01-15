@@ -20,14 +20,13 @@ public class ChatRoom {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exchange_post_no", nullable = false)
-    private ExchangePost exchangePostNo;
+    private ExchangePost exchangePost;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_no", nullable = false)
-    private User ownerId;
+    private User owner;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoomMode roomMode;
-
 }
