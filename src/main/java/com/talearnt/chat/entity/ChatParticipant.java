@@ -25,7 +25,7 @@ public class ChatParticipant {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_no", nullable = false)
-    private User participantUserNo;
+    private User participantUser;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp

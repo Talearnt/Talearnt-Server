@@ -3,10 +3,17 @@ package com.talearnt.chat.entity;
 import com.talearnt.enums.chat.MessageType;
 import com.talearnt.user.infomation.entity.User;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
