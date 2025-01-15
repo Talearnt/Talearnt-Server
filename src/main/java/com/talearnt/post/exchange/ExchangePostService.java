@@ -2,6 +2,10 @@ package com.talearnt.post.exchange;
 
 import com.talearnt.admin.category.entity.TalentCategory;
 import com.talearnt.admin.category.repository.TalentCategoryRepository;
+import com.talearnt.chat.ChatRoomMapper;
+import com.talearnt.chat.entity.ChatRoom;
+import com.talearnt.chat.repository.ChatRoomRepository;
+import com.talearnt.enums.chat.RoomMode;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.upload.PostType;
 import com.talearnt.post.exchange.entity.ExchangePost;
@@ -49,6 +53,7 @@ public class ExchangePostService {
     private final ExchangePostRepository exchangePostRepository;
     private final TalentCategoryRepository talentCategoryRepository;
     private final FileUploadRepository fileUploadRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     /** 재능 교환 게시글 작성 <br>
      * 조건<br>
@@ -57,8 +62,7 @@ public class ExchangePostService {
      * - GiveTalents 가 나의 재능의 주고 싶은 재능에 있는 키워드인가?<br>
      * - Give,Receive Talents 가 제대로된 키워드 코드로 넘어 왔는가?<br>
      *
-     * 개선점<br>
-     * - S3 도입 후 어떻게 저장되는가 확인
+     * 게시글이 작성되며 채팅방이 생성 되도록 변경함
      * */
     @Transactional
     public String writeExchangePost(ExchangePostReqDTO exchangePostReqDTO){
@@ -139,6 +143,11 @@ public class ExchangePostService {
             s3Service.deleteFiles(exchangePostReqDTO.getDeleteUrls());
         }
 
+        //채팅방 개설 전 Entity 설정
+        ChatRoom chatRoomEntity = ChatRoomMapper.INSTANCE.toEntity(savedPostEntity,exchangePostReqDTO.getUserInfo(), RoomMode.PUBLIC);
+        //채팅방 저장
+        chatRoomRepository.save(chatRoomEntity);
+
         log.info("재능 교환 게시글 작성 끝");
         return "재능 교환 게시글 작성 완료";
     }
@@ -181,9 +190,6 @@ public class ExchangePostService {
         return PaginatedResponse.success(result.getContent(),PageUtil.separatePaginationFromEntity(result));
     }
 
-    /** 재능 교환 게시글 상세보기
-     *
-     */
 
 
 
