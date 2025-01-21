@@ -3,16 +3,16 @@ package com.talearnt.post.exchange.response;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.enums.user.UserRole;
+import com.talearnt.util.common.SplitUtil;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Builder
+
 @Getter
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
 public class ExchangePostDetailResDTO {
     //유저 관령
     private Long userNo; //채팅방 연결 및 자기 게시글 검증
@@ -37,4 +37,27 @@ public class ExchangePostDetailResDTO {
     private Long favoriteCount; //찜(좋아요)수
     private Long openedChatRoomCount; // 진행중인 채팅 방 수
     private Long chatRoomNo; //채팅방 접속할 ID
+
+    @Builder
+    public ExchangePostDetailResDTO(Long userNo, String nickname, String profileImg, UserRole authority, Long exchangePostNo, String giveTalents, String receiveTalents, ExchangeType exchangeType, ExchangePostStatus status, LocalDateTime createdAt, String duration, Boolean requiredBadge, String title, String content, String images, int count, Long favoriteCount, Long openedChatRoomCount, Long chatRoomNo) {
+        this.userNo = userNo;
+        this.nickname = nickname;
+        this.profileImg = profileImg;
+        this.authority = authority;
+        this.exchangePostNo = exchangePostNo;
+        this.giveTalents = SplitUtil.splitStringToList(giveTalents);
+        this.receiveTalents = SplitUtil.splitStringToList(receiveTalents);
+        this.exchangeType = exchangeType;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.duration = duration;
+        this.requiredBadge = requiredBadge;
+        this.title = title;
+        this.content = content;
+        this.images = SplitUtil.splitStringToList(images);
+        this.count = count;
+        this.favoriteCount = favoriteCount;
+        this.openedChatRoomCount = openedChatRoomCount==null?0:openedChatRoomCount;
+        this.chatRoomNo = chatRoomNo;
+    }
 }
