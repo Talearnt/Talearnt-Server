@@ -16,6 +16,7 @@ import com.talearnt.post.exchange.repository.ExchangePostRepository;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
+import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.s3.S3Service;
 import com.talearnt.s3.entity.FileUpload;
 import com.talearnt.s3.repository.FileUploadRepository;
@@ -191,6 +192,20 @@ public class ExchangePostService {
     }
 
 
+    /** 재능교환 게시글 상세보기
+     * 조건 )
+     * - 게시글이 존재하는가?
+     * - 조회수 상승 필요
+     * */
+    public ExchangePostDetailResDTO getExchangePostDetail(Long postNo){
+        log.info("재능 교환 게시글 상세 보기 시작");
+
+        ExchangePostDetailResDTO result = exchangePostQueryRepository.getPostDetail(postNo)
+                .orElseThrow();
+
+        log.info("재능 교환 게시글 상세 보기 끝");
+        return result;
+    }
 
 
 }
