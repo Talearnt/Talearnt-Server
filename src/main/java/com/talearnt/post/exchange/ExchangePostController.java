@@ -3,6 +3,7 @@ package com.talearnt.post.exchange;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
+import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.user.talent.MyTalentService;
 import com.talearnt.user.talent.response.MyTalentsResDTO;
@@ -17,10 +18,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,6 +36,10 @@ public class ExchangePostController implements ExchangePostApi{
         return CommonResponse.success(myTalentService.getMyGiveTalents(auth));
     }
 
+    @GetMapping("/posts/exchanges/{postNo}")
+    public ResponseEntity<CommonResponse<ExchangePostDetailResDTO>> getExchangePostDetail(@PathVariable Long postNo){
+        return CommonResponse.success(exchangePostService.getExchangePostDetail(postNo));
+    }
 
     @GetMapping("/posts/exchanges")
     public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(@RequestParam(value = "categories",required = false,defaultValue = "")  List<String> categories,//Integer로 변환 필요

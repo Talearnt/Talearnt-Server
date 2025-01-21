@@ -8,6 +8,8 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.admin.category.entity.QTalentCategory;
+import com.talearnt.chat.entity.QChatRequest;
+import com.talearnt.chat.entity.QChatRoom;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.post.exchange.entity.QExchangePost;
@@ -15,7 +17,9 @@ import com.talearnt.post.exchange.entity.QFavoriteExchangePost;
 import com.talearnt.post.exchange.entity.QGiveTalent;
 import com.talearnt.post.exchange.entity.QReceiveTalent;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
+import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
+import com.talearnt.s3.entity.QFileUpload;
 import com.talearnt.user.infomation.entity.QUser;
 import com.talearnt.user.talent.entity.QMyTalent;
 import lombok.RequiredArgsConstructor;
@@ -41,9 +45,9 @@ public class ExchangePostQueryRepository {
     private final QGiveTalent giveTalent = QGiveTalent.giveTalent;
     private final QReceiveTalent receiveTalent = QReceiveTalent.receiveTalent;
     private final QFavoriteExchangePost favoriteExchangePost = QFavoriteExchangePost.favoriteExchangePost;
-
-
-
+    private final QChatRequest chatRequest = QChatRequest.chatRequest;
+    private final QChatRoom chatRoom = QChatRoom.chatRoom;
+    private final QTalentCategory talentCategory = QTalentCategory.talentCategory;
 
     /**활성화된 나의 주고 싶은 재능들 가져오기*/
     public List<Integer> getWantGiveMyTalents(Long userNo){
@@ -61,12 +65,66 @@ public class ExchangePostQueryRepository {
     }
 
 
+    /** 재능 교환 게시글 상세보기*/
+    public Optional<ExchangePostDetailResDTO> getPostDetail(Long postNo){
+        QFileUpload fileUpload = QFileUpload.fileUpload;
+        return Optional.ofNullable(
+                factory.select(Projections.constructor(ExchangePostDetailResDTO.class,
+                        user.userNo,
+                        user.nickname,
+                        user.profileImg,
+                        user.authority,
+                        exchangePost.exchangePostNo,
+                        ExpressionUtils.list(String.class,JPAExpressions
+                                .select(talentCategory.talentName)
+                                .from(talentCategory)
+                                .where(talentCategory.talentCode.eq(giveTalent.talentCode.talentCode))
+                                .groupBy(exchangePost.exchangePostNo)),
+                        ExpressionUtils.list(String.class,JPAExpressions
+                                .select(talentCategory.talentName)
+                                .from(talentCategory)
+                                .where(talentCategory.talentCode.eq(receiveTalent.talentCode.talentCode))
+                                .groupBy(exchangePost)),
+                        exchangePost.exchangeType,
+                        exchangePost.status,
+                        exchangePost.createdAt,
+                        exchangePost.duration,
+                        exchangePost.requiredBadge,
+
+                        exchangePost.title,
+                        exchangePost.content,
+                        ExpressionUtils.as(JPAExpressions
+                                .select(fileUpload.url)
+                                .from(fileUpload)
+                                .where(fileUpload.postNo.eq(postNo))
+                                ,"images"),
+                        exchangePost.count,
+                        favoriteExchangePost.count(),
+                        ExpressionUtils.as(JPAExpressions
+                                .select(chatRequest.count())
+                                .from(chatRequest)
+                                .where(chatRequest.chatRoom.roomNo.eq(chatRoom.roomNo)),
+                                "openedChatRoomCount"),
+                        chatRoom.roomNo
+                        ))
+                        .from(exchangePost)
+                        .leftJoin(user).on(user.userNo.eq(exchangePost.user.userNo))
+                        .leftJoin(chatRoom).on(chatRoom.exchangePost.eq(exchangePost))
+                        .leftJoin(giveTalent).on(giveTalent.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
+                        .leftJoin(receiveTalent).on(receiveTalent.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
+                        .leftJoin(favoriteExchangePost).on(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
+                        .where(exchangePost.exchangePostNo.eq(postNo))
+                        .fetchOne()
+        );
+    }
+
+
     /**재능 교환 목록 불러오기 (Filter 조건)<br>*/
     public Page<ExchangePostListResDTO> getFilteredExchangePostList(ExchangeSearchConditionDTO searchConditionDTO){
 
         log.info("search keyword : {} ",searchConditionDTO.getSearch());
 
-        QTalentCategory talentCategory = QTalentCategory.talentCategory;
+
         List<ExchangePostListResDTO> data = factory
                 .select(Projections.constructor(
                         ExchangePostListResDTO.class,

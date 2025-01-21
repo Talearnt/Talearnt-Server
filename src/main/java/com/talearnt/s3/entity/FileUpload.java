@@ -21,16 +21,16 @@ public class FileUpload {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fileUploadNo;
 
-    @Column(nullable = false)
+    @Column
     private Long postNo;
 
     @Column(nullable = false)
     private Long userNo;
 
-    @Column(nullable = false)
+    @Column
     private PostType postType;
 
-    @Column(nullable = false, length = 2048)
+    @Column(nullable = false, length = 2048, unique = true)
     private String url;
 
     @CreationTimestamp
