@@ -51,9 +51,16 @@ public class S3Service {
         //로그인 여부 확인
         UserUtil.validateAuthentication("S3 이미지 다중 업로드",auth);
 
+        //업로드 파일이 비어 있을 경우
         if (dtos.isEmpty()){
             log.error("S3 이미지 다중 업로드 실패 - 목록이 비어 있음 : {}",ErrorCode.FILE_UPLOAD_LENGTH_MISSING);
             throw new CustomRuntimeException(ErrorCode.FILE_UPLOAD_LENGTH_MISSING);
+        }
+
+        //업로드할 파일 사이즈가 5242880를 넘을 경우 Exception
+        if(dtos.stream().mapToLong(S3FilesReqDTO::getFileSize).sum()>5242880){
+            log.error("S3 이미지 다중 업로드 실패 - 업로드된 파일 5MB 초과");
+            throw new CustomRuntimeException(ErrorCode.FILE_UPLOAD_SIZE_OVER);
         }
 
         log.info("S3 이미지 다중 업로드 끝");
