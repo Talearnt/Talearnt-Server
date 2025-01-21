@@ -18,6 +18,5 @@ public class S3FilesReqDTO {
     private String fileName;
     @DynamicValid(errorCode = ErrorCode.FILE_UPLOAD_TYPE_NOT_MATCH,pattern = Regex.FILE_TYPE)
     private String fileType; // 이미지, PDF등 구분
-    @DynamicValid(errorCode = ErrorCode.FILE_UPLOAD_SIZE_OVER, maxValue = 5242880)
     private Long fileSize;
 }
