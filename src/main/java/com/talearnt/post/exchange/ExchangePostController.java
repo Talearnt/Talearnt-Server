@@ -10,12 +10,10 @@ import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.version.RestControllerV1;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -31,16 +29,20 @@ public class ExchangePostController implements ExchangePostApi{
     private final MyTalentService myTalentService;
     private final ExchangePostService exchangePostService;
 
+    //게시글 주고 싶은 재능 불러오기
     @GetMapping("/posts/exchange/talents/offered")
     public ResponseEntity<CommonResponse<List<MyTalentsResDTO>>> getWantGiveMyTalentsForPost(Authentication auth){
         return CommonResponse.success(myTalentService.getMyGiveTalents(auth));
     }
 
+    //게시글 상세보기
     @GetMapping("/posts/exchanges/{postNo}")
-    public ResponseEntity<CommonResponse<ExchangePostDetailResDTO>> getExchangePostDetail(@PathVariable Long postNo){
-        return CommonResponse.success(exchangePostService.getExchangePostDetail(postNo));
+    public ResponseEntity<CommonResponse<ExchangePostDetailResDTO>> getExchangePostDetail(@PathVariable Long postNo, Authentication auth){
+        log.info("게시글 상세 보기 Controller");
+        return CommonResponse.success(exchangePostService.getExchangePostDetail(postNo,auth));
     }
 
+    //게시글 목록
     @GetMapping("/posts/exchanges")
     public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(@RequestParam(value = "categories",required = false,defaultValue = "")  List<String> categories,//Integer로 변환 필요
                                                                                                @RequestParam(value = "talents",required = false,defaultValue = "") List<String> talents,//Integer로 변환 필요
@@ -55,6 +57,7 @@ public class ExchangePostController implements ExchangePostApi{
         return exchangePostService.getExchangePostList(categories,talents,order,duration,type,requiredBadge,status,page,size,search);
     }
 
+    //게시글 작성
     @PostMapping("/posts/exchanges")
     public ResponseEntity<CommonResponse<String>> writeExchangePost(@RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO){
         return CommonResponse.success(exchangePostService.writeExchangePost(exchangePostReqDTO));

@@ -22,7 +22,9 @@ import com.talearnt.s3.entity.FileUpload;
 import com.talearnt.s3.repository.FileUploadRepository;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
 import com.talearnt.util.common.PageUtil;
+import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.response.PaginatedResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -194,14 +197,26 @@ public class ExchangePostService {
 
     /** 재능교환 게시글 상세보기
      * 조건 )
+     * - 로그인이 되어 있는가? (찜 여부)
      * - 게시글이 존재하는가?
      * - 조회수 상승 필요
      * */
-    public ExchangePostDetailResDTO getExchangePostDetail(Long postNo){
+    public ExchangePostDetailResDTO getExchangePostDetail(Long postNo, Authentication auth){
         log.info("재능 교환 게시글 상세 보기 시작");
 
-        ExchangePostDetailResDTO result = exchangePostQueryRepository.getPostDetail(postNo)
-                .orElseThrow();
+        //유저가 로그인 했는 지 확인, 안했을 경우 찜 게시글 표시 False
+        Long currentUserNo = 0L;
+        if (auth != null){
+            UserInfo userInfo = UserUtil.validateAuthentication("재능 교환 게시글 상세 보기",auth);
+            currentUserNo = userInfo.getUserNo();
+            log.info("user Info : {}", userInfo);
+        }
+
+        ExchangePostDetailResDTO result = exchangePostQueryRepository.getPostDetail(postNo,currentUserNo)
+                .orElseThrow(()->{
+                    log.error("재능 교환 게시글 상세보기 실패 - 해당 게시글 없음 : {}",ErrorCode.POST_NOT_FOUND);
+                    throw new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
+                });
 
         log.info("재능 교환 게시글 상세 보기 끝");
         return result;

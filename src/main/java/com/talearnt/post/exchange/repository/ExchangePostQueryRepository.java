@@ -22,6 +22,7 @@ import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.s3.entity.QFileUpload;
 import com.talearnt.user.infomation.entity.QUser;
 import com.talearnt.user.talent.entity.QMyTalent;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -67,8 +68,15 @@ public class ExchangePostQueryRepository {
 
 
     /** 재능 교환 게시글 상세보기*/
-    public Optional<ExchangePostDetailResDTO> getPostDetail(Long postNo){
+    @Transactional
+    public Optional<ExchangePostDetailResDTO> getPostDetail(Long postNo, Long currentUserNo){
         QFileUpload fileUpload = QFileUpload.fileUpload;
+
+        factory.update(exchangePost)
+                .set(exchangePost.count, exchangePost.count.add(1))
+                .where(exchangePost.exchangePostNo.eq(postNo))
+                .execute();
+
         return Optional.ofNullable(
                 factory.select(Projections.constructor(ExchangePostDetailResDTO.class,
                         user.userNo,
@@ -92,7 +100,7 @@ public class ExchangePostQueryRepository {
                         exchangePost.createdAt,
                         exchangePost.duration,
                         exchangePost.requiredBadge,
-
+                        Expressions.booleanTemplate("CASE WHEN {0} IS NOT NULL THEN true ELSE false END", favoriteExchangePost.exchangePostNo),
                         exchangePost.title,
                         exchangePost.content,
                         Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",JPAExpressions
@@ -114,8 +122,11 @@ public class ExchangePostQueryRepository {
                         .leftJoin(chatRoom).on(chatRoom.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
                         .leftJoin(giveTalent).on(giveTalent.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
                         .leftJoin(receiveTalent).on(receiveTalent.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
-                        .leftJoin(favoriteExchangePost).on(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
-                        .where(exchangePost.exchangePostNo.eq(postNo))
+                        .leftJoin(favoriteExchangePost).on(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo).and(favoriteExchangePost.userNo.eq(currentUserNo)))
+                        .where(
+                                exchangePost.deletedAt.isNull(),
+                                exchangePost.exchangePostNo.eq(postNo)
+                        )
                         .groupBy(chatRoom.roomNo)
                         .fetchOne()
         );
