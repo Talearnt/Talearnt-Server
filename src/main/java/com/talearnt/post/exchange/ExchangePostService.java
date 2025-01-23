@@ -142,13 +142,9 @@ public class ExchangePostService {
             fileUploadRepository.saveAll(fileUploads);
         }
 
-        //삭제할 이미지가 있을 경우에 S3에 삭제 요청
-        if(!exchangePostReqDTO.getDeleteUrls().isEmpty()){
-            s3Service.deleteFiles(exchangePostReqDTO.getDeleteUrls());
-        }
-
         //채팅방 개설 전 Entity 설정
         ChatRoom chatRoomEntity = ChatRoomMapper.INSTANCE.toEntity(savedPostEntity,exchangePostReqDTO.getUserInfo(), RoomMode.PUBLIC);
+
         //채팅방 저장
         chatRoomRepository.save(chatRoomEntity);
 

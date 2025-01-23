@@ -44,5 +44,4 @@ public class ExchangePostReqDTO {
     private String duration;
 
     private Set<String> urls; //S3에서 삭제할 파일 경로 PresignedURL 옵션 제거 경로
-    private Set<String> deleteUrls; //S3에서 삭제할 파일 경로 PresignedURL 옵션 제거 경로
 }
