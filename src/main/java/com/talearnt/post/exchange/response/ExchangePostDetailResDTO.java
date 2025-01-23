@@ -29,6 +29,7 @@ public class ExchangePostDetailResDTO {
     private LocalDateTime createdAt;
     private String duration;
     private Boolean requiredBadge;
+    private Boolean isFavorite;
 
     private String title;
     private String content;
@@ -39,7 +40,7 @@ public class ExchangePostDetailResDTO {
     private Long chatRoomNo; //채팅방 접속할 ID
 
     @Builder
-    public ExchangePostDetailResDTO(Long userNo, String nickname, String profileImg, UserRole authority, Long exchangePostNo, String giveTalents, String receiveTalents, ExchangeType exchangeType, ExchangePostStatus status, LocalDateTime createdAt, String duration, Boolean requiredBadge, String title, String content, String images, int count, Long favoriteCount, Long openedChatRoomCount, Long chatRoomNo) {
+    public ExchangePostDetailResDTO(Long userNo, String nickname, String profileImg, UserRole authority, Long exchangePostNo, String giveTalents, String receiveTalents, ExchangeType exchangeType, ExchangePostStatus status, LocalDateTime createdAt, String duration, Boolean requiredBadge, Boolean isFavorite,String title, String content, String images, int count, Long favoriteCount, Long openedChatRoomCount, Long chatRoomNo) {
         this.userNo = userNo;
         this.nickname = nickname;
         this.profileImg = profileImg;
@@ -52,6 +53,7 @@ public class ExchangePostDetailResDTO {
         this.createdAt = createdAt;
         this.duration = duration;
         this.requiredBadge = requiredBadge;
+        this.isFavorite = isFavorite;
         this.title = title;
         this.content = content;
         this.images = SplitUtil.splitStringToList(images);
