@@ -1,6 +1,7 @@
 package com.talearnt.post.exchange;
 
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
+import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.util.response.CommonResponse;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -42,9 +44,9 @@ public interface ExchangePostApi {
     public ResponseEntity<CommonResponse<List<MyTalentsResDTO>>> getWantGiveMyTalentsForPost(Authentication auth);
 
 
-    @Operation(summary = "게시물 등록",
+    @Operation(summary = "게시글 등록",
             description = "<h2>내용</h2>" +
-                    "<p>재능 게시물 등록입니다. ( S3 미구현 - 추후 구현 )<p>" +
+                    "<p>재능 게시글 등록입니다. ( S3 미구현 - 추후 구현 )<p>" +
                     "<hr/>"+
                     "<h2>Request Body</h2>" +
                     "<ul>" +
@@ -90,6 +92,43 @@ public interface ExchangePostApi {
             @ApiResponse(responseCode = "400-6", ref = "POST_DURATION_MISSING"),
     })
     public ResponseEntity<CommonResponse<String>> writeExchangePost(@RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO);
+
+
+    @Operation(summary = "게시글 상세보기"
+            , description = "<h2>내용</h2>" +
+            "<p>재능 교환 게시글 상세보기 입니다.</p>" +
+            "<p>조회수 증가에 대한 조건은 없습니다. 같은 IP, 같은 ID가 봐도 조회수는 증가합니다.</p>" +
+            "<p>give, receive는 현재 재능 이름만 넘어가고 있습니다. <strong>필요하면 Code도 같이 넘어가도록 변경</strong>하겠습니다.</p>" +
+            "<p>채팅방에 연결 요청할 수 있는 chatRoomNo가 있습니다.</p>" +
+            "<p>채팅방 구현 시에 필요해 미리 넣어뒀습니다.</p>" +
+            "<hr/>" +
+            "<h2>Response</h2>" +
+            "<ul>" +
+                "<li>userNo : 유저 번호 - 내 게시글 판단하기 위함</li>" +
+                "<li>nickname : 유저 닉네임</li>" +
+                "<li>profileImg : 유저 프로필 사진 경로</li>" +
+                "<li>authority : 유저 권한 - MVP2 인증 유저용</li>" +
+                "<li>exchangePostNo : 게시글 번호</li>" +
+                "<li>giveTalents : 주고 싶은 재능 목록 (이름)</li>" +
+                "<li>receiveTalents : 받고 싶은 재능 목록 (이름)</li>" +
+                "<li>exchangeType : 온라인,오프라인,온_오프라인</li>" +
+                "<li>createdAt : 게시글 등록일시</li>" +
+                "<li>duration : 진행 기간 - 1개월,2개월 등등</li>" +
+                "<li>requiredBadge : 인증뱃지 필요 여부</li>" +
+                "<li>isFavorite : 찜 게시글 여부</li>" +
+                "<li>title : 게시글 제목</li>" +
+                "<li>content : 게시글 내용</li>" +
+                "<li>images : 이미지 경로 목록</li>" +
+                "<li>count : 조회수</li>" +
+                "<li>favoriteCount : 게시글의 찜 개수</li>" +
+                "<li>openedChatRoomCount : 해당 게시글에 열린 채팅방 개수</li>" +
+                "<li>chatRoomNo : 채팅방에 연결할 번호</li>" +
+            "</ul>")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200")
+    })
+    public ResponseEntity<CommonResponse<ExchangePostDetailResDTO>> getExchangePostDetail(@PathVariable Long postNo, Authentication auth);
+
 
 
     @Operation(summary = "재능 교환 게시글 목록"

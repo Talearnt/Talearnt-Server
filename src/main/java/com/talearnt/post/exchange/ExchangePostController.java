@@ -38,7 +38,6 @@ public class ExchangePostController implements ExchangePostApi{
     //게시글 상세보기
     @GetMapping("/posts/exchanges/{postNo}")
     public ResponseEntity<CommonResponse<ExchangePostDetailResDTO>> getExchangePostDetail(@PathVariable Long postNo, Authentication auth){
-        log.info("게시글 상세 보기 Controller");
         return CommonResponse.success(exchangePostService.getExchangePostDetail(postNo,auth));
     }
 
