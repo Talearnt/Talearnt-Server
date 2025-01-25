@@ -27,28 +27,26 @@ public class PostUtil {
      * */
     public static boolean isInteger(String value){
         try {
-            Integer.parseInt(value);
+            Integer.parseInt(value.trim());
             return true;
         }catch (NumberFormatException e){
             return false;
         }
     }
 
-
-
     /** 제대로 된 정렬 값이 넘어오지 않으면 recent로 만드는 Method <br>
      * 현재 사용하는 곳
      * - 재능 교환 게시글 목록 불러오기*/
     public static String filterValidOrderValue(String value){
         //Recent,Popular가 아니라면 recent 반환
-        if ("recent".equalsIgnoreCase(value) || "popular".equalsIgnoreCase(value)) return value;
+        if ("popular".equalsIgnoreCase(value.trim())) return value;
         return "recent";
     }
 
     /** 교환 기간 Regex에 맞지 않으면 null 반환 Method<br>*/
     public static String filterValidDurationValue(String value){
         //REGEX에 일치하면 해당 값 반환
-        if(value != null && value.matches(Regex.EXCHANGE_DURATION.getPattern())) return value;
+        if(value != null && value.trim().matches(Regex.EXCHANGE_DURATION.getPattern())) return value;
         //아닐 경우 null
         return null;
     }
@@ -57,8 +55,8 @@ public class PostUtil {
     public static ExchangeType filterValidExchangeType(String value){
         try {
             //온라인,오프라인,온_오프라인 값에 해당하는 거 가져오기.
-            return ExchangeType.valueOf(value);
-        } catch (IllegalArgumentException | NullPointerException e) {
+            return ExchangeType.valueOf(value.trim());
+        } catch (IllegalArgumentException e) {
             //해당 값 없으면 null 반환
             return null;
         }
@@ -69,7 +67,7 @@ public class PostUtil {
         //null 일 경우 그냥 null 반환
         if (value==null) return null;
         //null이 아닐 경우 value 에 맞는 값 반환
-        return switch (value.toLowerCase()){
+        return switch (value.trim().toLowerCase()){
             case "true" -> true;
             case "false" -> false;
             default -> null;
@@ -79,8 +77,8 @@ public class PostUtil {
     /** status - 모집중, 모집_완료 가 아니라면 null 반환*/
     public static ExchangePostStatus filterValidExchangePostStatus(String value){
         try {
-            return ExchangePostStatus.valueOf(value);
-        } catch (IllegalArgumentException | NullPointerException e) {
+            return ExchangePostStatus.valueOf(value.trim());
+        } catch (IllegalArgumentException e) {
             return null;
         }
     }
@@ -92,7 +90,7 @@ public class PostUtil {
         int defaultSize = 15;
         // Page number에 대한 Try-catch문
         try{
-            defaultPage = Integer.parseInt(page);
+            defaultPage = Integer.parseInt(page.trim());
             //음수에 대한 페이지인가? 맞다면 기본 값 설정.
             if (defaultPage < 1){
                 defaultPage = 1;
@@ -100,7 +98,7 @@ public class PostUtil {
         } catch (NumberFormatException ignored) {}
         // Page Size에 대한 Try-catch문
         try {
-            defaultSize = Integer.parseInt(size);
+            defaultSize = Integer.parseInt(size.trim());
             //무한한 값이 들어오거나 음수값이 들어올 경우 최대값, 최소값 설정.
             if(defaultSize > 50){
                 defaultSize = 50;
