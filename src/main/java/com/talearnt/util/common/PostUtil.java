@@ -10,16 +10,6 @@ import java.util.List;
 
 public class PostUtil {
 
-    /** 100글자일 경우 ...을 붙이고 아닐 경우 붙이지 않는 메소드<br>
-     * 주로 Content에 사용할 예정*/
-    public static String addThreeDotForContent(String content){
-        if (content == null) return null;
-        if (content.length() >= 100) return content+"...";
-
-        return content;
-    }
-
-
     /** String 에서 Integer 로 유효한 값만 변환하는 Method <br>
      * List<Integer> 반환*/
     public static List<Integer> filterValidIntegers(List<String> strings){

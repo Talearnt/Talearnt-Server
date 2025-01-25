@@ -14,8 +14,8 @@ import java.util.List;
 @ToString
 public class ExchangeSearchConditionDTO {
     private String search;
-    private List<Integer> categories; //Integer로 변환 필요
-    private List<Integer> talents; //Integer로 변환 필요
+    private List<Integer> giveTalents; //Integer로 변환 필요
+    private List<Integer> receiveTalents; //Integer로 변환 필요
     private String order; //recent,popular 로 변환 필요
     private String duration; // 이상한 값이 넘어올 경우 duration 없이 조건
     private ExchangeType type; //ExchangeType으로 변환 필요, ExchangeType 으로 변환 실패 시 null로 변환
@@ -25,10 +25,10 @@ public class ExchangeSearchConditionDTO {
 
 
     @Builder
-    public ExchangeSearchConditionDTO(String search,List<String> categories, List<String> talents, String order, String duration, String type, String requiredBadge, String status, String page, String size) {
+    public ExchangeSearchConditionDTO(String search,List<String> giveTalents, List<String> receiveTalents, String order, String duration, String type, String requiredBadge, String status, String page, String size) {
         this.search = SplitUtil.createSearchKeywordForBooleanMode(search);
-        this.categories = PostUtil.filterValidIntegers(categories);
-        this.talents = PostUtil.filterValidIntegers(talents);
+        this.giveTalents = PostUtil.filterValidIntegers(giveTalents);
+        this.receiveTalents = PostUtil.filterValidIntegers(receiveTalents);
         this.order = PostUtil.filterValidOrderValue(order);
         this.duration = PostUtil.filterValidDurationValue(duration);
         this.type = PostUtil.filterValidExchangeType(type);
