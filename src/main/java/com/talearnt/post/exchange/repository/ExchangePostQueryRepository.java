@@ -134,10 +134,7 @@ public class ExchangePostQueryRepository {
 
 
     /**재능 교환 목록 불러오기 (Filter 조건)<br>*/
-    public Page<ExchangePostListResDTO> getFilteredExchangePostList(ExchangeSearchConditionDTO searchConditionDTO){
-
-        log.info("search keyword : {} ",searchConditionDTO.getSearch());
-
+    public Page<ExchangePostListResDTO> getFilteredExchangePostList(ExchangeSearchConditionDTO searchConditionDTO, Long currentUserNo){
 
         List<ExchangePostListResDTO> data = factory
                 .select(Projections.constructor(
@@ -165,26 +162,37 @@ public class ExchangePostQueryRepository {
                                 .groupBy(receiveTalent.exchangePost.exchangePostNo)
                         ),
                         exchangePost.createdAt,
-                        exchangePost.count,
-                        favoriteExchangePost.countDistinct().intValue()
+                        Expressions.numberTemplate(Long.class,
+                                "COALESCE(({0}), 0)",
+                                JPAExpressions
+                                        .select(chatRequest.count())
+                                        .from(chatRequest)
+                                        .where(chatRequest.chatRoom.roomNo.eq(chatRoom.roomNo))
+                                        .groupBy(chatRequest.chatRoom.roomNo),
+                                "openedChatRoomCount"),
+                        favoriteExchangePost.countDistinct().intValue(),
+                        Expressions.booleanTemplate("CASE WHEN {0} IS NOT NULL THEN true ELSE false END", favoriteExchangePost.exchangePostNo)
                 )).from(exchangePost)
                 .leftJoin(user).on(exchangePost.user.userNo.eq(user.userNo))
-                .leftJoin(favoriteExchangePost).on(exchangePost.exchangePostNo.eq(favoriteExchangePost.exchangePostNo))
+                .leftJoin(favoriteExchangePost).on(exchangePost.exchangePostNo.eq(favoriteExchangePost.exchangePostNo)
+                        .and(favoriteExchangePost.userNo.eq(currentUserNo)))
                 .leftJoin(giveTalent).on(exchangePost.exchangePostNo.eq(giveTalent.exchangePost.exchangePostNo))
                 .leftJoin(receiveTalent).on(exchangePost.exchangePostNo.eq(receiveTalent.exchangePost.exchangePostNo))
+                .leftJoin(chatRoom).on(chatRoom.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
                 .where(
                         favoriteExchangePost.deletedAt.isNull(), // 찜 게시글이 삭제되지 않았고, -> favoriteExchangePost를 위함
                         exchangePost.deletedAt.isNull(), //게시글이 삭제되지 않았고,
                         titleLike(searchConditionDTO.getSearch()), //검색 키워드가 존재하고
-                        categoriesEq(searchConditionDTO.getCategories()),//대분류 코드가 일치하고,
-                        talentCodesEq(searchConditionDTO.getTalents()),//재능 분류의 코드가 일치할 경우
+                        giveTalentsCodeEq(searchConditionDTO.getGiveTalents()),//주고 싶은 재능 분류의 코드가 일치하고,
+                        receiveTalentCodesEq(searchConditionDTO.getReceiveTalents()),//받고 싶은 재능 분류의 코드가 일치할 경우
                         durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
                         exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
                         requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
                         exchangePostStatusEq(searchConditionDTO.getStatus()) // 모집 상태가 일치하고
                 )
                 .orderBy(orderEq(searchConditionDTO.getOrder()).toArray(new OrderSpecifier[0]))// 최신순, 인기순으로 정렬
-                .groupBy(exchangePost.exchangePostNo)
+                .groupBy(exchangePost.exchangePostNo,
+                        chatRoom.roomNo)
                 .offset(searchConditionDTO.getPage().getOffset())
                 .limit(searchConditionDTO.getPage().getPageSize())
                 .fetch();
@@ -196,8 +204,8 @@ public class ExchangePostQueryRepository {
                         .where(
                                 exchangePost.deletedAt.isNull(), //게시글이 삭제되지 않았고,
                                 titleLike(searchConditionDTO.getSearch()), //검색 키워드가 존재하고
-                                categoriesEq(searchConditionDTO.getCategories()),//대분류 코드가 일치하고,
-                                talentCodesEq(searchConditionDTO.getTalents()),//재능 분류의 코드가 일치할 경우
+                                giveTalentsCodeEq(searchConditionDTO.getGiveTalents()),//대분류 코드가 일치하고,
+                                receiveTalentCodesEq(searchConditionDTO.getReceiveTalents()),//재능 분류의 코드가 일치할 경우
                                 durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
                                 exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
                                 requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
@@ -223,16 +231,14 @@ public class ExchangePostQueryRepository {
 
     /** 재능 교환 게시글 대분류(categories)가 매개변수 값과 같은 조건 탐색<br>
      * PostUtil 의 filterValidIntegers 에서 정제를 커친 후 사용함*/
-    private BooleanExpression categoriesEq(List<Integer> categories){
-        return !categories.isEmpty() ? exchangePost.giveTalents.any().talentCode.bigCategory.categoryCode.in(categories)
-                .or(exchangePost.receiveTalents.any().talentCode.bigCategory.categoryCode.in(categories)) : null;
+    private BooleanExpression giveTalentsCodeEq(List<Integer> giveTalents){
+        return !giveTalents.isEmpty() ? exchangePost.giveTalents.any().talentCode.talentCode.in(giveTalents) : null;
     }
 
     /** 재능 코드 목록(Talents)을 올바른 값들만 반환하여 조건 탐색<br>
      * PostUtil 의 filterValidIntegers 에서 정제를 커친 후 사용함*/
-    private BooleanExpression talentCodesEq(List<Integer> talents){
-        return !talents.isEmpty() ? exchangePost.giveTalents.any().talentCode.talentCode.in(talents)
-                .or(exchangePost.receiveTalents.any().talentCode.talentCode.in(talents)): null;
+    private BooleanExpression receiveTalentCodesEq(List<Integer> receiveTalents){
+        return !receiveTalents.isEmpty() ? exchangePost.receiveTalents.any().talentCode.talentCode.in(receiveTalents): null;
     }
 
     /**  정렬 방식(Order) - Order By절 -> 최신순, 인기순<br>
