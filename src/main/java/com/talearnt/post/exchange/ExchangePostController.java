@@ -1,7 +1,6 @@
 package com.talearnt.post.exchange;
 
-import com.talearnt.enums.post.ExchangePostStatus;
-import com.talearnt.enums.post.ExchangeType;
+
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
@@ -43,8 +42,8 @@ public class ExchangePostController implements ExchangePostApi{
 
     //게시글 목록
     @GetMapping("/posts/exchanges")
-    public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(@RequestParam(value = "categories",required = false,defaultValue = "")  List<String> categories,//Integer로 변환 필요
-                                                                                               @RequestParam(value = "talents",required = false,defaultValue = "") List<String> talents,//Integer로 변환 필요
+    public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(@RequestParam(value = "giveTalents",required = false,defaultValue = "")  List<String> giveTalents,//Integer로 변환 필요
+                                                                                               @RequestParam(value = "receiveTalents",required = false,defaultValue = "") List<String> receiveTalents,//Integer로 변환 필요
                                                                                                @RequestParam(value = "order", required = false,defaultValue = "recent") String order,//recent,popular 로 변환 필요
                                                                                                @RequestParam(value = "duration",required = false) String duration,// 이상한 값이 넘어올 경우 duration 없이 조건
                                                                                                @RequestParam(value = "type", required = false) String type, //ExchangeType으로 변환 필요, ExchangeType 으로 변환 실패 시 null로 변환
@@ -52,8 +51,9 @@ public class ExchangePostController implements ExchangePostApi{
                                                                                                @RequestParam(value = "status",required = false) String status, //ExchangePostStatus으로 변환 필요, ExchangePostStatus 으로 변환 실패시  으로 변환 실패 시 null로 변환
                                                                                                @RequestParam(value = "page",required = false,defaultValue = "1") String page,
                                                                                                @RequestParam(value = "size",required = false,defaultValue = "15") String size,
-                                                                                               @RequestParam(value = "search",required = false) String search){
-        return exchangePostService.getExchangePostList(categories,talents,order,duration,type,requiredBadge,status,page,size,search);
+                                                                                               @RequestParam(value = "search",required = false) String search,
+                                                                                               Authentication auth){
+        return exchangePostService.getExchangePostList(giveTalents,receiveTalents,order,duration,type,requiredBadge,status,page,size,search, auth);
     }
 
     //게시글 작성
