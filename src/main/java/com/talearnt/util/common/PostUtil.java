@@ -27,9 +27,10 @@ public class PostUtil {
      * */
     public static boolean isInteger(String value){
         try {
+            value = getTrimString(value);
             Integer.parseInt(value.trim());
             return true;
-        }catch (NumberFormatException e){
+        }catch (NumberFormatException | NullPointerException e){
             return false;
         }
     }
@@ -38,15 +39,17 @@ public class PostUtil {
      * 현재 사용하는 곳
      * - 재능 교환 게시글 목록 불러오기*/
     public static String filterValidOrderValue(String value){
+        value = getTrimString(value);
         //Recent,Popular가 아니라면 recent 반환
-        if ("popular".equalsIgnoreCase(value.trim())) return value;
+        if ("popular".equalsIgnoreCase(value)) return value;
         return "recent";
     }
 
     /** 교환 기간 Regex에 맞지 않으면 null 반환 Method<br>*/
     public static String filterValidDurationValue(String value){
+        value = getTrimString(value);
         //REGEX에 일치하면 해당 값 반환
-        if(value != null && value.trim().matches(Regex.EXCHANGE_DURATION.getPattern())) return value;
+        if(value != null && value.matches(Regex.EXCHANGE_DURATION.getPattern())) return value;
         //아닐 경우 null
         return null;
     }
@@ -54,9 +57,10 @@ public class PostUtil {
     /** 진행 방식이 Regex에 맞지 않으면 null 반환 Method*/
     public static ExchangeType filterValidExchangeType(String value){
         try {
+            value = getTrimString(value);
             //온라인,오프라인,온_오프라인 값에 해당하는 거 가져오기.
-            return ExchangeType.valueOf(value.trim());
-        } catch (IllegalArgumentException e) {
+            return ExchangeType.valueOf(value);
+        } catch (IllegalArgumentException | NullPointerException e) {
             //해당 값 없으면 null 반환
             return null;
         }
@@ -65,9 +69,10 @@ public class PostUtil {
     /**requiredBadge 가 Boolean이 아닐 경우 null*/
     public static Boolean filterValidRequiredBadge(String value){
         //null 일 경우 그냥 null 반환
-        if (value==null) return null;
+        if (value == null) return null;
+        value = getTrimString(value);
         //null이 아닐 경우 value 에 맞는 값 반환
-        return switch (value.trim().toLowerCase()){
+        return switch (value.toLowerCase()){
             case "true" -> true;
             case "false" -> false;
             default -> null;
@@ -77,8 +82,8 @@ public class PostUtil {
     /** status - 모집중, 모집_완료 가 아니라면 null 반환*/
     public static ExchangePostStatus filterValidExchangePostStatus(String value){
         try {
-            return ExchangePostStatus.valueOf(value.trim());
-        } catch (IllegalArgumentException e) {
+            return ExchangePostStatus.valueOf(value);
+        } catch (IllegalArgumentException | NullPointerException e) {
             return null;
         }
     }
@@ -110,4 +115,10 @@ public class PostUtil {
         return PageRequest.of(defaultPage-1,defaultSize);
     }
 
+    private static String getTrimString(String value){
+        if (value == null) return null;
+        return value.trim();
+    }
+
 }
+
