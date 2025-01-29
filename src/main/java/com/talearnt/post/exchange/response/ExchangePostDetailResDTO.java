@@ -33,14 +33,14 @@ public class ExchangePostDetailResDTO {
 
     private String title;
     private String content;
-    private List<String> images;
+    private List<String> imageUrls;
     private int count; //조회수
     private Long favoriteCount; //찜(좋아요)수
     private Long openedChatRoomCount; // 진행중인 채팅 방 수
     private Long chatRoomNo; //채팅방 접속할 ID
 
     @Builder
-    public ExchangePostDetailResDTO(Long userNo, String nickname, String profileImg, UserRole authority, Long exchangePostNo, String giveTalents, String receiveTalents, ExchangeType exchangeType, ExchangePostStatus status, LocalDateTime createdAt, String duration, Boolean requiredBadge, Boolean isFavorite,String title, String content, String images, int count, Long favoriteCount, Long openedChatRoomCount, Long chatRoomNo) {
+    public ExchangePostDetailResDTO(Long userNo, String nickname, String profileImg, UserRole authority, Long exchangePostNo, String giveTalents, String receiveTalents, ExchangeType exchangeType, ExchangePostStatus status, LocalDateTime createdAt, String duration, Boolean requiredBadge, Boolean isFavorite,String title, String content, String imageUrls, int count, Long favoriteCount, Long openedChatRoomCount, Long chatRoomNo) {
         this.userNo = userNo;
         this.nickname = nickname;
         this.profileImg = profileImg;
@@ -56,7 +56,7 @@ public class ExchangePostDetailResDTO {
         this.isFavorite = isFavorite;
         this.title = title;
         this.content = content;
-        this.images = SplitUtil.splitStringToList(images);
+        this.imageUrls = SplitUtil.splitStringToList(imageUrls);
         this.count = count;
         this.favoriteCount = favoriteCount;
         this.openedChatRoomCount = openedChatRoomCount==null?0:openedChatRoomCount;

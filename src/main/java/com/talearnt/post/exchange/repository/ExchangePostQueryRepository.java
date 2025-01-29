@@ -12,6 +12,7 @@ import com.talearnt.chat.entity.QChatRequest;
 import com.talearnt.chat.entity.QChatRoom;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
+import com.talearnt.enums.upload.PostType;
 import com.talearnt.post.exchange.entity.QExchangePost;
 import com.talearnt.post.exchange.entity.QFavoriteExchangePost;
 import com.talearnt.post.exchange.entity.QGiveTalent;
@@ -106,7 +107,7 @@ public class ExchangePostQueryRepository {
                         Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",JPAExpressions
                                 .select(fileUpload.url)
                                 .from(fileUpload)
-                                .where(fileUpload.postNo.eq(postNo))),
+                                .where(fileUpload.postNo.eq(postNo).and(fileUpload.postType.eq(PostType.EXCHANGE)))),
                         exchangePost.count,
                         favoriteExchangePost.exchangePostNo.count(),
                         ExpressionUtils.as(JPAExpressions
@@ -229,13 +230,13 @@ public class ExchangePostQueryRepository {
         ).gt(0);
     }
 
-    /** 재능 교환 게시글 대분류(categories)가 매개변수 값과 같은 조건 탐색<br>
+    /** 주고 싶은 재능 분류 키워드에 해당하는 값들 가져오기 <br>
      * PostUtil 의 filterValidIntegers 에서 정제를 커친 후 사용함*/
     private BooleanExpression giveTalentsCodeEq(List<Integer> giveTalents){
         return !giveTalents.isEmpty() ? exchangePost.giveTalents.any().talentCode.talentCode.in(giveTalents) : null;
     }
 
-    /** 재능 코드 목록(Talents)을 올바른 값들만 반환하여 조건 탐색<br>
+    /** 받고 싶은 재능 분류 키워드에 해당하는 값들 가져오기<br>
      * PostUtil 의 filterValidIntegers 에서 정제를 커친 후 사용함*/
     private BooleanExpression receiveTalentCodesEq(List<Integer> receiveTalents){
         return !receiveTalents.isEmpty() ? exchangePost.receiveTalents.any().talentCode.talentCode.in(receiveTalents): null;

@@ -3,7 +3,6 @@ package com.talearnt.post.exchange.request;
 
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.common.Regex;
-import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.util.common.RequiredJwtValueDTO;
 import com.talearnt.util.jwt.UserInfo;
@@ -43,5 +42,5 @@ public class ExchangePostReqDTO {
     @DynamicValid(errorCode = ErrorCode.POST_DURATION_MISSING, pattern = Regex.EXCHANGE_DURATION)
     private String duration;
 
-    private Set<String> urls; //S3에서 삭제할 파일 경로 PresignedURL 옵션 제거 경로
+    private Set<String> imageUrls; //S3에서 삭제할 파일 경로 PresignedURL 옵션 제거 경로
 }

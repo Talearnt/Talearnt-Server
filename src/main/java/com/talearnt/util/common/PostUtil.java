@@ -82,6 +82,7 @@ public class PostUtil {
     /** status - 모집중, 모집_완료 가 아니라면 null 반환*/
     public static ExchangePostStatus filterValidExchangePostStatus(String value){
         try {
+            value = getTrimString(value);
             return ExchangePostStatus.valueOf(value);
         } catch (IllegalArgumentException | NullPointerException e) {
             return null;
