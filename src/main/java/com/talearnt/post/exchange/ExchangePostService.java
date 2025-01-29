@@ -70,7 +70,7 @@ public class ExchangePostService {
      * */
     @Transactional
     public String writeExchangePost(ExchangePostReqDTO exchangePostReqDTO){
-        log.info("재능 교환 게시글 작성 시작 : {}",exchangePostReqDTO);
+        log.info("재능 교환 게시글 작성 시작 : {}", exchangePostReqDTO);
 
         //주고 싶으 나의 재능 가져오기
         List<Integer> talentCodes = exchangePostQueryRepository.getWantGiveMyTalents(exchangePostReqDTO.getUserInfo().getUserNo());
@@ -97,7 +97,7 @@ public class ExchangePostService {
         ExchangePost savedPostEntity = exchangePostRepository.save(exchangePostEntity);
 
         //중복 키워드 코드 제거
-        Set<Integer> codes = Stream.concat(exchangePostReqDTO.getGiveTalents().stream(),exchangePostReqDTO.getReceiveTalents().stream())
+        Set<Integer> codes = Stream.concat(exchangePostReqDTO.getGiveTalents().stream(), exchangePostReqDTO.getReceiveTalents().stream())
                 .collect(Collectors.toSet());
 
         //제대로 된 키워드 코드로 넘어왔으면 값 가져와 캐싱
@@ -132,10 +132,10 @@ public class ExchangePostService {
                 });
 
         //이미지를 업로드 했을 경우 DB에 저장
-        if (!exchangePostReqDTO.getUrls().isEmpty()){
+        if (!exchangePostReqDTO.getImageUrls().isEmpty()){
             // 파일 업로드 경로 저장
-            List<FileUpload> fileUploads = exchangePostReqDTO.getUrls().stream().map(
-                    url-> new FileUpload(null,savedPostEntity.getExchangePostNo(),exchangePostReqDTO.getUserInfo().getUserNo(), PostType.EXCHANGE,url,null)
+            List<FileUpload> fileUploads = exchangePostReqDTO.getImageUrls().stream().map(
+                    url-> new FileUpload(null,savedPostEntity.getExchangePostNo(), exchangePostReqDTO.getUserInfo().getUserNo(), PostType.EXCHANGE,url,null)
             ).toList();
 
             // 파일 업로드 경로 모두 저장
@@ -143,7 +143,7 @@ public class ExchangePostService {
         }
 
         //채팅방 개설 전 Entity 설정
-        ChatRoom chatRoomEntity = ChatRoomMapper.INSTANCE.toEntity(savedPostEntity,exchangePostReqDTO.getUserInfo(), RoomMode.PUBLIC);
+        ChatRoom chatRoomEntity = ChatRoomMapper.INSTANCE.toEntity(savedPostEntity, exchangePostReqDTO.getUserInfo(), RoomMode.PUBLIC);
 
         //채팅방 저장
         chatRoomRepository.save(chatRoomEntity);
@@ -194,10 +194,10 @@ public class ExchangePostService {
     }
 
 
-    /** 재능교환 게시글 상세보기
-     * 조건 )
-     * - 로그인이 되어 있는가? (찜 여부)
-     * - 게시글이 존재하는가?
+    /** 재능교환 게시글 상세보기 <br>
+     * 조건 )<br>
+     * - 로그인이 되어 있는가? (찜 여부)<br>
+     * - 게시글이 존재하는가?<br>
      * - 조회수 상승 필요
      * */
     public ExchangePostDetailResDTO getExchangePostDetail(Long postNo, Authentication auth){
@@ -216,6 +216,19 @@ public class ExchangePostService {
         return result;
     }
 
+
+    /** 재능 교환 게시글 수정
+     * 조건 )
+     * - 로그인이 되어 있는가?
+     * - 나의 게시글이 맞는가?
+     * - 올바른 값이 넘어 왔는가? (Valid)
+     * - 새로운 이미지가 있는가? DB 업로드
+     * - 사라진 이미지가 있는가? DB 삭제 및 S3 삭제
+     * - */
+    public String updateExchangePost(){
+        
+        return "";
+    }
 
     private Long getCurrentUserNo(Authentication auth){
         Long currentUserNo = 0L;
