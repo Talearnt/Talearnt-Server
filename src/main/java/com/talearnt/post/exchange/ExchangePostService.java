@@ -76,13 +76,15 @@ public class ExchangePostService {
         List<Integer> talentCodes = exchangePostQueryRepository.getWantGiveMyTalents(exchangePostReqDTO.getUserInfo().getUserNo());
 
         //GiveTalents 가 나의 재능의 주고 싶은 재능에 있는 키워드인가?
-        talentCodes
+        List<Integer> invalidCodes = exchangePostReqDTO.getGiveTalents()
                 .stream()
-                .filter(code-> !exchangePostReqDTO.getGiveTalents().contains(code))
-                .findAny().ifPresent(code -> {
-                    log.error("재능 교환 게시글 작성 실패 - 나의 주고 싶은 재능에 없는 코드가 들어옴 : {}", ErrorCode.POST_GIVE_MY_TALENT_NOT_FOUND);
-                    throw new CustomRuntimeException(ErrorCode.POST_GIVE_MY_TALENT_NOT_FOUND);
-                });
+                .filter(code -> !talentCodes.contains(code)) // talentCodes에 없는 값만 필터링
+                .toList();
+
+        if (!invalidCodes.isEmpty()) {
+            log.error("재능 교환 게시글 작성 실패 - 유효하지 않은 재능 코드 목록: {}, 에러 코드: {}", invalidCodes, ErrorCode.POST_GIVE_MY_TALENT_NOT_FOUND);
+            throw new CustomRuntimeException(ErrorCode.POST_GIVE_MY_TALENT_NOT_FOUND);
+        }
         //Give,Receive Talents 가 제대로된 키워드 코드로 넘어 왔는가?
         if(myTalentQueryRepository.validateIsCategory(exchangePostReqDTO.getGiveTalents())
                 && myTalentQueryRepository.validateIsCategory(exchangePostReqDTO.getReceiveTalents())) {
@@ -132,7 +134,7 @@ public class ExchangePostService {
                 });
 
         //이미지를 업로드 했을 경우 DB에 저장
-        if (!exchangePostReqDTO.getImageUrls().isEmpty()){
+        if (exchangePostReqDTO.getImageUrls() != null && !exchangePostReqDTO.getImageUrls().isEmpty()){
             // 파일 업로드 경로 저장
             List<FileUpload> fileUploads = exchangePostReqDTO.getImageUrls().stream().map(
                     url-> new FileUpload(null,savedPostEntity.getExchangePostNo(), exchangePostReqDTO.getUserInfo().getUserNo(), PostType.EXCHANGE,url,null)
