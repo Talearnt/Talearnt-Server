@@ -98,6 +98,10 @@ public enum ErrorCode {
     POST_ACCESS_DENIED("403-POST-08", "해당 게시글에 대한 권한이 없습니다."),
     POST_GIVE_MY_TALENT_NOT_FOUND("404-POST-09", "나의 재능 - 주고 싶은 재능에 존재하지 않은 키워드입니다."),
     POST_DURATION_MISSING("400-POST-10", "진행 기간을 선택해 주세요."),
+    POST_FAILED_UPDATE("400-POST-11","게시글 수정에 실패하였습니다."),
+
+    //나의 재능 관련 오류
+    MY_TALENT_KEYWORD_NOT_REGISTERED("404-MYTALENT-01","나의 재능을 등록하지 않았습니다."),
 
     // 페이지 관련 오류
     PAGE_MIN_NUMBER("400-PAGE-01", "페이지 번호는 0보다 작을 수 없습니다."),
