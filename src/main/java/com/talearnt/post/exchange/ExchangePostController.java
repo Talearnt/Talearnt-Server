@@ -64,8 +64,9 @@ public class ExchangePostController implements ExchangePostApi{
 
 
     //게시글 수정
-    public ResponseEntity<CommonResponse<String>> updateExchangePost(@RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO){
-        return CommonResponse.success("");
+    @PutMapping("/posts/exchanges/{postNo}")
+    public ResponseEntity<CommonResponse<String>> updateExchangePost(@PathVariable Long postNo, @RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO){
+        return CommonResponse.success(exchangePostService.updateExchangePost(postNo,exchangePostReqDTO));
     }
 
 }
