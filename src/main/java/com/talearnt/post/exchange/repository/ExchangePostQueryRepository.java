@@ -5,7 +5,6 @@ import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.admin.category.entity.QTalentCategory;
 import com.talearnt.chat.entity.QChatRequest;
@@ -13,10 +12,7 @@ import com.talearnt.chat.entity.QChatRoom;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.enums.upload.PostType;
-import com.talearnt.post.exchange.entity.QExchangePost;
-import com.talearnt.post.exchange.entity.QFavoriteExchangePost;
-import com.talearnt.post.exchange.entity.QGiveTalent;
-import com.talearnt.post.exchange.entity.QReceiveTalent;
+import com.talearnt.post.exchange.entity.*;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
@@ -28,11 +24,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +45,37 @@ public class ExchangePostQueryRepository {
     private final QChatRequest chatRequest = QChatRequest.chatRequest;
     private final QChatRoom chatRoom = QChatRoom.chatRoom;
     private final QTalentCategory talentCategory = QTalentCategory.talentCategory;
+
+    /** ExchangePost 수정*/
+    public long updateExchangePost(Long postNo, String title, String content, ExchangeType exchangeType, boolean requiredBadge, String duration){
+        return factory.update(exchangePost)
+                .set(exchangePost.title,title)
+                .set(exchangePost.content,content)
+                .set(exchangePost.exchangeType,exchangeType)
+                .set(exchangePost.requiredBadge, requiredBadge)
+                .set(exchangePost.duration,duration)
+                .where(exchangePost.exchangePostNo.eq(postNo)).execute();
+    }
+
+    /**나의 재능 이력 가져오기 */
+    public List<Integer> getPastMyTalents(Long currentUserNo){
+        QMyTalent myTalent = QMyTalent.myTalent;
+        return factory.select(myTalent.talentCategory.talentCode)
+                .from(myTalent)
+                .where(myTalent.user.userNo.eq(currentUserNo),
+                        myTalent.type.eq(false))
+                .fetch();
+    }
+
+    /**내 게시글이 맞는지 확인 - 수정 페이지*/
+    public boolean isMyExchangePost(Long postNo, Long userNo){
+        return factory.selectOne()
+                .from(exchangePost)
+                .where(exchangePost.exchangePostNo.eq(postNo),
+                        exchangePost.user.userNo.eq(userNo))
+                .fetchFirst() != null;
+    }
+
 
     /**활성화된 나의 주고 싶은 재능들 가져오기*/
     public List<Integer> getWantGiveMyTalents(Long userNo){

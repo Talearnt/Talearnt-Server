@@ -13,6 +13,8 @@ import com.talearnt.post.exchange.entity.GiveTalent;
 import com.talearnt.post.exchange.entity.ReceiveTalent;
 import com.talearnt.post.exchange.repository.ExchangePostQueryRepository;
 import com.talearnt.post.exchange.repository.ExchangePostRepository;
+import com.talearnt.post.exchange.repository.GiveTalentRepository;
+import com.talearnt.post.exchange.repository.ReceiveTalentRepository;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
@@ -30,6 +32,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
@@ -58,6 +61,8 @@ public class ExchangePostService {
     private final TalentCategoryRepository talentCategoryRepository;
     private final FileUploadRepository fileUploadRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final GiveTalentRepository giveTalentRepository;
+    private final ReceiveTalentRepository receiveTalentRepository;
 
     /** 재능 교환 게시글 작성 <br>
      * 조건<br>
@@ -98,7 +103,7 @@ public class ExchangePostService {
         //ExchangePost 저장
         ExchangePost savedPostEntity = exchangePostRepository.save(exchangePostEntity);
 
-        //중복 키워드 코드 제거
+        //주고 싶은, 받고 싶은 키워드 합치기
         Set<Integer> codes = Stream.concat(exchangePostReqDTO.getGiveTalents().stream(), exchangePostReqDTO.getReceiveTalents().stream())
                 .collect(Collectors.toSet());
 
@@ -223,14 +228,49 @@ public class ExchangePostService {
      * 조건 )
      * - 로그인이 되어 있는가?
      * - 나의 게시글이 맞는가?
+     * - 주고 싶은 재능이 나의 재능 과거 이력과 현재 이력에 있는가?
      * - 올바른 값이 넘어 왔는가? (Valid)
      * - 새로운 이미지가 있는가? DB 업로드
      * - 사라진 이미지가 있는가? DB 삭제 및 S3 삭제
      * - */
-    public String updateExchangePost(){
+    @Transactional
+    public String updateExchangePost(Long postNo, ExchangePostReqDTO exchangePostReqDTO){
+        log.info("재능 교환 게시글 수정 시작 : {}",postNo);
+
+        //나의 게시글이 맞는가?
+        if(!exchangePostQueryRepository.isMyExchangePost(postNo, exchangePostReqDTO.getUserInfo().getUserNo())){
+            log.error("재능 교환 게시글 수정 실패 - 내 게시글이 아님 : {} - {}",postNo,ErrorCode.POST_ACCESS_DENIED);
+            throw new CustomRuntimeException(ErrorCode.POST_ACCESS_DENIED);
+        }
+        // 주고 싶은 재능이 나의 재능 이력에 존재하는가?
+        List<Integer> myTalents = exchangePostQueryRepository.getPastMyTalents(exchangePostReqDTO.getUserInfo().getUserNo());
+        if (myTalents.isEmpty()){
+            log.error("재능 교환 게시글 수정 실패 - 나의 재능 이력이 존재하지 않음 : {} - {}",exchangePostReqDTO.getUserInfo().getUserNo(), ErrorCode.MY_TALENT_KEYWORD_NOT_REGISTERED);
+            throw new CustomRuntimeException(ErrorCode.MY_TALENT_KEYWORD_NOT_REGISTERED);
+        }
+
+        List<Integer> notContainsTalentCode = exchangePostReqDTO.getGiveTalents().stream()
+                .filter(talentCode -> !myTalents.contains(talentCode))
+                .toList();
+
+        if (!notContainsTalentCode.isEmpty()){
+            log.error("재능 교환 게시글 수정 실패 - 나의 재능 이력에 존재하지 않는 코드 존재 : {} - {}", exchangePostReqDTO.getUserInfo().getUserNo(), ErrorCode.POST_GIVE_MY_TALENT_NOT_FOUND);
+            throw new CustomRuntimeException(ErrorCode.POST_GIVE_MY_TALENT_NOT_FOUND);
+        }
+
+        //게시글 업데이트
+        Long updatedPostCount = exchangePostQueryRepository.updateExchangePost(postNo,exchangePostReqDTO.getTitle(),exchangePostReqDTO.getContent(),exchangePostReqDTO.getExchangeType(),exchangePostReqDTO.isRequiredBadge(),exchangePostReqDTO.getDuration());
+        if(updatedPostCount == 0 || updatedPostCount > 1){
+            log.error("재능 교환 게시글 수정 실패 - 수정된 게시글이 0개 또는 여러 개입니다. : {} - {}",postNo,ErrorCode.POST_FAILED_UPDATE);
+            throw new CustomRuntimeException(ErrorCode.POST_FAILED_UPDATE);
+        }
         
-        return "";
+
+        log.info("재능 교환 게시글 수정 끝 : {}",postNo);
+        return "ㅇㅇ";
     }
+
+
 
     private Long getCurrentUserNo(Authentication auth){
         Long currentUserNo = 0L;
