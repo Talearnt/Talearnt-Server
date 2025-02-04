@@ -1,5 +1,6 @@
 package com.talearnt.post.exchange;
 
+import com.querydsl.core.Tuple;
 import com.talearnt.admin.category.entity.TalentCategory;
 import com.talearnt.admin.category.repository.TalentCategoryRepository;
 import com.talearnt.chat.ChatRoomMapper;
@@ -38,9 +39,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -264,14 +263,90 @@ public class ExchangePostService {
             log.error("재능 교환 게시글 수정 실패 - 수정된 게시글이 0개 또는 여러 개입니다. : {} - {}",postNo,ErrorCode.POST_FAILED_UPDATE);
             throw new CustomRuntimeException(ErrorCode.POST_FAILED_UPDATE);
         }
-        
+
+        //주고 싶은, 받고 싶은 코드 조회 Keys = giveTalentCodes, receiveTalentCodes
+        Map<String, List<Tuple>> codes = exchangePostQueryRepository.getGiveAndReceiveTalentCodesByPostNo(postNo);
+        updateGiveAndReceiveTalents(postNo, codes, exchangePostReqDTO.getGiveTalents(), exchangePostReqDTO.getReceiveTalents());
 
         log.info("재능 교환 게시글 수정 끝 : {}",postNo);
         return "ㅇㅇ";
     }
 
+    //주고 싶은, 받고 싶은 재능 업데이트
+    private void updateGiveAndReceiveTalents(Long postNo, Map<String,List<Tuple>> codes,List<Integer> willUpdateGiveTalentCodes, List<Integer> willUpdateReceiveTalentCodes){
+        //Tuple -> Map으로 변경
+        Map<Long, Integer> giveTalentMap = getTalentMap("giveTalentCodes", codes);
+
+        //유지할 값 추출 - 주고 싶은 재능
+        Set<Integer> sameGiveCodes = getSameCodes(giveTalentMap,willUpdateGiveTalentCodes);
+
+        //변경할 값 추출 - 주고 싶은 재능
+        Map<Long, Integer> updateGiveTalentCodes =getUpdateTalentCodes(giveTalentMap, willUpdateGiveTalentCodes, sameGiveCodes);
+
+        //추가할 값 추출 - 주고 싶은 재능
+        List<Integer> addGiveTalentCodes = getAddTalentCodes(willUpdateGiveTalentCodes,giveTalentMap,updateGiveTalentCodes);
+
+        //삭제할 값 추출 - 주고 싶은 재능
+        List<Long> deleteGiveNos = getDeleteIds(giveTalentMap, sameGiveCodes, updateGiveTalentCodes);
+        log.info("유지할 값 : {} ",sameGiveCodes);
+        log.info("변경할 값 : {} ",updateGiveTalentCodes);
+        log.info("추가할 값 : {} ",addGiveTalentCodes);
+        log.info("삭제할 값 : {} ",deleteGiveNos);
+
+    }
+
+    //재능 게시글 업데이트 - 추가할 값 추출
+    private List<Integer> getAddTalentCodes(List<Integer> willUpdateTalentCode, Map<Long, Integer> talentMap, Map<Long, Integer> updateTalentCodeMap){
+        return willUpdateTalentCode.stream()
+                .filter(code-> !talentMap.containsValue(code) && !updateTalentCodeMap.containsValue(code))
+                .toList();
+    }
 
 
+    //재능 게시글 업데이트 - 유지할 값 추출
+    private Set<Integer> getSameCodes(Map<Long,Integer> talentMap, List<Integer> willUpdateTalentCodes){
+        Set<Integer> sameCodes = new HashSet<>(talentMap.values());
+        sameCodes.retainAll(willUpdateTalentCodes);
+        return sameCodes;
+    }
+
+    // 재능 게시글 업데이트 - 변경할 값 추출
+    private Map<Long, Integer> getUpdateTalentCodes(Map<Long,Integer> talentMap, List<Integer> newTalentCodes, Set<Integer> sameCodes){
+        List<Long> updateKey = new ArrayList<>(talentMap.keySet());
+
+        Map<Long, Integer> updateTalent = new HashMap<>();
+
+        for (int i = 0; i < Math.min(updateKey.size(),newTalentCodes.size()); i++) {
+            if(!sameCodes.contains(talentMap.get(updateKey.get(i)))){
+                updateTalent.put(updateKey.get(i), newTalentCodes.get(i));
+            }
+        }
+
+        return updateTalent;
+    }
+
+    // 재능 게시글 업데이트 - 삭제할 아이디 값 추출
+    private List<Long> getDeleteIds(Map<Long,Integer> talentMap, Set<Integer> sameCodes, Map<Long, Integer> updateTalentCodeMap){
+        return talentMap.entrySet().stream()
+                .filter(talent -> !sameCodes.contains(talent.getValue())
+                        && !updateTalentCodeMap.containsKey(talent.getKey()))
+                .map(Map.Entry::getKey)
+                .toList();
+    }
+
+
+    //재능 게시글 업데이트 - Tuple -> Map으로 변경
+    private Map<Long, Integer> getTalentMap(String key, Map<String, List<Tuple>> codes) {
+        return codes.get(key)
+                .stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(0, Long.class),
+                        tuple -> tuple.get(1, Integer.class)
+                ));
+    }
+
+
+    //찜 게시글, 로그인 하지 않았더라도 여부 알기용.
     private Long getCurrentUserNo(Authentication auth){
         Long currentUserNo = 0L;
         if (auth != null){

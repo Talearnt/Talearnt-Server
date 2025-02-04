@@ -1,6 +1,7 @@
 package com.talearnt.post.exchange.repository;
 
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -27,7 +28,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -45,6 +48,22 @@ public class ExchangePostQueryRepository {
     private final QChatRequest chatRequest = QChatRequest.chatRequest;
     private final QChatRoom chatRoom = QChatRoom.chatRoom;
     private final QTalentCategory talentCategory = QTalentCategory.talentCategory;
+
+    public Map<String,List<Tuple>> getGiveAndReceiveTalentCodesByPostNo(Long postNo){
+        Map<String, List<Tuple>> codes = new HashMap<>();
+
+        codes.put("giveTalentCodes",factory.select(giveTalent.wantGiveTalentNo, giveTalent.talentCode.talentCode)
+                .from(giveTalent)
+                .where(giveTalent.exchangePost.exchangePostNo.eq(postNo))
+                .fetch());
+
+        codes.put("receiveTalentCodes", factory.select(receiveTalent.wantReceiveTalentNo, receiveTalent.talentCode.talentCode)
+                .from(receiveTalent)
+                .where(receiveTalent.exchangePost.exchangePostNo.eq(postNo))
+                .fetch());
+
+        return codes;
+    }
 
     /** ExchangePost 수정*/
     public long updateExchangePost(Long postNo, String title, String content, ExchangeType exchangeType, boolean requiredBadge, String duration){
