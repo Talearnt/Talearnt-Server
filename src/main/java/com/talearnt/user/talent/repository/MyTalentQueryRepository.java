@@ -19,16 +19,15 @@ public class MyTalentQueryRepository {
 
 
 
-    /** 나의재능 키워드가 설정되어 있는지 확인하는 메소드
-     * return boolean isKeywordSet*/
-    public Boolean isKeywordSetByUserNo(Long userNo){
-        return factory.selectFrom(myTalent)
+    /** 주고 싶은 재능 코드 반환하는 메소드*/
+    public List<Integer> getgiveTalentCodesByUserNo(Long userNo){
+        return factory.select(myTalent.talentCategory.talentCode)
+                .from(myTalent)
                 .where(
-                        myTalent.isActive.eq(true)//나의 재능을 사용하고 있는지 판단.
-                                .and(
-                                        myTalent.user.userNo.eq(userNo) //회원 번호가 가지고 있는
-                                )
-                ).fetch().size() >= 2; //주고싶은 재능 1개, 받고 싶은 재능 1개가 필수이므로 그 이하일 경우 False, 이상일 경우 True
+                        myTalent.isActive.eq(true),//나의 재능을 사용하고 있는지 판단.
+                        myTalent.user.userNo.eq(userNo),// 유저 회원 번호와 같으며
+                        myTalent.type.eq(false)//주고 싶은 재능일 것
+                ).fetch();
     }
 
 

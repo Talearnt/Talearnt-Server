@@ -31,7 +31,8 @@ public interface UserApi {
                 "<li>userNo : 로그인한 유저 번호 - 본인 게시글 판단 여부 및 API 호출 용도</li>" +
                 "<li>profileImg : 유저의 프로필 이미지 경로</li>" +
                 "<li>nickname : 유저의 닉네임</li>" +
-                "<li>isKeywordSet : 유저의 키워드 설정 여부</li>" +
+                "<li>giveTalentCodes : 유저 주고 싶은 재능 코드</li>" +
+            "<li>나의 재능 등록만 해서 Test 아이디로 조회할 경우 중복 값 및 5개 이상 여러 값이 들어가 있습니다.</li>" +
             "</ul>"
     )
     @ApiResponses(value = {
