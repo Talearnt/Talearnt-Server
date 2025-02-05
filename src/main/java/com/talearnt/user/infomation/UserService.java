@@ -47,7 +47,7 @@ public class UserService {
                 .userNo(userInfo.getUserNo())
                 .nickname(userInfo.getNickname())
                 .profileImg(userInfo.getProfileImg())
-                .isKeywordSet(myTalentQueryRepository.isKeywordSetByUserNo(userInfo.getUserNo()))
+                .giveTalentCodes(myTalentQueryRepository.getgiveTalentCodesByUserNo(userInfo.getUserNo()))
                 .build();
     }
 
