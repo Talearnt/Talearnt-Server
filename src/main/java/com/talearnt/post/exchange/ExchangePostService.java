@@ -39,6 +39,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -349,6 +350,36 @@ public class ExchangePostService {
         //삭제 실행
         exchangePostQueryRepository.deleteReceiveTalents(deleteReceiveNos);
 
+    }
+
+
+    /**재능 교환 게시글 삭제
+     * 조건 )
+     * - 로그인이 되어 있는가?
+     * - 나의 게시글이 맞는가?
+     * */
+    @Transactional
+    public String deleteExchangePost(Long postNo, Authentication auth){
+        log.info("재능 교환 게시글 삭제 시작");
+
+        //로그인 여부 확인
+        UserInfo userInfo = UserUtil.validateAuthentication("재능교환 게시글 삭제", auth);
+
+        //나의 게시글이 맞는가?
+        if(!exchangePostQueryRepository.isMyExchangePost(postNo, userInfo.getUserNo())){
+            log.error("재능 교환 게시글 삭제 실패 - 내 게시글이 아님 : {} - {}",postNo,ErrorCode.POST_ACCESS_DENIED);
+            throw new CustomRuntimeException(ErrorCode.POST_ACCESS_DENIED);
+        }
+
+        //재능 교환 게시글 소프트 삭제
+        long deletedPostCount = exchangePostQueryRepository.deleteExchangePostByPostNo(postNo);
+        if (deletedPostCount != 1){
+            log.error("재능 교환 게시글 삭제 실패 - 삭제된 게시글이 0개 또는 여러 개입니다 : {}",ErrorCode.POST_FAILED_DELETE);
+            throw new CustomRuntimeException(ErrorCode.POST_FAILED_DELETE);
+        }
+
+        log.info("재능 교환 게시글 삭제 끝");
+        return "재능 교환 게시글이 성공적으로 삭제 되었습니다.";
     }
 
     //찜 게시글, 로그인 하지 않았더라도 여부 알기용.

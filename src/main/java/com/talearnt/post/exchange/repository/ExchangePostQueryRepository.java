@@ -46,6 +46,15 @@ public class ExchangePostQueryRepository {
     private final QChatRoom chatRoom = QChatRoom.chatRoom;
     private final QTalentCategory talentCategory = QTalentCategory.talentCategory;
 
+    //재능 교환 게시글 삭제
+    public long deleteExchangePostByPostNo(Long postNo){
+        return factory.update(exchangePost)
+                .set(exchangePost.deletedAt, LocalDateTime.now())
+                .where(exchangePost.exchangePostNo.eq(postNo))
+                .execute();
+    }
+
+
     //받고 싶은 재능 삭제
     public void deleteReceiveTalents(List<Long> ids){
         if (ids.isEmpty()) return;

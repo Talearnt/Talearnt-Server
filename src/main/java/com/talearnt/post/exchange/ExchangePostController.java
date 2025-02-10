@@ -69,4 +69,10 @@ public class ExchangePostController implements ExchangePostApi{
         return CommonResponse.success(exchangePostService.updateExchangePost(postNo,exchangePostReqDTO));
     }
 
+    //게시글 삭제
+    @DeleteMapping("/posts/exchanges/{postNo}")
+    public ResponseEntity<CommonResponse<String>> deleteExchangePost(@PathVariable Long postNo, Authentication auth){
+        return CommonResponse.success(exchangePostService.deleteExchangePost(postNo, auth));
+    }
+
 }

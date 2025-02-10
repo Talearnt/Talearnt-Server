@@ -99,6 +99,7 @@ public enum ErrorCode {
     POST_GIVE_MY_TALENT_NOT_FOUND("404-POST-09", "나의 재능 - 주고 싶은 재능에 존재하지 않은 키워드입니다."),
     POST_DURATION_MISSING("400-POST-10", "진행 기간을 선택해 주세요."),
     POST_FAILED_UPDATE("400-POST-11","게시글 수정에 실패하였습니다."),
+    POST_FAILED_DELETE("400-POST-12","게시글 삭제에 실패하였습니다."),
 
     //나의 재능 관련 오류
     MY_TALENT_KEYWORD_NOT_REGISTERED("404-MYTALENT-01","나의 재능을 등록하지 않았습니다."),
