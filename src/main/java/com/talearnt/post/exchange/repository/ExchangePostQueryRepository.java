@@ -3,10 +3,10 @@ package com.talearnt.post.exchange.repository;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.*;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.talearnt.admin.category.entity.QTalentCategory;
 import com.talearnt.chat.entity.QChatRequest;
 import com.talearnt.chat.entity.QChatRoom;
@@ -28,10 +28,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -49,6 +46,46 @@ public class ExchangePostQueryRepository {
     private final QChatRoom chatRoom = QChatRoom.chatRoom;
     private final QTalentCategory talentCategory = QTalentCategory.talentCategory;
 
+    //받고 싶은 재능 삭제
+    public void deleteReceiveTalents(List<Long> ids){
+        if (ids.isEmpty()) return;
+
+        factory.delete(receiveTalent)
+                .where(receiveTalent.wantReceiveTalentNo.in(ids))
+                .execute();
+    }
+
+
+    //받고 싶은 재능 업데이트
+    public void updateReceiveTalents(Map<Long, Integer> updateReceiveTalentCodes){
+        if (updateReceiveTalentCodes.isEmpty()) return;
+
+        updateReceiveTalentCodes.forEach((key, value) ->  factory.update(receiveTalent)
+                .set(receiveTalent.talentCode.talentCode, value)
+                .where(receiveTalent.wantReceiveTalentNo.eq(key))
+                .execute());
+    }
+
+    //주고 싶은 재능 삭제
+    public void deleteGiveTalents(List<Long> ids){
+        if (ids.isEmpty()) return;
+
+        factory.delete(giveTalent)
+                .where(giveTalent.wantGiveTalentNo.in(ids))
+                .execute();
+    }
+
+    //주고 싶은 재능 업데이트
+    public void updateGiveTalents(Map<Long, Integer> updateGiveTalentCodes){
+        if (updateGiveTalentCodes.isEmpty()) return;
+
+        updateGiveTalentCodes.forEach((key, value) ->  factory.update(giveTalent)
+                .set(giveTalent.talentCode.talentCode, value)
+                .where(giveTalent.wantGiveTalentNo.eq(key))
+                .execute());
+    }
+
+    //주고 싶은, 받고 싶은 텔런트 코드 추출
     public Map<String,List<Tuple>> getGiveAndReceiveTalentCodesByPostNo(Long postNo){
         Map<String, List<Tuple>> codes = new HashMap<>();
 
