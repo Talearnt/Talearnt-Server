@@ -15,7 +15,7 @@ import java.util.List;
 @Log4j2
 public class FileUploadCustomRepository {
     private final JPAQueryFactory factory;
-    private final QFileUpload fileUpload;
+    private final QFileUpload fileUpload = QFileUpload.fileUpload;
 
     public List<FileUpload> getFileUploadsByExchangePostNo(Long postNo){
 
