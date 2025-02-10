@@ -47,7 +47,8 @@ public class UserService {
                 .userNo(userInfo.getUserNo())
                 .nickname(userInfo.getNickname())
                 .profileImg(userInfo.getProfileImg())
-                .giveTalentCodes(myTalentQueryRepository.getgiveTalentCodesByUserNo(userInfo.getUserNo()))
+                .giveTalentCodes(myTalentQueryRepository.getGiveTalentCodesByUserNo(userInfo.getUserNo()))
+                .receiveTalentCodes(myTalentQueryRepository.getReceiveTalentCodesByUserNo(userInfo.getUserNo()))
                 .build();
     }
 

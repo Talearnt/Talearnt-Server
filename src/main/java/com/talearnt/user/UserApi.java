@@ -32,10 +32,12 @@ public interface UserApi {
                 "<li>profileImg : 유저의 프로필 이미지 경로</li>" +
                 "<li>nickname : 유저의 닉네임</li>" +
                 "<li>giveTalentCodes : 유저 주고 싶은 재능 코드</li>" +
-            "<li>나의 재능 등록만 해서 Test 아이디로 조회할 경우 중복 값 및 5개 이상 여러 값이 들어가 있습니다.</li>" +
-            "</ul>"
+                "<li>receiveTalentCodes : 유저 받고 싶은 재능 코드</li>" +
+            "</ul>"+
+            "<p>나의 재능 등록만 해서 Test 아이디로 조회할 경우 중복 값 및 5개 이상 여러 값이 들어가 있습니다.</p>"
     )
     @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
     })
     public ResponseEntity<CommonResponse<UserHeaderResDTO>> getHeaderUserInfo(Authentication authentication);

@@ -19,8 +19,19 @@ public class MyTalentQueryRepository {
 
 
 
+    /** 받고 싶은 재능 코드 반환하는 메소드*/
+    public List<Integer> getReceiveTalentCodesByUserNo(Long userNo){
+        return factory.select(myTalent.talentCategory.talentCode)
+                .from(myTalent)
+                .where(
+                        myTalent.isActive.eq(true),//나의 재능을 사용하고 있는지 판단.
+                        myTalent.user.userNo.eq(userNo),// 유저 회원 번호와 같으며
+                        myTalent.type.eq(true)//주고 싶은 재능일 것
+                ).fetch();
+    }
+
     /** 주고 싶은 재능 코드 반환하는 메소드*/
-    public List<Integer> getgiveTalentCodesByUserNo(Long userNo){
+    public List<Integer> getGiveTalentCodesByUserNo(Long userNo){
         return factory.select(myTalent.talentCategory.talentCode)
                 .from(myTalent)
                 .where(

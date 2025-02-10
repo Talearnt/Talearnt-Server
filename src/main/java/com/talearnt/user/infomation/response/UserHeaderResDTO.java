@@ -15,4 +15,5 @@ public class UserHeaderResDTO {
     private String profileImg;
     private String nickname;
     private List<Integer> giveTalentCodes;
+    private List<Integer> receiveTalentCodes;
 }
