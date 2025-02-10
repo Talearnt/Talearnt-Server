@@ -14,6 +14,6 @@ public class UserHeaderResDTO {
     private Long userNo;
     private String profileImg;
     private String nickname;
-    private List<Integer> giveTalentCodes;
-    private List<Integer> receiveTalentCodes;
+    private List<Integer> giveTalents;
+    private List<Integer> receiveTalents;
 }

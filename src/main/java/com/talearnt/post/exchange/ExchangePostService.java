@@ -272,7 +272,7 @@ public class ExchangePostService {
 
 
         log.info("재능 교환 게시글 수정 끝 : {}",postNo);
-        return "ㅇㅇ";
+        return "재능 교환 게시글 수정이 성공적으로 이루어졌습니다.";
     }
 
 

@@ -180,4 +180,38 @@ public interface ExchangePostApi {
                                                                                                @RequestParam(value = "size",required = false,defaultValue = "15") @Schema(description = "입력 X 기본 15개 반환, 필요시 50개 이하 호출 가능, 그 이상 불가능") String size,
                                                                                                @RequestParam(value = "search",required = false) @Schema(description = "Ngram Parse 사용중, 기본 2글자부터 검색 시 제대로 반환") String search,
                                                                                                Authentication auth);
+    @Operation(summary = "재능 교환 게시글 수정",
+            description = "<h2>내용</h2>" +
+                    "<p>게시글 작성 부분과 똑같은 Request 형태를 가지고 있습니다.</p>" +
+                    "<p>다만, imageUrls 부분을 신경써서 보내주셔야 합니다.</p>" +
+                    "<p>기존 이미지 + 추가한 이미지 를 imagesUrls에 담아서 보내주시고, 삭제했다면 imageUrls에서 목록에서 제거해서 보내주셔야 합니다.</p>" +
+                    "<p>서버 쪽에서 재능 교환 게시글 번호에 해당하는 이미지들을 가져온 후, DB에 있지만 imageUrls 없는 값들은 DB 삭제 후 서버에서 S3로 삭제 요청을 날립니다.</p>" +
+                    "<p>DB에 없고 imageUrls에 있는 값은 DB에 추가합니다.</p>" +
+                    "<p>이 부분은 BE만으로 테스트 하기 어려워 아직 테스트 하지 않았습니다.</p>" +
+                    "<p>FE 분들의 게시글 작성 부분이 끝나 이미지 업로드까지 성공적으로 마친 경우 게시글 수정에서 이미지 부분을 처리하도록 하겠습니다.</p>" +
+                    "<p>이미지를 제외한 값은 수정 가능합니다.</p>" +
+                    "<p>Response가 수정된 게시글 내용으로 가져오시길 원하면 말씀주시면 그 값들로 변경해서 보내드리도록 하겠습니다.</p>" +
+                    "<hr/>" +
+                    "<h2>Request Body</h2>" +
+                    "<ul>" +
+                    "<li><strong>title :</strong> 2자 이상, 50자 이하</li>" +
+                    "<li><strong>content :</strong> 20자 이상</li>" +
+                    "<li><strong>giveTalents :</strong> 1개 이상, 5개 이하</li>" +
+                    "<li><strong>receiveTalents :</strong> 1개 이상, 5개 이하</li>" +
+                    "<li><strong>exchangeType :</strong> 진행 방식(온라인,오프라인,온/오프라인)</li>" +
+                    "<li><strong>requiredBadge :</strong> 인증 뱃지 필수 여부 - 기본 false</li>" +
+                    "<li><strong>duration :</strong> 진행 기간(기간 미정,1개월,2개월,3개월,3개월 이상)</li>" +
+                    "<li><strong>imageUrls :</strong> S3에 저장된 이미지 경로 목록 - Presigned URL 에서 ?의 뒷 부분은 제거하고 보내주세요.</li>" +
+                    "</ul>"+
+                    "<hr/>")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "403", ref = "POST_ACCESS_DENIED"),
+            @ApiResponse(responseCode = "404-1", ref = "MY_TALENT_KEYWORD_NOT_REGISTERED"),
+            @ApiResponse(responseCode = "404-2", ref = "POST_GIVE_MY_TALENT_NOT_FOUND"),
+            @ApiResponse(responseCode = "400", ref = "POST_FAILED_UPDATE"),
+    })
+    public ResponseEntity<CommonResponse<String>> updateExchangePost(@PathVariable Long postNo, @RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO);
+
 }
+
