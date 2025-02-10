@@ -6,9 +6,7 @@ import com.talearnt.user.infomation.entity.User;
 import com.talearnt.util.converter.post.ExchangePostStatusConverter;
 import com.talearnt.util.converter.post.ExchangeTypeConverter;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -20,6 +18,8 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class ExchangePost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -83,4 +83,8 @@ public class ExchangePost {
             this.status = ExchangePostStatus.모집중;
         }
     }
+    public ExchangePost(Long exchangePostNo){
+        this.exchangePostNo = exchangePostNo;
+    }
+
 }

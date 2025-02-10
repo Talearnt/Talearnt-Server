@@ -1,12 +1,16 @@
 package com.talearnt.util.common;
 
+import com.querydsl.core.Tuple;
 import com.talearnt.enums.common.Regex;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PostUtil {
 
@@ -120,6 +124,66 @@ public class PostUtil {
         if (value == null) return null;
         return value.trim();
     }
+
+
+
+
+    //재능 게시글 업데이트 - 추가할 값 추출
+    public static List<Integer> getAddTalentCodes(List<Integer> willUpdateTalentCode, Map<Long, Integer> talentMap, Map<Long, Integer> updateTalentCodeMap){
+        return willUpdateTalentCode.stream()
+                .filter(code-> !talentMap.containsValue(code) && !updateTalentCodeMap.containsValue(code))
+                .toList();
+    }
+
+
+    //재능 게시글 업데이트 - 유지할 값 추출
+    public static Map<Long,Integer> getSameCodes(Map<Long,Integer> talentMap, List<Integer> willUpdateTalentCodes){
+        return talentMap.entrySet().stream().filter(entry->willUpdateTalentCodes.contains(entry.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    // 재능 게시글 업데이트 - 변경할 값 추출
+    public static Map<Long, Integer> getUpdateTalentCodes(Map<Long,Integer> talentMap, List<Integer> newTalentCodes, Map<Long,Integer> sameCodes){
+        List<Long> notEqualTalents = talentMap.keySet()
+                .stream()
+                .filter(integer -> !sameCodes.containsKey(integer))
+                .sorted()
+                .toList();
+
+        List<Integer> notEqualTalentCodes = newTalentCodes.stream()
+                .filter(code -> !sameCodes.containsValue(code))
+                .toList();
+
+        Map<Long,Integer> updateTalents = new HashMap<>();
+
+        for (int i = 0; i < Math.min(notEqualTalents.size(),notEqualTalentCodes.size()); i++) {
+            updateTalents.put(notEqualTalents.get(i), notEqualTalentCodes.get(i));
+        }
+
+        return updateTalents;
+    }
+
+    // 재능 게시글 업데이트 - 삭제할 아이디 값 추출
+    public static List<Long> getDeleteIds(Map<Long,Integer> talentMap, Map<Long, Integer> sameCodes, Map<Long, Integer> updateTalentCodeMap){
+        return talentMap.entrySet().stream()
+                .filter(talent -> !sameCodes.containsValue(talent.getValue())
+                        && !updateTalentCodeMap.containsKey(talent.getKey()))
+                .map(Map.Entry::getKey)
+                .toList();
+    }
+
+
+    //재능 게시글 업데이트 - Tuple -> Map으로 변경
+    public static Map<Long, Integer> getTalentMap(String key, Map<String, List<Tuple>> codes) {
+        return codes.get(key)
+                .stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(0, Long.class),
+                        tuple -> tuple.get(1, Integer.class)
+                ));
+    }
+
+
 
 }
 

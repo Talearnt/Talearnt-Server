@@ -25,6 +25,7 @@ import com.talearnt.s3.entity.FileUpload;
 import com.talearnt.s3.repository.FileUploadRepository;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
 import com.talearnt.util.common.PageUtil;
+import com.talearnt.util.common.PostUtil;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
@@ -33,7 +34,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
@@ -215,7 +215,7 @@ public class ExchangePostService {
         ExchangePostDetailResDTO result = exchangePostQueryRepository.getPostDetail(postNo,currentUserNo)
                 .orElseThrow(()->{
                     log.error("재능 교환 게시글 상세보기 실패 - 해당 게시글 없음 : {}",ErrorCode.POST_NOT_FOUND);
-                    throw new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
+                    return new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
                 });
 
         log.info("재능 교환 게시글 상세 보기 끝");
@@ -258,7 +258,7 @@ public class ExchangePostService {
         }
 
         //게시글 업데이트
-        Long updatedPostCount = exchangePostQueryRepository.updateExchangePost(postNo,exchangePostReqDTO.getTitle(),exchangePostReqDTO.getContent(),exchangePostReqDTO.getExchangeType(),exchangePostReqDTO.isRequiredBadge(),exchangePostReqDTO.getDuration());
+        long updatedPostCount = exchangePostQueryRepository.updateExchangePost(postNo,exchangePostReqDTO.getTitle(),exchangePostReqDTO.getContent(),exchangePostReqDTO.getExchangeType(),exchangePostReqDTO.isRequiredBadge(),exchangePostReqDTO.getDuration());
         if(updatedPostCount == 0 || updatedPostCount > 1){
             log.error("재능 교환 게시글 수정 실패 - 수정된 게시글이 0개 또는 여러 개입니다. : {} - {}",postNo,ErrorCode.POST_FAILED_UPDATE);
             throw new CustomRuntimeException(ErrorCode.POST_FAILED_UPDATE);
@@ -268,83 +268,88 @@ public class ExchangePostService {
         Map<String, List<Tuple>> codes = exchangePostQueryRepository.getGiveAndReceiveTalentCodesByPostNo(postNo);
         updateGiveAndReceiveTalents(postNo, codes, exchangePostReqDTO.getGiveTalents(), exchangePostReqDTO.getReceiveTalents());
 
+        //해당 게시글의 업로드된 이미지 가져오기
+
+
         log.info("재능 교환 게시글 수정 끝 : {}",postNo);
         return "ㅇㅇ";
     }
 
+
+
+
     //주고 싶은, 받고 싶은 재능 업데이트
     private void updateGiveAndReceiveTalents(Long postNo, Map<String,List<Tuple>> codes,List<Integer> willUpdateGiveTalentCodes, List<Integer> willUpdateReceiveTalentCodes){
+        //게시글 번호로 생성
+        ExchangePost changedExchangePost = new ExchangePost(postNo);
+
         //Tuple -> Map으로 변경
-        Map<Long, Integer> giveTalentMap = getTalentMap("giveTalentCodes", codes);
+        Map<Long, Integer> giveTalentMap = PostUtil.getTalentMap("giveTalentCodes", codes);
 
         //유지할 값 추출 - 주고 싶은 재능
-        Set<Integer> sameGiveCodes = getSameCodes(giveTalentMap,willUpdateGiveTalentCodes);
+        Map<Long,Integer> sameGiveCodes = PostUtil.getSameCodes(giveTalentMap,willUpdateGiveTalentCodes);
 
         //변경할 값 추출 - 주고 싶은 재능
-        Map<Long, Integer> updateGiveTalentCodes =getUpdateTalentCodes(giveTalentMap, willUpdateGiveTalentCodes, sameGiveCodes);
+        Map<Long, Integer> updateGiveTalentCodes =PostUtil.getUpdateTalentCodes(giveTalentMap, willUpdateGiveTalentCodes, sameGiveCodes);
+        //변경할 값 저장
+        exchangePostQueryRepository.updateGiveTalents(updateGiveTalentCodes);
 
         //추가할 값 추출 - 주고 싶은 재능
-        List<Integer> addGiveTalentCodes = getAddTalentCodes(willUpdateGiveTalentCodes,giveTalentMap,updateGiveTalentCodes);
+        List<Integer> addGiveTalentCodes = PostUtil.getAddTalentCodes(willUpdateGiveTalentCodes,giveTalentMap,updateGiveTalentCodes);
+        //추가할 값이 있으면 저장
+        if(!addGiveTalentCodes.isEmpty()) {
+            List<GiveTalent> addGiveTalents = addGiveTalentCodes.stream()
+                    .map(talentCode -> new GiveTalent(null, changedExchangePost, new TalentCategory(talentCode)))
+                    .toList();
 
-        //삭제할 값 추출 - 주고 싶은 재능
-        List<Long> deleteGiveNos = getDeleteIds(giveTalentMap, sameGiveCodes, updateGiveTalentCodes);
-        log.info("유지할 값 : {} ",sameGiveCodes);
-        log.info("변경할 값 : {} ",updateGiveTalentCodes);
-        log.info("추가할 값 : {} ",addGiveTalentCodes);
-        log.info("삭제할 값 : {} ",deleteGiveNos);
-
-    }
-
-    //재능 게시글 업데이트 - 추가할 값 추출
-    private List<Integer> getAddTalentCodes(List<Integer> willUpdateTalentCode, Map<Long, Integer> talentMap, Map<Long, Integer> updateTalentCodeMap){
-        return willUpdateTalentCode.stream()
-                .filter(code-> !talentMap.containsValue(code) && !updateTalentCodeMap.containsValue(code))
-                .toList();
-    }
-
-
-    //재능 게시글 업데이트 - 유지할 값 추출
-    private Set<Integer> getSameCodes(Map<Long,Integer> talentMap, List<Integer> willUpdateTalentCodes){
-        Set<Integer> sameCodes = new HashSet<>(talentMap.values());
-        sameCodes.retainAll(willUpdateTalentCodes);
-        return sameCodes;
-    }
-
-    // 재능 게시글 업데이트 - 변경할 값 추출
-    private Map<Long, Integer> getUpdateTalentCodes(Map<Long,Integer> talentMap, List<Integer> newTalentCodes, Set<Integer> sameCodes){
-        List<Long> updateKey = new ArrayList<>(talentMap.keySet());
-
-        Map<Long, Integer> updateTalent = new HashMap<>();
-
-        for (int i = 0; i < Math.min(updateKey.size(),newTalentCodes.size()); i++) {
-            if(!sameCodes.contains(talentMap.get(updateKey.get(i)))){
-                updateTalent.put(updateKey.get(i), newTalentCodes.get(i));
-            }
+            String giveTalentsSQL = "INSERT INTO give_talent (exchange_post_no, talent_code) VALUES (?, ?)";
+            // GiveTalent Bulk Insert 시작
+            jdbcTemplate.batchUpdate(giveTalentsSQL,addGiveTalents,5,
+                    (ps,entity)->{
+                        ps.setLong(1,entity.getExchangePost().getExchangePostNo());
+                        ps.setInt(2, entity.getTalentCode().getTalentCode());
+                    });
         }
 
-        return updateTalent;
+        //삭제할 값 추출 - 주고 싶은 재능
+        List<Long> deleteGiveNos = PostUtil.getDeleteIds(giveTalentMap, sameGiveCodes, updateGiveTalentCodes);
+        //삭제 실행
+        exchangePostQueryRepository.deleteGiveTalents(deleteGiveNos);
+
+        //Tuple -> Map으로 변경 - 받고 싶은 재능
+        Map<Long, Integer> receiveTalentMap = PostUtil.getTalentMap("receiveTalentCodes", codes);
+
+        //유지할 값 추출 - 받고 싶은 재능
+        Map<Long,Integer> sameReceiveCodes = PostUtil.getSameCodes(receiveTalentMap,willUpdateReceiveTalentCodes);
+
+        //변경할 값 추출 - 받고 싶은 재능
+        Map<Long, Integer> updateReceiveTalentCodes =PostUtil.getUpdateTalentCodes(receiveTalentMap, willUpdateReceiveTalentCodes, sameReceiveCodes);
+        //변경할 값 저장
+        exchangePostQueryRepository.updateReceiveTalents(updateReceiveTalentCodes);
+
+        //추가할 값 추출 - 받고 싶은 재능
+        List<Integer> addReceiveTalentCodes = PostUtil.getAddTalentCodes(willUpdateReceiveTalentCodes,receiveTalentMap,updateReceiveTalentCodes);
+        //추가할 값이 있으면 저장
+        if(!addReceiveTalentCodes.isEmpty()) {
+            List<ReceiveTalent> addReceiveTalents = addReceiveTalentCodes.stream()
+                    .map(talentCode -> new ReceiveTalent(null, changedExchangePost, new TalentCategory(talentCode)))
+                    .toList();
+
+            String receiveTalentsSQL =   "INSERT INTO receive_talent (exchange_post_no, talent_code) VALUES (?, ?)";
+            // GiveTalent Bulk Insert 시작
+            jdbcTemplate.batchUpdate(receiveTalentsSQL,addReceiveTalents,5,
+                    (ps,entity)->{
+                        ps.setLong(1,entity.getExchangePost().getExchangePostNo());
+                        ps.setInt(2, entity.getTalentCode().getTalentCode());
+                    });
+        }
+
+        //삭제할 값 추출 - 주고 싶은 재능
+        List<Long> deleteReceiveNos = PostUtil.getDeleteIds(receiveTalentMap, sameReceiveCodes, updateReceiveTalentCodes);
+        //삭제 실행
+        exchangePostQueryRepository.deleteReceiveTalents(deleteReceiveNos);
+
     }
-
-    // 재능 게시글 업데이트 - 삭제할 아이디 값 추출
-    private List<Long> getDeleteIds(Map<Long,Integer> talentMap, Set<Integer> sameCodes, Map<Long, Integer> updateTalentCodeMap){
-        return talentMap.entrySet().stream()
-                .filter(talent -> !sameCodes.contains(talent.getValue())
-                        && !updateTalentCodeMap.containsKey(talent.getKey()))
-                .map(Map.Entry::getKey)
-                .toList();
-    }
-
-
-    //재능 게시글 업데이트 - Tuple -> Map으로 변경
-    private Map<Long, Integer> getTalentMap(String key, Map<String, List<Tuple>> codes) {
-        return codes.get(key)
-                .stream()
-                .collect(Collectors.toMap(
-                        tuple -> tuple.get(0, Long.class),
-                        tuple -> tuple.get(1, Integer.class)
-                ));
-    }
-
 
     //찜 게시글, 로그인 하지 않았더라도 여부 알기용.
     private Long getCurrentUserNo(Authentication auth){
