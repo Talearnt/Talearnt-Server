@@ -111,14 +111,16 @@ public class LoginService {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
+        cookie.setMaxAge(cookieExpirationMilliseconds);
+        
         if(isAutoLogin){
-            cookie.setMaxAge(cookieExpirationMilliseconds); // 유효기간 1년
+            response.addHeader("Set-Cookie", "refreshToken=" + refreshToken +
+                    "; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=" + cookieExpirationMilliseconds);
+        }else{
+            response.addHeader("Set-Cookie", "refreshToken=" + refreshToken +
+                    "; HttpOnly; Secure; SameSite=None; Path=/;");
         }
 
-
-        // SameSite 속성을 추가하기 위해 Set-Cookie 헤더 수정
-        response.addHeader("Set-Cookie", "refreshToken=" + refreshToken +
-                "; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=" + cookieExpirationMilliseconds);
 
         /*
         * ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
