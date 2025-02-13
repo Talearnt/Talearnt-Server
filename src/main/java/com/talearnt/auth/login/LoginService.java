@@ -111,7 +111,10 @@ public class LoginService {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
-        cookie.setMaxAge(cookieExpirationMilliseconds); // 유효기간 7일
+        if(isAutoLogin){
+            cookie.setMaxAge(cookieExpirationMilliseconds); // 유효기간 1년
+        }
+
 
         // SameSite 속성을 추가하기 위해 Set-Cookie 헤더 수정
         response.addHeader("Set-Cookie", "refreshToken=" + refreshToken +
