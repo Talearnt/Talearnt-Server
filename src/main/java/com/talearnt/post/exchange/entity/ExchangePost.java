@@ -29,7 +29,7 @@ public class ExchangePost {
     @JoinColumn(name = "user_no") // 내일 User Entity id 를 userNo로 변경 요청
     private User user;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 50)
     private String title;
 
     @Column(columnDefinition = "TEXT", nullable = false)

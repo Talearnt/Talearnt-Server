@@ -99,8 +99,8 @@ public class LoginService {
 
         //자동 로그인 기간 설정
         int cookieExpirationMilliseconds = isAutoLogin
-                ? 3 * 60 //7 * 24 * 60 * 60
-                : 60; //3 * 24 * 60 * 60;
+                ? 365 * 24 * 60 * 60 //365일
+                : 30 * 24 * 60 * 60; // 30일
         long refreshTokenMilliseconds = cookieExpirationMilliseconds * 1000L;
 
         //리프레시 토큰 생성
@@ -117,8 +117,19 @@ public class LoginService {
         response.addHeader("Set-Cookie", "refreshToken=" + refreshToken +
                 "; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=" + cookieExpirationMilliseconds);
 
-        log.info("Refresh Token : {}",refreshToken);
-        log.info("Refresh Response : {}",response);
+        /*
+        * ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)   // HttpOnly 속성 적용
+                .secure(true)     // HTTPS에서만 전송
+                .sameSite("None") // CORS 요청에서도 쿠키 전송 허용
+                .path("/")        // 쿠키 경로 설정
+                .maxAge(Duration.ofMillis(cookieExpirationMilliseconds))
+                .build();
+
+        // SameSite 속성을 추가하기 위해 Set-Cookie 헤더 수정
+        response.setHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+        * */
+
         log.info("Refresh Cookie : {}",cookie);
         return userInfo;
     }
