@@ -1,6 +1,6 @@
 package com.talearnt.post.community.entity;
 
-import com.talearnt.enums.upload.PostType;
+import com.talearnt.enums.post.PostType;
 import com.talearnt.user.infomation.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
