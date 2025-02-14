@@ -8,7 +8,7 @@ import com.talearnt.chat.entity.ChatRoom;
 import com.talearnt.chat.repository.ChatRoomRepository;
 import com.talearnt.enums.chat.RoomMode;
 import com.talearnt.enums.common.ErrorCode;
-import com.talearnt.enums.upload.PostType;
+import com.talearnt.enums.post.PostType;
 import com.talearnt.post.exchange.entity.ExchangePost;
 import com.talearnt.post.exchange.entity.GiveTalent;
 import com.talearnt.post.exchange.entity.ReceiveTalent;
@@ -39,7 +39,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;

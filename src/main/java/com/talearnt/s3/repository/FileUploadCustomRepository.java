@@ -1,7 +1,7 @@
 package com.talearnt.s3.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.talearnt.enums.upload.PostType;
+import com.talearnt.enums.post.PostType;
 import com.talearnt.s3.entity.FileUpload;
 import com.talearnt.s3.entity.QFileUpload;
 import lombok.RequiredArgsConstructor;

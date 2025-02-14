@@ -9,6 +9,7 @@ import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.valid.DynamicValid;
 import com.talearnt.util.valid.ListValid;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import lombok.*;
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class ExchangePostReqDTO {
     @ListValid(errorCode = ErrorCode.POST_KEYWORD_LENGTH_OVER, maxLength = 5)
     private List<Integer> receiveTalents;
 
+    @Valid
     @DynamicValid(errorCode = ErrorCode.POST_BAD_REQUEST, pattern = Regex.EXCHANGE_TPYE)
     private ExchangeType exchangeType;
 
@@ -42,5 +44,5 @@ public class ExchangePostReqDTO {
     @DynamicValid(errorCode = ErrorCode.POST_DURATION_MISSING, pattern = Regex.EXCHANGE_DURATION)
     private String duration;
 
-    private Set<String> imageUrls; //S3에서 삭제할 파일 경로 PresignedURL 옵션 제거 경로
+    private List<String> imageUrls; //S3에서 삭제할 파일 경로 PresignedURL 옵션 제거 경로
 }
