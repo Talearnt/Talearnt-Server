@@ -1,7 +1,7 @@
 package com.talearnt.s3.entity;
 
 
-import com.talearnt.enums.upload.PostType;
+import com.talearnt.enums.post.PostType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,7 +27,8 @@ public class FileUpload {
     @Column(nullable = false)
     private Long userNo;
 
-    @Column
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false,length = 10)
     private PostType postType;
 
     @Column(nullable = false, length = 2048, unique = true)
