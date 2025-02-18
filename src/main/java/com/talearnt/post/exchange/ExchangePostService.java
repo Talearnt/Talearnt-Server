@@ -171,7 +171,7 @@ public class ExchangePostService {
      * - 모집 상태 : ExchangePostStatus 값이 아닐 경우 null - 검증 완료<br>
      * - 페이지 번호 : Integer 가 아닐 경우 기본 값 1 (커뮤니티 공통)<br>
      * */
-    public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(List<String> giveTalents, List<String> receiveTalents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String search, Authentication auth){
+    public PaginatedResponse<List<ExchangePostListResDTO>> getExchangePostList(List<String> giveTalents, List<String> receiveTalents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String search, Authentication auth){
         log.info("재능 교환 게시글 목록 불러오기 시작");
 
         //유저가 로그인 했는 지 확인, 안했을 경우 찜 게시글 표시 False
@@ -196,7 +196,7 @@ public class ExchangePostService {
 
         log.info("재능 교환 게시글 목록 불러오기 끝");
         //데이터 넣고, Pagination으로 변환 -> 데이터와 Page 분리하여 보내기
-        return PaginatedResponse.success(result.getContent(),PageUtil.separatePaginationFromEntity(result));
+        return new PaginatedResponse<>(result.getContent(),PageUtil.separatePaginationFromEntity(result));
     }
 
 

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -168,17 +169,17 @@ public interface ExchangePostApi {
             "<li>currentPage : 현재 페이지</li>" +
             "</ul>"
     )
-    public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(@RequestParam(value = "giveTalents", required = false, defaultValue = "") @Schema(description = "주고 싶은 재능 코드 List") List<String> giveTalents,//Integer로 변환 필요
-                                                                                               @RequestParam(value = "receiveTalents", required = false, defaultValue = "") @Schema(description = "받고 싶은 재능 코드 List") List<String> receiveTalents,//Integer로 변환 필요
-                                                                                               @RequestParam(value = "order", required = false, defaultValue = "recent") @Schema(description = "정렬 - recent : 최신순, popular : 인기순") String order,//recent,popular 로 변환 필요
-                                                                                               @RequestParam(value = "duration", required = false) @Schema(description = "진행 기간 - 기간 미정, 1개월,2개월,3개월, 3개월 이상 만 가능") String duration,// 이상한 값이 넘어올 경우 duration 없이 조건
-                                                                                               @RequestParam(value = "type", required = false) @Schema(description = "진행 방식 - 온라인, 오프라인, 온_오프라인 만 가능") String type, //ExchangeType으로 변환 필요, ExchangeType 으로 변환 실패 시 null로 변환
-                                                                                               @RequestParam(value = "badge", required = false) @Schema(description = "인증 뱃지 필요 여부 - true, false 만 가능") String requiredBadge, // Boolean 값으로 넘어오지 않을 경우 null로 변환
-                                                                                               @RequestParam(value = "status", required = false) @Schema(description = "모집 상태 - 모집중, 모집_완료 만 가능") String status, //ExchangePostStatus으로 변환 필요, ExchangePostStatus 으로 변환 실패시  으로 변환 실패 시 null로 변환
-                                                                                               @RequestParam(value = "page", required = false, defaultValue = "1") @Schema(description = "기본 1") String page,
-                                                                                               @RequestParam(value = "size", required = false, defaultValue = "15") @Schema(description = "입력 X 기본 15개 반환, 필요시 50개 이하 호출 가능, 그 이상 불가능") String size,
-                                                                                               @RequestParam(value = "search", required = false) @Schema(description = "Ngram Parse 사용중, 기본 2글자부터 검색 시 제대로 반환") String search,
-                                                                                               Authentication auth);
+    public ResponseEntity<CommonResponse<PaginatedResponse<List<ExchangePostListResDTO>>>> getExchangePostList(@RequestParam(value = "giveTalents", required = false, defaultValue = "") @Schema(description = "주고 싶은 재능 코드 List") List<String> giveTalents,//Integer로 변환 필요
+                                                                                            @RequestParam(value = "receiveTalents", required = false, defaultValue = "") @Schema(description = "받고 싶은 재능 코드 List") List<String> receiveTalents,//Integer로 변환 필요
+                                                                                            @RequestParam(value = "order", required = false, defaultValue = "recent") @Schema(description = "정렬 - recent : 최신순, popular : 인기순") String order,//recent,popular 로 변환 필요
+                                                                                            @RequestParam(value = "duration", required = false) @Schema(description = "진행 기간 - 기간 미정, 1개월,2개월,3개월, 3개월 이상 만 가능") String duration,// 이상한 값이 넘어올 경우 duration 없이 조건
+                                                                                            @RequestParam(value = "type", required = false) @Schema(description = "진행 방식 - 온라인, 오프라인, 온_오프라인 만 가능") String type, //ExchangeType으로 변환 필요, ExchangeType 으로 변환 실패 시 null로 변환
+                                                                                            @RequestParam(value = "badge", required = false) @Schema(description = "인증 뱃지 필요 여부 - true, false 만 가능") String requiredBadge, // Boolean 값으로 넘어오지 않을 경우 null로 변환
+                                                                                            @RequestParam(value = "status", required = false) @Schema(description = "모집 상태 - 모집중, 모집_완료 만 가능") String status, //ExchangePostStatus으로 변환 필요, ExchangePostStatus 으로 변환 실패시  으로 변환 실패 시 null로 변환
+                                                                                            @RequestParam(value = "page", required = false, defaultValue = "1") @Schema(description = "기본 1") String page,
+                                                                                            @RequestParam(value = "size", required = false, defaultValue = "15") @Schema(description = "입력 X 기본 15개 반환, 필요시 50개 이하 호출 가능, 그 이상 불가능") String size,
+                                                                                            @RequestParam(value = "search", required = false) @Schema(description = "Ngram Parse 사용중, 기본 2글자부터 검색 시 제대로 반환") String search,
+                                                                                            Authentication auth);
 
     @Operation(summary = "재능 교환 게시글 수정",
             description = "<h2>내용</h2>" +
