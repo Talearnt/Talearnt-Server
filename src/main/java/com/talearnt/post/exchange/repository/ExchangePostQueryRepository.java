@@ -193,10 +193,10 @@ public class ExchangePostQueryRepository {
                         Expressions.booleanTemplate("CASE WHEN {0} IS NOT NULL THEN true ELSE false END", favoriteExchangePost.exchangePostNo),
                         exchangePost.title,
                         exchangePost.content,
-                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",JPAExpressions
-                                .select(fileUpload.url)
+                        JPAExpressions.select(Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",fileUpload.url))
                                 .from(fileUpload)
-                                .where(fileUpload.postNo.eq(postNo).and(fileUpload.postType.eq(PostType.EXCHANGE)))),
+                                .where(fileUpload.postNo.eq(postNo),
+                                        fileUpload.postType.eq(PostType.EXCHANGE)),
                         exchangePost.count,
                         favoriteExchangePost.exchangePostNo.count(),
                         ExpressionUtils.as(JPAExpressions
@@ -218,7 +218,7 @@ public class ExchangePostQueryRepository {
                                 exchangePost.exchangePostNo.eq(postNo)
                         )
                         .groupBy(chatRoom.roomNo)
-                        .fetchOne()
+                        .fetchFirst()
         );
     }
 
