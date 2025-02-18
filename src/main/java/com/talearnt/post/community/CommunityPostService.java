@@ -4,6 +4,7 @@ import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.post.community.entity.CommunityPost;
 import com.talearnt.post.community.repository.CommunityPostRepository;
 import com.talearnt.post.community.request.CommunityPostReqDTO;
+import com.talearnt.post.community.response.CommunityPostDetailResDTO;
 import com.talearnt.s3.FileUploadService;
 import com.talearnt.util.exception.CustomRuntimeException;
 import jakarta.transaction.Transactional;
@@ -18,6 +19,23 @@ public class CommunityPostService {
 
     private final CommunityPostRepository communityPostRepository;
     private final FileUploadService fileUploadService;
+
+
+    /**커뮤니티 게시글 상세보기
+     * 조건)
+     * - 존재하는 게시글인가?
+     * - 조회수 증가*/
+    public CommunityPostDetailResDTO getCommunityPostDetail(Long postNo){
+        log.info("커뮤니티 게시글 상세보기 시작 : {}", postNo);
+
+
+
+        log.info("커뮤니티 게시글 상세보기 끝");
+        return null;
+    }
+
+
+
     /** 커뮤니티 게시글 등록
      * 조건)
      * - 로그인 하였는가?
