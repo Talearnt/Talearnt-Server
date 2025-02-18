@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -42,18 +43,18 @@ public class ExchangePostController implements ExchangePostApi{
 
     //게시글 목록
     @GetMapping("/posts/exchanges")
-    public ResponseEntity<PaginatedResponse<List<ExchangePostListResDTO>>> getExchangePostList(@RequestParam(value = "giveTalents",required = false,defaultValue = "")  List<String> giveTalents,//Integer로 변환 필요
-                                                                                               @RequestParam(value = "receiveTalents",required = false,defaultValue = "") List<String> receiveTalents,//Integer로 변환 필요
-                                                                                               @RequestParam(value = "order", required = false,defaultValue = "recent") String order,//recent,popular 로 변환 필요
-                                                                                               @RequestParam(value = "duration",required = false) String duration,// 이상한 값이 넘어올 경우 duration 없이 조건
-                                                                                               @RequestParam(value = "type", required = false) String type, //ExchangeType으로 변환 필요, ExchangeType 으로 변환 실패 시 null로 변환
-                                                                                               @RequestParam(value = "badge",required = false) String requiredBadge, // Boolean 값으로 넘어오지 않을 경우 null로 변환
-                                                                                               @RequestParam(value = "status",required = false) String status, //ExchangePostStatus으로 변환 필요, ExchangePostStatus 으로 변환 실패시  으로 변환 실패 시 null로 변환
-                                                                                               @RequestParam(value = "page",required = false,defaultValue = "1") String page,
-                                                                                               @RequestParam(value = "size",required = false,defaultValue = "15") String size,
-                                                                                               @RequestParam(value = "search",required = false) String search,
-                                                                                               Authentication auth){
-        return exchangePostService.getExchangePostList(giveTalents,receiveTalents,order,duration,type,requiredBadge,status,page,size,search, auth);
+    public ResponseEntity<CommonResponse<PaginatedResponse<List<ExchangePostListResDTO>>>> getExchangePostList(@RequestParam(value = "giveTalents",required = false,defaultValue = "")  List<String> giveTalents,//Integer로 변환 필요
+                                                                                            @RequestParam(value = "receiveTalents",required = false,defaultValue = "") List<String> receiveTalents,//Integer로 변환 필요
+                                                                                            @RequestParam(value = "order", required = false,defaultValue = "recent") String order,//recent,popular 로 변환 필요
+                                                                                            @RequestParam(value = "duration",required = false) String duration,// 이상한 값이 넘어올 경우 duration 없이 조건
+                                                                                            @RequestParam(value = "type", required = false) String type, //ExchangeType으로 변환 필요, ExchangeType 으로 변환 실패 시 null로 변환
+                                                                                            @RequestParam(value = "badge",required = false) String requiredBadge, // Boolean 값으로 넘어오지 않을 경우 null로 변환
+                                                                                            @RequestParam(value = "status",required = false) String status, //ExchangePostStatus으로 변환 필요, ExchangePostStatus 으로 변환 실패시  으로 변환 실패 시 null로 변환
+                                                                                            @RequestParam(value = "page",required = false,defaultValue = "1") String page,
+                                                                                            @RequestParam(value = "size",required = false,defaultValue = "15") String size,
+                                                                                            @RequestParam(value = "search",required = false) String search,
+                                                                                            Authentication auth){
+        return CommonResponse.success(exchangePostService.getExchangePostList(giveTalents,receiveTalents,order,duration,type,requiredBadge,status,page,size,search, auth));
     }
 
     //게시글 작성

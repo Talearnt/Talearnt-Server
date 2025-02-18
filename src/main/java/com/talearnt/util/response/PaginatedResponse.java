@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 @Schema(description = "해당 페이지 목록 가져올 때 사용할 CommonResponse")
 public class PaginatedResponse<T> {
     @Schema(description = "실제 데이터")
-    private T data;
+    private T results;
 
     @Schema(description = "페이지에 대한 정보")
     private Pagination pagination;
