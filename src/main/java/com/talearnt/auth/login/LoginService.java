@@ -17,11 +17,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -107,35 +110,28 @@ public class LoginService {
         String refreshToken = jwtTokenUtil.createRefreshToken(userInfo,refreshTokenMilliseconds);
 
         // 리프레시 토큰 쿠키에 설정
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(cookieExpirationMilliseconds);
-        
-        if(isAutoLogin){
-            response.addHeader("Set-Cookie", "refreshToken=" + refreshToken +
-                    "; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=" + cookieExpirationMilliseconds);
+        ResponseCookie refreshTokenCookie = null;
+        if (isAutoLogin){
+            refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
+                    .httpOnly(true)   // HttpOnly 속성 적용
+                    .secure(true)     // HTTPS에서만 전송
+                    .sameSite("None") // CORS 요청에서도 쿠키 전송 허용
+                    .path("/")        // 쿠키 경로 설정
+                    .maxAge(Duration.ofMillis(cookieExpirationMilliseconds))
+                    .build();
         }else{
-            response.addHeader("Set-Cookie", "refreshToken=" + refreshToken +
-                    "; HttpOnly; Secure; SameSite=None; Path=/;");
+            refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
+                    .httpOnly(true)   // HttpOnly 속성 적용
+                    .secure(true)     // HTTPS에서만 전송
+                    .sameSite("None") // CORS 요청에서도 쿠키 전송 허용
+                    .path("/")        // 쿠키 경로 설정
+                    .build();
         }
-
-
-        /*
-        * ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
-                .httpOnly(true)   // HttpOnly 속성 적용
-                .secure(true)     // HTTPS에서만 전송
-                .sameSite("None") // CORS 요청에서도 쿠키 전송 허용
-                .path("/")        // 쿠키 경로 설정
-                .maxAge(Duration.ofMillis(cookieExpirationMilliseconds))
-                .build();
 
         // SameSite 속성을 추가하기 위해 Set-Cookie 헤더 수정
         response.setHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
-        * */
 
-        log.info("Refresh Cookie : {}",cookie);
+        log.info("Refresh Cookie : {}",refreshTokenCookie);
         return userInfo;
     }
 
