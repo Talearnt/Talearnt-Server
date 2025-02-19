@@ -4,8 +4,10 @@ import com.querydsl.core.Tuple;
 import com.talearnt.enums.common.Regex;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
+import com.talearnt.util.jwt.UserInfo;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 
 import java.util.HashMap;
 import java.util.List;
@@ -183,7 +185,15 @@ public class PostUtil {
                 ));
     }
 
-
+    //찜 게시글, 게시글 좋아요, 로그인 하지 않았더라도 여부 알기용.
+    public static Long getCurrentUserNo(Authentication auth){
+        Long currentUserNo = 0L;
+        if (auth != null){
+            UserInfo userInfo = UserUtil.validateAuthentication("재능 교환 게시글 상세 보기",auth);
+            currentUserNo = userInfo.getUserNo();
+        }
+        return currentUserNo;
+    }
 
 }
 
