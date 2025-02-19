@@ -20,8 +20,8 @@ public class CommunityPostDetailResDTO {
     private String title;
     private String content;
     private PostType postType;
-    private Long count;
-    private boolean isLike;
-    private Integer commentCount;
+    private Integer count;
+    private Boolean isLike;
+    private Long commentCount;
     private LocalDateTime createdAt;
 }
