@@ -238,7 +238,7 @@ public class ExchangePostQueryRepository {
                         exchangePost.duration,
                         exchangePost.requiredBadge,
                         exchangePost.title,
-                        Expressions.stringTemplate("SUBSTRING(CAST(REGEXP_REPLACE({0}, '<(?!br\\s*/?)[^>]*>', '') AS STRING), 1, 100)", exchangePost.content),
+                        Expressions.stringTemplate("SUBSTRING(CAST(REGEXP_REPLACE({0}, '<[^>]*>', '') AS STRING), 1, 100)", exchangePost.content),
                         Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",JPAExpressions
                                 .select(talentCategory.talentName)
                                 .from(talentCategory)
