@@ -22,8 +22,10 @@ public enum ExchangePostStatus {
 
     @JsonCreator
     public static ExchangePostStatus fromFE(String value) {
+        if (value == null) return null;
+
         for (ExchangePostStatus exchangePostStatus : ExchangePostStatus.values()) {
-            if (exchangePostStatus.status.equals(value)) {
+            if (exchangePostStatus.status.equals(value) || exchangePostStatus.name().equals(value)) {
                 return exchangePostStatus;
             }
         }
