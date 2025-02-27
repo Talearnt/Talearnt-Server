@@ -278,7 +278,8 @@ public class ExchangePostQueryRepository {
                         durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
                         exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
                         requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
-                        exchangePostStatusEq(searchConditionDTO.getStatus()) // 모집 상태가 일치하고
+                        exchangePostStatusEq(searchConditionDTO.getStatus()), // 모집 상태가 일치하고
+                        lastNoLt(searchConditionDTO.getLastNo()) //마지막 번호보다 작고
                 )
                 .orderBy(orderEq(searchConditionDTO.getOrder()).toArray(new OrderSpecifier[0]))// 최신순, 인기순으로 정렬
                 .groupBy(exchangePost.exchangePostNo,
@@ -299,7 +300,8 @@ public class ExchangePostQueryRepository {
                                 durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
                                 exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
                                 requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
-                                exchangePostStatusEq(searchConditionDTO.getStatus()) // 모집 상태가 일치하고
+                                exchangePostStatusEq(searchConditionDTO.getStatus()), // 모집 상태가 일치하고
+                                lastNoLt(searchConditionDTO.getLastNo()) //마지막 번호보다 작고
                         ).fetchOne()
         ).orElse(0L);
 
@@ -346,6 +348,10 @@ public class ExchangePostQueryRepository {
         }
         // 죄신순일 경우
         return List.of(exchangePost.exchangePostNo.desc());
+    }
+
+    private BooleanExpression lastNoLt(Long lastNo){
+        return lastNo != null ? exchangePost.exchangePostNo.lt(lastNo) : null;
     }
 
     /** 진행 기간(Duration)에 맞는 게시글 가져오기 <br>

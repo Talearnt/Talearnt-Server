@@ -9,6 +9,7 @@ import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.version.RestControllerV1;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,9 +53,10 @@ public class ExchangePostController implements ExchangePostApi{
                                                                                             @RequestParam(value = "status",required = false) String status, //ExchangePostStatus으로 변환 필요, ExchangePostStatus 으로 변환 실패시  으로 변환 실패 시 null로 변환
                                                                                             @RequestParam(value = "page",required = false,defaultValue = "1") String page,
                                                                                             @RequestParam(value = "size",required = false,defaultValue = "15") String size,
+                                                                                            @RequestParam(value = "lastNo", required = false) String lastNo,
                                                                                             @RequestParam(value = "search",required = false) String search,
                                                                                             Authentication auth){
-        return CommonResponse.success(exchangePostService.getExchangePostList(giveTalents,receiveTalents,order,duration,type,requiredBadge,status,page,size,search, auth));
+        return CommonResponse.success(exchangePostService.getExchangePostList(giveTalents,receiveTalents,order,duration,type,requiredBadge,status,page,size,search, lastNo, auth));
     }
 
     //게시글 작성
