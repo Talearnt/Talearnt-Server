@@ -73,7 +73,7 @@ public class ExchangePostService {
      * 게시글이 작성되며 채팅방이 생성 되도록 변경함
      * */
     @Transactional
-    public String writeExchangePost(ExchangePostReqDTO exchangePostReqDTO){
+    public ExchangePostDetailResDTO writeExchangePost(ExchangePostReqDTO exchangePostReqDTO){
         log.info("재능 교환 게시글 작성 시작 : {}", exchangePostReqDTO);
 
         //주고 싶으 나의 재능 가져오기
@@ -155,7 +155,11 @@ public class ExchangePostService {
         chatRoomRepository.save(chatRoomEntity);
 
         log.info("재능 교환 게시글 작성 끝");
-        return "재능 교환 게시글 작성 완료";
+        return exchangePostQueryRepository.getPostDetail(savedPostEntity.getExchangePostNo(), exchangePostReqDTO.getUserInfo().getUserNo())
+                .orElseThrow(()->{
+                    log.error("재능 교환 게시글 작성 실패 - 저장된 게시글 불러올 수 없음 : {}", ErrorCode.POST_NOT_FOUND);
+                    throw new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
+                });
     }
 
 
