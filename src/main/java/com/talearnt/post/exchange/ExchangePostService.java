@@ -66,7 +66,7 @@ public class ExchangePostService {
      * 게시글이 작성되며 채팅방이 생성 되도록 변경함
      * */
     @Transactional
-    public ExchangePostDetailResDTO writeExchangePost(ExchangePostReqDTO exchangePostReqDTO){
+    public Long writeExchangePost(ExchangePostReqDTO exchangePostReqDTO){
         log.info("재능 교환 게시글 작성 시작 : {}", exchangePostReqDTO);
 
         //주고 싶으 나의 재능 가져오기
@@ -148,11 +148,7 @@ public class ExchangePostService {
         chatRoomRepository.save(chatRoomEntity);
 
         log.info("재능 교환 게시글 작성 끝");
-        return exchangePostQueryRepository.getPostDetail(savedPostEntity.getExchangePostNo(), exchangePostReqDTO.getUserInfo().getUserNo())
-                .orElseThrow(()->{
-                    log.error("재능 교환 게시글 작성 실패 - 저장된 게시글 불러올 수 없음 : {}", ErrorCode.POST_NOT_FOUND);
-                    return new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
-                });
+        return savedPostEntity.getExchangePostNo();
     }
 
 
@@ -231,7 +227,7 @@ public class ExchangePostService {
      * - 사라진 이미지가 있는가? DB 삭제 및 S3 삭제
      * - */
     @Transactional
-    public ExchangePostDetailResDTO updateExchangePost(Long postNo, ExchangePostReqDTO exchangePostReqDTO){
+    public Void updateExchangePost(Long postNo, ExchangePostReqDTO exchangePostReqDTO){
         log.info("재능 교환 게시글 수정 시작 : {}",postNo);
 
         //나의 게시글이 맞는가?
@@ -270,11 +266,7 @@ public class ExchangePostService {
 
 
         log.info("재능 교환 게시글 수정 끝 : {}",postNo);
-        return exchangePostQueryRepository.getPostDetail(postNo, exchangePostReqDTO.getUserInfo().getUserNo())
-                .orElseThrow(()->{
-                    log.error("재능 교환 게시글 수정 실패 - 수정된 게시글 불러올 수 없음 : {}", ErrorCode.POST_NOT_FOUND);
-                    return new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
-                });
+        return null;
     }
 
 

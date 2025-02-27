@@ -81,25 +81,7 @@ public interface ExchangePostApi {
                     "<hr>"+
                     "<h2>Response</h2>" +
                     "<ul>" +
-                    "<li>userNo : 유저 번호 - 내 게시글 판단하기 위함</li>" +
-                    "<li>nickname : 유저 닉네임</li>" +
-                    "<li>profileImg : 유저 프로필 사진 경로</li>" +
-                    "<li>authority : 유저 권한 - MVP2 인증 유저용</li>" +
-                    "<li>exchangePostNo : 게시글 번호</li>" +
-                    "<li>giveTalents : 주고 싶은 재능 목록 (이름)</li>" +
-                    "<li>receiveTalents : 받고 싶은 재능 목록 (이름)</li>" +
-                    "<li>exchangeType : 온라인,오프라인,온/오프라인</li>" +
-                    "<li>createdAt : 게시글 등록일시</li>" +
-                    "<li>duration : 진행 기간 - 1개월,2개월 등등</li>" +
-                    "<li>requiredBadge : 인증뱃지 필요 여부</li>" +
-                    "<li>isFavorite : 찜 게시글 여부</li>" +
-                    "<li>title : 게시글 제목</li>" +
-                    "<li>content : 게시글 내용</li>" +
-                    "<li>imageUrls : 이미지 경로 목록</li>" +
-                    "<li>count : 조회수</li>" +
-                    "<li>favoriteCount : 게시글의 찜 개수</li>" +
-                    "<li>openedChatRoomCount : 해당 게시글에 열린 채팅방 개수</li>" +
-                    "<li>chatRoomNo : 채팅방에 연결할 번호</li>" +
+                    "<li>등록한 게시글 번호</li>" +
                     "</ul>"
     )
     @ApiResponses(value = {
@@ -115,7 +97,7 @@ public interface ExchangePostApi {
             @ApiResponse(responseCode = "400-5", ref = "POST_BAD_REQUEST"),
             @ApiResponse(responseCode = "400-6", ref = "POST_DURATION_MISSING"),
     })
-    public ResponseEntity<CommonResponse<ExchangePostDetailResDTO>> writeExchangePost(@RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO);
+    public ResponseEntity<CommonResponse<Long>> writeExchangePost(@RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO);
 
 
     @Operation(summary = "게시글 상세보기"
@@ -234,29 +216,6 @@ public interface ExchangePostApi {
                     "<li><strong>requiredBadge :</strong> 인증 뱃지 필수 여부 - 기본 false</li>" +
                     "<li><strong>duration :</strong> 진행 기간(기간 미정,1개월,2개월,3개월,3개월 이상)</li>" +
                     "<li><strong>imageUrls :</strong> S3에 저장된 이미지 경로 목록 - Presigned URL 에서 ?의 뒷 부분은 제거하고 보내주세요.</li>" +
-                    "</ul>" +
-                    "<hr>"+
-                    "<h2>Response</h2>" +
-                    "<ul>" +
-                    "<li>userNo : 유저 번호 - 내 게시글 판단하기 위함</li>" +
-                    "<li>nickname : 유저 닉네임</li>" +
-                    "<li>profileImg : 유저 프로필 사진 경로</li>" +
-                    "<li>authority : 유저 권한 - MVP2 인증 유저용</li>" +
-                    "<li>exchangePostNo : 게시글 번호</li>" +
-                    "<li>giveTalents : 주고 싶은 재능 목록 (이름)</li>" +
-                    "<li>receiveTalents : 받고 싶은 재능 목록 (이름)</li>" +
-                    "<li>exchangeType : 온라인,오프라인,온/오프라인</li>" +
-                    "<li>createdAt : 게시글 등록일시</li>" +
-                    "<li>duration : 진행 기간 - 1개월,2개월 등등</li>" +
-                    "<li>requiredBadge : 인증뱃지 필요 여부</li>" +
-                    "<li>isFavorite : 찜 게시글 여부</li>" +
-                    "<li>title : 게시글 제목</li>" +
-                    "<li>content : 게시글 내용</li>" +
-                    "<li>imageUrls : 이미지 경로 목록</li>" +
-                    "<li>count : 조회수</li>" +
-                    "<li>favoriteCount : 게시글의 찜 개수</li>" +
-                    "<li>openedChatRoomCount : 해당 게시글에 열린 채팅방 개수</li>" +
-                    "<li>chatRoomNo : 채팅방에 연결할 번호</li>" +
                     "</ul>")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
@@ -266,7 +225,7 @@ public interface ExchangePostApi {
             @ApiResponse(responseCode = "404-2", ref = "POST_GIVE_MY_TALENT_NOT_FOUND"),
             @ApiResponse(responseCode = "400", ref = "POST_FAILED_UPDATE"),
     })
-    public ResponseEntity<CommonResponse<ExchangePostDetailResDTO>> updateExchangePost(@PathVariable Long postNo, @RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO);
+    public ResponseEntity<CommonResponse<Void>> updateExchangePost(@PathVariable Long postNo, @RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO);
 
     @Operation(summary = "재능 교환 게시글 삭제",
             description = "<h2>내용</h2>" +
