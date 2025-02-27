@@ -89,7 +89,7 @@ public interface ExchangePostApi {
             @ApiResponse(responseCode = "400-5", ref = "POST_BAD_REQUEST"),
             @ApiResponse(responseCode = "400-6", ref = "POST_DURATION_MISSING"),
     })
-    public ResponseEntity<CommonResponse<String>> writeExchangePost(@RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO);
+    public ResponseEntity<CommonResponse<ExchangePostDetailResDTO>> writeExchangePost(@RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO);
 
 
     @Operation(summary = "게시글 상세보기"

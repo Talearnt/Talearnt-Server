@@ -61,7 +61,7 @@ public class ExchangePostController implements ExchangePostApi{
 
     //게시글 작성
     @PostMapping("/posts/exchanges")
-    public ResponseEntity<CommonResponse<String>> writeExchangePost(@RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO){
+    public ResponseEntity<CommonResponse<ExchangePostDetailResDTO>> writeExchangePost(@RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO){
         return CommonResponse.success(exchangePostService.writeExchangePost(exchangePostReqDTO));
     }
 
