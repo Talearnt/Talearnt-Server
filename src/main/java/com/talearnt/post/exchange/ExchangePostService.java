@@ -14,13 +14,10 @@ import com.talearnt.post.exchange.entity.GiveTalent;
 import com.talearnt.post.exchange.entity.ReceiveTalent;
 import com.talearnt.post.exchange.repository.ExchangePostQueryRepository;
 import com.talearnt.post.exchange.repository.ExchangePostRepository;
-import com.talearnt.post.exchange.repository.GiveTalentRepository;
-import com.talearnt.post.exchange.repository.ReceiveTalentRepository;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
-import com.talearnt.s3.S3Service;
 import com.talearnt.s3.entity.FileUpload;
 import com.talearnt.s3.repository.FileUploadRepository;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
@@ -34,7 +31,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -51,7 +47,6 @@ public class ExchangePostService {
 
     //JdbcTemplate
     private final JdbcTemplate jdbcTemplate;
-    private final S3Service s3Service;
 
     //Repositories
     private final ExchangePostQueryRepository exchangePostQueryRepository;
@@ -60,8 +55,6 @@ public class ExchangePostService {
     private final TalentCategoryRepository talentCategoryRepository;
     private final FileUploadRepository fileUploadRepository;
     private final ChatRoomRepository chatRoomRepository;
-    private final GiveTalentRepository giveTalentRepository;
-    private final ReceiveTalentRepository receiveTalentRepository;
 
     /** 재능 교환 게시글 작성 <br>
      * 조건<br>
@@ -158,7 +151,7 @@ public class ExchangePostService {
         return exchangePostQueryRepository.getPostDetail(savedPostEntity.getExchangePostNo(), exchangePostReqDTO.getUserInfo().getUserNo())
                 .orElseThrow(()->{
                     log.error("재능 교환 게시글 작성 실패 - 저장된 게시글 불러올 수 없음 : {}", ErrorCode.POST_NOT_FOUND);
-                    throw new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
+                    return new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
                 });
     }
 
@@ -238,7 +231,7 @@ public class ExchangePostService {
      * - 사라진 이미지가 있는가? DB 삭제 및 S3 삭제
      * - */
     @Transactional
-    public String updateExchangePost(Long postNo, ExchangePostReqDTO exchangePostReqDTO){
+    public ExchangePostDetailResDTO updateExchangePost(Long postNo, ExchangePostReqDTO exchangePostReqDTO){
         log.info("재능 교환 게시글 수정 시작 : {}",postNo);
 
         //나의 게시글이 맞는가?
@@ -277,7 +270,11 @@ public class ExchangePostService {
 
 
         log.info("재능 교환 게시글 수정 끝 : {}",postNo);
-        return "재능 교환 게시글 수정이 성공적으로 이루어졌습니다.";
+        return exchangePostQueryRepository.getPostDetail(postNo, exchangePostReqDTO.getUserInfo().getUserNo())
+                .orElseThrow(()->{
+                    log.error("재능 교환 게시글 수정 실패 - 수정된 게시글 불러올 수 없음 : {}", ErrorCode.POST_NOT_FOUND);
+                    return new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
+                });
     }
 
 
