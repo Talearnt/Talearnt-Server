@@ -47,7 +47,7 @@ public interface ExchangePostApi {
 
     @Operation(summary = "게시글 등록",
             description = "<h2>내용</h2>" +
-                    "<p>재능 게시글 등록입니다. ( S3 미구현 - 추후 구현 )<p>" +
+                    "<p>재능 게시글 등록입니다.<p>" +
                     "<hr/>" +
                     "<h2>Request Body</h2>" +
                     "<ul>" +
@@ -74,7 +74,33 @@ public interface ExchangePostApi {
                     "<li>이미지 업로드 성공 시 urls에 경로 담기</li>" +
                     "<li>5MB Byte가 넘을 경우 압축 OR 압축 불가 시 등록 불가</li>" +
                     "</ol>" +
-                    "<p><strong>웹에서는 CTRL+Z를 누를 경우 이전 작업</strong>으로 이동하는데 그 경우 Delete에 있는 값이 URLS로 이동하는 지 확인 작업 필요!</p>"
+                    "<p><strong>웹에서는 CTRL+Z를 누를 경우 이전 작업</strong>으로 이동하는데 그 경우 Delete에 있는 값이 URLS로 이동하는 지 확인 작업 필요!</p>"+
+                    "<hr>"+
+                    "<h3>변경된 점</h3>"+
+                    "<p>반환 값이 변경되었습니다. '성공적으로 재능 교환 게시글 등록하였습니다.' String 값이 넘어갔으나 이제는 작성된 내용을 보냅니다.</p>"+
+                    "<hr>"+
+                    "<h2>Response</h2>" +
+                    "<ul>" +
+                    "<li>userNo : 유저 번호 - 내 게시글 판단하기 위함</li>" +
+                    "<li>nickname : 유저 닉네임</li>" +
+                    "<li>profileImg : 유저 프로필 사진 경로</li>" +
+                    "<li>authority : 유저 권한 - MVP2 인증 유저용</li>" +
+                    "<li>exchangePostNo : 게시글 번호</li>" +
+                    "<li>giveTalents : 주고 싶은 재능 목록 (이름)</li>" +
+                    "<li>receiveTalents : 받고 싶은 재능 목록 (이름)</li>" +
+                    "<li>exchangeType : 온라인,오프라인,온/오프라인</li>" +
+                    "<li>createdAt : 게시글 등록일시</li>" +
+                    "<li>duration : 진행 기간 - 1개월,2개월 등등</li>" +
+                    "<li>requiredBadge : 인증뱃지 필요 여부</li>" +
+                    "<li>isFavorite : 찜 게시글 여부</li>" +
+                    "<li>title : 게시글 제목</li>" +
+                    "<li>content : 게시글 내용</li>" +
+                    "<li>imageUrls : 이미지 경로 목록</li>" +
+                    "<li>count : 조회수</li>" +
+                    "<li>favoriteCount : 게시글의 찜 개수</li>" +
+                    "<li>openedChatRoomCount : 해당 게시글에 열린 채팅방 개수</li>" +
+                    "<li>chatRoomNo : 채팅방에 연결할 번호</li>" +
+                    "</ul>"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
@@ -109,14 +135,14 @@ public interface ExchangePostApi {
             "<li>exchangePostNo : 게시글 번호</li>" +
             "<li>giveTalents : 주고 싶은 재능 목록 (이름)</li>" +
             "<li>receiveTalents : 받고 싶은 재능 목록 (이름)</li>" +
-            "<li>exchangeType : 온라인,오프라인,온_오프라인</li>" +
+            "<li>exchangeType : 온라인,오프라인,온/오프라인</li>" +
             "<li>createdAt : 게시글 등록일시</li>" +
             "<li>duration : 진행 기간 - 1개월,2개월 등등</li>" +
             "<li>requiredBadge : 인증뱃지 필요 여부</li>" +
             "<li>isFavorite : 찜 게시글 여부</li>" +
             "<li>title : 게시글 제목</li>" +
             "<li>content : 게시글 내용</li>" +
-            "<li>images : 이미지 경로 목록</li>" +
+            "<li>imageUrls : 이미지 경로 목록</li>" +
             "<li>count : 조회수</li>" +
             "<li>favoriteCount : 게시글의 찜 개수</li>" +
             "<li>openedChatRoomCount : 해당 게시글에 열린 채팅방 개수</li>" +
@@ -195,6 +221,9 @@ public interface ExchangePostApi {
                     "<p>이미지를 제외한 값은 수정 가능합니다.</p>" +
                     "<p>Response가 수정된 게시글 내용으로 가져오시길 원하면 말씀주시면 그 값들로 변경해서 보내드리도록 하겠습니다.</p>" +
                     "<hr/>" +
+                    "<h3>변경된 점</h3>"+
+                    "<p>반환 값이 변경되었습니다. '기존 게시글 수정 완료' String 값이 넘어갔으나 이제는 변경된 내용을 보냅니다.</p>"+
+                    "<hr/>" +
                     "<h2>Request Body</h2>" +
                     "<ul>" +
                     "<li><strong>title :</strong> 2자 이상, 50자 이하</li>" +
@@ -206,7 +235,29 @@ public interface ExchangePostApi {
                     "<li><strong>duration :</strong> 진행 기간(기간 미정,1개월,2개월,3개월,3개월 이상)</li>" +
                     "<li><strong>imageUrls :</strong> S3에 저장된 이미지 경로 목록 - Presigned URL 에서 ?의 뒷 부분은 제거하고 보내주세요.</li>" +
                     "</ul>" +
-                    "<hr/>")
+                    "<hr>"+
+                    "<h2>Response</h2>" +
+                    "<ul>" +
+                    "<li>userNo : 유저 번호 - 내 게시글 판단하기 위함</li>" +
+                    "<li>nickname : 유저 닉네임</li>" +
+                    "<li>profileImg : 유저 프로필 사진 경로</li>" +
+                    "<li>authority : 유저 권한 - MVP2 인증 유저용</li>" +
+                    "<li>exchangePostNo : 게시글 번호</li>" +
+                    "<li>giveTalents : 주고 싶은 재능 목록 (이름)</li>" +
+                    "<li>receiveTalents : 받고 싶은 재능 목록 (이름)</li>" +
+                    "<li>exchangeType : 온라인,오프라인,온/오프라인</li>" +
+                    "<li>createdAt : 게시글 등록일시</li>" +
+                    "<li>duration : 진행 기간 - 1개월,2개월 등등</li>" +
+                    "<li>requiredBadge : 인증뱃지 필요 여부</li>" +
+                    "<li>isFavorite : 찜 게시글 여부</li>" +
+                    "<li>title : 게시글 제목</li>" +
+                    "<li>content : 게시글 내용</li>" +
+                    "<li>imageUrls : 이미지 경로 목록</li>" +
+                    "<li>count : 조회수</li>" +
+                    "<li>favoriteCount : 게시글의 찜 개수</li>" +
+                    "<li>openedChatRoomCount : 해당 게시글에 열린 채팅방 개수</li>" +
+                    "<li>chatRoomNo : 채팅방에 연결할 번호</li>" +
+                    "</ul>")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
@@ -215,7 +266,7 @@ public interface ExchangePostApi {
             @ApiResponse(responseCode = "404-2", ref = "POST_GIVE_MY_TALENT_NOT_FOUND"),
             @ApiResponse(responseCode = "400", ref = "POST_FAILED_UPDATE"),
     })
-    public ResponseEntity<CommonResponse<String>> updateExchangePost(@PathVariable Long postNo, @RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO);
+    public ResponseEntity<CommonResponse<ExchangePostDetailResDTO>> updateExchangePost(@PathVariable Long postNo, @RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO);
 
     @Operation(summary = "재능 교환 게시글 삭제",
             description = "<h2>내용</h2>" +
