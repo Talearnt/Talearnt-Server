@@ -41,6 +41,15 @@ public class PostUtil {
         }
     }
 
+    public static Long isLong(String value){
+        try {
+            value = getTrimString(value);
+            return Long.parseLong(value);
+        }catch (NumberFormatException | NullPointerException e){
+            return null;
+        }
+    }
+
     /** 제대로 된 정렬 값이 넘어오지 않으면 recent로 만드는 Method <br>
      * 현재 사용하는 곳
      * - 재능 교환 게시글 목록 불러오기*/
@@ -65,7 +74,7 @@ public class PostUtil {
         try {
             value = getTrimString(value);
             //온라인,오프라인,온_오프라인 값에 해당하는 거 가져오기.
-            return ExchangeType.valueOf(value);
+            return ExchangeType.fromFE(value);
         } catch (IllegalArgumentException | NullPointerException e) {
             //해당 값 없으면 null 반환
             return null;
@@ -89,7 +98,7 @@ public class PostUtil {
     public static ExchangePostStatus filterValidExchangePostStatus(String value){
         try {
             value = getTrimString(value);
-            return ExchangePostStatus.valueOf(value);
+            return ExchangePostStatus.fromFE(value);
         } catch (IllegalArgumentException | NullPointerException e) {
             return null;
         }
