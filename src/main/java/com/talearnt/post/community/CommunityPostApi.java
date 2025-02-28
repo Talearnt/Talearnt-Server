@@ -62,4 +62,27 @@ public interface CommunityPostApi {
             @ApiResponse(responseCode = "404",ref="POST_NOT_FOUND"),
     })
     public ResponseEntity<CommonResponse<CommunityPostDetailResDTO>> getCommunityPostDetail(@PathVariable Long postNo, Authentication authentication);
+
+
+    @Operation(summary = "커뮤니티 게시글 수정"
+            , description = "<h2>내용</h2>" +
+            "<p>커뮤니티 게시글 수정입니다.</p>" +
+            "<p>postType은 FREE|QUESTION|STUDY 중 하나를 택하여 보내주시면 되겠습니다.</p>" +
+            "<p>이미지 수정은 S3에 직접 업로드된 경우가 필요하여 FE에서 완성할 경우 테스트 해보도록 하겠습니다.</p>" +
+            "<h2>Request</h2>" +
+            "<ul>" +
+                "<li>title : 제목 - 2자 이상 50자 이하</li>" +
+                "<li>content : 내용 - 20자 이상 1000자 이하 (불상사를 막기위하여 DB는 TEXT 타입)</li>" +
+                "<li>postType : 커뮤니티 게시글 타입 - (EXCHANGE|FREE|QUESTION|STUDY)</li>" +
+                "<li>imageUrls : 이미지 경로들</li>" +
+            "</ul>"
+           )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "401",ref="EXPIRED_TOKEN"),
+            @ApiResponse(responseCode = "403",ref="POST_ACCESS_DENIED"),
+    })
+    public ResponseEntity<CommonResponse<Void>> updateCommunityPost(@PathVariable Long postNo, @RequestBody CommunityPostReqDTO communityPostReqDTO);
+
+
 }

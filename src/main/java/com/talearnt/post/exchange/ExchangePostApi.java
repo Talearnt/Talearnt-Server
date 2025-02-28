@@ -187,8 +187,8 @@ public interface ExchangePostApi {
                                                                                             @RequestParam(value = "status", required = false) @Schema(description = "모집 상태 - 모집중, 모집 완료(모집_완료) 만 가능") String status, //ExchangePostStatus으로 변환 필요, ExchangePostStatus 으로 변환 실패시  으로 변환 실패 시 null로 변환
                                                                                             @RequestParam(value = "page", required = false, defaultValue = "1") @Schema(description = "기본 1") String page,
                                                                                             @RequestParam(value = "size", required = false, defaultValue = "15") @Schema(description = "입력 X 기본 15개 반환, 필요시 50개 이하 호출 가능, 그 이상 불가능") String size,
-                                                                                            @RequestParam(value = "search", required = false) @Schema(description = "Ngram Parse 사용중, 기본 2글자부터 검색 시 제대로 반환") String search,
                                                                                             @RequestParam(value = "lastNo", required = false) @Schema(description = "마지막 게시글 번호") String lastNo,
+                                                                                            @RequestParam(value = "search", required = false) @Schema(description = "Ngram Parse 사용중, 기본 2글자부터 검색 시 제대로 반환") String search,
                                                                                             Authentication auth);
 
     @Operation(summary = "재능 교환 게시글 수정",

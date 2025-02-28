@@ -30,6 +30,15 @@ public class CommunityPostQueryRepository {
     private final QCommunityReply communityReply = QCommunityReply.communityReply;
     private final QLikeCommunity likeCommunity = QLikeCommunity.likeCommunity;
 
+    public boolean idMyCommunityPostByUserNo(Long postNo, Long userNo){
+        return factory.selectOne()
+                .from(communityPost)
+                .where(communityPost.communityPostNo.eq(postNo),
+                        communityPost.user.userNo.eq(userNo))
+                .fetchFirst() == null;
+    }
+
+
     public Optional<CommunityPostDetailResDTO> getCommunityPostByPostNo(Long currentPostNo, Long currentUserNo) {
 
         //조회수 증가

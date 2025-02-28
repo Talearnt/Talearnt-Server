@@ -74,4 +74,39 @@ public class CommunityPostService {
         log.info("커뮤니티 게시글 등록 끝");
         return "성공적으로 커뮤니티 게시글을 등록하였습니다.";
     }
+
+
+    /** 커뮤니티 게시글 수정
+     * 이미지 수정을 했을 경우에 DB에 존재하는 이미지와 입력받은 이미지 중 없는 것은 삭제하고,
+     * 만약 추가 이미지가 있다면, 삭제할 번호와 교체하여 수정 작업을 진행한다.
+     * 추가만 있을 경우에는 이미지를 추가한다.
+     * 조건)
+     * - 로그인을 했는가?
+     * - 본인의 게시글이 맞는가?
+     * - 이미지 수정했는가?
+     * */
+    @Transactional
+    public Void updateCommunityPost(Long postNo, CommunityPostReqDTO communityPostReqDTO){
+        log.info("커뮤니티 게시글 수정 시작 : {}",postNo);
+
+        //내 게시글이 맞는 지 확인
+        if(communityPostQueryRepository.idMyCommunityPostByUserNo(postNo,communityPostReqDTO.getUserInfo().getUserNo())){
+            log.error("커뮤니티 게시글 수정 실패 - 본인 게시글이 아님 : {}", ErrorCode.POST_ACCESS_DENIED);
+            throw new CustomRuntimeException(ErrorCode.POST_ACCESS_DENIED);
+        }
+
+        //엔티티로 변환
+        CommunityPost communityPost = CommunityPostMapper.INSTANCE.toEntity(communityPostReqDTO);
+        communityPost.setCommunityPostNo(postNo);
+
+        //엔티티 수정
+        communityPostRepository.save(communityPost);
+        //이미지 수정 메소드 미구현
+
+
+        log.info("커뮤니티 게시글 수정 끝");
+        return null;
+    }
+
+
 }
