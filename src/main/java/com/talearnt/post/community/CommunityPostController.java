@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -33,6 +30,12 @@ public class CommunityPostController implements CommunityPostApi{
     @PostMapping("/posts/communities")
     public ResponseEntity<CommonResponse<String>> addCommunityPost(@Valid @RequestBody CommunityPostReqDTO communityPostReqDTO){
         return CommonResponse.success(communityPostService.addCommunityPost(communityPostReqDTO));
+    }
+
+    //커뮤니티 게시글 수정
+    @PutMapping("/posts/communities/{postNo}")
+    public ResponseEntity<CommonResponse<Void>> updateCommunityPost(@PathVariable Long postNo, @RequestBody CommunityPostReqDTO communityPostReqDTO){
+        return CommonResponse.success(communityPostService.updateCommunityPost(postNo,communityPostReqDTO));
     }
 
 }
