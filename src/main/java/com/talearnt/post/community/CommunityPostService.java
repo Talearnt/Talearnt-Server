@@ -8,7 +8,9 @@ import com.talearnt.post.community.request.CommunityPostReqDTO;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
 import com.talearnt.s3.FileUploadService;
 import com.talearnt.util.common.PostUtil;
+import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.jwt.UserInfo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -83,14 +85,21 @@ public class CommunityPostService {
      * 조건)
      * - 로그인을 했는가?
      * - 본인의 게시글이 맞는가?
+     * - 게시글이 삭제 되었는가?
      * - 이미지 수정했는가?
      * */
     @Transactional
     public Void updateCommunityPost(Long postNo, CommunityPostReqDTO communityPostReqDTO){
         log.info("커뮤니티 게시글 수정 시작 : {}",postNo);
 
+        //삭제된 게시글인지 확인
+        if(communityPostQueryRepository.isDeletedCommunityPost(postNo)){
+            log.error("커뮤니티 게시글 수정 실패 - 삭제된 게시글임 : {}", ErrorCode.POST_FAILED_UPDATE);
+            throw new CustomRuntimeException(ErrorCode.POST_FAILED_UPDATE);
+        }
+
         //내 게시글이 맞는 지 확인
-        if(communityPostQueryRepository.idMyCommunityPostByUserNo(postNo,communityPostReqDTO.getUserInfo().getUserNo())){
+        if(communityPostQueryRepository.isMyCommunityPostByUserNo(postNo,communityPostReqDTO.getUserInfo().getUserNo())){
             log.error("커뮤니티 게시글 수정 실패 - 본인 게시글이 아님 : {}", ErrorCode.POST_ACCESS_DENIED);
             throw new CustomRuntimeException(ErrorCode.POST_ACCESS_DENIED);
         }
@@ -105,6 +114,37 @@ public class CommunityPostService {
 
 
         log.info("커뮤니티 게시글 수정 끝");
+        return null;
+    }
+
+
+    /**커뮤니티 게시글 삭제
+     * 커뮤니티 게시글 삭제 시 이미지를 지울 것인가에 대한 기획이 되어있지 않습니다.
+     * 조건)
+     * - 로그인을 했는가?
+     * - 나의 게시글이 맞는가?
+     * - 삭제된 게시글인가?
+     * */
+    @Transactional
+    public Void deleteCommunityPost(Long postNo, Authentication authentication){
+        log.info("커뮤니티 게시글 삭제 시작 : {} ", postNo);
+
+        //로그인 여부 검증
+        UserInfo userInfo = UserUtil.validateAuthentication("커뮤니티 게시글 삭제",authentication);
+
+        //나의 게시글 맞는가? true == 아님 , false == 맞음
+        if(communityPostQueryRepository.isMyCommunityPostByUserNo(postNo,userInfo.getUserNo())){
+            log.error("커뮤니티 게시글 삭제 실패 - 본인 게시글이 아님 : {}", ErrorCode.POST_ACCESS_DENIED);
+            throw new CustomRuntimeException(ErrorCode.POST_ACCESS_DENIED);
+        }
+
+        //커뮤니티 게시글 삭제
+        if(communityPostQueryRepository.deleteCommunityPostByPostNo(postNo) != 1){
+            log.error("커뮤니티 게시글 삭제 실패 - 0개 또는 여러 개의 게시글을 삭제 시도 : {}", ErrorCode.POST_FAILED_DELETE);
+            throw new CustomRuntimeException(ErrorCode.POST_FAILED_DELETE);
+        }
+
+        log.info("커뮤니티 게시글 삭제 끝");
         return null;
     }
 
