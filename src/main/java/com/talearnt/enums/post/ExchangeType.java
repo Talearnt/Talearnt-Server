@@ -23,7 +23,7 @@ public enum ExchangeType {
 
     @JsonCreator
     public static ExchangeType fromFE(String value){
-        if (value == null) return null;
+        if (value == null || value.isEmpty()) return null;
 
         for (ExchangeType exchangeType : ExchangeType.values()){
             if(exchangeType.type.equals(value) || exchangeType.name().equals(value)){
