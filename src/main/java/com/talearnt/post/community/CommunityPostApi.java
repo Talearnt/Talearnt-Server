@@ -69,6 +69,7 @@ public interface CommunityPostApi {
             "<p>커뮤니티 게시글 수정입니다.</p>" +
             "<p>postType은 FREE|QUESTION|STUDY 중 하나를 택하여 보내주시면 되겠습니다.</p>" +
             "<p>이미지 수정은 S3에 직접 업로드된 경우가 필요하여 FE에서 완성할 경우 테스트 해보도록 하겠습니다.</p>" +
+            "<p><strong>삭제된 게시글은 수정할 수 없습니다.</strong></p>" +
             "<h2>Request</h2>" +
             "<ul>" +
                 "<li>title : 제목 - 2자 이상 50자 이하</li>" +
@@ -81,8 +82,22 @@ public interface CommunityPostApi {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "401",ref="EXPIRED_TOKEN"),
             @ApiResponse(responseCode = "403",ref="POST_ACCESS_DENIED"),
+            @ApiResponse(responseCode = "400",ref="POST_FAILED_UPDATE"),
     })
     public ResponseEntity<CommonResponse<Void>> updateCommunityPost(@PathVariable Long postNo, @RequestBody CommunityPostReqDTO communityPostReqDTO);
 
+    @Operation(summary = "커뮤니티 게시글 삭제"
+            , description = "<h2>내용</h2>" +
+            "<p>커뮤니티 게시글 삭제입니다.</p>" +
+            "<p>이미 삭제된 게시글은 삭제되지 않습니다.</p>" +
+            "<p>커뮤니티 게시글 삭제 시 S3에 존재하는 이미지 삭제 부분은 구현하지 않았습니다. 기획이 완성되는 대로 이미지 삭제 여부를 확인하겠습니다.</p>"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "401",ref="EXPIRED_TOKEN"),
+            @ApiResponse(responseCode = "403",ref="POST_ACCESS_DENIED"),
+            @ApiResponse(responseCode = "400",ref="POST_FAILED_DELETE"),
+    })
+    public ResponseEntity<CommonResponse<Void>> deleteCommunityPost(@PathVariable Long postNo, Authentication authentication);
 
 }

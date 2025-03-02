@@ -38,4 +38,10 @@ public class CommunityPostController implements CommunityPostApi{
         return CommonResponse.success(communityPostService.updateCommunityPost(postNo,communityPostReqDTO));
     }
 
+    //커뮤니티 게시글 삭제
+    @DeleteMapping("/posts/communities/{postNo}")
+    public ResponseEntity<CommonResponse<Void>> deleteCommunityPost(@PathVariable Long postNo, Authentication authentication){
+        return CommonResponse.success(communityPostService.deleteCommunityPost(postNo, authentication));
+    }
+
 }

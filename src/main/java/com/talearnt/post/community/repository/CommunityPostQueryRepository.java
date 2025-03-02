@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -30,7 +31,28 @@ public class CommunityPostQueryRepository {
     private final QCommunityReply communityReply = QCommunityReply.communityReply;
     private final QLikeCommunity likeCommunity = QLikeCommunity.likeCommunity;
 
-    public boolean idMyCommunityPostByUserNo(Long postNo, Long userNo){
+
+    //커뮤니티 게시글 삭제
+    public long deleteCommunityPostByPostNo(Long postNo){
+        return factory.update(communityPost)
+                .set(communityPost.deletedAt, LocalDateTime.now())
+                .where(communityPost.communityPostNo.eq(postNo),
+                        communityPost.deletedAt.isNull())
+                .execute();
+    }
+
+    //커뮤니티 게시글 삭제가 되었는지 확인 true == 삭제된 게시글, false == 삭제되지 않은 게시글
+    public boolean isDeletedCommunityPost(Long postNo){
+        return factory
+                .selectOne()
+                .from(communityPost)
+                .where(communityPost.deletedAt.isNull(),
+                        communityPost.communityPostNo.eq(postNo))
+                .fetchFirst() == null;
+    }
+
+    //커뮤니티 게시글 본인 게시글 맞는지 확인 true == 내 게시글 아님, false == 내 게시글임
+    public boolean isMyCommunityPostByUserNo(Long postNo, Long userNo){
         return factory.selectOne()
                 .from(communityPost)
                 .where(communityPost.communityPostNo.eq(postNo),
@@ -38,7 +60,7 @@ public class CommunityPostQueryRepository {
                 .fetchFirst() == null;
     }
 
-
+    //커뮤니티 게시글 상세보기
     public Optional<CommunityPostDetailResDTO> getCommunityPostByPostNo(Long currentPostNo, Long currentUserNo) {
 
         //조회수 증가
@@ -74,7 +96,8 @@ public class CommunityPostQueryRepository {
                         .leftJoin(likeCommunity).on(likeCommunity.communityPost.eq(communityPost)
                                 .and(likeCommunity.userNo.eq(currentUserNo))
                                 .and(likeCommunity.canceledAt.isNull()))
-                        .where(communityPost.communityPostNo.eq(currentPostNo))
+                        .where(communityPost.deletedAt.isNull(),
+                                communityPost.communityPostNo.eq(currentPostNo))
                         .groupBy(communityPost)
                         .fetchOne()
         );
