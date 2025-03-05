@@ -284,7 +284,6 @@ public class ExchangePostQueryRepository {
                 .orderBy(orderEq(searchConditionDTO.getOrder()).toArray(new OrderSpecifier[0]))// 최신순, 인기순으로 정렬
                 .groupBy(exchangePost.exchangePostNo,
                         chatRoom.roomNo)
-                .offset(searchConditionDTO.getPage().getOffset())
                 .limit(searchConditionDTO.getPage().getPageSize())
                 .fetch();
 
