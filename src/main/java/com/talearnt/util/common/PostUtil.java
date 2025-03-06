@@ -4,6 +4,8 @@ import com.querydsl.core.Tuple;
 import com.talearnt.enums.common.Regex;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
+import com.talearnt.enums.post.PostType;
+import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +43,7 @@ public class PostUtil {
         }
     }
 
-    public static Long isLong(String value){
+    public static Long parseLong(String value){
         try {
             value = getTrimString(value);
             return Long.parseLong(value);
@@ -56,8 +58,10 @@ public class PostUtil {
     public static String filterValidOrderValue(String value){
         value = getTrimString(value);
         //Recent,Popular가 아니라면 recent 반환
-        if ("popular".equalsIgnoreCase(value)) return value;
-        return "recent";
+        return switch (value.toLowerCase()){
+            case "popular", "hot" -> value;
+            default -> "recent";
+        };
     }
 
     /** 교환 기간 Regex에 맞지 않으면 null 반환 Method<br>*/
@@ -195,13 +199,29 @@ public class PostUtil {
     }
 
     //찜 게시글, 게시글 좋아요, 로그인 하지 않았더라도 여부 알기용.
-    public static Long getCurrentUserNo(Authentication auth){
+    public static Long getCurrentUserNo(String errorLocation, Authentication auth){
         Long currentUserNo = 0L;
         if (auth != null){
-            UserInfo userInfo = UserUtil.validateAuthentication("재능 교환 게시글 상세 보기",auth);
+            UserInfo userInfo = UserUtil.validateAuthentication(errorLocation,auth);
             currentUserNo = userInfo.getUserNo();
         }
         return currentUserNo;
+    }
+
+    //게시글 Post Type 변환
+    public static PostType filterValidPostType(String value){
+        try{
+            value = getTrimString(value);
+            return PostType.from(value);
+        }catch (IllegalArgumentException | NullPointerException | CustomRuntimeException e){
+            return null;
+        }
+    }
+
+    //post 접근 디바이스 Web or Mobile
+    public static String filterValidPath(String value){
+        if (value.equalsIgnoreCase("mobile")) return "mobile";
+        return "web";
     }
 
 }
