@@ -35,7 +35,7 @@ public class ExchangeSearchConditionDTO {
         this.type = PostUtil.filterValidExchangeType(type);
         this.requiredBadge = PostUtil.filterValidRequiredBadge(requiredBadge);
         this.status = PostUtil.filterValidExchangePostStatus(status);
-        this.lastNo = PostUtil.isLong(lastNo);
+        this.lastNo = PostUtil.parseLong(lastNo);
         this.page = PostUtil.filterValidPagination(page,size);
     }
 }

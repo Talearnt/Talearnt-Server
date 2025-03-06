@@ -168,7 +168,7 @@ public class ExchangePostService {
         log.info("재능 교환 게시글 목록 불러오기 시작");
 
         //유저가 로그인 했는 지 확인, 안했을 경우 찜 게시글 표시 False
-        Long currentUserNo = PostUtil.getCurrentUserNo(auth);
+        Long currentUserNo = PostUtil.getCurrentUserNo("재능 교환 게시글 목록 불러오기",auth);
 
         //DTO로 변환 하면서 값 유효한 값으로 생성자에서 변경
         ExchangeSearchConditionDTO searchCondition = ExchangeSearchConditionDTO.builder()
@@ -204,7 +204,7 @@ public class ExchangePostService {
         log.info("재능 교환 게시글 상세 보기 시작");
 
         //유저가 로그인 했는 지 확인, 안했을 경우 찜 게시글 표시 False
-        Long currentUserNo = PostUtil.getCurrentUserNo(auth);
+        Long currentUserNo = PostUtil.getCurrentUserNo("재능 교환 게시글 상세 보기",auth);
 
         ExchangePostDetailResDTO result = exchangePostQueryRepository.getPostDetail(postNo,currentUserNo)
                 .orElseThrow(()->{
