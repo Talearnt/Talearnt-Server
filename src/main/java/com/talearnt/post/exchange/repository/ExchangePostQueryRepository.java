@@ -261,11 +261,15 @@ public class ExchangePostQueryRepository {
                                         .groupBy(chatRequest.chatRoom.roomNo),
                                 "openedChatRoomCount"),
                         favoriteExchangePost.countDistinct().intValue(),
-                        Expressions.booleanTemplate("CASE WHEN {0} IS NOT NULL THEN true ELSE false END", favoriteExchangePost.exchangePostNo)
+                        JPAExpressions.select(favoriteExchangePost.count().gt(0))
+                                .from(favoriteExchangePost)
+                                .where(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo),
+                                        favoriteExchangePost.userNo.eq(currentUserNo),
+                                        favoriteExchangePost.deletedAt.isNull())
                 )).from(exchangePost)
                 .leftJoin(user).on(exchangePost.user.userNo.eq(user.userNo))
-                .leftJoin(favoriteExchangePost).on(exchangePost.exchangePostNo.eq(favoriteExchangePost.exchangePostNo)
-                        .and(favoriteExchangePost.userNo.eq(currentUserNo)))
+                .leftJoin(favoriteExchangePost).on(exchangePost.exchangePostNo.eq(favoriteExchangePost.exchangePostNo),
+                        favoriteExchangePost.deletedAt.isNull())
                 .leftJoin(giveTalent).on(exchangePost.exchangePostNo.eq(giveTalent.exchangePost.exchangePostNo))
                 .leftJoin(receiveTalent).on(exchangePost.exchangePostNo.eq(receiveTalent.exchangePost.exchangePostNo))
                 .leftJoin(chatRoom).on(chatRoom.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
