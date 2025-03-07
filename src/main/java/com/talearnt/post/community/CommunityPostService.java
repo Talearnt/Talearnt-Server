@@ -14,6 +14,7 @@ import com.talearnt.util.common.PostUtil;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
+import com.talearnt.util.log.LogRunningTime;
 import com.talearnt.util.response.PaginatedResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class CommunityPostService {
      * - 내가 좋아요 게시글 눌른 것이 있는가?
      * - 모바일인가? 웹인가?
      * */
+    @LogRunningTime
     public PaginatedResponse<List<CommunityPostListResDTO>> getCommunityPostList(Authentication authentication, String postType, String order, String path, String lastNo, String popularScore, String baseTime, String page, String size){
         log.info("커뮤니티 게시글 목록 조회 시작 : {} - {} - {}",postType,order,path);
 

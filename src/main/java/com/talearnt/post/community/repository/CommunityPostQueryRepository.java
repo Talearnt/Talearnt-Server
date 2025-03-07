@@ -138,17 +138,10 @@ public class CommunityPostQueryRepository {
                     communityPost.postType,
                     communityPost.title,
                     communityPost.count,
-                    ExpressionUtils.as(
-                            JPAExpressions.select(communityComment.countDistinct().add(communityReply.countDistinct()))
-                                    .from(communityComment)
-                                    .leftJoin(communityReply).on(communityReply.communityComment.eq(communityComment),
-                                            communityReply.deletedAt.isNull())
-                                    .where(communityComment.communityPost.eq(communityPost)
-                                    ,communityComment.deletedAt.isNull()),
-                            "commentCount"
-                    ),
+                    communityComment.countDistinct().add(communityReply.countDistinct()),
                     likeCommunity.countDistinct(),
                     Expressions.booleanTemplate("MAX(CASE WHEN {0} THEN 1 ELSE 0 END) = 1", likeCommunity.userNo.eq(userNo)),
+                    communityPost.createdAt,
                     Expressions.stringTemplate("SUBSTRING(CAST(REGEXP_REPLACE({0}, '<[^>]*>', '') AS STRING), 1, 100)", communityPost.content)
                     ));
         }else{ // 웹 반환
@@ -163,15 +156,7 @@ public class CommunityPostQueryRepository {
                     communityPost.postType,
                     communityPost.title,
                     communityPost.count,
-                    ExpressionUtils.as(
-                            JPAExpressions.select(communityComment.countDistinct().add(communityReply.countDistinct()))
-                                    .from(communityComment)
-                                    .leftJoin(communityReply).on(communityReply.communityComment.eq(communityComment),
-                                            communityReply.deletedAt.isNull())
-                                    .where(communityComment.communityPost.eq(communityPost),
-                                            communityComment.deletedAt.isNull()),
-                            "commentCount"
-                    ),
+                    communityComment.countDistinct().add(communityReply.countDistinct()),
                     likeCommunity.countDistinct(),
                     Expressions.booleanTemplate("MAX(CASE WHEN {0} THEN 1 ELSE 0 END) = 1", likeCommunity.userNo.eq(userNo)),
                     communityPost.createdAt
@@ -186,6 +171,8 @@ public class CommunityPostQueryRepository {
                         likeCommunity.canceledAt.isNull())
                 .leftJoin(communityComment).on(communityPost.communityPostNo.eq(communityComment.communityPost.communityPostNo),
                         communityComment.deletedAt.isNull())//댓글 조인
+                .leftJoin(communityReply).on(communityComment.commentNo.eq(communityReply.communityComment.commentNo),
+                        communityReply.deletedAt.isNull())//답글 조인
                 .where(communityPost.deletedAt.isNull(),// 게시글이 삭제 되지 않았고
                         postTypeEq(condition.getPostType()),// 포스트 타입이 같고, 같지 않을 경우 null == 전체 검색
                         lastNoLt(condition.getOrder(), condition.getLastNo()),//마지막 게시글 번호보다 작은 것
