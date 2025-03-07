@@ -303,8 +303,7 @@ public class ExchangePostQueryRepository {
                                 durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
                                 exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
                                 requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
-                                exchangePostStatusEq(searchConditionDTO.getStatus()), // 모집 상태가 일치하고
-                                lastNoLt(searchConditionDTO.getLastNo()) //마지막 번호보다 작고
+                                exchangePostStatusEq(searchConditionDTO.getStatus()) // 모집 상태가 일치하고
                         ).fetchOne()
         ).orElse(0L);
 

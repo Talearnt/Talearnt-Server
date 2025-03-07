@@ -5,17 +5,24 @@ import com.talearnt.post.community.entity.CommunityPost;
 import com.talearnt.post.community.repository.CommunityPostQueryRepository;
 import com.talearnt.post.community.repository.CommunityPostRepository;
 import com.talearnt.post.community.request.CommunityPostReqDTO;
+import com.talearnt.post.community.request.CommunityPostSearchConditionDTO;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
+import com.talearnt.post.community.response.CommunityPostListResDTO;
 import com.talearnt.s3.FileUploadService;
+import com.talearnt.util.common.PageUtil;
 import com.talearnt.util.common.PostUtil;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
+import com.talearnt.util.response.PaginatedResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Log4j2
@@ -26,6 +33,37 @@ public class CommunityPostService {
     private final FileUploadService fileUploadService;
     private final CommunityPostQueryRepository communityPostQueryRepository;
 
+    /** 커뮤니티 게시글 목록 조회
+     * 조건)
+     * - 내가 좋아요 게시글 눌른 것이 있는가?
+     * - 모바일인가? 웹인가?
+     * */
+    public PaginatedResponse<List<CommunityPostListResDTO>> getCommunityPostList(Authentication authentication, String postType, String order, String path, String lastNo, String popularScore, String baseTime, String page, String size){
+        log.info("커뮤니티 게시글 목록 조회 시작 : {} - {} - {}",postType,order,path);
+
+        //로그인 여부 확인, 안했을 경우 user no = 0; 좋아요 여부 확인용!
+        Long userNo = PostUtil.getCurrentUserNo("커뮤니티 게시글 목록 조회", authentication);
+
+        //Search Condition 생성
+        CommunityPostSearchConditionDTO condition = CommunityPostSearchConditionDTO.builder()
+                .postType(postType)
+                .order(order)
+                .path(path)
+                .page(page)
+                .size(size)
+                .baseTime(baseTime)
+                .lastNo(lastNo)
+                .popularScore(popularScore)
+                .build();
+
+        //게시글 가져오기
+        Page<CommunityPostListResDTO> result = communityPostQueryRepository.getCommunityPostList(userNo,condition);
+
+        log.info("커뮤니티 게시글 목록 조회 끝");
+        return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntity(result));
+    }
+
+
     /**커뮤니티 게시글 상세보기
      * 조건)
      * - 존재하는 게시글인가?
@@ -35,7 +73,7 @@ public class CommunityPostService {
         log.info("커뮤니티 게시글 상세보기 시작 : {}", postNo);
 
         //유저 번호 얻어오기 -> 좋아요 게시글 여부
-        Long userNo = PostUtil.getCurrentUserNo(auth);
+        Long userNo = PostUtil.getCurrentUserNo("커뮤니티 게시글 상세보기",auth);
 
         //게시글 Count++ 및 게시글 조회
         CommunityPostDetailResDTO result = communityPostQueryRepository.getCommunityPostByPostNo(postNo,userNo)

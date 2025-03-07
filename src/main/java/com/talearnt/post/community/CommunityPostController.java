@@ -1,8 +1,12 @@
 package com.talearnt.post.community;
 
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.post.community.request.CommunityPostReqDTO;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
+import com.talearnt.post.community.response.CommunityPostListResDTO;
+import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.CommonResponse;
+import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.version.RestControllerV1;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -12,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Log4j2
 @RequiredArgsConstructor
 @RestControllerV1
@@ -19,6 +25,22 @@ import org.springframework.web.bind.annotation.*;
 public class CommunityPostController implements CommunityPostApi{
 
     private final CommunityPostService communityPostService;
+
+    //커뮤니티 게시글 목록
+    @GetMapping("posts/communities")
+    public ResponseEntity<CommonResponse<PaginatedResponse<List<CommunityPostListResDTO>>>> getCommunityPostList(
+            @RequestParam(required = false) String postType,
+            @RequestParam(required = false, defaultValue = "recent") String order,
+            @RequestParam(required = false, defaultValue = "web") String path,
+            @RequestParam(required = false) String baseTime,
+            @RequestParam(required = false, defaultValue = "1") String page,
+            @RequestParam(required = false, defaultValue = "12") String size,
+            @RequestParam(required = false) String lastNo,
+            @RequestParam(required = false) String popularScore,
+            Authentication authentication){
+
+        return CommonResponse.success(communityPostService.getCommunityPostList(authentication,postType,order,path,lastNo,popularScore ,baseTime,page,size));
+    }
 
     //커뮤니티 게시글 상세보기
     @GetMapping("/posts/communities/{postNo}")
