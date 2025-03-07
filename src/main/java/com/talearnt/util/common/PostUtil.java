@@ -11,6 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +46,26 @@ public class PostUtil {
         }
     }
 
+    public static Integer parseInteger(String value){
+        try {
+            value = getTrimString(value);
+            return Integer.parseInt(value);
+        }catch (NumberFormatException | NullPointerException e){
+            return null;
+        }
+    }
+
+    public static Double parseDouble(String value){
+        try {
+            value = getTrimString(value);
+            return Double.parseDouble(value);
+        }catch (NumberFormatException | NullPointerException e){
+            return null;
+        }
+    }
+
+    /** String을 Long 타입으로 바꿔주는 메소드, Search에 많이 사용하려고 만들었습니다.
+     * Exception 발생 시 조건 탐색을 안하기 위해서 null을 반환합니다.*/
     public static Long parseLong(String value){
         try {
             value = getTrimString(value);
@@ -222,6 +245,16 @@ public class PostUtil {
     public static String filterValidPath(String value){
         if (value.equalsIgnoreCase("mobile")) return "mobile";
         return "web";
+    }
+
+    // 조회 검색 시 기준 시간 변환 - 값이 없을 경우 현재 시간을 기준으로 생성
+    public static LocalDateTime filterValidBaseTime(String value){
+        try {
+            value = getTrimString(value);
+            return LocalDateTime.parse(value,DateTimeFormatter.ISO_DATE_TIME);
+        }catch (NullPointerException | DateTimeParseException e){
+            return LocalDateTime.now();
+        }
     }
 
 }
