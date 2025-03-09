@@ -74,11 +74,11 @@ public interface ExchangePostApi {
                     "<li>이미지 업로드 성공 시 urls에 경로 담기</li>" +
                     "<li>5MB Byte가 넘을 경우 압축 OR 압축 불가 시 등록 불가</li>" +
                     "</ol>" +
-                    "<p><strong>웹에서는 CTRL+Z를 누를 경우 이전 작업</strong>으로 이동하는데 그 경우 Delete에 있는 값이 URLS로 이동하는 지 확인 작업 필요!</p>"+
-                    "<hr>"+
-                    "<h3>변경된 점</h3>"+
-                    "<p>반환 값이 변경되었습니다. '성공적으로 재능 교환 게시글 등록하였습니다.' String 값이 넘어갔으나 이제는 작성된 내용을 보냅니다.</p>"+
-                    "<hr>"+
+                    "<p><strong>웹에서는 CTRL+Z를 누를 경우 이전 작업</strong>으로 이동하는데 그 경우 Delete에 있는 값이 URLS로 이동하는 지 확인 작업 필요!</p>" +
+                    "<hr>" +
+                    "<h3>변경된 점</h3>" +
+                    "<p>반환 값이 변경되었습니다. '성공적으로 재능 교환 게시글 등록하였습니다.' String 값이 넘어갔으나 이제는 작성된 내용을 보냅니다.</p>" +
+                    "<hr>" +
                     "<h2>Response</h2>" +
                     "<ul>" +
                     "<li>등록한 게시글 번호</li>" +
@@ -107,6 +107,7 @@ public interface ExchangePostApi {
             "<p>give, receive는 현재 재능 이름만 넘어가고 있습니다. <strong>필요하면 Code도 같이 넘어가도록 변경</strong>하겠습니다.</p>" +
             "<p>채팅방에 연결 요청할 수 있는 chatRoomNo가 있습니다.</p>" +
             "<p>채팅방 구현 시에 필요해 미리 넣어뒀습니다.</p>" +
+            "<p>이미지 모아보기의 순서를 오름차순으로 정렬하여 순서에 맞게 보내줍니다.</p>" +
             "<hr/>" +
             "<h2>Response</h2>" +
             "<ul>" +
@@ -137,59 +138,72 @@ public interface ExchangePostApi {
 
 
     @Operation(summary = "재능 교환 게시글 목록"
-            , description = "<h2>내용</h2>" +
-            "<p>giveTalents, receiveTalents는 List<String>으로 받고 있습니다.</p>" +
-            "<p>잘못된 값이 들어와도 서버에서 오류 발생을 방지하기 위하여 Query Parameter Type이 String으로 구성되어 있습니다.</p>" +
-            "<p>유효한 값이 아닐 경우, 그 값은 제외하고 검색을 시작합니다</p>" +
-            "<p>ex) giveTalents=1001,일공공이 -> 1001만 필터 조건으로 걸림</p>" +
-            "<h3>Size</h3>" +
-            "<p>재능 교환 게시글 목록을 15개(기본) 반환합니다.</p>" +
-            "<p>Size로 원하는 갯수만큼 반환할 수 있습니다.</p>" +
-            "<p>Content의 내용에 HTML 태그 제거 및 100자까지 뽑아서 반환합니다.</p>" +
-            "<h3>Enum 클래스 Request 값 변경</h3>" +
-            "<p>서버로 보내는 쿼리 파라미터의 이름이 변경되었습니다.</p>" +
-            "<p>기존에 보내던 방식도 가능하오니 필요한 분은 변경하시길 바랍니다.</p>" +
-            "<p>온_오프라인 -> 온/오프라인</p>" +
-            "<p>모집_완료 -> 모집 완료</p>" +
-            "<h3>Last No 추가</h3>" +
-            "<p>페이지네이션 - No offset(무한스크롤) 방식의 중복 처리를 위하여 Last No를 추가했습니다.</p>" +
-            "<p>LastId로 하고 싶었으나, No가 우리의 ID의 명칭이므로 No로 지정했습니다.</p>" +
+            , description = "<h2>공통 참고 내용</h2>" +
+            "<p>게시글 목록은 단 하나의 경우를 제외하고 값을 제대로 보내기 위하여 모든 값을 String 또는 List<String>으로 받고 있습니다.</p>" +
+            "<p>path는 반드시 보내주셔야 합니다. 안보낼 경우 web으로 기본 설정되어 있습니다. (web|mobile)</p>" +
+            "<h2><모바일 참고 내용></h2>" +
+            "<h2>2페이지 이상 호출 시 반드시 필요한 값 - 모바일</h2>" +
+            "<ul>" +
+                "<li>lastNo : 마지막 게시글 번호</li>" +
+            "</ul>" +
+            "<p>lastNo는 다음 페이지에 존재하는 값을 불러오기 위한 번호입니다.</p>" +
+            "<p><strong>lastNo가 있지만 Page 번호가 2 이상일 경우 중복/누락 데이터가 발생</strong>하여 UX/DX를 개선하기 위해 이례적으로 Exception을 발생시킵니다.</p>" +
+            "<p><strong>Page 번호를 입력 안하시면 됩니다.</strong></p>" +
+            "<hr>" +
+            "<hr>" +
+            "<h2><웹 참고 내용></h2>" +
+            "<h2>2페이지 이상 호출 시 반드시 필요한 값 - 웹</h2>" +
+            "<ul>" +
+                "<li>firstNo : 첫 번째 게시글 번호</li>" +
+                "<li>page : 다음 페이지 번호</li>" +
+            "</ul>" +
+            "<p>firstNo는 중복 데이터를 제거하기 위한 기준 번호입니다.</p>" +
+            "<p>page는 N번째 부터 Size 까지 뽑아오기 위해 존재합니다.</p>" +
+            "<p><strong>page번호가 2이상이지만, firstNo가 없을 경우</strong>와 <strong>lastNo가 존재할 경우 중복/누락 데이터가 발생</strong>하여 UX/DX를 개선하기 위해 이례적으로 Exception을 발생시킵니다.</p>" +
+            "<hr>" +
             "<hr>" +
             "<h2>Response</h2>" +
             "<ul>" +
-            "<li>profileImg : 작성자의 프로필 이미지 경로</li>" +
-            "<li>nickname : 작성자의 닉네임</li>" +
-            "<li>authority : 작성자의 권한 (인증 유저)</li>" +
-            "<li>exchangePostNo : 게시글 번호</li>" +
-            "<li>status : 게시글 모집 상태</li>" +
-            "<li>exchangeType : 게시글 진행 방식</li>" +
-            "<li>duration : 게시글 진행 기간</li>" +
-            "<li>title : 게시글 제목</li>" +
-            "<li>giveTalents : 게시글 주고 싶은 재능</li>" +
-            "<li>receiveTalents : 게시글 받고 싶은 재능</li>" +
-            "<li>createdAt : 게시글 작성일</li>" +
-            "<li>openedChatRoomCount : 신청된 채팅방 갯수</li>" +
-            "<li>favoriteCount : 게시글 찜 갯수</li>" +
-            "<li>isFavorite : 게시글 찜 여부</li>" +
+                "<li>profileImg : 작성자의 프로필 이미지 경로</li>" +
+                "<li>nickname : 작성자의 닉네임</li>" +
+                "<li>authority : 작성자의 권한 (인증 유저)</li>" +
+                "<li>exchangePostNo : 게시글 번호</li>" +
+                "<li>status : 게시글 모집 상태</li>" +
+                "<li>exchangeType : 게시글 진행 방식</li>" +
+                "<li>duration : 게시글 진행 기간</li>" +
+                "<li>title : 게시글 제목</li>" +
+                "<li>content : 게시글 내용 (태그를 제외한 100자 이내)</li>" +
+                "<li>giveTalents : 게시글 주고 싶은 재능</li>" +
+                "<li>receiveTalents : 게시글 받고 싶은 재능</li>" +
+                "<li>createdAt : 게시글 작성일</li>" +
+                "<li>openedChatRoomCount : 신청된 채팅방 갯수</li>" +
+                "<li>favoriteCount : 게시글 찜 갯수</li>" +
+                "<li>isFavorite : 게시글 찜 여부</li>" +
             "<br>" +
-            "<li>hasNext : 다음 버튼 여부</li>" +
-            "<li>hasPrevious : 이전 버튼 여부</li>" +
-            "<li>totalPages : 총 페이지 수 </li>" +
-            "<li>currentPage : 현재 페이지</li>" +
+                "<li>hasNext : 다음 게시글 호출 가능 여부</li>" +
+                "<li>hasPrevious : 이전 게시글 조회 가능 여부 (모바일 사용 X)</li>" +
+                "<li>totalPages : 총 게시글 개수 (모바일 사용 X)</li>" +
+                "<li>currentPage : 현재 페이지 번호 (모바일은 언제나 1)</li>" +
             "</ul>"
     )
-    public ResponseEntity<CommonResponse<PaginatedResponse<List<ExchangePostListResDTO>>>> getExchangePostList(@RequestParam(value = "giveTalents", required = false, defaultValue = "") @Schema(description = "주고 싶은 재능 코드 List") List<String> giveTalents,//Integer로 변환 필요
-                                                                                            @RequestParam(value = "receiveTalents", required = false, defaultValue = "") @Schema(description = "받고 싶은 재능 코드 List") List<String> receiveTalents,//Integer로 변환 필요
-                                                                                            @RequestParam(value = "order", required = false, defaultValue = "recent") @Schema(description = "정렬 - recent : 최신순, popular : 인기순") String order,//recent,popular 로 변환 필요
-                                                                                            @RequestParam(value = "duration", required = false) @Schema(description = "진행 기간 - 기간 미정, 1개월,2개월,3개월, 3개월 이상 만 가능") String duration,// 이상한 값이 넘어올 경우 duration 없이 조건
-                                                                                            @RequestParam(value = "type", required = false) @Schema(description = "진행 방식 - 온라인, 오프라인, 온/오프라인(온_오프라인) 만 가능") String type, //ExchangeType으로 변환 필요, ExchangeType 으로 변환 실패 시 null로 변환
-                                                                                            @RequestParam(value = "badge", required = false) @Schema(description = "인증 뱃지 필요 여부 - true, false 만 가능") String requiredBadge, // Boolean 값으로 넘어오지 않을 경우 null로 변환
-                                                                                            @RequestParam(value = "status", required = false) @Schema(description = "모집 상태 - 모집중, 모집 완료(모집_완료) 만 가능") String status, //ExchangePostStatus으로 변환 필요, ExchangePostStatus 으로 변환 실패시  으로 변환 실패 시 null로 변환
-                                                                                            @RequestParam(value = "page", required = false, defaultValue = "1") @Schema(description = "기본 1") String page,
-                                                                                            @RequestParam(value = "size", required = false, defaultValue = "15") @Schema(description = "입력 X 기본 15개 반환, 필요시 50개 이하 호출 가능, 그 이상 불가능") String size,
-                                                                                            @RequestParam(value = "lastNo", required = false) @Schema(description = "마지막 게시글 번호") String lastNo,
-                                                                                            @RequestParam(value = "search", required = false) @Schema(description = "Ngram Parse 사용중, 기본 2글자부터 검색 시 제대로 반환") String search,
-                                                                                            Authentication auth);
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", ref = "POST_FAILED_CALL_LIST"),
+    })
+    public ResponseEntity<CommonResponse<PaginatedResponse<List<ExchangePostListResDTO>>>> getExchangePostList(@RequestParam(value = "giveTalents", required = false, defaultValue = "") @Schema(description = "주고 싶은 재능 코드 List") List<String> giveTalents,
+                                                                                                               @RequestParam(value = "receiveTalents", required = false, defaultValue = "") @Schema(description = "받고 싶은 재능 코드 List") List<String> receiveTalents,
+                                                                                                               @RequestParam(value = "order", required = false, defaultValue = "recent") @Schema(description = "정렬(기본) - recent : 최신순, popular : 인기순") String order,
+                                                                                                               @RequestParam(value = "duration", required = false) @Schema(description = "진행 기간 - 기간 미정, 1개월,2개월,3개월, 3개월 이상 만 가능 - null일 경우 전체") String duration,
+                                                                                                               @RequestParam(value = "type", required = false) @Schema(description = "진행 방식 - 온라인, 오프라인, 온/오프라인(온_오프라인) 만 가능 - null일 경우 전체") String type,
+                                                                                                               @RequestParam(value = "badge", required = false) @Schema(description = "인증 뱃지 필요 여부 - true, false 만 가능 - null 일 경우 전체") String requiredBadge,
+                                                                                                               @RequestParam(value = "status", required = false) @Schema(description = "모집 상태 - 모집중, 모집 완료(모집_완료) 만 가능 - null일 경우 전체") String status,
+                                                                                                               @RequestParam(value = "page",required = false,defaultValue = "1") @Schema(description = "모바일 사용 X (모바일은 언제나 1이어야 함), 웹만 사용") String page,
+                                                                                                               @RequestParam(value = "size", required = false, defaultValue = "15") @Schema(description = "입력 안할 경우 기본 15개 반환, 필요시 50개 이하 호출 가능, 그 이상 불가능") String size,
+                                                                                                               @RequestParam(value = "lastNo", required = false) @Schema(description = "마지막 게시글 번호") String lastNo,
+                                                                                                               @RequestParam(value = "firstNo", required = false) @Schema(description = "게시글 첫 번째 번호") String firstNo,
+                                                                                                               @RequestParam(value = "path", required = false, defaultValue = "web") @Schema(description = "(mobile|web)") String path,
+                                                                                                               Authentication auth);
+
 
     @Operation(summary = "재능 교환 게시글 수정",
             description = "<h2>내용</h2>" +
@@ -203,8 +217,8 @@ public interface ExchangePostApi {
                     "<p>이미지를 제외한 값은 수정 가능합니다.</p>" +
                     "<p>Response가 수정된 게시글 내용으로 가져오시길 원하면 말씀주시면 그 값들로 변경해서 보내드리도록 하겠습니다.</p>" +
                     "<hr/>" +
-                    "<h3>변경된 점</h3>"+
-                    "<p>반환 값이 변경되었습니다. '기존 게시글 수정 완료' String 값이 넘어갔으나 이제는 변경된 내용을 보냅니다.</p>"+
+                    "<h3>변경된 점</h3>" +
+                    "<p>반환 값이 변경되었습니다. '기존 게시글 수정 완료' String 값이 넘어갔으나 이제는 변경된 내용을 보냅니다.</p>" +
                     "<hr/>" +
                     "<h2>Request Body</h2>" +
                     "<ul>" +

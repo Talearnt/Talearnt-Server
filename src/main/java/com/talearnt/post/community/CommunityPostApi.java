@@ -69,10 +69,10 @@ public interface CommunityPostApi {
                 "<li>createdAt : 게시글 작성일</li>" +
                 "<li>content : 게시글 내용(path=mobile 일 경우만 나옴)</li>" +
                 "<br>"+
-                "<li>hasNext : 이미지 경로들</li>" +
-                "<li>hasPrevious : 이미지 경로들</li>" +
-                "<li>totalPages : 이미지 경로들</li>" +
-                "<li>currentPage : 이미지 경로들</li>" +
+                "<li>hasNext : 다음 게시글 조회 가능 여부</li>" +
+                "<li>hasPrevious : 이전 게시글 조회 가능 여부</li>" +
+                "<li>totalPages : 총 게시글 개수</li>" +
+                "<li>currentPage : 현재 페이지 번호</li>" +
             "</ul>" +
             "")
     @ApiResponses(value = {

@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class ExchangeSearchConditionDTO {
-    private String search;
     private List<Integer> giveTalents; //Integer로 변환 필요
     private List<Integer> receiveTalents; //Integer로 변환 필요
     private String order; //recent,popular 로 변환 필요
@@ -22,12 +21,11 @@ public class ExchangeSearchConditionDTO {
     private Boolean requiredBadge; // Boolean 값으로 넘어오지 않을 경우 null로 변환
     private ExchangePostStatus status; //ExchangePostStatus으로 변환 필요, ExchangePostStatus 으로 변환 실패시  으로 변환 실패 시 null로 변환
     private Long lastNo;
+    private Long firstNo;
     private Pageable page;
 
-
     @Builder
-    public ExchangeSearchConditionDTO(String search,List<String> giveTalents, List<String> receiveTalents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String lastNo) {
-        this.search = SplitUtil.createSearchKeywordForBooleanMode(search);
+    public ExchangeSearchConditionDTO(List<String> giveTalents, List<String> receiveTalents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String lastNo, String firstNo) {
         this.giveTalents = PostUtil.filterValidIntegers(giveTalents);
         this.receiveTalents = PostUtil.filterValidIntegers(receiveTalents);
         this.order = PostUtil.filterValidOrderValue(order);
@@ -36,6 +34,7 @@ public class ExchangeSearchConditionDTO {
         this.requiredBadge = PostUtil.filterValidRequiredBadge(requiredBadge);
         this.status = PostUtil.filterValidExchangePostStatus(status);
         this.lastNo = PostUtil.parseLong(lastNo);
+        this.firstNo = PostUtil.parseLong(firstNo);
         this.page = PostUtil.filterValidPagination(page,size);
     }
 }

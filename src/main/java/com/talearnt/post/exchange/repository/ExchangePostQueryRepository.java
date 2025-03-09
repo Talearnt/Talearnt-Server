@@ -6,6 +6,7 @@ import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.admin.category.entity.QTalentCategory;
 import com.talearnt.chat.entity.QChatRequest;
@@ -13,6 +14,7 @@ import com.talearnt.chat.entity.QChatRoom;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.enums.post.PostType;
+import com.talearnt.post.community.response.CommunityPostListResDTO;
 import com.talearnt.post.exchange.entity.*;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
@@ -45,6 +47,8 @@ public class ExchangePostQueryRepository {
     private final QChatRequest chatRequest = QChatRequest.chatRequest;
     private final QChatRoom chatRoom = QChatRoom.chatRoom;
     private final QTalentCategory talentCategory = QTalentCategory.talentCategory;
+    private final QTalentCategory giveCategory = new QTalentCategory("giveCategory");
+    private final QTalentCategory receiveCategory = new QTalentCategory("receiveCategory");
 
     //재능 교환 게시글 삭제
     public long deleteExchangePostByPostNo(Long postNo) {
@@ -172,8 +176,6 @@ public class ExchangePostQueryRepository {
     @Transactional
     public Optional<ExchangePostDetailResDTO> getPostDetail(Long postNo, Long currentUserNo) {
         QFileUpload fileUpload = QFileUpload.fileUpload;
-        QTalentCategory giveCategory = new QTalentCategory("giveCategory");
-        QTalentCategory receiveCategory = new QTalentCategory("receiveCategory");
 
         factory.update(exchangePost)
                 .set(exchangePost.count, exchangePost.count.add(1))
@@ -188,21 +190,21 @@ public class ExchangePostQueryRepository {
                                 user.profileImg,
                                 user.authority,
                                 exchangePost.exchangePostNo,
-                                Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",giveCategory.talentName),
-                                Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",receiveCategory.talentName),
+                                Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", giveCategory.talentName),
+                                Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", receiveCategory.talentName),
                                 exchangePost.exchangeType,
                                 exchangePost.status,
                                 exchangePost.createdAt,
                                 exchangePost.duration,
                                 exchangePost.requiredBadge,
-                                Expressions.booleanTemplate("MAX(CASE WHEN {0} THEN 1 ELSE 0 END) = 1",favoriteExchangePost.userNo.eq(currentUserNo)),
+                                Expressions.booleanTemplate("MAX(CASE WHEN {0} THEN 1 ELSE 0 END) = 1", favoriteExchangePost.userNo.eq(currentUserNo)),
                                 exchangePost.title,
                                 exchangePost.content,
-                                Expressions.stringTemplate("function('CUSTOM_GROUP_CONCAT_ASC',{0},{1})",fileUpload.url, fileUpload.fileUploadNo),
+                                Expressions.stringTemplate("function('CUSTOM_GROUP_CONCAT_ASC',{0},{1})", fileUpload.url, fileUpload.fileUploadNo),
                                 exchangePost.count,
                                 favoriteExchangePost.countDistinct(),
                                 chatRequest.countDistinct(),
-                                Expressions.numberTemplate(Long.class,"MAX({0})",chatRoom.roomNo)
+                                Expressions.numberTemplate(Long.class, "MAX({0})", chatRoom.roomNo)
                         ))
                         .from(exchangePost)
                         .leftJoin(user).on(user.eq(exchangePost.user))
@@ -222,74 +224,64 @@ public class ExchangePostQueryRepository {
         );
     }
 
-
     /**
-     * 재능 교환 목록 불러오기 (Filter 조건)<br>
+     * 재능 교환 목록 불러오기 - 모바일 전용(Filter 조건)<br>
      */
-    public Page<ExchangePostListResDTO> getFilteredExchangePostList(ExchangeSearchConditionDTO searchConditionDTO, Long currentUserNo) {
-
-        List<ExchangePostListResDTO> data = factory
-                .select(Projections.constructor(
-                        ExchangePostListResDTO.class,
-                        user.profileImg,
-                        user.nickname,
-                        user.authority,
-                        exchangePost.exchangePostNo,
-                        exchangePost.status,
-                        exchangePost.exchangeType,
-                        exchangePost.duration,
-                        exchangePost.requiredBadge,
-                        exchangePost.title,
-                        Expressions.stringTemplate("SUBSTRING(CAST(REGEXP_REPLACE({0}, '<[^>]*>', '') AS STRING), 1, 100)", exchangePost.content),
-                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", JPAExpressions
-                                .select(talentCategory.talentName)
-                                .from(talentCategory)
-                                .where(talentCategory.talentCode.eq(giveTalent.talentCode.talentCode))
-                                .groupBy(giveTalent.exchangePost.exchangePostNo)
-                        ),
-                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", JPAExpressions
-                                .select(talentCategory.talentName)
-                                .from(talentCategory)
-                                .where(talentCategory.talentCode.eq(receiveTalent.talentCode.talentCode))
-                                .groupBy(receiveTalent.exchangePost.exchangePostNo)
-                        ),
-                        exchangePost.createdAt,
-                        Expressions.numberTemplate(Long.class,
-                                "COALESCE(({0}), 0)",
-                                JPAExpressions
-                                        .select(chatRequest.count())
-                                        .from(chatRequest)
-                                        .where(chatRequest.chatRoom.roomNo.eq(chatRoom.roomNo))
-                                        .groupBy(chatRequest.chatRoom.roomNo),
-                                "openedChatRoomCount"),
-                        favoriteExchangePost.countDistinct().intValue(),
-                        JPAExpressions.select(favoriteExchangePost.count().gt(0))
-                                .from(favoriteExchangePost)
-                                .where(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo),
-                                        favoriteExchangePost.userNo.eq(currentUserNo),
-                                        favoriteExchangePost.deletedAt.isNull())
-                )).from(exchangePost)
-                .leftJoin(user).on(exchangePost.user.userNo.eq(user.userNo))
-                .leftJoin(favoriteExchangePost).on(exchangePost.exchangePostNo.eq(favoriteExchangePost.exchangePostNo),
-                        favoriteExchangePost.deletedAt.isNull())
-                .leftJoin(giveTalent).on(exchangePost.exchangePostNo.eq(giveTalent.exchangePost.exchangePostNo))
-                .leftJoin(receiveTalent).on(exchangePost.exchangePostNo.eq(receiveTalent.exchangePost.exchangePostNo))
-                .leftJoin(chatRoom).on(chatRoom.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
+    public Page<ExchangePostListResDTO> getFilteredExchangePostListToMobile(ExchangeSearchConditionDTO searchConditionDTO, Long currentUserNo) {
+        List<ExchangePostListResDTO> data = getListSelected(currentUserNo)
                 .where(
                         favoriteExchangePost.deletedAt.isNull(), // 찜 게시글이 삭제되지 않았고, -> favoriteExchangePost를 위함
                         exchangePost.deletedAt.isNull(), //게시글이 삭제되지 않았고,
-                        titleLike(searchConditionDTO.getSearch()), //검색 키워드가 존재하고
+                        giveTalentsCodeEq(searchConditionDTO.getGiveTalents()),//주고 싶은 재능 분류의 코드가 일치하고,
+                        receiveTalentCodesEq(searchConditionDTO.getReceiveTalents()),//받고 싶은 재능 분류의 코드가 일치할 경우
+                        durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
+                        exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
+                        requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
+                        exchangePostStatusEq(searchConditionDTO.getStatus()),// 모집 상태가 일치하고
+                        lastNoLt(searchConditionDTO.getLastNo()) //마지막 번째 번호보다 작고
+                ).orderBy(orderEq(searchConditionDTO.getOrder()).toArray(new OrderSpecifier[0]))// 최신순으로 정렬
+                .groupBy(exchangePost.exchangePostNo)
+                .limit(searchConditionDTO.getPage().getPageSize())
+                .fetch();
+
+        Long total = Optional.ofNullable(
+                factory
+                        .select(exchangePost.count())
+                        .from(exchangePost)
+                        .where(
+                                exchangePost.deletedAt.isNull(), //게시글이 삭제되지 않았고,
+                                giveTalentsCodeEq(searchConditionDTO.getGiveTalents()),//대분류 코드가 일치하고,
+                                receiveTalentCodesEq(searchConditionDTO.getReceiveTalents()),//재능 분류의 코드가 일치할 경우
+                                durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
+                                exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
+                                requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
+                                exchangePostStatusEq(searchConditionDTO.getStatus()), // 모집 상태가 일치하고
+                                lastNoLt(searchConditionDTO.getLastNo()) //마지막 번째 번호보다 작고
+                        ).fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(data, searchConditionDTO.getPage(), total);
+    }
+
+    /**
+     * 재능 교환 목록 불러오기 - 웹 전용(Filter 조건)<br>
+     */
+    public Page<ExchangePostListResDTO> getFilteredExchangePostListToWeb(ExchangeSearchConditionDTO searchConditionDTO, Long currentUserNo) {
+
+        List<ExchangePostListResDTO> data = getListSelected(currentUserNo)
+                .where(
+                        favoriteExchangePost.deletedAt.isNull(), // 찜 게시글이 삭제되지 않았고, -> favoriteExchangePost를 위함
+                        exchangePost.deletedAt.isNull(), //게시글이 삭제되지 않았고,
                         giveTalentsCodeEq(searchConditionDTO.getGiveTalents()),//주고 싶은 재능 분류의 코드가 일치하고,
                         receiveTalentCodesEq(searchConditionDTO.getReceiveTalents()),//받고 싶은 재능 분류의 코드가 일치할 경우
                         durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
                         exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
                         requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
                         exchangePostStatusEq(searchConditionDTO.getStatus()), // 모집 상태가 일치하고
-                        lastNoLt(searchConditionDTO.getLastNo()) //마지막 번호보다 작고
+                        firstNoLoe(searchConditionDTO.getFirstNo()) //첫 번째 번호보다 같거나 작고
                 )
-                .orderBy(orderEq(searchConditionDTO.getOrder()).toArray(new OrderSpecifier[0]))// 최신순, 인기순으로 정렬
-                .groupBy(exchangePost.exchangePostNo,
-                        chatRoom.roomNo)
+                .orderBy(orderEq(searchConditionDTO.getOrder()).toArray(new OrderSpecifier[0]))// 최신순으로 정렬
+                .groupBy(exchangePost.exchangePostNo)
                 .offset(searchConditionDTO.getPage().getOffset())
                 .limit(searchConditionDTO.getPage().getPageSize())
                 .fetch();
@@ -300,18 +292,57 @@ public class ExchangePostQueryRepository {
                         .from(exchangePost)
                         .where(
                                 exchangePost.deletedAt.isNull(), //게시글이 삭제되지 않았고,
-                                titleLike(searchConditionDTO.getSearch()), //검색 키워드가 존재하고
                                 giveTalentsCodeEq(searchConditionDTO.getGiveTalents()),//대분류 코드가 일치하고,
                                 receiveTalentCodesEq(searchConditionDTO.getReceiveTalents()),//재능 분류의 코드가 일치할 경우
                                 durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
                                 exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
                                 requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
-                                exchangePostStatusEq(searchConditionDTO.getStatus()) // 모집 상태가 일치하고
+                                exchangePostStatusEq(searchConditionDTO.getStatus()), // 모집 상태가 일치하고
+                                firstNoLoe(searchConditionDTO.getFirstNo()) //첫 번째 번호보다 같거나 작고
                         ).fetchOne()
         ).orElse(0L);
 
 
         return new PageImpl<>(data, searchConditionDTO.getPage(), total);
+    }
+
+
+    /**
+     * 재능 교환 목록 Select 공통 사용 함수
+     */
+    private JPAQuery<ExchangePostListResDTO> getListSelected(Long userNo) {
+        return factory.select(Projections.constructor(ExchangePostListResDTO.class,
+                                user.profileImg,
+                                user.nickname,
+                                user.authority,
+                                exchangePost.exchangePostNo,
+                                exchangePost.status,
+                                exchangePost.exchangeType,
+                                exchangePost.duration,
+                                exchangePost.requiredBadge,
+                                exchangePost.title,
+                                Expressions.stringTemplate("SUBSTRING(CAST(REGEXP_REPLACE({0}, '<[^>]*>', '') AS STRING), 1, 100)", exchangePost.content),
+                                Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", giveCategory.talentName),
+                                Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", receiveCategory.talentName),
+                                exchangePost.createdAt,
+                                chatRequest.countDistinct(),
+                                favoriteExchangePost.countDistinct(),
+                                Expressions.booleanTemplate("MAX(CASE WHEN {0} THEN 1 ELSE 0 END) = 1", favoriteExchangePost.userNo.eq(userNo))
+                        )
+                )
+                .from(exchangePost)
+                .leftJoin(user).on(user.eq(exchangePost.user))
+                .leftJoin(giveTalent).on(giveTalent.exchangePost.eq(exchangePost))
+                .leftJoin(receiveTalent).on(receiveTalent.exchangePost.eq(exchangePost))
+                .leftJoin(favoriteExchangePost).on(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
+                .leftJoin(giveCategory).on(giveCategory.talentCode.eq(giveTalent.talentCode.talentCode))
+                .leftJoin(receiveCategory).on(receiveCategory.talentCode.eq(receiveTalent.talentCode.talentCode))
+                .leftJoin(chatRoom).on(chatRoom.exchangePost.eq(exchangePost))
+                .leftJoin(chatRequest).on(chatRequest.chatRoom.eq(chatRoom));
+    }
+
+    private BooleanExpression firstNoLoe(Long firstNo) {
+        return firstNo != null ? exchangePost.exchangePostNo.loe(firstNo) : null;
     }
 
     /**
