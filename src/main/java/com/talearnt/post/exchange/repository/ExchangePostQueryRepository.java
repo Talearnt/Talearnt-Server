@@ -2,6 +2,7 @@ package com.talearnt.post.exchange.repository;
 
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
@@ -46,7 +47,7 @@ public class ExchangePostQueryRepository {
     private final QTalentCategory talentCategory = QTalentCategory.talentCategory;
 
     //재능 교환 게시글 삭제
-    public long deleteExchangePostByPostNo(Long postNo){
+    public long deleteExchangePostByPostNo(Long postNo) {
         return factory.update(exchangePost)
                 .set(exchangePost.deletedAt, LocalDateTime.now())
                 .where(exchangePost.exchangePostNo.eq(postNo))
@@ -55,7 +56,7 @@ public class ExchangePostQueryRepository {
 
 
     //받고 싶은 재능 삭제
-    public void deleteReceiveTalents(List<Long> ids){
+    public void deleteReceiveTalents(List<Long> ids) {
         if (ids.isEmpty()) return;
 
         factory.delete(receiveTalent)
@@ -65,17 +66,17 @@ public class ExchangePostQueryRepository {
 
 
     //받고 싶은 재능 업데이트
-    public void updateReceiveTalents(Map<Long, Integer> updateReceiveTalentCodes){
+    public void updateReceiveTalents(Map<Long, Integer> updateReceiveTalentCodes) {
         if (updateReceiveTalentCodes.isEmpty()) return;
 
-        updateReceiveTalentCodes.forEach((key, value) ->  factory.update(receiveTalent)
+        updateReceiveTalentCodes.forEach((key, value) -> factory.update(receiveTalent)
                 .set(receiveTalent.talentCode.talentCode, value)
                 .where(receiveTalent.wantReceiveTalentNo.eq(key))
                 .execute());
     }
 
     //주고 싶은 재능 삭제
-    public void deleteGiveTalents(List<Long> ids){
+    public void deleteGiveTalents(List<Long> ids) {
         if (ids.isEmpty()) return;
 
         factory.delete(giveTalent)
@@ -84,20 +85,20 @@ public class ExchangePostQueryRepository {
     }
 
     //주고 싶은 재능 업데이트
-    public void updateGiveTalents(Map<Long, Integer> updateGiveTalentCodes){
+    public void updateGiveTalents(Map<Long, Integer> updateGiveTalentCodes) {
         if (updateGiveTalentCodes.isEmpty()) return;
 
-        updateGiveTalentCodes.forEach((key, value) ->  factory.update(giveTalent)
+        updateGiveTalentCodes.forEach((key, value) -> factory.update(giveTalent)
                 .set(giveTalent.talentCode.talentCode, value)
                 .where(giveTalent.wantGiveTalentNo.eq(key))
                 .execute());
     }
 
     //주고 싶은, 받고 싶은 텔런트 코드 추출
-    public Map<String,List<Tuple>> getGiveAndReceiveTalentCodesByPostNo(Long postNo){
+    public Map<String, List<Tuple>> getGiveAndReceiveTalentCodesByPostNo(Long postNo) {
         Map<String, List<Tuple>> codes = new HashMap<>();
 
-        codes.put("giveTalentCodes",factory.select(giveTalent.wantGiveTalentNo, giveTalent.talentCode.talentCode)
+        codes.put("giveTalentCodes", factory.select(giveTalent.wantGiveTalentNo, giveTalent.talentCode.talentCode)
                 .from(giveTalent)
                 .where(giveTalent.exchangePost.exchangePostNo.eq(postNo))
                 .fetch());
@@ -110,19 +111,23 @@ public class ExchangePostQueryRepository {
         return codes;
     }
 
-    /** ExchangePost 수정*/
-    public long updateExchangePost(Long postNo, String title, String content, ExchangeType exchangeType, boolean requiredBadge, String duration){
+    /**
+     * ExchangePost 수정
+     */
+    public long updateExchangePost(Long postNo, String title, String content, ExchangeType exchangeType, boolean requiredBadge, String duration) {
         return factory.update(exchangePost)
-                .set(exchangePost.title,title)
-                .set(exchangePost.content,content)
-                .set(exchangePost.exchangeType,exchangeType)
+                .set(exchangePost.title, title)
+                .set(exchangePost.content, content)
+                .set(exchangePost.exchangeType, exchangeType)
                 .set(exchangePost.requiredBadge, requiredBadge)
-                .set(exchangePost.duration,duration)
+                .set(exchangePost.duration, duration)
                 .where(exchangePost.exchangePostNo.eq(postNo)).execute();
     }
 
-    /**나의 재능 이력 가져오기 */
-    public List<Integer> getPastMyTalents(Long currentUserNo){
+    /**
+     * 나의 재능 이력 가져오기
+     */
+    public List<Integer> getPastMyTalents(Long currentUserNo) {
         QMyTalent myTalent = QMyTalent.myTalent;
         return factory.select(myTalent.talentCategory.talentCode)
                 .from(myTalent)
@@ -131,8 +136,10 @@ public class ExchangePostQueryRepository {
                 .fetch();
     }
 
-    /**내 게시글이 맞는지 확인 - 수정 페이지*/
-    public boolean isMyExchangePost(Long postNo, Long userNo){
+    /**
+     * 내 게시글이 맞는지 확인 - 수정 페이지
+     */
+    public boolean isMyExchangePost(Long postNo, Long userNo) {
         return factory.selectOne()
                 .from(exchangePost)
                 .where(exchangePost.exchangePostNo.eq(postNo),
@@ -141,8 +148,10 @@ public class ExchangePostQueryRepository {
     }
 
 
-    /**활성화된 나의 주고 싶은 재능들 가져오기*/
-    public List<Integer> getWantGiveMyTalents(Long userNo){
+    /**
+     * 활성화된 나의 주고 싶은 재능들 가져오기
+     */
+    public List<Integer> getWantGiveMyTalents(Long userNo) {
         QMyTalent myTalent = QMyTalent.myTalent;
         QTalentCategory talentCategory = QTalentCategory.talentCategory;
         return factory
@@ -157,10 +166,14 @@ public class ExchangePostQueryRepository {
     }
 
 
-    /** 재능 교환 게시글 상세보기*/
+    /**
+     * 재능 교환 게시글 상세보기
+     */
     @Transactional
-    public Optional<ExchangePostDetailResDTO> getPostDetail(Long postNo, Long currentUserNo){
+    public Optional<ExchangePostDetailResDTO> getPostDetail(Long postNo, Long currentUserNo) {
         QFileUpload fileUpload = QFileUpload.fileUpload;
+        QTalentCategory giveCategory = new QTalentCategory("giveCategory");
+        QTalentCategory receiveCategory = new QTalentCategory("receiveCategory");
 
         factory.update(exchangePost)
                 .set(exchangePost.count, exchangePost.count.add(1))
@@ -168,63 +181,52 @@ public class ExchangePostQueryRepository {
                 .execute();
 
         return Optional.ofNullable(
-                factory.select(Projections.constructor(ExchangePostDetailResDTO.class,
-                        user.userNo,
-                        user.nickname,
-                        user.profileImg,
-                        user.authority,
-                        exchangePost.exchangePostNo,
-                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})"
-                                ,JPAExpressions
-                                        .select(talentCategory.talentName)
-                                        .from(talentCategory)
-                                        .where(talentCategory.talentCode.eq(giveTalent.talentCode.talentCode))
-                                        .groupBy(giveTalent.exchangePost.exchangePostNo)),
-                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",JPAExpressions
-                                .select(talentCategory.talentName)
-                                .from(talentCategory)
-                                .where(talentCategory.talentCode.eq(receiveTalent.talentCode.talentCode))
-                                .groupBy(receiveTalent.exchangePost.exchangePostNo)),
-                        exchangePost.exchangeType,
-                        exchangePost.status,
-                        exchangePost.createdAt,
-                        exchangePost.duration,
-                        exchangePost.requiredBadge,
-                        Expressions.booleanTemplate("CASE WHEN {0} IS NOT NULL THEN true ELSE false END", favoriteExchangePost.exchangePostNo),
-                        exchangePost.title,
-                        exchangePost.content,
-                        JPAExpressions.select(Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",fileUpload.url))
-                                .from(fileUpload)
-                                .where(fileUpload.postNo.eq(postNo),
-                                        fileUpload.postType.eq(PostType.EXCHANGE)),
-                        exchangePost.count,
-                        favoriteExchangePost.exchangePostNo.count(),
-                        ExpressionUtils.as(JPAExpressions
-                                .select(chatRequest.count())
-                                .from(chatRequest)
-                                .where(chatRequest.chatRoom.roomNo.eq(chatRoom.roomNo))
-                                .groupBy(chatRequest.chatRoom.roomNo),
-                                "openedChatRoomCount"),
-                        chatRoom.roomNo
+                factory
+                        .select(Projections.constructor(ExchangePostDetailResDTO.class,
+                                user.userNo,
+                                user.nickname,
+                                user.profileImg,
+                                user.authority,
+                                exchangePost.exchangePostNo,
+                                Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",giveCategory.talentName),
+                                Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",receiveCategory.talentName),
+                                exchangePost.exchangeType,
+                                exchangePost.status,
+                                exchangePost.createdAt,
+                                exchangePost.duration,
+                                exchangePost.requiredBadge,
+                                Expressions.booleanTemplate("MAX(CASE WHEN {0} THEN 1 ELSE 0 END) = 1",favoriteExchangePost.userNo.eq(currentUserNo)),
+                                exchangePost.title,
+                                exchangePost.content,
+                                Expressions.stringTemplate("function('CUSTOM_GROUP_CONCAT_ASC',{0},{1})",fileUpload.url, fileUpload.fileUploadNo),
+                                exchangePost.count,
+                                favoriteExchangePost.countDistinct(),
+                                chatRequest.countDistinct(),
+                                Expressions.numberTemplate(Long.class,"MAX({0})",chatRoom.roomNo)
                         ))
                         .from(exchangePost)
-                        .leftJoin(user).on(user.userNo.eq(exchangePost.user.userNo))
-                        .leftJoin(chatRoom).on(chatRoom.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
-                        .leftJoin(giveTalent).on(giveTalent.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
-                        .leftJoin(receiveTalent).on(receiveTalent.exchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
-                        .leftJoin(favoriteExchangePost).on(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo).and(favoriteExchangePost.userNo.eq(currentUserNo)))
-                        .where(
-                                exchangePost.deletedAt.isNull(),
-                                exchangePost.exchangePostNo.eq(postNo)
-                        )
-                        .groupBy(chatRoom.roomNo)
-                        .fetchFirst()
+                        .leftJoin(user).on(user.eq(exchangePost.user))
+                        .leftJoin(giveTalent).on(giveTalent.exchangePost.eq(exchangePost))
+                        .leftJoin(receiveTalent).on(receiveTalent.exchangePost.eq(exchangePost))
+                        .leftJoin(favoriteExchangePost).on(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
+                        .leftJoin(giveCategory).on(giveCategory.talentCode.eq(giveTalent.talentCode.talentCode))
+                        .leftJoin(receiveCategory).on(receiveCategory.talentCode.eq(receiveTalent.talentCode.talentCode))
+                        .leftJoin(fileUpload).on(fileUpload.postNo.eq(exchangePost.exchangePostNo),
+                                fileUpload.postType.eq(PostType.EXCHANGE))
+                        .leftJoin(chatRoom).on(chatRoom.exchangePost.eq(exchangePost))
+                        .leftJoin(chatRequest).on(chatRequest.chatRoom.eq(chatRoom))
+                        .where(exchangePost.exchangePostNo.eq(postNo),
+                                exchangePost.deletedAt.isNull())
+                        .groupBy(exchangePost.exchangePostNo)
+                        .fetchOne()
         );
     }
 
 
-    /**재능 교환 목록 불러오기 (Filter 조건)<br>*/
-    public Page<ExchangePostListResDTO> getFilteredExchangePostList(ExchangeSearchConditionDTO searchConditionDTO, Long currentUserNo){
+    /**
+     * 재능 교환 목록 불러오기 (Filter 조건)<br>
+     */
+    public Page<ExchangePostListResDTO> getFilteredExchangePostList(ExchangeSearchConditionDTO searchConditionDTO, Long currentUserNo) {
 
         List<ExchangePostListResDTO> data = factory
                 .select(Projections.constructor(
@@ -239,13 +241,13 @@ public class ExchangePostQueryRepository {
                         exchangePost.requiredBadge,
                         exchangePost.title,
                         Expressions.stringTemplate("SUBSTRING(CAST(REGEXP_REPLACE({0}, '<[^>]*>', '') AS STRING), 1, 100)", exchangePost.content),
-                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",JPAExpressions
+                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", JPAExpressions
                                 .select(talentCategory.talentName)
                                 .from(talentCategory)
                                 .where(talentCategory.talentCode.eq(giveTalent.talentCode.talentCode))
                                 .groupBy(giveTalent.exchangePost.exchangePostNo)
                         ),
-                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})",JPAExpressions
+                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", JPAExpressions
                                 .select(talentCategory.talentName)
                                 .from(talentCategory)
                                 .where(talentCategory.talentCode.eq(receiveTalent.talentCode.talentCode))
@@ -288,6 +290,7 @@ public class ExchangePostQueryRepository {
                 .orderBy(orderEq(searchConditionDTO.getOrder()).toArray(new OrderSpecifier[0]))// 최신순, 인기순으로 정렬
                 .groupBy(exchangePost.exchangePostNo,
                         chatRoom.roomNo)
+                .offset(searchConditionDTO.getPage().getOffset())
                 .limit(searchConditionDTO.getPage().getPageSize())
                 .fetch();
 
@@ -308,41 +311,49 @@ public class ExchangePostQueryRepository {
         ).orElse(0L);
 
 
-        return new PageImpl<>(data,searchConditionDTO.getPage(),total);
+        return new PageImpl<>(data, searchConditionDTO.getPage(), total);
     }
 
-    /** 재능 교환 제목 검색(title)가 searchTitle과 같은 값만 조건 탐색.*/
-    private BooleanExpression titleLike(String searchKeyword){
-        if(searchKeyword == null || searchKeyword.isEmpty()) return null;
+    /**
+     * 재능 교환 제목 검색(title)가 searchTitle과 같은 값만 조건 탐색.
+     */
+    private BooleanExpression titleLike(String searchKeyword) {
+        if (searchKeyword == null || searchKeyword.isEmpty()) return null;
         final String formattedSearchKeyword = "\"" + searchKeyword + "\"";
 
-        return  Expressions.numberTemplate(Double.class,
+        return Expressions.numberTemplate(Double.class,
                 "function('match',{0},{1})",
                 QExchangePost.exchangePost.title,
                 formattedSearchKeyword
         ).gt(0);
     }
 
-    /** 주고 싶은 재능 분류 키워드에 해당하는 값들 가져오기 <br>
-     * PostUtil 의 filterValidIntegers 에서 정제를 커친 후 사용함*/
-    private BooleanExpression giveTalentsCodeEq(List<Integer> giveTalents){
+    /**
+     * 주고 싶은 재능 분류 키워드에 해당하는 값들 가져오기 <br>
+     * PostUtil 의 filterValidIntegers 에서 정제를 커친 후 사용함
+     */
+    private BooleanExpression giveTalentsCodeEq(List<Integer> giveTalents) {
         return !giveTalents.isEmpty() ? exchangePost.giveTalents.any().talentCode.talentCode.in(giveTalents) : null;
     }
 
-    /** 받고 싶은 재능 분류 키워드에 해당하는 값들 가져오기<br>
-     * PostUtil 의 filterValidIntegers 에서 정제를 커친 후 사용함*/
-    private BooleanExpression receiveTalentCodesEq(List<Integer> receiveTalents){
-        return !receiveTalents.isEmpty() ? exchangePost.receiveTalents.any().talentCode.talentCode.in(receiveTalents): null;
+    /**
+     * 받고 싶은 재능 분류 키워드에 해당하는 값들 가져오기<br>
+     * PostUtil 의 filterValidIntegers 에서 정제를 커친 후 사용함
+     */
+    private BooleanExpression receiveTalentCodesEq(List<Integer> receiveTalents) {
+        return !receiveTalents.isEmpty() ? exchangePost.receiveTalents.any().talentCode.talentCode.in(receiveTalents) : null;
     }
 
-    /**  정렬 방식(Order) - Order By절 -> 최신순, 인기순<br>
-     * PostUtil 의 filterValidOrderValue 에서 정제를 커친 후 사용함*/
-    private List<OrderSpecifier<?>> orderEq(String order){
+    /**
+     * 정렬 방식(Order) - Order By절 -> 최신순, 인기순<br>
+     * PostUtil 의 filterValidOrderValue 에서 정제를 커친 후 사용함
+     */
+    private List<OrderSpecifier<?>> orderEq(String order) {
         //인기 순일 경우
-        if("popular".equals(order)){
+        if ("popular".equals(order)) {
             LocalDateTime now = LocalDateTime.now();
             return List.of(
-                    Expressions.cases().when(exchangePost.createdAt.between(now.minusHours(24),now))//24시간 이내로
+                    Expressions.cases().when(exchangePost.createdAt.between(now.minusHours(24), now))//24시간 이내로
                             .then(1)//우선순위 1
                             .otherwise(2).asc() //나머지는 2순위, then = 1, otherwise = 2 에 대한 .asc
                     , exchangePost.count.desc() // 게시글 조회수 순
@@ -352,35 +363,43 @@ public class ExchangePostQueryRepository {
         return List.of(exchangePost.exchangePostNo.desc());
     }
 
-    private BooleanExpression lastNoLt(Long lastNo){
+    private BooleanExpression lastNoLt(Long lastNo) {
         return lastNo != null ? exchangePost.exchangePostNo.lt(lastNo) : null;
     }
 
-    /** 진행 기간(Duration)에 맞는 게시글 가져오기 <br>
+    /**
+     * 진행 기간(Duration)에 맞는 게시글 가져오기 <br>
      * 이미 PostUtil의 filterValidDurationVlaue 에서 정제를 거친 후 사용함<br>
-     * 기간 미정,1개월,2개월,3개월,3개월 이상이 아닌 값은 null*/
-    private BooleanExpression durationEq(String duration){
+     * 기간 미정,1개월,2개월,3개월,3개월 이상이 아닌 값은 null
+     */
+    private BooleanExpression durationEq(String duration) {
         return duration != null ? exchangePost.duration.eq(duration) : null;
     }
 
-    /** 재능 교환 진행 방식 (Exchange Type)이 일치하는 게시글 가져오기<br>
+    /**
+     * 재능 교환 진행 방식 (Exchange Type)이 일치하는 게시글 가져오기<br>
      * PostUtil 의 filterValidExchangeType 에서 정제를 커친 후 사용함<br>
-     * 온라인,오프라인,온_오프라인 외 null 값*/
-    private BooleanExpression exchangeTypeEq(ExchangeType type){
+     * 온라인,오프라인,온_오프라인 외 null 값
+     */
+    private BooleanExpression exchangeTypeEq(ExchangeType type) {
         return type != null ? exchangePost.exchangeType.eq(type) : null;
     }
 
-    /** 인증뱃지 필수 여부 (requiredBadge)<br>
+    /**
+     * 인증뱃지 필수 여부 (requiredBadge)<br>
      * PostUtil 의 filterValidRequiredBadge 에서 정제를 커친 후 사용함<br>
-     * true,false 외 null*/
-    private BooleanExpression requiredBadgeEq(Boolean requiredBadge){
+     * true,false 외 null
+     */
+    private BooleanExpression requiredBadgeEq(Boolean requiredBadge) {
         return requiredBadge != null ? exchangePost.requiredBadge.eq(requiredBadge) : null;
     }
 
-    /** 재능 교환 모집 상태 (ExchangePostStatus)<br>
+    /**
+     * 재능 교환 모집 상태 (ExchangePostStatus)<br>
      * PostUtil 의 filterValidExchangePostStatus 에서 정제를 커친 후 사용함<br>
-     * 모집중,모집_완료 외 null*/
-    private BooleanExpression exchangePostStatusEq(ExchangePostStatus status){
+     * 모집중,모집_완료 외 null
+     */
+    private BooleanExpression exchangePostStatusEq(ExchangePostStatus status) {
         return status != null ? exchangePost.status.eq(status) : null;
     }
 

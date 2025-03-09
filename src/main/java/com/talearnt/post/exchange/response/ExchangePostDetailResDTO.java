@@ -3,6 +3,7 @@ package com.talearnt.post.exchange.response;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.enums.user.UserRole;
+import com.talearnt.util.common.S3Util;
 import com.talearnt.util.common.SplitUtil;
 import lombok.*;
 
@@ -56,7 +57,7 @@ public class ExchangePostDetailResDTO {
         this.isFavorite = isFavorite;
         this.title = title;
         this.content = content;
-        this.imageUrls = SplitUtil.splitStringToList(imageUrls);
+        this.imageUrls = S3Util.splitStringToList(imageUrls);
         this.count = count;
         this.favoriteCount = favoriteCount;
         this.openedChatRoomCount = openedChatRoomCount==null?0:openedChatRoomCount;
