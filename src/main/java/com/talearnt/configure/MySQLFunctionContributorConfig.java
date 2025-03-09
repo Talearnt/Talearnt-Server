@@ -16,5 +16,11 @@ public class MySQLFunctionContributorConfig implements FunctionContributor {
                         functionContributions.getTypeConfiguration()
                                 .getBasicTypeRegistry()
                                 .resolve(StandardBasicTypes.DOUBLE));
+
+        functionContributions.getFunctionRegistry()
+                .registerPattern("CUSTOM_GROUP_CONCAT_ASC", "GROUP_CONCAT(DISTINCT (?1) ORDER BY (?2) ASC)",
+                        functionContributions.getTypeConfiguration()
+                                .getBasicTypeRegistry()
+                                .resolve(StandardBasicTypes.STRING));
     }
 }
