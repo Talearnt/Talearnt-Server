@@ -3,6 +3,7 @@ package com.talearnt.s3;
 import com.talearnt.enums.post.PostType;
 import com.talearnt.s3.entity.FileUpload;
 import com.talearnt.s3.repository.FileUploadRepository;
+import com.talearnt.util.common.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,7 +29,7 @@ public class FileUploadService {
 
         //Urls -> entity로 변환
         List<FileUpload> fileUploadEntities = urls.stream()
-                .map(url-> FileUploadMapper.INSTANCE.toEntity(postNo,postType,userNo,url))
+                .map(url-> FileUploadMapper.INSTANCE.toEntity(postNo,postType,userNo,url.substring(S3Util.S3_DOMAIN_BASE_URL.length())))
                 .toList();
 
         //entity 저장

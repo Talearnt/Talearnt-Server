@@ -57,12 +57,6 @@ public class S3Service {
             throw new CustomRuntimeException(ErrorCode.FILE_UPLOAD_LENGTH_MISSING);
         }
 
-        //업로드할 파일 사이즈가 5242880를 넘을 경우 Exception
-        if(dtos.stream().mapToLong(S3FilesReqDTO::getFileSize).sum()>5242880){
-            log.error("S3 이미지 다중 업로드 실패 - 업로드된 파일 5MB 초과");
-            throw new CustomRuntimeException(ErrorCode.FILE_UPLOAD_SIZE_OVER);
-        }
-
         log.info("S3 이미지 다중 업로드 끝");
         return dtos.stream().map(file -> this.generatePresignedURL(file.getFileName(),file.getFileType(),file.getFileSize())).toList();
     }
@@ -85,7 +79,7 @@ public class S3Service {
     }
 
     private String createFileName(String filaName){
-        return UUID.randomUUID()+filaName;
+        return UUID.randomUUID().toString().replace("-","")+filaName.substring(filaName.lastIndexOf("."));
     }
 
 
