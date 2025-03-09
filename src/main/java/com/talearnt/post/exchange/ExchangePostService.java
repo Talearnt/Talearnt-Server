@@ -18,6 +18,7 @@ import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
+import com.talearnt.s3.FileUploadService;
 import com.talearnt.s3.entity.FileUpload;
 import com.talearnt.s3.repository.FileUploadRepository;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
@@ -53,7 +54,7 @@ public class ExchangePostService {
     private final MyTalentQueryRepository myTalentQueryRepository;
     private final ExchangePostRepository exchangePostRepository;
     private final TalentCategoryRepository talentCategoryRepository;
-    private final FileUploadRepository fileUploadRepository;
+    private final FileUploadService fileUploadService;
     private final ChatRoomRepository chatRoomRepository;
 
     /** 재능 교환 게시글 작성 <br>
@@ -131,14 +132,12 @@ public class ExchangePostService {
                 });
 
         //이미지를 업로드 했을 경우 DB에 저장
-        if (exchangePostReqDTO.getImageUrls() != null && !exchangePostReqDTO.getImageUrls().isEmpty()){
-            // 파일 업로드 경로 저장
-            List<FileUpload> fileUploads = exchangePostReqDTO.getImageUrls().stream().map(
-                    url-> new FileUpload(null,savedPostEntity.getExchangePostNo(), exchangePostReqDTO.getUserInfo().getUserNo(), PostType.EXCHANGE,url,null)
-            ).toList();
+        int insertedCount = fileUploadService.addPostFileUploads(savedPostEntity.getExchangePostNo(),PostType.EXCHANGE,exchangePostReqDTO.getUserInfo().getUserNo(),exchangePostReqDTO.getImageUrls());
 
-            // 파일 업로드 경로 모두 저장
-            fileUploadRepository.saveAll(fileUploads);
+        //images Urls이 비어 있지 않은데 등록된 이미지가 없을 경우 Exception
+        if (!exchangePostReqDTO.getImageUrls().isEmpty() && insertedCount == 0){
+            log.error("재능 교환 게시글 작성 실패 - 이미지 DB 저장이 0개 저장됨: {}", ErrorCode.FILE_FAILED_UPLOAD);
+            throw new CustomRuntimeException(ErrorCode.FILE_FAILED_UPLOAD);
         }
 
         //채팅방 개설 전 Entity 설정
