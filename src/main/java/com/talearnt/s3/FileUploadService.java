@@ -25,7 +25,7 @@ public class FileUploadService {
      * 다른 메소드 혹은 컨트롤러에서도 사용 가능하도록 만든 메소드<br>
      * 사용 조건은 로그인 여부를 이것을 사용하기 전에 미리 확인 시켜야 한다.*/
     public Integer addPostFileUploads(Long postNo, PostType postType, Long userNo, List<String> urls){
-        if (urls == null || urls.isEmpty()) return null;
+        if (urls == null || urls.isEmpty()) return 0;
 
         //Urls -> entity로 변환
         List<FileUpload> fileUploadEntities = urls.stream()
