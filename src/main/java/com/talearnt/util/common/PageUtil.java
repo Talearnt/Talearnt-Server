@@ -4,19 +4,29 @@ import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.util.exception.CustomRuntimeException;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
+
 public class PageUtil {
 
-    /**
+    /** 웹 전용
      * 이용하는 방법은 Page<Entity>를 넣으면 Pagination을 만들어 반환한다.
      * @param page : Page<Entity> 형태에서 제네릭을 안써서 Page 정보만 가지고 있는 상태.
      */
-    public static Pagination separatePaginationFromEntity(Page page) {
+    public static Pagination separatePaginationFromEntityToWeb(Page page, LocalDateTime latestCreatedAt) {
         return new Pagination.PaginationBuilder()
                 .hasNext(page.hasNext())
                 .hasPrevious(page.hasPrevious())
                 .totalPages(page.getTotalPages())
                 .currentPage(page.getNumber() + 1)
+                .totalCount(page.getTotalElements())
+                .latestCreatedAt(latestCreatedAt)
                 .build();
+    }
+
+    /** 모바일 전용
+     */
+    public static Pagination separatePaginationFromEntityToMobile(Page page) {
+        return Pagination.builder().hasNext(page.hasNext()).build();
     }
 
     /**
