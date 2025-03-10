@@ -154,12 +154,10 @@ public interface ExchangePostApi {
             "<h2><웹 참고 내용></h2>" +
             "<h2>2페이지 이상 호출 시 반드시 필요한 값 - 웹</h2>" +
             "<ul>" +
-                "<li>firstNo : 첫 번째 게시글 번호</li>" +
                 "<li>page : 다음 페이지 번호</li>" +
             "</ul>" +
-            "<p>firstNo는 중복 데이터를 제거하기 위한 기준 번호입니다.</p>" +
             "<p>page는 N번째 부터 Size 까지 뽑아오기 위해 존재합니다.</p>" +
-            "<p><strong>page번호가 2이상이지만, firstNo가 없을 경우</strong>와 <strong>lastNo가 존재할 경우 중복/누락 데이터가 발생</strong>하여 UX/DX를 개선하기 위해 이례적으로 Exception을 발생시킵니다.</p>" +
+            "<p><strong>lastNo가 존재할 경우 중복/누락 데이터가 발생</strong>하여 UX/DX를 개선하기 위해 이례적으로 Exception을 발생시킵니다.</p>" +
             "<hr>" +
             "<hr>" +
             "<h2>Response</h2>" +
@@ -179,11 +177,21 @@ public interface ExchangePostApi {
                 "<li>openedChatRoomCount : 신청된 채팅방 갯수</li>" +
                 "<li>favoriteCount : 게시글 찜 갯수</li>" +
                 "<li>isFavorite : 게시글 찜 여부</li>" +
-            "<br>" +
-                "<li>hasNext : 다음 게시글 호출 가능 여부</li>" +
-                "<li>hasPrevious : 이전 게시글 조회 가능 여부 (모바일 사용 X)</li>" +
-                "<li>totalPages : 총 게시글 개수 (모바일 사용 X)</li>" +
-                "<li>currentPage : 현재 페이지 번호 (모바일은 언제나 1)</li>" +
+            "</ul>" +
+            "<hr>" +
+            "<h2>Pagination 정보 - Mobile</h2>" +
+            "<ul>" +
+                "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
+            "</ul>" +
+            "<hr>" +
+            "<h2>Pagination 정보 - Web</h2>" +
+            "<ul>" +
+                "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
+                "<li>hasPrevious - 이전 페이지 이동 가능 여부</li>" +
+                "<li>totalCount - 총 데이터 개수</li>" +
+                "<li>totalPages - 총 페이지 개수</li>" +
+                "<li>currentPage - 현재 페이지 번호</li>" +
+                "<li>latestCreatedAt - 가장 최근 Data 작성일</li>" +
             "</ul>"
     )
     @ApiResponses(value = {
@@ -200,7 +208,6 @@ public interface ExchangePostApi {
                                                                                                                @RequestParam(value = "page",required = false,defaultValue = "1") @Schema(description = "모바일 사용 X (모바일은 언제나 1이어야 함), 웹만 사용") String page,
                                                                                                                @RequestParam(value = "size", required = false, defaultValue = "15") @Schema(description = "입력 안할 경우 기본 15개 반환, 필요시 50개 이하 호출 가능, 그 이상 불가능") String size,
                                                                                                                @RequestParam(value = "lastNo", required = false) @Schema(description = "마지막 게시글 번호") String lastNo,
-                                                                                                               @RequestParam(value = "firstNo", required = false) @Schema(description = "게시글 첫 번째 번호") String firstNo,
                                                                                                                @RequestParam(value = "path", required = false, defaultValue = "web") @Schema(description = "(mobile|web)") String path,
                                                                                                                Authentication auth);
 

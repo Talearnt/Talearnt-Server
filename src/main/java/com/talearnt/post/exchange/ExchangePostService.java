@@ -9,6 +9,7 @@ import com.talearnt.chat.repository.ChatRoomRepository;
 import com.talearnt.enums.chat.RoomMode;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.post.PostType;
+import com.talearnt.util.pagination.PagedListWrapper;
 import com.talearnt.post.exchange.entity.ExchangePost;
 import com.talearnt.post.exchange.entity.GiveTalent;
 import com.talearnt.post.exchange.entity.ReceiveTalent;
@@ -19,8 +20,6 @@ import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.s3.FileUploadService;
-import com.talearnt.s3.entity.FileUpload;
-import com.talearnt.s3.repository.FileUploadRepository;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
 import com.talearnt.util.common.PageUtil;
 import com.talearnt.util.common.PostUtil;
@@ -32,6 +31,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -163,7 +163,7 @@ public class ExchangePostService {
      * - 모집 상태 : ExchangePostStatus 값이 아닐 경우 null - 검증 완료<br>
      * - 페이지 번호 : Integer 가 아닐 경우 기본 값 1 (커뮤니티 공통)<br>
      * */
-    public PaginatedResponse<List<ExchangePostListResDTO>> getExchangePostList(List<String> giveTalents, List<String> receiveTalents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String lastNo, String firstNo, Authentication auth, String path){
+    public PaginatedResponse<List<ExchangePostListResDTO>> getExchangePostList(List<String> giveTalents, List<String> receiveTalents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String lastNo, Authentication auth, String path){
         log.info("재능 교환 게시글 목록 불러오기 시작");
 
         //유저가 로그인 했는 지 확인, 안했을 경우 찜 게시글 표시 False
@@ -181,21 +181,21 @@ public class ExchangePostService {
                 .page(page)
                 .size(size)
                 .lastNo(lastNo)
-                .firstNo(firstNo)
                 .build();
-
-        // 초기화 전
-        Page<ExchangePostListResDTO> result = null;
 
         //경로가 웹일 경우 Offset 방식으로 추출
         if (path.equalsIgnoreCase("web")){
-            //page 번호가가 2이상이지만, firstNo가 없거나 lastNo가 존재하는 경우
-            if ((condition.getPage().getPageNumber() > 0 && condition.getFirstNo() ==null) || condition.getLastNo() !=null){
-                log.info("재능 교환 게시글 목록 불러오기 실패 - 웹, 2페이지 이상 FirstNo 존재 X 혹은 lastNo가 넘어옴 : {}", ErrorCode.POST_FAILED_CALL_LIST);
+            //lastNo가 존재하는 경우
+            if (condition.getLastNo() !=null){
+                log.info("재능 교환 게시글 목록 불러오기 실패 - 웹, lastNo가 넘어옴 : {}", ErrorCode.POST_FAILED_CALL_LIST);
                 throw new CustomRuntimeException(ErrorCode.POST_FAILED_CALL_LIST);
             }
-            result = exchangePostQueryRepository.getFilteredExchangePostListToWeb(condition, currentUserNo);
-            return new PaginatedResponse<>(result.getContent(),PageUtil.separatePaginationFromEntity(result));
+            //필요 데이터 가져오기
+            PagedListWrapper<ExchangePostListResDTO> wrapperDTO = exchangePostQueryRepository.getFilteredExchangePostListToWeb(condition, currentUserNo);
+            //Page 로 정제
+            Page<ExchangePostListResDTO> result = new PageImpl<>(wrapperDTO.getList(),condition.getPage(),wrapperDTO.getPagedData().getTotal());
+
+            return new PaginatedResponse<>(result.getContent(),PageUtil.separatePaginationFromEntityToWeb(result, wrapperDTO.getPagedData().getLatestCreatedAt()));
         }
 
         // LastNo가 존재하지만 Page 번호가 1이 아닐 경우
@@ -205,11 +205,11 @@ public class ExchangePostService {
         }
 
         //경로가 모바일일 경우 Cursor 방식으로 추출
-        result = exchangePostQueryRepository.getFilteredExchangePostListToMobile(condition,currentUserNo);
+        Page<ExchangePostListResDTO> result = exchangePostQueryRepository.getFilteredExchangePostListToMobile(condition,currentUserNo);
 
         log.info("재능 교환 게시글 목록 불러오기 끝");
         //데이터 넣고, Pagination으로 변환 -> 데이터와 Page 분리하여 보내기
-        return new PaginatedResponse<>(result.getContent(),PageUtil.separatePaginationFromEntity(result));
+        return new PaginatedResponse<>(result.getContent(),PageUtil.separatePaginationFromEntityToMobile(result));
     }
 
 

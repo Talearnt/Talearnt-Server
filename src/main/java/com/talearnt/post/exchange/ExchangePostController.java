@@ -54,10 +54,9 @@ public class ExchangePostController implements ExchangePostApi{
                                                                                             @RequestParam(value = "page",required = false,defaultValue = "1") String page,
                                                                                             @RequestParam(value = "size",required = false,defaultValue = "15") String size,
                                                                                             @RequestParam(value = "lastNo", required = false) String lastNo,
-                                                                                            @RequestParam(value = "firstNo", required = false) String firstNo,
                                                                                             @RequestParam(value = "path", required = false, defaultValue = "web") String path,
                                                                                             Authentication auth){
-        return CommonResponse.success(exchangePostService.getExchangePostList(giveTalents,receiveTalents,order,duration,type,requiredBadge,status,page,size,lastNo,firstNo, auth, path));
+        return CommonResponse.success(exchangePostService.getExchangePostList(giveTalents,receiveTalents,order,duration,type,requiredBadge,status,page,size,lastNo, auth, path));
     }
 
     //게시글 작성

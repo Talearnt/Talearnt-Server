@@ -2,10 +2,8 @@ package com.talearnt.post.exchange.repository;
 
 
 import com.querydsl.core.Tuple;
-import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.*;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.admin.category.entity.QTalentCategory;
@@ -14,7 +12,8 @@ import com.talearnt.chat.entity.QChatRoom;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.enums.post.PostType;
-import com.talearnt.post.community.response.CommunityPostListResDTO;
+import com.talearnt.util.pagination.PagedData;
+import com.talearnt.util.pagination.PagedListWrapper;
 import com.talearnt.post.exchange.entity.*;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
@@ -266,7 +265,7 @@ public class ExchangePostQueryRepository {
     /**
      * 재능 교환 목록 불러오기 - 웹 전용(Filter 조건)<br>
      */
-    public Page<ExchangePostListResDTO> getFilteredExchangePostListToWeb(ExchangeSearchConditionDTO searchConditionDTO, Long currentUserNo) {
+    public PagedListWrapper<ExchangePostListResDTO> getFilteredExchangePostListToWeb(ExchangeSearchConditionDTO searchConditionDTO, Long currentUserNo) {
 
         List<ExchangePostListResDTO> data = getListSelected(currentUserNo)
                 .where(
@@ -277,8 +276,7 @@ public class ExchangePostQueryRepository {
                         durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
                         exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
                         requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
-                        exchangePostStatusEq(searchConditionDTO.getStatus()), // 모집 상태가 일치하고
-                        firstNoLoe(searchConditionDTO.getFirstNo()) //첫 번째 번호보다 같거나 작고
+                        exchangePostStatusEq(searchConditionDTO.getStatus()) // 모집 상태가 일치하고
                 )
                 .orderBy(orderEq(searchConditionDTO.getOrder()).toArray(new OrderSpecifier[0]))// 최신순으로 정렬
                 .groupBy(exchangePost.exchangePostNo)
@@ -286,9 +284,13 @@ public class ExchangePostQueryRepository {
                 .limit(searchConditionDTO.getPage().getPageSize())
                 .fetch();
 
-        Long total = Optional.ofNullable(
+         PagedData pagedData = Optional.ofNullable(
                 factory
-                        .select(exchangePost.count())
+                        .select(Projections.constructor(PagedData.class,
+                                exchangePost.count(),
+                                Expressions.dateTemplate(LocalDateTime.class,
+                                        "MAX({0})",
+                                        exchangePost.createdAt)))
                         .from(exchangePost)
                         .where(
                                 exchangePost.deletedAt.isNull(), //게시글이 삭제되지 않았고,
@@ -297,13 +299,11 @@ public class ExchangePostQueryRepository {
                                 durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
                                 exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
                                 requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
-                                exchangePostStatusEq(searchConditionDTO.getStatus()), // 모집 상태가 일치하고
-                                firstNoLoe(searchConditionDTO.getFirstNo()) //첫 번째 번호보다 같거나 작고
+                                exchangePostStatusEq(searchConditionDTO.getStatus()) // 모집 상태가 일치하고
                         ).fetchOne()
-        ).orElse(0L);
-
-
-        return new PageImpl<>(data, searchConditionDTO.getPage(), total);
+        ).orElse(null);
+         
+        return PagedListWrapper.<ExchangePostListResDTO>builder().list(data).pagedData(pagedData).build();
     }
 
 
@@ -341,9 +341,6 @@ public class ExchangePostQueryRepository {
                 .leftJoin(chatRequest).on(chatRequest.chatRoom.eq(chatRoom));
     }
 
-    private BooleanExpression firstNoLoe(Long firstNo) {
-        return firstNo != null ? exchangePost.exchangePostNo.loe(firstNo) : null;
-    }
 
     /**
      * 재능 교환 제목 검색(title)가 searchTitle과 같은 값만 조건 탐색.
