@@ -101,7 +101,7 @@ public enum ErrorCode {
     POST_DURATION_MISSING("400-POST-10", "진행 기간을 선택해 주세요."),
     POST_FAILED_UPDATE("400-POST-11","게시글 수정에 실패하였습니다."),
     POST_FAILED_DELETE("400-POST-12","게시글 삭제에 실패하였습니다."),
-    POST_FAILED_CALL_LIST("400-POST-13","게시글 목록 조회에 실패했습니다. 필요 값을 확인하세요. (Page|FirstNo) OR (LastNo)"),
+    POST_FAILED_CALL_LIST("400-POST-13","게시글 목록 조회에 실패했습니다. 필요 값을 확인하세요. (Page-Web) OR (LastNo-Mobile)"),
 
     //나의 재능 관련 오류
     MY_TALENT_KEYWORD_NOT_REGISTERED("404-MYTALENT-01","나의 재능을 등록하지 않았습니다."),

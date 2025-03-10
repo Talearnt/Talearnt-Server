@@ -62,7 +62,7 @@ public class CommunityPostService {
         Page<CommunityPostListResDTO> result = communityPostQueryRepository.getCommunityPostList(userNo,condition);
 
         log.info("커뮤니티 게시글 목록 조회 끝");
-        return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntity(result));
+        return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToMobile(result));
     }
 
 
