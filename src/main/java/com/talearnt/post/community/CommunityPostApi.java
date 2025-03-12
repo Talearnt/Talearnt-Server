@@ -82,11 +82,9 @@ public interface CommunityPostApi {
             @RequestParam(required = false) String postType,
             @RequestParam(required = false, defaultValue = "recent") String order,
             @RequestParam(required = false, defaultValue = "web") String path,
-            @RequestParam(required = false) String baseTime,
             @RequestParam(required = false, defaultValue = "1") String page,
             @RequestParam(required = false, defaultValue = "12") String size,
             @RequestParam(required = false) String lastNo,
-            @RequestParam(required = false) String popularScore,
             Authentication authentication);
 
     @Operation(summary = "커뮤니티 게시글 작성"

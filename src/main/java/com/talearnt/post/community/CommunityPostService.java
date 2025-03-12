@@ -60,7 +60,7 @@ public class CommunityPostService {
 
 
         //모바일 게시글 목록 가져오기
-        Page<CommunityPostListResDTO> result = communityPostQueryRepository.getCommunityPostList(userNo,condition);
+        Page<CommunityPostListResDTO> result = communityPostQueryRepository.getCommunityPostListToMobile(userNo,condition);
 
         log.info("커뮤니티 게시글 목록 조회 끝");
         return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToMobile(result));
