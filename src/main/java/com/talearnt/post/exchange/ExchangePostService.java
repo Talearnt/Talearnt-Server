@@ -134,7 +134,6 @@ public class ExchangePostService {
         //이미지를 업로드 했을 경우 DB에 저장
         int insertedCount = fileUploadService.addPostFileUploads(savedPostEntity.getExchangePostNo(),PostType.EXCHANGE,exchangePostReqDTO.getUserInfo().getUserNo(),exchangePostReqDTO.getImageUrls());
 
-        log.info("ㅁ낭ㄹ만ㅇ루ㅏㅜㅁㄴㅇ라ㅏㅁㄴㅇㄹ : {} ",exchangePostReqDTO.getImageUrls());
         //images Urls이 비어 있지 않은데 등록된 이미지가 없을 경우 Exception
         if (exchangePostReqDTO.getImageUrls() !=null && !exchangePostReqDTO.getImageUrls().isEmpty() && insertedCount == 0){
             log.error("재능 교환 게시글 작성 실패 - 이미지 DB 저장이 0개 저장됨: {}", ErrorCode.FILE_FAILED_UPLOAD);

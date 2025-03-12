@@ -108,7 +108,7 @@ public class CommunityPostService {
 
         //이미지 업로드
         Integer uploadCount = fileUploadService.addPostFileUploads(addedCommunityPost.getCommunityPostNo(),reqDTO.getPostType(),reqDTO.getUserInfo().getUserNo(),reqDTO.getImageUrls());
-        if (uploadCount != null && uploadCount < 1){
+        if (reqDTO.getImageUrls() != null && !reqDTO.getImageUrls().isEmpty() && uploadCount < 1){
             log.error("커뮤니티 게시글 등록 실패 - 이미지 업로드 실패 : {}", ErrorCode.FILE_FAILED_UPLOAD);
             throw new CustomRuntimeException(ErrorCode.FILE_FAILED_UPLOAD);
         }

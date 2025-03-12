@@ -20,6 +20,7 @@ import com.talearnt.post.community.request.CommunityPostSearchConditionDTO;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
 import com.talearnt.post.community.response.CommunityPostListResDTO;
 import com.talearnt.post.community.response.CommunityPostMobileListResDTO;
+import com.talearnt.s3.entity.QFileUpload;
 import com.talearnt.user.infomation.entity.QUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -42,7 +43,7 @@ public class CommunityPostQueryRepository {
     private final QCommunityComment communityComment = QCommunityComment.communityComment;
     private final QCommunityReply communityReply = QCommunityReply.communityReply;
     private final QLikeCommunity likeCommunity = QLikeCommunity.likeCommunity;
-
+    private final QFileUpload fileUpload = QFileUpload.fileUpload;
 
     //커뮤니티 게시글 삭제
     public long deleteCommunityPostByPostNo(Long postNo){
@@ -88,33 +89,25 @@ public class CommunityPostQueryRepository {
                                 user.profileImg,
                                 user.authority,
 
+                                communityPost.communityPostNo,
                                 communityPost.title,
                                 communityPost.content,
                                 communityPost.postType,
+                                Expressions.stringTemplate("function('CUSTOM_GROUP_CONCAT_ASC',{0},{1})", fileUpload.url, fileUpload.fileUploadNo),
                                 communityPost.count,
-                                JPAExpressions
-                                        .select(likeCommunity.count().gt(0))  // 로그인한 유저가 좋아요 했는지 확인
-                                        .from(likeCommunity)
-                                        .where(likeCommunity.communityPost.communityPostNo.eq(communityPost.communityPostNo),
-                                                likeCommunity.userNo.eq(currentUserNo),
-                                                likeCommunity.canceledAt.isNull()),
-                                likeCommunity.communityPost.countDistinct(),
-                                ExpressionUtils.as(
-                                        JPAExpressions.select(communityComment.countDistinct().add(communityReply.countDistinct()))
-                                                .from(communityComment)
-                                                .leftJoin(communityReply).on(communityReply.communityComment.eq(communityComment),
-                                                        communityReply.deletedAt.isNull())
-                                                .where(communityComment.communityPost.eq(communityPost),
-                                                        communityComment.deletedAt.isNull()),
-                                        "commentCount"
-                                ),
+                                Expressions.booleanTemplate("MAX(CASE WHEN {0} THEN 1 ELSE 0 END) = 1", likeCommunity.userNo.eq(currentUserNo)),
+                                likeCommunity.countDistinct(),
+                                communityComment.countDistinct().add(communityReply.countDistinct()),
                                 communityPost.createdAt
                         ))
                         .from(communityPost)
                         .leftJoin(user).on(user.eq(communityPost.user))
                         .leftJoin(communityComment).on(communityComment.communityPost.eq(communityPost))
+                        .leftJoin(communityReply).on(communityReply.communityComment.eq(communityComment))
                         .leftJoin(likeCommunity).on(likeCommunity.communityPost.eq(communityPost)
                                 .and(likeCommunity.canceledAt.isNull()))
+                        .leftJoin(fileUpload).on(fileUpload.postNo.eq(currentPostNo),
+                                fileUpload.postType.eq(communityPost.postType))
                         .where(communityPost.deletedAt.isNull(),
                                 communityPost.communityPostNo.eq(currentPostNo))
                         .groupBy(communityPost)
