@@ -116,14 +116,43 @@ public class CommunityPostQueryRepository {
     }
 
     //커뮤니티 게시글 목록 조회
-    public Page<CommunityPostListResDTO> getCommunityPostList(Long userNo, CommunityPostSearchConditionDTO condition){
-        JPAQuery<CommunityPostListResDTO> selected = null;
+    public Page<CommunityPostListResDTO> getCommunityPostListToMobile(Long userNo, CommunityPostSearchConditionDTO condition){
+        JPAQuery<CommunityPostListResDTO> selected = getSeletedList(condition.getPath(),condition.getOrder(),userNo);
 
-        if (condition.getPath().equalsIgnoreCase("mobile")){
+        List <CommunityPostListResDTO> data = selected.from(communityPost)
+                .leftJoin(user).on(communityPost.user.userNo.eq(user.userNo))
+                .leftJoin(likeCommunity).on(likeCommunity.communityPost.communityPostNo.eq(communityPost.communityPostNo),
+                        likeCommunity.canceledAt.isNull())
+                .leftJoin(communityComment).on(communityPost.communityPostNo.eq(communityComment.communityPost.communityPostNo),
+                        communityComment.deletedAt.isNull())//댓글 조인
+                .leftJoin(communityReply).on(communityComment.commentNo.eq(communityReply.communityComment.commentNo),
+                        communityReply.deletedAt.isNull())//답글 조인
+                .where(communityPost.deletedAt.isNull(),// 게시글이 삭제 되지 않았고
+                        postTypeEq(condition.getPostType()),// 포스트 타입이 같고, 같지 않을 경우 null == 전체 검색
+                        lastNoLt(condition.getOrder(), condition.getLastNo())//마지막 게시글 번호보다 작은 것
+                )
+                .orderBy(orderEq(condition.getOrder()).toArray(new OrderSpecifier[0]))
+                .groupBy(communityPost.communityPostNo)
+                .limit(condition.getPage().getPageSize())
+                .fetch();
+
+        Long total = Optional.ofNullable(
+                factory.select(communityPost.count())
+                        .from(communityPost)
+                        .where(communityPost.deletedAt.isNull(),
+                                postTypeEq(condition.getPostType()),
+                                lastNoLt(condition.getOrder(), condition.getLastNo()))
+                        .fetchOne()
+        ).orElse(0L);
+        return new PageImpl<>(data, condition.getPage(), total);
+    }
+
+    //모바일, 웹 공통 Select
+    private JPAQuery<CommunityPostListResDTO> getSeletedList(String path, String order, Long userNo){
+        JPAQuery<CommunityPostListResDTO> selected = null;
+        //모바일이거나, 웹 핫한 게시글 호출 시
+        if (path.equalsIgnoreCase("mobile") || (path.equalsIgnoreCase("web") && order.equalsIgnoreCase("hot"))){
             selected = factory.select(Projections.constructor(CommunityPostMobileListResDTO.class,
-                    Expressions.numberTemplate(Double.class, "({0} * 0.7 + {1} * 0.3)",
-                            likeCommunity.countDistinct().coalesce(0L),
-                            communityPost.count.coalesce(0)).as("popularScore"),
                     user.profileImg,
                     user.nickname,
                     user.authority,
@@ -136,12 +165,9 @@ public class CommunityPostQueryRepository {
                     Expressions.booleanTemplate("MAX(CASE WHEN {0} THEN 1 ELSE 0 END) = 1", likeCommunity.userNo.eq(userNo)),
                     communityPost.createdAt,
                     Expressions.stringTemplate("SUBSTRING(CAST(REGEXP_REPLACE({0}, '<[^>]*>', '') AS STRING), 1, 100)", communityPost.content)
-                    ));
+            ));
         }else{ // 웹 반환
             selected = factory.select(Projections.constructor(CommunityPostListResDTO.class,
-                    Expressions.numberTemplate(Double.class, "({0} * 0.7 + {1} * 0.3)",
-                            likeCommunity.countDistinct().coalesce(0L),
-                            communityPost.count.coalesce(0)).as("popularScore"),
                     user.profileImg,
                     user.nickname,
                     user.authority,
@@ -155,46 +181,16 @@ public class CommunityPostQueryRepository {
                     communityPost.createdAt
             ));
         }
-
-
-
-        List <CommunityPostListResDTO> data = selected.from(communityPost)
-                .leftJoin(user).on(communityPost.user.userNo.eq(user.userNo))
-                .leftJoin(likeCommunity).on(likeCommunity.communityPost.communityPostNo.eq(communityPost.communityPostNo),
-                        likeCommunity.canceledAt.isNull())
-                .leftJoin(communityComment).on(communityPost.communityPostNo.eq(communityComment.communityPost.communityPostNo),
-                        communityComment.deletedAt.isNull())//댓글 조인
-                .leftJoin(communityReply).on(communityComment.commentNo.eq(communityReply.communityComment.commentNo),
-                        communityReply.deletedAt.isNull())//답글 조인
-                .where(communityPost.deletedAt.isNull(),// 게시글이 삭제 되지 않았고
-                        postTypeEq(condition.getPostType()),// 포스트 타입이 같고, 같지 않을 경우 null == 전체 검색
-                        lastNoLt(condition.getOrder(), condition.getLastNo()),//마지막 게시글 번호보다 작은 것
-                        baseTimeBetween(condition.getOrder(), condition.getBaseTime())//Hot 게시글 시간 조건
-                )
-                .orderBy(orderEq(condition.getOrder()).toArray(new OrderSpecifier[0]))
-                .groupBy(communityPost.communityPostNo,
-                        user.userNo)
-                .having(lastPopularScore(condition.getOrder(),condition.getPopularScore(),condition.getLastNo()))
-                .limit(condition.getPage().getPageSize())
-                .fetch();
-
-        Long total = Optional.ofNullable(
-                factory.select(communityPost.count())
-                        .from(communityPost)
-                        .where(communityPost.deletedAt.isNull(),
-                                postTypeEq(condition.getPostType()),
-                                baseTimeBetween(condition.getOrder(),condition.getBaseTime()))
-                        .fetchOne()
-        ).orElse(0L);
-        return new PageImpl<>(data, condition.getPage(), total);
+        return selected;
     }
+
 
     /** 인기순위 점수 구하기 좋아요 * 0.7 + 조회수 * 0.3
      * Hot이 아닐 경우 구해지지 않음,
      * 추후 인기순이 나올 경우 이것으로 계산하고 where절의 baseTimeBetween을 최신순으로 바꾸면 사용 가능
      * */
-    private BooleanExpression lastPopularScore(String order, Double popularScore, Long lastNo){
-        if (!"hot".equalsIgnoreCase(order) || popularScore == null || lastNo == null) {
+    private BooleanExpression lastPopularScore(String order, Long lastNo){
+        if (!"hot".equalsIgnoreCase(order) || lastNo == null) {
             return null;
         }
 
@@ -204,22 +200,23 @@ public class CommunityPostQueryRepository {
                 likeCommunity.countDistinct().coalesce(0L),
                 communityPost.count.coalesce(0)
         );
-        return currentPopularScore.lt(popularScore)
+
+        NumberExpression<Double> lastPopularScore = Expressions.numberTemplate(
+                Double.class,
+                "({0} * 0.7 + {1} * 0.3)",
+                likeCommunity.countDistinct().coalesce(0L),
+                communityPost.count.coalesce(0)
+        ).where(communityPost.communityPostNo.eq(lastNo));
+
+        return currentPopularScore.lt(lastPopularScore)
                 .or(
-                        currentPopularScore.eq(popularScore)
+                        currentPopularScore.eq(lastPopularScore)
                                 .and(communityPost.communityPostNo.lt(lastNo))
                 );
 
     }
 
-    /** 커뮤니티 게시글 핫한 게시글 불러올 때 시간 제어*/
-    private BooleanExpression baseTimeBetween(String order, LocalDateTime baseTime){
-        if ("hot".equalsIgnoreCase(order)){
-            return communityPost.createdAt.between(baseTime.minusDays(3),baseTime);
-        }
-        // 최신순
-        return communityPost.createdAt.loe(baseTime);
-    }
+
 
     /** 커뮤니티 게시글 Order
      * 핫한 게시물을 뽑아올 때는 3일 이내

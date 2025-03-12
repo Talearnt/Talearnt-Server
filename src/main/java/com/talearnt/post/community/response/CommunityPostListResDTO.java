@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 public class CommunityPostListResDTO {
-    private Double popularScore;
     private String profileImg;
     private String nickname;
     private UserRole authority;

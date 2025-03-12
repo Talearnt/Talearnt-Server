@@ -40,7 +40,7 @@ public class CommunityPostService {
      * - 모바일인가? 웹인가?
      * */
     @LogRunningTime
-    public PaginatedResponse<List<CommunityPostListResDTO>> getCommunityPostList(Authentication authentication, String postType, String order, String path, String lastNo, String popularScore, String baseTime, String page, String size){
+    public PaginatedResponse<List<CommunityPostListResDTO>> getCommunityPostList(Authentication authentication, String postType, String order, String path, String lastNo, String page, String size){
         log.info("커뮤니티 게시글 목록 조회 시작 : {} - {} - {}",postType,order,path);
 
         //로그인 여부 확인, 안했을 경우 user no = 0; 좋아요 여부 확인용!
@@ -53,12 +53,13 @@ public class CommunityPostService {
                 .path(path)
                 .page(page)
                 .size(size)
-                .baseTime(baseTime)
                 .lastNo(lastNo)
-                .popularScore(popularScore)
                 .build();
 
-        //게시글 가져오기
+        //웹 게시글 목록 가져오기
+
+
+        //모바일 게시글 목록 가져오기
         Page<CommunityPostListResDTO> result = communityPostQueryRepository.getCommunityPostList(userNo,condition);
 
         log.info("커뮤니티 게시글 목록 조회 끝");
