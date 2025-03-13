@@ -15,11 +15,13 @@ import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.log.LogRunningTime;
+import com.talearnt.util.pagination.PagedListWrapper;
 import com.talearnt.util.response.PaginatedResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +59,20 @@ public class CommunityPostService {
                 .build();
 
         //웹 게시글 목록 가져오기
+        if ("web".equalsIgnoreCase(path)){
+            // LastNo가 null이 아니면 Exception 발생
+            if (condition.getLastNo() != null){
+                log.error("커뮤니티 게시글 목록 조회 실패 - 웹 : lastNo 포함 : {}", ErrorCode.POST_FAILED_CALL_LIST);
+                throw new CustomRuntimeException(ErrorCode.POST_FAILED_CALL_LIST);
+            }
 
+            //웹 게시글 목록 조회
+            PagedListWrapper<CommunityPostListResDTO> wrapper = communityPostQueryRepository.getCommunityPostListToWeb(userNo, condition);
+            //페이지 정보로 변환
+            Page<CommunityPostListResDTO> result = new PageImpl<>(wrapper.getList(),condition.getPage(),wrapper.getPagedData().getTotal());
+            //반환
+            return new PaginatedResponse<>(result.getContent(),PageUtil.separatePaginationFromEntityToWeb(result, wrapper.getPagedData().getLatestCreatedAt()));
+        }
 
         //모바일 게시글 목록 가져오기
         Page<CommunityPostListResDTO> result = communityPostQueryRepository.getCommunityPostListToMobile(userNo,condition);
@@ -72,6 +87,7 @@ public class CommunityPostService {
      * - 존재하는 게시글인가?
      * - 조회수 증가*/
     @Transactional
+    @LogRunningTime
     public CommunityPostDetailResDTO getCommunityPostDetail(Long postNo, Authentication auth){
         log.info("커뮤니티 게시글 상세보기 시작 : {}", postNo);
 
@@ -98,6 +114,7 @@ public class CommunityPostService {
      * - 이미지 경로가 제대로 되었는가? (테스트 완료 후 추가)
      * */
     @Transactional
+    @LogRunningTime
     public String addCommunityPost(CommunityPostReqDTO reqDTO){
         log.info("커뮤니티 게시글 등록 시작 : {}", reqDTO);
 
@@ -130,6 +147,7 @@ public class CommunityPostService {
      * - 이미지 수정했는가?
      * */
     @Transactional
+    @LogRunningTime
     public Void updateCommunityPost(Long postNo, CommunityPostReqDTO communityPostReqDTO){
         log.info("커뮤니티 게시글 수정 시작 : {}",postNo);
 
@@ -167,6 +185,7 @@ public class CommunityPostService {
      * - 삭제된 게시글인가?
      * */
     @Transactional
+    @LogRunningTime
     public Void deleteCommunityPost(Long postNo, Authentication authentication){
         log.info("커뮤니티 게시글 삭제 시작 : {} ", postNo);
 

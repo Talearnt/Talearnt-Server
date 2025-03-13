@@ -22,6 +22,8 @@ import com.talearnt.post.community.response.CommunityPostListResDTO;
 import com.talearnt.post.community.response.CommunityPostMobileListResDTO;
 import com.talearnt.s3.entity.QFileUpload;
 import com.talearnt.user.infomation.entity.QUser;
+import com.talearnt.util.pagination.PagedData;
+import com.talearnt.util.pagination.PagedListWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.query.criteria.JpaSubQuery;
@@ -119,9 +121,45 @@ public class CommunityPostQueryRepository {
         );
     }
 
+    public PagedListWrapper<CommunityPostListResDTO> getCommunityPostListToWeb(Long userNo, CommunityPostSearchConditionDTO condition){
+        JPAQuery<CommunityPostListResDTO> selected = getSeletedList(condition.getPath(), condition.getOrder(), userNo);
+
+        List<CommunityPostListResDTO> data = selected.from(communityPost)
+                .leftJoin(user).on(communityPost.user.userNo.eq(user.userNo))
+                .leftJoin(likeCommunity).on(likeCommunity.communityPost.communityPostNo.eq(communityPost.communityPostNo),
+                        likeCommunity.canceledAt.isNull())
+                .leftJoin(communityComment).on(communityPost.communityPostNo.eq(communityComment.communityPost.communityPostNo),
+                        communityComment.deletedAt.isNull())//댓글 조인
+                .leftJoin(communityReply).on(communityComment.commentNo.eq(communityReply.communityComment.commentNo),
+                        communityReply.deletedAt.isNull())//답글 조인
+                .where(communityPost.deletedAt.isNull(),// 게시글이 삭제 되지 않았고
+                        postTypeEq(condition.getPostType())// 포스트 타입이 같고, 같지 않을 경우 null == 전체 검색
+                )
+                .groupBy(communityPost.communityPostNo)
+                .orderBy(orderEq(condition.getOrder()).toArray(new OrderSpecifier[0]))
+                .offset(condition.getPage().getOffset())
+                .limit(condition.getPage().getPageSize())
+                .fetch();
+
+        PagedData pagedData = factory.select(Projections.constructor(PagedData.class,
+                        communityPost.countDistinct(),
+                        Expressions.dateTemplate(LocalDateTime.class,
+                                "MAX({0})",
+                                communityPost.createdAt)))
+                .from(communityPost)
+                .where(communityPost.deletedAt.isNull(),// 게시글이 삭제 되지 않았고
+                        postTypeEq(condition.getPostType())// 포스트 타입이 같고, 같지 않을 경우 null == 전체 검색
+                ).fetchOne();
+
+
+        return PagedListWrapper.<CommunityPostListResDTO>builder().list(data).pagedData(pagedData).build();
+    }
+
+
+
     //커뮤니티 게시글 목록 조회 - 모바일
     public Page<CommunityPostListResDTO> getCommunityPostListToMobile(Long userNo, CommunityPostSearchConditionDTO condition) {
-        //마지막 게시글 인기 점수 뽑기
+        //마지막 게시글 인기 점수 뽑기 - 커서 기반 페이지네이션
         Double lastPopularScore = null;
         if (condition.getOrder().equalsIgnoreCase("hot") && condition.getLastNo() != null) {
             lastPopularScore = factory.select(Expressions.numberTemplate(
@@ -156,9 +194,8 @@ public class CommunityPostQueryRepository {
                 .orderBy(orderEq(condition.getOrder()).toArray(new OrderSpecifier[0]))
                 .limit(condition.getPage().getPageSize())
                 .fetch();
-
-
-        Long total =generatedJdbcDynamicQuery(condition.getOrder(), condition.getLastNo(), lastPopularScore);
+        //인라인 뷰 테이블로 페이지 total 값 가져오기
+        Long total = generatedJdbcDynamicQuery(condition.getOrder(), condition.getLastNo(), lastPopularScore);
         return new PageImpl<>(data, condition.getPage(), total);
     }
 
@@ -167,12 +204,11 @@ public class CommunityPostQueryRepository {
         List<Object> params = new ArrayList<>();
 
         sql.append("""
-                SELECT count(community.postNo)
-                FROM talearnt.community_post cp
-                LEFT JOIN (
-                		SELECT (count(DISTINCT lc.like_no) * 0.7 + cp.count * 0.3) AS popular, cp.community_post_no AS postNo FROM talearnt.community_post cp
-                		LEFT JOIN talearnt.like_community lc ON lc.community_post_no = cp.community_post_no
-                		WHERE cp.deleted_at IS NULL
+             SELECT count(community.postNo)
+             FROM (SELECT (count(DISTINCT lc.like_no) * 0.7 + cp.count * 0.3) AS popular, cp.community_post_no AS postNo
+                    FROM talearnt.community_post cp
+                    LEFT JOIN talearnt.like_community lc ON lc.community_post_no = cp.community_post_no
+                    WHERE cp.deleted_at IS NULL
                 """);
         //최근 게시글 정렬이고 LastNo가 있으면 Where절에 추가
         if ("recent".equalsIgnoreCase(order) && lastNo != null) {
@@ -192,7 +228,7 @@ public class CommunityPostQueryRepository {
         }
         sql.append("""
                     ) AS community 
-                    ON community.postNo = cp.community_post_no
+                    ORDER BY community.popular DESC, community.postNo desc;
                 """);
 
         return jdbcTemplate.queryForObject(sql.toString(),params.toArray(),Long.class);

@@ -26,6 +26,11 @@ public interface CommunityPostApi {
             "<p>path에 (mobile|web) 으로 보내주셔야하고 보내지 않을 경우에는 web으로 기본 설정 되어 있습니다.</p>" +
             "<p>커뮤니티 게시글의 order는 (recent|hot)으로 구성 되어 있고, 기본 값은 recent입니다.</p>" +
             "<hr/>" +
+            "<h2>웹 참고 내용</h2>" +
+            "<p>웹은 Page하고 Size만 보내주시면 됩니다.</p>" +
+            "<p>Last No를 포함할 시 예외적으로 목록 조회 Exception이 발생합니다.</p>" +
+            "<p>order가 hot이면 모바일처럼 Content가 포함되어 넘어갑니다.</p>" +
+            "<hr/>" +
             "<h2>모바일 참고 내용</h2>" +
             "<p>첫 게시글 호출 시 path, order, size만 보내고 2페이지 이상 호출 시 lastNo를 추가하시면 됩니다.</p>" +
             "<p>order : recent(최신순) 과 LastNo : 게시글 마지막 번호를 같이 보내면 최신순 다음 페이지 호출입니다.</p>" +
@@ -33,7 +38,7 @@ public interface CommunityPostApi {
             "<p>page는 무조건 1로 보내셔야 합니다.</p>" +
             "<p>size는 자유입니다. 기본 12로 구현되어 있습니다.</p>" +
             "<hr/>" +
-            "<h2>Response - Mobile</h2>" +
+            "<h2>Response - 공통</h2>" +
             "<ul>" +
                 "<li>profileImg : 작성자의 프로필 이미지 경로</li>" +
                 "<li>nickname : 작성자의 닉네임</li>" +
@@ -46,9 +51,11 @@ public interface CommunityPostApi {
                 "<li>likeCount : 게시글 좋아요 개수</li>" +
                 "<li>isLike : 게시글 좋아요 여부(true:좋아요, false:안누름)</li>" +
                 "<li>createdAt : 게시글 작성일</li>" +
-                "<li>content : 게시글 내용(path=mobile 일 경우만 나옴)</li>" +
-                "<br>"+
-
+            "</ul>" +
+            "<hr/>" +
+            "<h2>Response - 모바일에서 추가</h2>" +
+            "<ul>" +
+                "<li>content : 게시글 내용</li>" +
             "</ul>" +
             "<hr/>" +
             "<h2>pagination - Mobile</h2>" +
