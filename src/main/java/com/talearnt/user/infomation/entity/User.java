@@ -53,7 +53,7 @@ public class User {
     private LocalDateTime registeredAt;
 
     @UpdateTimestamp //update 쿼리가 발생했을 때 현재 시간값 적용
-    @Column(nullable = false)
+    @Column(insertable = false)
     private LocalDateTime lastLogin;
 
     @Column(nullable = false, length = 10)

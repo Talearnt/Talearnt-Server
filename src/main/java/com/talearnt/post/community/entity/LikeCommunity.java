@@ -3,7 +3,6 @@ package com.talearnt.post.community.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -26,7 +25,7 @@ public class LikeCommunity {
     private Long userNo;
 
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     private LocalDateTime canceledAt;
