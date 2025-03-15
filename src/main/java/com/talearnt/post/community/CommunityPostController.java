@@ -1,10 +1,8 @@
 package com.talearnt.post.community;
 
-import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.post.community.request.CommunityPostReqDTO;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
 import com.talearnt.post.community.response.CommunityPostListResDTO;
-import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.version.RestControllerV1;
@@ -27,7 +25,7 @@ public class CommunityPostController implements CommunityPostApi{
     private final CommunityPostService communityPostService;
 
     //커뮤니티 게시글 목록
-    @GetMapping("posts/communities")
+    @GetMapping("/posts/communities")
     public ResponseEntity<CommonResponse<PaginatedResponse<List<CommunityPostListResDTO>>>> getCommunityPostList(
             @RequestParam(required = false) String postType,
             @RequestParam(required = false, defaultValue = "recent") String order,

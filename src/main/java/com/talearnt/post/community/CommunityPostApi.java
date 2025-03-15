@@ -60,9 +60,17 @@ public interface CommunityPostApi {
             "<hr/>" +
             "<h2>pagination - Mobile</h2>" +
             "<ul>" +
-                "<li>hasNext : 다음 게시글 조회 가능 여부</li>" +
+                "<li>hasNext : 다음 게시글 이동 가능 여부</li>" +
             "</ul>" +
-            "")
+            "<h2>pagination - Web</h2>" +
+            "<ul>" +
+                "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
+                "<li>hasPrevious - 이전 페이지 이동 가능 여부</li>" +
+                "<li>totalCount - 총 데이터 개수</li>" +
+                "<li>totalPages - 총 페이지 개수</li>" +
+                "<li>currentPage - 현재 페이지 번호</li>" +
+                "<li>latestCreatedAt - 가장 최근 Data 작성일</li>" +
+            "</ul>")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200")
     })
