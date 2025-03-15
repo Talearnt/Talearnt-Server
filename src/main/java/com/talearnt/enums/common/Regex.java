@@ -23,6 +23,7 @@ public enum Regex {
     SMS_TYPE("^[a-zA-Z]{4,}$"),
     FILE_TYPE("^(image/jpeg|image/png|image/tiff|application/pdf)$"),
     FILE_EXTENSION("(?i)^.*\\.(jpg|jpeg|png|tiff|jfif|pdf|webp|gif)$"),
-    POST_TYPE("^(EXCHANGE|FREE|QUESTION|STUDY)$");
+    POST_TYPE("^(EXCHANGE|FREE|QUESTION|STUDY)$"),
+    NUMBER_TYPE_PRIMARY_KEY("^[0-9]$");
     private final String pattern;
 }
