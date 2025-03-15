@@ -19,6 +19,6 @@ public class CommentReqDTO {
     private UserInfo userInfo;
     @DynamicValid(errorCode = ErrorCode.COMMENT_MISMATCH_POST_NUMBER, pattern = Regex.NUMBER_TYPE_PRIMARY_KEY)
     private Long communityPostNo;
-    @DynamicValid(errorCode = ErrorCode.COMMENT_CONTENT_OVER_LENGTH, minLength = 2, maxLength = 300)
+    @DynamicValid(errorCode = ErrorCode.COMMENT_CONTENT_OVER_LENGTH, minLength = 3, maxLength = 300)
     private String content;
 }
