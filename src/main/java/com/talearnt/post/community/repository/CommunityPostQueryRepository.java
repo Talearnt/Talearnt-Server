@@ -11,10 +11,10 @@ import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.talearnt.comment.community.entity.QCommunityComment;
+import com.talearnt.comment.community.entity.QCommunityReply;
 import com.talearnt.enums.post.PostType;
-import com.talearnt.post.community.entity.QCommunityComment;
 import com.talearnt.post.community.entity.QCommunityPost;
-import com.talearnt.post.community.entity.QCommunityReply;
 import com.talearnt.post.community.entity.QLikeCommunity;
 import com.talearnt.post.community.request.CommunityPostSearchConditionDTO;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
@@ -50,6 +50,15 @@ public class CommunityPostQueryRepository {
     private final QLikeCommunity likeCommunity = QLikeCommunity.likeCommunity;
     private final QFileUpload fileUpload = QFileUpload.fileUpload;
     private final JdbcTemplate jdbcTemplate;
+
+    //커뮤니티 게시글 존재 여부
+    public boolean existCommunityByPostNo(Long communityPostNo) {
+        return factory.select(communityPost.communityPostNo)
+                .from(communityPost)
+                .where(communityPost.communityPostNo.eq(communityPostNo),
+                        communityPost.deletedAt.isNull())
+                .fetchFirst() != null;
+    }
 
     //커뮤니티 게시글 삭제
     public long deleteCommunityPostByPostNo(Long postNo) {
