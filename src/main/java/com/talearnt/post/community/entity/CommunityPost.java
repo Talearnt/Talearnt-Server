@@ -42,7 +42,7 @@ public class CommunityPost {
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(nullable = false)
+    @Column(insertable = false)
     private LocalDateTime updatedAt;
 
     private LocalDateTime deletedAt;

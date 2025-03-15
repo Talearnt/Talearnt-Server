@@ -1,7 +1,6 @@
 package com.talearnt.post.exchange.entity;
 
 
-import com.talearnt.user.infomation.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +27,7 @@ public class FavoriteExchangePost {
     @Column(nullable = false)
     private Long userNo;
 
-    @Column(updatable = false)
+    @Column(nullable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
