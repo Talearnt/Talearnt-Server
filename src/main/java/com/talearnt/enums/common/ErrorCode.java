@@ -93,6 +93,9 @@ public enum ErrorCode {
     COMMENT_CONTENT_OVER_LENGTH("400-COMMENT-02","댓글은 3자 이상, 300자 이하 입력 가능합니다."),
     COMMENT_NOT_FOUND_POST("404-COMMENT-03","해당 게시글이 없거나, 삭제되어 댓글을 달 수 없습니다."),
     COMMENT_FAILED_CALL_LIST("400-COMMENT-04","댓글 목록 조회에 실패했습니다. 필요 값을 확인하세요. (Page-Web) OR (LastNo-Mobile)"),
+    COMMENT_MISMATCH_NUMBER("400-COMMENT-05","댓글을 달 수 없습니다. 올바른 댓글 번호를 입력하세요."),
+    COMMENT_ACCESS_DINED("403-COMMENT-06","삭제된 댓글이거나, 본인 댓글이 아닙니다."),
+    COMMENT_FAILED_UPDATE("400-COMMENT-07","댓글 수정에 실패했습니다 - (0개 또는 복수 개 업데이트 될 가능성 있음)"),
 
     //게시글 관련 오류
     POST_TITLE_LENGTH_MISSING("400-POST-01", "제목을 2글자 이상 입력해 주세요."),

@@ -32,6 +32,36 @@ public class CommentQueryRepository {
     private final QCommunityReply reply = QCommunityReply.communityReply;
     private final QUser user = QUser.user;
 
+    /** 커뮤니티 댓글 수정
+     * @return
+     * Long : 업데이트 된 게시글 갯수*/
+    public Long updateCommentByUserNoAndCommentNo(Long userNo, Long commentNo, String content) {
+
+        return factory.update(comment)
+                .set(comment.content, content)
+                .set(comment.updatedAt, LocalDateTime.now())
+                .where(comment.commentNo.eq(commentNo),
+                        comment.user.userNo.eq(userNo),
+                        comment.deletedAt.isNull())
+                .execute();
+    }
+
+
+    /** 커뮤니티 댓글 수정 전 권환 확인- 나의 댓글이 맞고, 삭제된 댓글이 아닌가?
+     * @return
+     * true : 내 댓글이 맞음
+     * false : 내 댓글이 아님*/
+    public Boolean isMyCommentAndIsNotDeleted(Long userNo, Long commentNo) {
+        return factory.select(comment.commentNo)
+                .from(comment)
+                .where(comment.user.userNo.eq(userNo),
+                        comment.commentNo.eq(commentNo),
+                        comment.deletedAt.isNull())
+                .fetchOne() != null;
+    }
+
+
+    /**커뮤니티 댓글 목록 - 모바일 전용*/
     public Page<CommentListResDTO> getCommentListToMobile(Long postNo, CommentSearchCondition condition) {
 
         List<CommentListResDTO> data = getListSeleted()
@@ -57,9 +87,8 @@ public class CommentQueryRepository {
         return new PageImpl<>(data, condition.getPage(), total);
     }
 
-    /**
-     * 커뮤니티 댓글 목록 조회 - 웹 버전
-     */
+
+    /**커뮤니티 댓글 목록 - 웹 전용*/
     public PagedListWrapper<CommentListResDTO> getCommentListToWeb(Long postNo, CommentSearchCondition condition) {
         List<CommentListResDTO> data = getListSeleted()
                 .where(
