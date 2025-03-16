@@ -32,6 +32,16 @@ public class CommentQueryRepository {
     private final QCommunityReply reply = QCommunityReply.communityReply;
     private final QUser user = QUser.user;
 
+    //커뮤니티 댓글 삭제
+    public Long deleteCommentByUserNoAndCommentNo(Long userNo, Long commentNo) {
+        return factory.update(comment)
+                .set(comment.deletedAt, LocalDateTime.now())
+                .where(comment.user.userNo.eq(userNo),
+                        comment.commentNo.eq(commentNo),
+                        comment.deletedAt.isNull())
+                .execute();
+    }
+
     /** 커뮤니티 댓글 수정
      * @return
      * Long : 업데이트 된 게시글 갯수*/
