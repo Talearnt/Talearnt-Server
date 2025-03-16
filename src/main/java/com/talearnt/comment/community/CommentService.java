@@ -4,7 +4,6 @@ package com.talearnt.comment.community;
 import com.talearnt.comment.community.entity.CommunityComment;
 import com.talearnt.comment.community.repository.CommentQueryRepository;
 import com.talearnt.comment.community.repository.CommentRepository;
-import com.talearnt.comment.community.request.CommentReqDTO;
 import com.talearnt.comment.community.request.CommentSearchCondition;
 import com.talearnt.comment.community.response.CommentListResDTO;
 import com.talearnt.enums.common.ErrorCode;
@@ -31,6 +30,8 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommunityPostQueryRepository communityPostQueryRepository;
     private final CommentQueryRepository commentQueryRepository;
+
+
 
     @LogRunningTime
     public PaginatedResponse<List<CommentListResDTO>> getCommunityComments(Long communityPostNo, String path, String lastNo, String page, String size) {
@@ -79,22 +80,73 @@ public class CommentService {
      * */
     @LogRunningTime
     @Transactional
-    public Long addComment(CommentReqDTO commentReqDTO) {
-        log.info("커뮤니티 게시글 댓글 추가 시작 : {}", commentReqDTO);
+    public Long addComment(Long userNo, Long communityPostNo, String content) {
+        log.info("커뮤니티 게시글 댓글 추가 시작 : {}", communityPostNo);
 
         //커뮤니티 게시글이 있는지 조회 있을 경우 : true 반환, 없을 경우 false 반환
-        if (!communityPostQueryRepository.existCommunityByPostNo(commentReqDTO.getCommunityPostNo())){
-            log.error("커뮤니티 게시글 댓글 추가 실패 - 해당 게시글이 삭제되었거나 없음 : {} - {}", commentReqDTO.getCommunityPostNo(), ErrorCode.COMMENT_NOT_FOUND_POST);
+        if (!communityPostQueryRepository.existCommunityByPostNo(communityPostNo)){
+            log.error("커뮤니티 게시글 댓글 추가 실패 - 해당 게시글이 삭제되었거나 없음 : {} - {}", communityPostNo, ErrorCode.COMMENT_NOT_FOUND_POST);
             throw new CustomRuntimeException(ErrorCode.COMMENT_NOT_FOUND_POST);
         }
 
         //Entity로 변환
-        CommunityComment comment = CommentMapper.INSTANCE.toEntity(commentReqDTO);
+        CommunityComment comment = CommentMapper.INSTANCE.toEntity(userNo, communityPostNo);
 
         //댓글 저장
         comment = commentRepository.save(comment);
 
         log.info("커뮤니티 게시글 댓글 추가 끝");
         return comment.getCommentNo();
+    }
+
+    /**커뮤니티 게시글 댓글 수정
+     * 조건)
+     * - 로그인 했는가?
+     * - 나의 댓글이 맞고, 삭제한 댓글이 아닌가?
+     * */
+    @Transactional
+    @LogRunningTime
+    public Void updateComment(Long userNo, Long commentNo, String content) {
+        log.info("커뮤니티 게시글 댓글 수정 시작 : {} - {} - {}", userNo, commentNo, content);
+
+        //나의 댓글이 맞고, 삭제한 댓글이 아닌가?
+        if (!commentQueryRepository.isMyCommentAndIsNotDeleted(userNo, commentNo)){
+            log.error("커뮤니티 게시글 댓글 수정 실패 - 삭제된 댓글을 수정하려하거나, 나의 댓글이 아님 : {} - {}",commentNo,ErrorCode.COMMENT_ACCESS_DINED);
+            throw new CustomRuntimeException(ErrorCode.COMMENT_ACCESS_DINED);
+        }
+
+        Long updatedCount = commentQueryRepository.updateCommentByUserNoAndCommentNo(userNo, commentNo, content);
+
+        if (updatedCount != 1){
+            log.error("커뮤니티 게시글 댓글 수정 실패 - 0개 또는 복수 개의 댓글이 수정되었습니다 : {} - {}", updatedCount, ErrorCode.COMMENT_FAILED_UPDATE);
+            throw new CustomRuntimeException(ErrorCode.COMMENT_FAILED_UPDATE);
+        }
+
+        log.info("커뮤니티 게시글 댓글 수정 끝");
+        return null;
+    }
+
+    /** 커뮤니티 게시글 댓글 삭제
+     * 조건 )
+     * - 로그인을 했는가?
+     * - 나의 댓글이 맞고, 삭제한 게시글이 아닌가?
+     * */
+    @Transactional
+    @LogRunningTime
+    public Void deleteComment(Long userNo, Long commentNo) {
+        log.info("커뮤니티 게시글 댓글 삭제 시작 : {} - {}", userNo, commentNo);
+
+        //나의 댓글이 맞고, 삭제한 게시글이 아닌가?
+        if (!commentQueryRepository.isMyCommentAndIsNotDeleted(userNo, commentNo)){
+            log.error("커뮤니티 게시글 댓글 삭제 실패 - 나의 댓글이 아니거나, 이미 삭제된 게시글 : {} - {}", commentNo, ErrorCode.COMMENT_ACCESS_DINED);
+            throw new CustomRuntimeException(ErrorCode.COMMENT_ACCESS_DINED);
+        }
+
+        //댓글 소프트 삭제
+
+
+
+        log.info("커뮤니티 게시글 댓글 삭제 끝");
+        return null;
     }
 }
