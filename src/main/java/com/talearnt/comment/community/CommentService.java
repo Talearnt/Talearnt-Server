@@ -9,7 +9,9 @@ import com.talearnt.comment.community.response.CommentListResDTO;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.post.community.repository.CommunityPostQueryRepository;
 import com.talearnt.util.common.PageUtil;
+import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.log.LogRunningTime;
 import com.talearnt.util.pagination.PagedListWrapper;
 import com.talearnt.util.response.PaginatedResponse;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -117,8 +120,9 @@ public class CommentService {
 
         Long updatedCount = commentQueryRepository.updateCommentByUserNoAndCommentNo(userNo, commentNo, content);
 
+        //0개 또는 여러 개 업데이트 될 경우 버그 발생으로 Throw 발생
         if (updatedCount != 1){
-            log.error("커뮤니티 게시글 댓글 수정 실패 - 0개 또는 복수 개의 댓글이 수정되었습니다 : {} - {}", updatedCount, ErrorCode.COMMENT_FAILED_UPDATE);
+            log.error("커뮤니티 게시글 댓글 수정 실패 - 0개 또는 여러 개의 댓글이 수정되었습니다 : {} - {}", updatedCount, ErrorCode.COMMENT_FAILED_UPDATE);
             throw new CustomRuntimeException(ErrorCode.COMMENT_FAILED_UPDATE);
         }
 
@@ -133,18 +137,26 @@ public class CommentService {
      * */
     @Transactional
     @LogRunningTime
-    public Void deleteComment(Long userNo, Long commentNo) {
-        log.info("커뮤니티 게시글 댓글 삭제 시작 : {} - {}", userNo, commentNo);
+    public Void deleteComment(Authentication authentication, Long commentNo) {
+        log.info("커뮤니티 게시글 댓글 삭제 시작 : {}", commentNo);
+
+        //로그인 여부 확인
+        UserInfo userInfo = UserUtil.validateAuthentication("커뮤니티 게시글 댓글 삭제", authentication);
 
         //나의 댓글이 맞고, 삭제한 게시글이 아닌가?
-        if (!commentQueryRepository.isMyCommentAndIsNotDeleted(userNo, commentNo)){
+        if (!commentQueryRepository.isMyCommentAndIsNotDeleted(userInfo.getUserNo(), commentNo)){
             log.error("커뮤니티 게시글 댓글 삭제 실패 - 나의 댓글이 아니거나, 이미 삭제된 게시글 : {} - {}", commentNo, ErrorCode.COMMENT_ACCESS_DINED);
             throw new CustomRuntimeException(ErrorCode.COMMENT_ACCESS_DINED);
         }
 
         //댓글 소프트 삭제
+        Long deletedCount = commentQueryRepository.deleteCommentByUserNoAndCommentNo(userInfo.getUserNo(), commentNo);
 
-
+        //0개 또는 여러 개 댓글이 삭제되어 Throw 발생
+        if (deletedCount != 1){
+            log.error("커뮤니티 게시글 댓글 삭제 실패 - 0개 또는 여러 개의 댓글이 삭제되었습니다 : {} - {}", deletedCount, ErrorCode.COMMENT_FAILED_DELETE);
+            throw new CustomRuntimeException(ErrorCode.COMMENT_FAILED_DELETE);
+        }
 
         log.info("커뮤니티 게시글 댓글 삭제 끝");
         return null;
