@@ -46,7 +46,7 @@ public class CommunityPostController implements CommunityPostApi{
 
     //커뮤니티 게시글 작성
     @PostMapping("/posts/communities")
-    public ResponseEntity<CommonResponse<String>> addCommunityPost(@Valid @RequestBody CommunityPostReqDTO communityPostReqDTO){
+    public ResponseEntity<CommonResponse<Long>> addCommunityPost(@Valid @RequestBody CommunityPostReqDTO communityPostReqDTO){
         return CommonResponse.success(communityPostService.addCommunityPost(communityPostReqDTO));
     }
 

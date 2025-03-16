@@ -103,7 +103,7 @@ public interface CommunityPostApi {
             @ApiResponse(responseCode = "400",ref="FILE_FAILED_UPLOAD"),
             @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
     })
-    public ResponseEntity<CommonResponse<String>> addCommunityPost(@Valid @RequestBody CommunityPostReqDTO communityPostReqDTO);
+    public ResponseEntity<CommonResponse<Long>> addCommunityPost(@Valid @RequestBody CommunityPostReqDTO communityPostReqDTO);
 
     @Operation(summary = "커뮤니티 게시글 상세보기"
             , description = "<h2>내용</h2>" +

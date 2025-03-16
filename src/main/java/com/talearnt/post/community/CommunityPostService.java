@@ -115,7 +115,7 @@ public class CommunityPostService {
      * */
     @Transactional
     @LogRunningTime
-    public String addCommunityPost(CommunityPostReqDTO reqDTO){
+    public Long addCommunityPost(CommunityPostReqDTO reqDTO){
         log.info("커뮤니티 게시글 등록 시작 : {}", reqDTO);
 
         //Req -> Enitiy로 변환
@@ -132,7 +132,7 @@ public class CommunityPostService {
         }
 
         log.info("커뮤니티 게시글 등록 끝");
-        return "성공적으로 커뮤니티 게시글을 등록하였습니다.";
+        return addedCommunityPost.getCommunityPostNo();
     }
 
 
