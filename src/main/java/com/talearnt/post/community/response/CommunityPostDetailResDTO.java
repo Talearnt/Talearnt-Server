@@ -29,9 +29,10 @@ public class CommunityPostDetailResDTO {
     private long likeCount;
     private long commentCount;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Builder
-    public CommunityPostDetailResDTO(Long userNo, String nickname, String profileImg, UserRole authority, Long communityPostNo, String title, String content, PostType postType, String imageUrls, Integer count, Boolean isLike, long likeCount, long commentCount, LocalDateTime createdAt) {
+    public CommunityPostDetailResDTO(Long userNo, String nickname, String profileImg, UserRole authority, Long communityPostNo, String title, String content, PostType postType, String imageUrls, Integer count, Boolean isLike, long likeCount, long commentCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.userNo = userNo;
         this.nickname = nickname;
         this.profileImg = profileImg;
@@ -46,5 +47,6 @@ public class CommunityPostDetailResDTO {
         this.likeCount = likeCount;
         this.commentCount = commentCount;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }

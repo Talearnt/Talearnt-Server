@@ -113,7 +113,8 @@ public class CommunityPostQueryRepository {
                                 Expressions.booleanTemplate("MAX(CASE WHEN {0} THEN 1 ELSE 0 END) = 1", likeCommunity.userNo.eq(currentUserNo)),
                                 likeCommunity.countDistinct(),
                                 communityComment.countDistinct().add(communityReply.countDistinct()),
-                                communityPost.createdAt
+                                communityPost.createdAt,
+                                communityPost.updatedAt
                         ))
                         .from(communityPost)
                         .leftJoin(user).on(user.eq(communityPost.user))
