@@ -2,8 +2,10 @@ package com.talearnt.post.exchange.repository;
 
 
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.*;
-import com.querydsl.core.types.dsl.*;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.admin.category.entity.QTalentCategory;
@@ -12,15 +14,18 @@ import com.talearnt.chat.entity.QChatRoom;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.enums.post.PostType;
-import com.talearnt.util.pagination.PagedData;
-import com.talearnt.util.pagination.PagedListWrapper;
-import com.talearnt.post.exchange.entity.*;
+import com.talearnt.post.exchange.entity.QExchangePost;
+import com.talearnt.post.exchange.entity.QFavoriteExchangePost;
+import com.talearnt.post.exchange.entity.QGiveTalent;
+import com.talearnt.post.exchange.entity.QReceiveTalent;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.s3.entity.QFileUpload;
 import com.talearnt.user.infomation.entity.QUser;
 import com.talearnt.user.talent.entity.QMyTalent;
+import com.talearnt.util.pagination.PagedData;
+import com.talearnt.util.pagination.PagedListWrapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -29,7 +34,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -194,6 +202,7 @@ public class ExchangePostQueryRepository {
                                 exchangePost.exchangeType,
                                 exchangePost.status,
                                 exchangePost.createdAt,
+                                exchangePost.updatedAt,
                                 exchangePost.duration,
                                 exchangePost.requiredBadge,
                                 Expressions.booleanTemplate("MAX(CASE WHEN {0} THEN 1 ELSE 0 END) = 1", favoriteExchangePost.userNo.eq(currentUserNo)),
