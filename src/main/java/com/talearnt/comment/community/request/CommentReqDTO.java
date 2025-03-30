@@ -21,4 +21,6 @@ public class CommentReqDTO {
     private Long communityPostNo;
     @DynamicValid(errorCode = ErrorCode.COMMENT_CONTENT_OVER_LENGTH, minLength = 3, maxLength = 300)
     private String content;
+    @DynamicValid(errorCode = ErrorCode.BAD_ACCESS_PATH, pattern = Regex.ACCESS_PATH)
+    private String path = "web";
 }

@@ -21,6 +21,7 @@ public enum Regex {
     NAME("^[가-힣]{2,5}$"),
     //인증 문자 전송 타입 : 회원 가입 전용, 아이디 찾기 전용
     SMS_TYPE("^[a-zA-Z]{4,}$"),
+    ACCESS_PATH("^(mobile|web)$"),
     FILE_TYPE("^(image/jpeg|image/png|image/tiff|application/pdf)$"),
     FILE_EXTENSION("(?i)^.*\\.(jpg|jpeg|png|tiff|jfif|pdf|webp|gif)$"),
     POST_TYPE("^(EXCHANGE|FREE|QUESTION|STUDY)$"),

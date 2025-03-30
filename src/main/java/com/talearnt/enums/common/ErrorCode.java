@@ -128,8 +128,8 @@ public enum ErrorCode {
     METHOD_NOT_SUPPORTED("405-COMMON-01", "지원하지 않는 HTTP 메서드입니다."),
     RESOURCE_NOT_FOUND("404-COMMON-02", "요청한 리소스를 찾을 수 없습니다. 경로를 확인하세요."),
     BAD_PARAMETER("400-COMMON-03", "잘못된 값이 넘어왔습니다. 입력하신 내용을 확인해주세요."),
-    BAD_NULL_PARAMETER("400-COMMON-04", "입력한 값이 NULL입니다. 입력하신 내용을 확인해주세요.");
-
+    BAD_NULL_PARAMETER("400-COMMON-04", "입력한 값이 NULL입니다. 입력하신 내용을 확인해주세요."),
+    BAD_ACCESS_PATH("400-COMMON-05","Path값이 일치하지 않습니다.");
     private final String code;
     private final String message;
 
