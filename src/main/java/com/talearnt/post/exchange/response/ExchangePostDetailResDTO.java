@@ -5,7 +5,10 @@ import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.enums.user.UserRole;
 import com.talearnt.util.common.S3Util;
 import com.talearnt.util.common.SplitUtil;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,6 +31,7 @@ public class ExchangePostDetailResDTO {
     private ExchangeType exchangeType;
     private ExchangePostStatus status;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private String duration;
     private Boolean requiredBadge;
     private Boolean isFavorite;
@@ -41,7 +45,7 @@ public class ExchangePostDetailResDTO {
     private Long chatRoomNo; //채팅방 접속할 ID
 
     @Builder
-    public ExchangePostDetailResDTO(Long userNo, String nickname, String profileImg, UserRole authority, Long exchangePostNo, String giveTalents, String receiveTalents, ExchangeType exchangeType, ExchangePostStatus status, LocalDateTime createdAt, String duration, Boolean requiredBadge, Boolean isFavorite,String title, String content, String imageUrls, int count, Long favoriteCount, Long openedChatRoomCount, Long chatRoomNo) {
+    public ExchangePostDetailResDTO(Long userNo, String nickname, String profileImg, UserRole authority, Long exchangePostNo, String giveTalents, String receiveTalents, ExchangeType exchangeType, ExchangePostStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, String duration, Boolean requiredBadge, Boolean isFavorite,String title, String content, String imageUrls, int count, Long favoriteCount, Long openedChatRoomCount, Long chatRoomNo) {
         this.userNo = userNo;
         this.nickname = nickname;
         this.profileImg = profileImg;
@@ -52,6 +56,7 @@ public class ExchangePostDetailResDTO {
         this.exchangeType = exchangeType;
         this.status = status;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.duration = duration;
         this.requiredBadge = requiredBadge;
         this.isFavorite = isFavorite;

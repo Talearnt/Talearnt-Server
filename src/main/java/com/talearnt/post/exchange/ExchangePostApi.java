@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -119,7 +118,8 @@ public interface ExchangePostApi {
             "<li>giveTalents : 주고 싶은 재능 목록 (이름)</li>" +
             "<li>receiveTalents : 받고 싶은 재능 목록 (이름)</li>" +
             "<li>exchangeType : 온라인,오프라인,온/오프라인</li>" +
-            "<li>createdAt : 게시글 등록일시</li>" +
+            "<li>createdAt : 게시글 등록 일시</li>" +
+            "<li>updatedAt : 게시글 수정 일시</li>" +
             "<li>duration : 진행 기간 - 1개월,2개월 등등</li>" +
             "<li>requiredBadge : 인증뱃지 필요 여부</li>" +
             "<li>isFavorite : 찜 게시글 여부</li>" +
