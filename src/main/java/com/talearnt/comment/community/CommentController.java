@@ -34,7 +34,7 @@ public class CommentController implements CommentApi {
                 commentReqDTO.getContent()));
     }
 
-    @GetMapping("/comments/communties/{postNo}")
+    @GetMapping("/comments/communities/{postNo}")
     public ResponseEntity<CommonResponse<PaginatedResponse<List<CommentListResDTO>>>> getCommentList(
             @PathVariable Long postNo,
             @RequestParam(required = false, defaultValue = "web") String path,
