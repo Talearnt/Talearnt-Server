@@ -13,8 +13,9 @@ public interface CommentMapper {
     CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
     @Mappings({
             @Mapping(source = "userNo", target = "user.userNo"),
-            @Mapping(source = "communityPostNo", target = "communityPost.communityPostNo")
+            @Mapping(source = "communityPostNo", target = "communityPost.communityPostNo"),
+            @Mapping(source = "content", target = "content")
     })
-    public CommunityComment toEntity(Long userNo, Long communityPostNo);
+    CommunityComment toEntity(Long userNo, Long communityPostNo, String content);
 
 }

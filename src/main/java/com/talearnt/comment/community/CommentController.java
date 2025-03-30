@@ -21,17 +21,18 @@ import java.util.List;
 
 @RestControllerV1
 @RequiredArgsConstructor
-@Tag(name = "Comment")
+@Tag(name = "Comment-Community")
 @Validated
 public class CommentController implements CommentApi {
 
     private final CommentService commentService;
 
     @PostMapping("/comments/communities")
-    public ResponseEntity<CommonResponse<Long>> addComment(@RequestBody @Valid CommentReqDTO commentReqDTO) {
+    public ResponseEntity<CommonResponse<PaginatedResponse<List<CommentListResDTO>>>> addComment(@RequestBody @Valid CommentReqDTO commentReqDTO) {
         return CommonResponse.success(commentService.addComment(commentReqDTO.getUserInfo().getUserNo(),
                 commentReqDTO.getCommunityPostNo(),
-                commentReqDTO.getContent()));
+                commentReqDTO.getContent(),
+                commentReqDTO.getPath()));
     }
 
     @GetMapping("/comments/communities/{postNo}")
@@ -40,7 +41,7 @@ public class CommentController implements CommentApi {
             @RequestParam(required = false, defaultValue = "web") String path,
             @RequestParam(required = false) String lastNo,
             @RequestParam(required = false, defaultValue = "1") String page,
-            @RequestParam(required = false, defaultValue = "10") String size) {
+            @RequestParam(required = false, defaultValue = "30") String size) {
         return CommonResponse.success(commentService.getCommunityComments(postNo, path, lastNo, page, size));
     }
 

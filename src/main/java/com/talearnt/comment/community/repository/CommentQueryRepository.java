@@ -1,5 +1,6 @@
 package com.talearnt.comment.community.repository;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -42,9 +43,11 @@ public class CommentQueryRepository {
                 .execute();
     }
 
-    /** 커뮤니티 댓글 수정
-     * @return
-     * Long : 업데이트 된 게시글 갯수*/
+    /**
+     * 커뮤니티 댓글 수정
+     *
+     * @return Long : 업데이트 된 게시글 갯수
+     */
     public Long updateCommentByUserNoAndCommentNo(Long userNo, Long commentNo, String content) {
 
         return factory.update(comment)
@@ -57,10 +60,12 @@ public class CommentQueryRepository {
     }
 
 
-    /** 커뮤니티 댓글 수정 전 권환 확인- 나의 댓글이 맞고, 삭제된 댓글이 아닌가?
-     * @return
-     * true : 내 댓글이 맞음
-     * false : 내 댓글이 아님*/
+    /**
+     * 커뮤니티 댓글 수정 전 권환 확인- 나의 댓글이 맞고, 삭제된 댓글이 아닌가?
+     *
+     * @return true : 내 댓글이 맞음
+     * false : 내 댓글이 아님
+     */
     public Boolean isMyCommentAndIsNotDeleted(Long userNo, Long commentNo) {
         return factory.select(comment.commentNo)
                 .from(comment)
@@ -70,10 +75,24 @@ public class CommentQueryRepository {
                 .fetchOne() != null;
     }
 
+    /**댓글 추가 시 웹에서 Offset을 설정하기 위해 총 댓글 수를 호출*/
+    public Long getCommentTotalCount(Long postNo){
+        return Optional.ofNullable(
+                factory.select(comment.countDistinct())
+                        .from(comment)
+                        .where(comment.deletedAt.isNull(),
+                                comment.communityPost.communityPostNo.eq(postNo))
+                        .fetchOne()
+        ).orElse(0L);
+    }
 
-    /**커뮤니티 댓글 목록 - 모바일 전용*/
-    public Page<CommentListResDTO> getCommentListToMobile(Long postNo, CommentSearchCondition condition) {
 
+    /**
+     * 커뮤니티 댓글 목록 - 모바일 전용
+     */
+    public Page<CommentListResDTO> getCommentListToMobile(Long postNo, CommentSearchCondition condition, String path) {
+
+        //최신순, 오래된순
         List<CommentListResDTO> data = getListSeleted()
                 .where(
                         comment.deletedAt.isNull(),
@@ -81,8 +100,16 @@ public class CommentQueryRepository {
                         lastNoGt(condition.getLastNo()) // LastNo가 있을 경우 보다 큰거 거 반환 - 오래된 순임
                 )
                 .groupBy(comment.commentNo)
+                .orderBy(orderByPathAndLastNo(path, condition.getLastNo()))// 최신순, 오래된 순
                 .limit(condition.getPage().getPageSize())
                 .fetch();
+
+        //데이터 정렬이 최신순일 때 오래된 순으로 변경
+        if ("mobile".equalsIgnoreCase(path) && condition.getLastNo() == null) {
+            data = data.stream()
+                    .sorted((d1, d2) -> d1.getCommentNo().compareTo(d2.getCommentNo()))
+                    .toList();
+        }
 
         Long total = Optional.ofNullable(
                 factory.select(comment.countDistinct())
@@ -98,7 +125,9 @@ public class CommentQueryRepository {
     }
 
 
-    /**커뮤니티 댓글 목록 - 웹 전용*/
+    /**
+     * 커뮤니티 댓글 목록 - 웹 전용
+     */
     public PagedListWrapper<CommentListResDTO> getCommentListToWeb(Long postNo, CommentSearchCondition condition) {
         List<CommentListResDTO> data = getListSeleted()
                 .where(
@@ -153,4 +182,13 @@ public class CommentQueryRepository {
         return lastNo != null ? comment.commentNo.gt(lastNo) : null;
     }
 
+    /**
+     * 경로가 모바일이고, lastNo가 없을 경우 최신순 데이터를 뽑도록 유도 아닐 경우 오래된 순으로
+     */
+    private OrderSpecifier<Long> orderByPathAndLastNo(String path, Long lastNo) {
+        if (lastNo == null && "mobile".equalsIgnoreCase(path)) {
+            return comment.commentNo.desc();
+        }
+        return comment.commentNo.asc();
+    }
 }
