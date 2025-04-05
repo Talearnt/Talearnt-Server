@@ -18,7 +18,7 @@ import java.util.List;
 @Log4j2
 @RequiredArgsConstructor
 @Tag(name = "Reply-Community")
-public class ReplyController {
+public class ReplyController implements ReplyApi {
 
     private final ReplyService replyService;
 
