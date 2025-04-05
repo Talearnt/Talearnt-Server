@@ -1,6 +1,7 @@
 package com.talearnt.reply.community;
 
-import com.talearnt.reply.community.request.ReplyReqDTO;
+import com.talearnt.reply.community.request.ReplyCreateReqDTO;
+import com.talearnt.reply.community.request.ReplyUpdateReqDTO;
 import com.talearnt.reply.community.response.ReplyListResDTO;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
@@ -69,6 +70,23 @@ public interface ReplyApi {
             @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
             @ApiResponse(responseCode = "404", ref = "COMMENT_MISMATCH_REPLY_NUMBER")
     })
-    public ResponseEntity<CommonResponse<PaginatedResponse<List<ReplyListResDTO>>>> createReply(@RequestBody ReplyReqDTO replyCreateReqDTO);
+    ResponseEntity<CommonResponse<PaginatedResponse<List<ReplyListResDTO>>>> createReply(@RequestBody ReplyCreateReqDTO replyCreateReqDTO);
+
+
+    @Operation(summary = "커뮤니티 게시글 답글 수정",
+            description = "<h2>내용</h2>" +
+                    "<p>답글을 수정합니다.</p>" +
+                    "<h2>Request</h2>" +
+                    "<ul>" +
+                        "<li>content : 답글 내용 </li>" +
+                    "</ul>")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
+            @ApiResponse(responseCode = "404", ref = "REPLY_NOT_FOUND"),
+            @ApiResponse(responseCode = "403", ref = "COMMENT_ACCESS_DINED")
+    })
+    public ResponseEntity<CommonResponse<Void>> updateReply(@PathVariable Long replyNo,
+                                                            @RequestBody ReplyUpdateReqDTO replyUpdateReqDTO);
 
 }
