@@ -1,5 +1,6 @@
 package com.talearnt.reply.community;
 
+import com.talearnt.reply.community.request.ReplyReqDTO;
 import com.talearnt.reply.community.response.ReplyListResDTO;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
@@ -8,9 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,5 +32,10 @@ public class ReplyController implements ReplyApi {
         return CommonResponse.success(replyService.getReplies(commentNo, lastNo, size));
     }
 
+    //커뮤니티 답글 작성
+    @PostMapping("/replies/communities")
+    public ResponseEntity<CommonResponse<PaginatedResponse<List<ReplyListResDTO>>>> createReply(@RequestBody ReplyReqDTO replyCreateReqDTO) {
+        return CommonResponse.success(replyService.createReply(replyCreateReqDTO.getUserInfo().getUserNo(), replyCreateReqDTO.getCommentNo(), replyCreateReqDTO.getContent()));
+    }
 
 }
