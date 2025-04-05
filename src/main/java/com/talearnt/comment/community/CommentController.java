@@ -21,13 +21,13 @@ import java.util.List;
 
 @RestControllerV1
 @RequiredArgsConstructor
-@Tag(name = "Comment-Community & Reply")
+@Tag(name = "Community-Comment & Reply")
 @Validated
 public class CommentController implements CommentApi {
 
     private final CommentService commentService;
 
-    @PostMapping("/comments/communities")
+    @PostMapping("/communities/comments")
     public ResponseEntity<CommonResponse<PaginatedResponse<List<CommentListResDTO>>>> addComment(@RequestBody @Valid CommentReqDTO commentReqDTO) {
         return CommonResponse.success(commentService.addComment(commentReqDTO.getUserInfo().getUserNo(),
                 commentReqDTO.getCommunityPostNo(),
@@ -35,7 +35,7 @@ public class CommentController implements CommentApi {
                 commentReqDTO.getPath()));
     }
 
-    @GetMapping("/comments/communities/{postNo}")
+    @GetMapping("/communities/{postNo}/comments")
     public ResponseEntity<CommonResponse<PaginatedResponse<List<CommentListResDTO>>>> getCommentList(
             @PathVariable Long postNo,
             @RequestParam(required = false, defaultValue = "web") String path,
@@ -46,7 +46,7 @@ public class CommentController implements CommentApi {
     }
 
 
-    @PutMapping("/comments/{commentNo}/communities")
+    @PutMapping("/communities/comments/{commentNo}")
     public ResponseEntity<CommonResponse<Void>> updateComment(@PathVariable @DynamicValid(errorCode = ErrorCode.COMMENT_MISMATCH_NUMBER, pattern = Regex.NUMBER_TYPE_PRIMARY_KEY) Long commentNo,
                                                               @RequestBody @Valid CommentUpdateReqDTO commentUpdateReqDTO) {
         return CommonResponse.success(commentService.updateComment(
@@ -55,7 +55,7 @@ public class CommentController implements CommentApi {
                 , commentUpdateReqDTO.getContent()));
     }
 
-    @DeleteMapping("/comments/{commentNo}/communities")
+    @DeleteMapping("/communities/comments/{commentNo}")
     public ResponseEntity<CommonResponse<Void>> deleteComment(@PathVariable @DynamicValid(errorCode = ErrorCode.COMMENT_MISMATCH_NUMBER, pattern = Regex.NUMBER_TYPE_PRIMARY_KEY) Long commentNo,
                                                               Authentication authentication) {
         return CommonResponse.success(commentService.deleteComment(authentication, commentNo));
