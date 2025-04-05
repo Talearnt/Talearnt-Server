@@ -24,20 +24,17 @@ public class ReplyService {
      * 조건 없음)
      * @param commentNo - 댓글 번호
      * @param lastNo - 마지막 답글 번호 번호
-     * @param page - 페이지 번호
      * @param size - 페이지 사이즈
-     * @param path - 접근 경로 (web, mobile)
      */
     public PaginatedResponse<List<ReplyListResDTO>> getReplies(Long commentNo,
                                                                String lastNo,
-                                                               String page,
                                                                String size) {
-        log.info("커뮤니티 답글 목록 시작 commentNo : {}, lastNo : {}, page : {}, size : {}", commentNo, lastNo, page, size);
+        log.info("커뮤니티 답글 목록 시작 commentNo : {}, lastNo : {}, size : {}", commentNo, lastNo, size);
 
         //Condition 생성
         ReplySearchCondition condition = ReplySearchCondition.builder()
                 .lastNo(lastNo)
-                .page(page)
+                .page("1")
                 .size(size)
                 .build();
 

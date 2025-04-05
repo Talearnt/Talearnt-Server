@@ -25,11 +25,10 @@ public class ReplyController {
     @GetMapping("/replies/communities/{commentNo}")
     public ResponseEntity<CommonResponse<PaginatedResponse<List<ReplyListResDTO>>>> getReplies(@PathVariable Long commentNo,
                                                                                                @RequestParam(required = false) String lastNo,
-                                                                                               @RequestParam(required = false, defaultValue = "1") String page,
                                                                                                @RequestParam(required = false, defaultValue = "10") String size) {
 
 
-        return CommonResponse.success(replyService.getReplies(commentNo, lastNo, page, size));
+        return CommonResponse.success(replyService.getReplies(commentNo, lastNo, size));
     }
 
 
