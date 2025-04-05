@@ -1,6 +1,7 @@
 package com.talearnt.reply.community;
 
-import com.talearnt.reply.community.request.ReplyReqDTO;
+import com.talearnt.reply.community.request.ReplyCreateReqDTO;
+import com.talearnt.reply.community.request.ReplyUpdateReqDTO;
 import com.talearnt.reply.community.response.ReplyListResDTO;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
@@ -21,7 +22,7 @@ public class ReplyController implements ReplyApi {
 
     private final ReplyService replyService;
 
-    
+
     //커뮤니티 답글 목록 조회
     @GetMapping("/replies/communities/{commentNo}")
     public ResponseEntity<CommonResponse<PaginatedResponse<List<ReplyListResDTO>>>> getReplies(@PathVariable Long commentNo,
@@ -34,8 +35,15 @@ public class ReplyController implements ReplyApi {
 
     //커뮤니티 답글 작성
     @PostMapping("/replies/communities")
-    public ResponseEntity<CommonResponse<PaginatedResponse<List<ReplyListResDTO>>>> createReply(@RequestBody ReplyReqDTO replyCreateReqDTO) {
+    public ResponseEntity<CommonResponse<PaginatedResponse<List<ReplyListResDTO>>>> createReply(@RequestBody ReplyCreateReqDTO replyCreateReqDTO) {
         return CommonResponse.success(replyService.createReply(replyCreateReqDTO.getUserInfo().getUserNo(), replyCreateReqDTO.getCommentNo(), replyCreateReqDTO.getContent()));
     }
 
+
+    //커뮤니티 답글 수정
+    @PutMapping("/replies/communities/{replyNo}")
+    public ResponseEntity<CommonResponse<Void>> updateReply(@PathVariable Long replyNo,
+                            @RequestBody ReplyUpdateReqDTO replyUpdateReqDTO) {
+        return CommonResponse.success(replyService.updateReply(replyUpdateReqDTO.getUserInfo().getUserNo(), replyNo, replyUpdateReqDTO.getContent()));
+    }
 }
