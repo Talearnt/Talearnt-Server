@@ -9,7 +9,9 @@ import com.talearnt.reply.community.request.ReplySearchCondition;
 import com.talearnt.reply.community.response.ReplyListResDTO;
 import com.talearnt.util.common.PageUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.log.LogRunningTime;
 import com.talearnt.util.response.PaginatedResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -34,6 +36,7 @@ public class ReplyService {
      * @param lastNo    - 마지막 답글 번호 번호
      * @param size      - 페이지 사이즈
      */
+    @LogRunningTime
     public PaginatedResponse<List<ReplyListResDTO>> getReplies(Long commentNo,
                                                                String lastNo,
                                                                String size) {
@@ -64,6 +67,8 @@ public class ReplyService {
      * @param content   - 답글 내용
      * @return 최신화된 답글 목록
      */
+    @LogRunningTime
+    @Transactional
     public PaginatedResponse<List<ReplyListResDTO>> createReply(Long userNo, Long commentNo, String content) {
         log.info("커뮤니티 답글 작성 시작 , userNo : {}, commentNo : {}, content : {}", userNo, commentNo, content);
 
@@ -80,6 +85,7 @@ public class ReplyService {
         replyRepository.save(reply);
 
         //최신 데이터 조회
+        //FIXME : 페이지 사이즈를 50으로 고정해뒀으나 50개 이상일 경우 이곳을 바꿔야할 수 있음
         ReplySearchCondition condition = ReplySearchCondition.builder()
                 .page("1")
                 .size("50")
