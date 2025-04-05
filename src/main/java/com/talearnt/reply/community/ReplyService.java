@@ -97,4 +97,37 @@ public class ReplyService {
         return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToMobile(result));
     }
 
+    /**
+     * 커뮤니티 답글 수정
+     * 조건 )
+     * - 로그인 했는가?
+     * - 게시글이 존재하는가?
+     * - 나의 게시글이 맞는가?
+     *
+     * @param replyNo - 답글 번호
+     */
+    @LogRunningTime
+    @Transactional
+    public Void updateReply(Long userNo, Long replyNo, String content) {
+        log.info("커뮤니티 답글 수정 시작 , replyNo : {}, content : {}", replyNo, content);
+
+        //답글 번호 확인
+        CommunityReply reply = replyQueryRepository.findByIdAndNotDeleted(replyNo)
+                .orElseThrow(() -> {
+                    log.error("커뮤니티 답글 수정 실패 - 답글 번호 없음, replyNo : {}", replyNo);
+                    return new CustomRuntimeException(ErrorCode.REPLY_NOT_FOUND);
+                });
+
+        //나의 게시글이 맞는가 판다
+        if (!reply.getUser().getUserNo().equals(userNo)) {
+            log.error("커뮤니티 답글 수정 실패 - 나의 답글이 아님, replyNo : {}, userNo : {}", replyNo, userNo);
+            throw new CustomRuntimeException(ErrorCode.COMMENT_ACCESS_DINED);
+        }
+
+        //답글 내용 수정 더티 체킹
+        reply.setContent(content);
+
+        log.info("커뮤니티 답글 수정 끝");
+        return null;
+    }
 }
