@@ -3,7 +3,7 @@ package com.talearnt.reply.community.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.talearnt.comment.community.entity.QCommunityReply;
+import com.talearnt.reply.community.entity.QCommunityReply;
 import com.talearnt.reply.community.request.ReplySearchCondition;
 import com.talearnt.reply.community.response.ReplyListResDTO;
 import com.talearnt.user.infomation.entity.QUser;

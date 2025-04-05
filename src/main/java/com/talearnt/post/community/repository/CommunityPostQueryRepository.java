@@ -1,18 +1,15 @@
 package com.talearnt.post.community.repository;
 
 
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberTemplate;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.comment.community.entity.QCommunityComment;
-import com.talearnt.comment.community.entity.QCommunityReply;
 import com.talearnt.enums.post.PostType;
 import com.talearnt.post.community.entity.QCommunityPost;
 import com.talearnt.post.community.entity.QLikeCommunity;
@@ -20,13 +17,13 @@ import com.talearnt.post.community.request.CommunityPostSearchConditionDTO;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
 import com.talearnt.post.community.response.CommunityPostListResDTO;
 import com.talearnt.post.community.response.CommunityPostMobileListResDTO;
+import com.talearnt.reply.community.entity.QCommunityReply;
 import com.talearnt.s3.entity.QFileUpload;
 import com.talearnt.user.infomation.entity.QUser;
 import com.talearnt.util.pagination.PagedData;
 import com.talearnt.util.pagination.PagedListWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.hibernate.query.criteria.JpaSubQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.jdbc.core.JdbcTemplate;
