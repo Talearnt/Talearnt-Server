@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -86,7 +87,19 @@ public interface ReplyApi {
             @ApiResponse(responseCode = "404", ref = "REPLY_NOT_FOUND"),
             @ApiResponse(responseCode = "403", ref = "COMMENT_ACCESS_DINED")
     })
-    public ResponseEntity<CommonResponse<Void>> updateReply(@PathVariable Long replyNo,
+    ResponseEntity<CommonResponse<Void>> updateReply(@PathVariable Long replyNo,
                                                             @RequestBody ReplyUpdateReqDTO replyUpdateReqDTO);
+
+
+    @Operation(summary = "커뮤니티 게시글 답글 삭제",
+            description = "<h2>내용</h2>" +
+                    "<p>답글을 삭제합니다.</p>")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
+            @ApiResponse(responseCode = "404", ref = "REPLY_NOT_FOUND"),
+            @ApiResponse(responseCode = "403", ref = "COMMENT_ACCESS_DINED")
+    })
+    ResponseEntity<CommonResponse<Void>> deleteReply(@PathVariable Long replyNo, Authentication authentication);
 
 }
