@@ -1,5 +1,6 @@
-package com.talearnt.comment.community.entity;
+package com.talearnt.reply.community.entity;
 
+import com.talearnt.comment.community.entity.CommunityComment;
 import com.talearnt.user.infomation.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
