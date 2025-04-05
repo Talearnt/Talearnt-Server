@@ -17,11 +17,13 @@ import java.util.List;
 @RestControllerV1
 @Log4j2
 @RequiredArgsConstructor
-@Tag(name = "Reply-Community")
+@Tag(name = "Comment-Community & Reply")
 public class ReplyController implements ReplyApi {
 
     private final ReplyService replyService;
 
+    
+    //커뮤니티 답글 목록 조회
     @GetMapping("/replies/communities/{commentNo}")
     public ResponseEntity<CommonResponse<PaginatedResponse<List<ReplyListResDTO>>>> getReplies(@PathVariable Long commentNo,
                                                                                                @RequestParam(required = false) String lastNo,
