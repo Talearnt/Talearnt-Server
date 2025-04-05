@@ -3,6 +3,7 @@ package com.talearnt.reply.community.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.talearnt.reply.community.entity.CommunityReply;
 import com.talearnt.reply.community.entity.QCommunityReply;
 import com.talearnt.reply.community.request.ReplySearchCondition;
 import com.talearnt.reply.community.response.ReplyListResDTO;
@@ -23,6 +24,23 @@ public class ReplyQueryRepository {
     private final QCommunityReply reply = QCommunityReply.communityReply;
     private final QUser user = QUser.user;
 
+    public Optional<CommunityReply> findByIdAndNotDeleted(Long replyNo) {
+        return Optional.ofNullable(
+                factory.selectFrom(reply)
+                        .where(
+                                reply.deletedAt.isNull(),
+                                reply.replyNo.eq(replyNo)
+                        )
+                        .fetchOne()
+        );
+    }
+
+    /***
+     * 댓글 번호에 해당하는 답글 목록을 가져옵니다.
+     * @param commentNo 댓글 번호
+     * @param condition 검색 조건
+     * @return Page<ReplyListResDTO>
+     */
     public Page<ReplyListResDTO> getReplies(Long commentNo,ReplySearchCondition condition) {
 
         List<ReplyListResDTO> data = factory.select(Projections.constructor(ReplyListResDTO.class,
