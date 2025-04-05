@@ -8,15 +8,19 @@ import com.talearnt.reply.community.repository.ReplyRepository;
 import com.talearnt.reply.community.request.ReplySearchCondition;
 import com.talearnt.reply.community.response.ReplyListResDTO;
 import com.talearnt.util.common.PageUtil;
+import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.log.LogRunningTime;
 import com.talearnt.util.response.PaginatedResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -128,6 +132,45 @@ public class ReplyService {
         reply.setContent(content);
 
         log.info("커뮤니티 답글 수정 끝");
+        return null;
+    }
+
+    /**
+     * 커뮤니티 답글 삭제
+     * 조건 )
+     * - 로그인 했는가?
+     * - 게시글이 존재하는가?
+     * - 나의 게시글이 맞는가?
+     * - 삭제된 게시글이 아닌가?
+     * @param replyNo - 답글 번호
+     * @param authentication - Authentication
+     * @Return Void
+     * */
+    @LogRunningTime
+    @Transactional
+    public Void deleteReply(Long replyNo, Authentication authentication) {
+        log.info("커뮤니티 답글 삭제 시작 , replyNo : {}", replyNo);
+
+        //로그인 했는가?
+        UserInfo userInfo = UserUtil.validateAuthentication("커뮤니티 답글 삭제", authentication);
+
+        //답글 번호 존재 여부 확인
+        CommunityReply reply = replyQueryRepository.findByIdAndNotDeleted(replyNo)
+                .orElseThrow(() -> {
+                    log.error("커뮤니티 답글 삭제 실패 - 답글 번호 없음, replyNo : {}", replyNo);
+                    return new CustomRuntimeException(ErrorCode.REPLY_NOT_FOUND);
+                });
+
+        //나의 게시글이 맞는가 판단
+        if (!reply.getUser().getUserNo().equals(userInfo.getUserNo())) {
+            log.error("커뮤니티 답글 삭제 실패 - 나의 답글이 아님, replyNo : {}, userNo : {}", replyNo, userInfo.getUserNo());
+            throw new CustomRuntimeException(ErrorCode.COMMENT_ACCESS_DINED);
+        }
+
+        //답글 삭제 더티 체킹
+        reply.setDeletedAt(LocalDateTime.now());
+
+        log.info("커뮤니티 답글 삭제 끝");
         return null;
     }
 }

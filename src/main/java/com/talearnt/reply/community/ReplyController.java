@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,11 +40,16 @@ public class ReplyController implements ReplyApi {
         return CommonResponse.success(replyService.createReply(replyCreateReqDTO.getUserInfo().getUserNo(), replyCreateReqDTO.getCommentNo(), replyCreateReqDTO.getContent()));
     }
 
-
     //커뮤니티 답글 수정
     @PutMapping("/communities/replies/{replyNo}")
     public ResponseEntity<CommonResponse<Void>> updateReply(@PathVariable Long replyNo,
                             @RequestBody ReplyUpdateReqDTO replyUpdateReqDTO) {
         return CommonResponse.success(replyService.updateReply(replyUpdateReqDTO.getUserInfo().getUserNo(), replyNo, replyUpdateReqDTO.getContent()));
+    }
+
+    //커뮤니티 답글 삭제
+    @DeleteMapping("/communities/replies/{replyNo}")
+    public ResponseEntity<CommonResponse<Void>> deleteReply(@PathVariable Long replyNo, Authentication authentication) {
+        return CommonResponse.success(replyService.deleteReply(replyNo, authentication));
     }
 }
