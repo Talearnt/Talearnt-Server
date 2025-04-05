@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestControllerV1
 @RequiredArgsConstructor
-@Tag(name = "Comment-Community")
+@Tag(name = "Comment-Community & Reply")
 @Validated
 public class CommentController implements CommentApi {
 
