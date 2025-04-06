@@ -37,4 +37,7 @@ public class FileUpload {
     @CreationTimestamp
     @Column(updatable = false,nullable = false)
     private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime deletedAt;
 }

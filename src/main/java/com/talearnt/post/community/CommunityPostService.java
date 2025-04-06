@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -36,14 +37,15 @@ public class CommunityPostService {
     private final FileUploadService fileUploadService;
     private final CommunityPostQueryRepository communityPostQueryRepository;
 
-    /** 커뮤니티 게시글 목록 조회
+    /**
+     * 커뮤니티 게시글 목록 조회
      * 조건)
      * - 내가 좋아요 게시글 눌른 것이 있는가?
      * - 모바일인가? 웹인가?
-     * */
+     */
     @LogRunningTime
-    public PaginatedResponse<List<CommunityPostListResDTO>> getCommunityPostList(Authentication authentication, String postType, String order, String path, String lastNo, String page, String size){
-        log.info("커뮤니티 게시글 목록 조회 시작 : {} - {} - {}",postType,order,path);
+    public PaginatedResponse<List<CommunityPostListResDTO>> getCommunityPostList(Authentication authentication, String postType, String order, String path, String lastNo, String page, String size) {
+        log.info("커뮤니티 게시글 목록 조회 시작 : {} - {} - {}", postType, order, path);
 
         //로그인 여부 확인, 안했을 경우 user no = 0; 좋아요 여부 확인용!
         Long userNo = PostUtil.getCurrentUserNo("커뮤니티 게시글 목록 조회", authentication);
@@ -59,9 +61,9 @@ public class CommunityPostService {
                 .build();
 
         //웹 게시글 목록 가져오기
-        if ("web".equalsIgnoreCase(path)){
+        if ("web".equalsIgnoreCase(path)) {
             // LastNo가 null이 아니면 Exception 발생
-            if (condition.getLastNo() != null){
+            if (condition.getLastNo() != null) {
                 log.error("커뮤니티 게시글 목록 조회 실패 - 웹 : lastNo 포함 : {}", ErrorCode.POST_FAILED_CALL_LIST);
                 throw new CustomRuntimeException(ErrorCode.POST_FAILED_CALL_LIST);
             }
@@ -69,35 +71,37 @@ public class CommunityPostService {
             //웹 게시글 목록 조회
             PagedListWrapper<CommunityPostListResDTO> wrapper = communityPostQueryRepository.getCommunityPostListToWeb(userNo, condition);
             //페이지 정보로 변환
-            Page<CommunityPostListResDTO> result = new PageImpl<>(wrapper.getList(),condition.getPage(),wrapper.getPagedData().getTotal());
+            Page<CommunityPostListResDTO> result = new PageImpl<>(wrapper.getList(), condition.getPage(), wrapper.getPagedData().getTotal());
             //반환
-            return new PaginatedResponse<>(result.getContent(),PageUtil.separatePaginationFromEntityToWeb(result, wrapper.getPagedData().getLatestCreatedAt()));
+            return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToWeb(result, wrapper.getPagedData().getLatestCreatedAt()));
         }
 
         //모바일 게시글 목록 가져오기
-        Page<CommunityPostListResDTO> result = communityPostQueryRepository.getCommunityPostListToMobile(userNo,condition);
+        Page<CommunityPostListResDTO> result = communityPostQueryRepository.getCommunityPostListToMobile(userNo, condition);
 
         log.info("커뮤니티 게시글 목록 조회 끝");
         return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToMobile(result));
     }
 
 
-    /**커뮤니티 게시글 상세보기
+    /**
+     * 커뮤니티 게시글 상세보기
      * 조건)
      * - 존재하는 게시글인가?
-     * - 조회수 증가*/
+     * - 조회수 증가
+     */
     @Transactional
     @LogRunningTime
-    public CommunityPostDetailResDTO getCommunityPostDetail(Long postNo, Authentication auth){
+    public CommunityPostDetailResDTO getCommunityPostDetail(Long postNo, Authentication auth) {
         log.info("커뮤니티 게시글 상세보기 시작 : {}", postNo);
 
         //유저 번호 얻어오기 -> 좋아요 게시글 여부
-        Long userNo = PostUtil.getCurrentUserNo("커뮤니티 게시글 상세보기",auth);
+        Long userNo = PostUtil.getCurrentUserNo("커뮤니티 게시글 상세보기", auth);
 
         //게시글 Count++ 및 게시글 조회
-        CommunityPostDetailResDTO result = communityPostQueryRepository.getCommunityPostByPostNo(postNo,userNo)
-                .orElseThrow(()->{
-                    log.error("커뮤니티 게시글 상세보기 실패 - 찾는 게시글이 없음 : {}",ErrorCode.POST_NOT_FOUND);
+        CommunityPostDetailResDTO result = communityPostQueryRepository.getCommunityPostByPostNo(postNo, userNo)
+                .orElseThrow(() -> {
+                    log.error("커뮤니티 게시글 상세보기 실패 - 찾는 게시글이 없음 : {}", ErrorCode.POST_NOT_FOUND);
                     return new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
                 });
 
@@ -106,16 +110,16 @@ public class CommunityPostService {
     }
 
 
-
-    /** 커뮤니티 게시글 등록
+    /**
+     * 커뮤니티 게시글 등록
      * 조건)
      * - 로그인 하였는가?
      * - Request DTO 값이 제대로 되었는가?
      * - 이미지 경로가 제대로 되었는가? (테스트 완료 후 추가)
-     * */
+     */
     @Transactional
     @LogRunningTime
-    public Long addCommunityPost(CommunityPostReqDTO reqDTO){
+    public Long addCommunityPost(CommunityPostReqDTO reqDTO) {
         log.info("커뮤니티 게시글 등록 시작 : {}", reqDTO);
 
         //Req -> Enitiy로 변환
@@ -125,8 +129,8 @@ public class CommunityPostService {
         CommunityPost addedCommunityPost = communityPostRepository.save(communityPostEntity);
 
         //이미지 업로드
-        Integer uploadCount = fileUploadService.addPostFileUploads(addedCommunityPost.getCommunityPostNo(),reqDTO.getPostType(),reqDTO.getUserInfo().getUserNo(),reqDTO.getImageUrls());
-        if (reqDTO.getImageUrls() != null && !reqDTO.getImageUrls().isEmpty() && uploadCount < 1){
+        Integer uploadCount = fileUploadService.addPostFileUploads(addedCommunityPost.getCommunityPostNo(), reqDTO.getPostType(), reqDTO.getUserInfo().getUserNo(), reqDTO.getImageUrls());
+        if (reqDTO.getImageUrls() != null && !reqDTO.getImageUrls().isEmpty() && uploadCount < 1) {
             log.error("커뮤니티 게시글 등록 실패 - 이미지 업로드 실패 : {}", ErrorCode.FILE_FAILED_UPLOAD);
             throw new CustomRuntimeException(ErrorCode.FILE_FAILED_UPLOAD);
         }
@@ -136,7 +140,8 @@ public class CommunityPostService {
     }
 
 
-    /** 커뮤니티 게시글 수정
+    /**
+     * 커뮤니티 게시글 수정
      * 이미지 수정을 했을 경우에 DB에 존재하는 이미지와 입력받은 이미지 중 없는 것은 삭제하고,
      * 만약 추가 이미지가 있다면, 삭제할 번호와 교체하여 수정 작업을 진행한다.
      * 추가만 있을 경우에는 이미지를 추가한다.
@@ -145,31 +150,20 @@ public class CommunityPostService {
      * - 본인의 게시글이 맞는가?
      * - 게시글이 삭제 되었는가?
      * - 이미지 수정했는가?
-     * */
+     */
     @Transactional
     @LogRunningTime
-    public Void updateCommunityPost(Long postNo, CommunityPostReqDTO communityPostReqDTO){
-        log.info("커뮤니티 게시글 수정 시작 : {}",postNo);
+    public Void updateCommunityPost(Long postNo, CommunityPostReqDTO communityPostReqDTO) {
+        log.info("커뮤니티 게시글 수정 시작 : {}", postNo);
 
-        //삭제된 게시글인지 확인
-        if(communityPostQueryRepository.isDeletedCommunityPost(postNo)){
-            log.error("커뮤니티 게시글 수정 실패 - 삭제된 게시글임 : {}", ErrorCode.POST_FAILED_UPDATE);
-            throw new CustomRuntimeException(ErrorCode.POST_FAILED_UPDATE);
-        }
+        CommunityPost communityPost = validatePostAccess("커뮤니티 게시글 수정",postNo, communityPostReqDTO.getUserInfo().getUserNo());
 
-        //내 게시글이 맞는 지 확인
-        if(communityPostQueryRepository.isMyCommunityPostByUserNo(postNo,communityPostReqDTO.getUserInfo().getUserNo())){
-            log.error("커뮤니티 게시글 수정 실패 - 본인 게시글이 아님 : {}", ErrorCode.POST_ACCESS_DENIED);
-            throw new CustomRuntimeException(ErrorCode.POST_ACCESS_DENIED);
-        }
-
-        //엔티티로 변환
-        CommunityPost communityPost = CommunityPostMapper.INSTANCE.toEntity(communityPostReqDTO);
-        communityPost.setCommunityPostNo(postNo);
-
-        //엔티티 수정
+        //Mapper -> Enitity 
+        communityPost = CommunityPostMapper.INSTANCE.updateEntity(postNo, communityPostReqDTO);
+        //TODO: 이미지 수정 메소드 미구현
+        
+        //게시글 수정
         communityPostRepository.save(communityPost);
-        //이미지 수정 메소드 미구현
 
 
         log.info("커뮤니티 게시글 수정 끝");
@@ -177,36 +171,47 @@ public class CommunityPostService {
     }
 
 
-    /**커뮤니티 게시글 삭제
+    /**
+     * 커뮤니티 게시글 삭제
      * 커뮤니티 게시글 삭제 시 이미지를 지울 것인가에 대한 기획이 되어있지 않습니다.
      * 조건)
      * - 로그인을 했는가?
      * - 나의 게시글이 맞는가?
      * - 삭제된 게시글인가?
-     * */
+     */
     @Transactional
     @LogRunningTime
-    public Void deleteCommunityPost(Long postNo, Authentication authentication){
+    public Void deleteCommunityPost(Long postNo, Authentication authentication) {
         log.info("커뮤니티 게시글 삭제 시작 : {} ", postNo);
 
         //로그인 여부 검증
-        UserInfo userInfo = UserUtil.validateAuthentication("커뮤니티 게시글 삭제",authentication);
+        UserInfo userInfo = UserUtil.validateAuthentication("커뮤니티 게시글 삭제", authentication);
 
-        //나의 게시글 맞는가? true == 아님 , false == 맞음
-        if(communityPostQueryRepository.isMyCommunityPostByUserNo(postNo,userInfo.getUserNo())){
-            log.error("커뮤니티 게시글 삭제 실패 - 본인 게시글이 아님 : {}", ErrorCode.POST_ACCESS_DENIED);
-            throw new CustomRuntimeException(ErrorCode.POST_ACCESS_DENIED);
-        }
+        //게시글 조건 탐색 후 Entity 가져오기
+        CommunityPost communityPost = validatePostAccess("커뮤니티 게시글 삭제", postNo, userInfo.getUserNo());
 
-        //커뮤니티 게시글 삭제
-        if(communityPostQueryRepository.deleteCommunityPostByPostNo(postNo) != 1){
-            log.error("커뮤니티 게시글 삭제 실패 - 0개 또는 여러 개의 게시글을 삭제 시도 : {}", ErrorCode.POST_FAILED_DELETE);
-            throw new CustomRuntimeException(ErrorCode.POST_FAILED_DELETE);
-        }
+        //게시물 삭제
+        communityPost.setDeletedAt(LocalDateTime.now());
+        //TODO: 이미지 삭제 메소드 미구현
 
         log.info("커뮤니티 게시글 삭제 끝");
         return null;
     }
 
 
+    private CommunityPost validatePostAccess(String errorLocation, Long postNo, Long userNo) {
+        //게시물이 삭제하지 않고 존재하는가?
+        CommunityPost communityPost = communityPostQueryRepository.findByPostNo(postNo).orElseThrow(() -> {
+            log.error("커뮤니티 게시글 {} 실패 - 찾는 게시글이 삭제되었거나 없음 : {}", errorLocation, ErrorCode.POST_NOT_FOUND);
+            return new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
+        });
+
+        //내 게시글이 맞는 지 확인
+        if (!communityPost.getUser().getUserNo().equals(userNo)) {
+            log.error("커뮤니티 게시글 {} 실패 - 본인 게시글이 아님 : {}", errorLocation, ErrorCode.POST_ACCESS_DENIED);
+            throw new CustomRuntimeException(ErrorCode.POST_ACCESS_DENIED);
+        }
+
+        return communityPost;
+    }
 }

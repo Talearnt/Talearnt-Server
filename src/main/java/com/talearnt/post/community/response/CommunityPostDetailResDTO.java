@@ -2,9 +2,11 @@ package com.talearnt.post.community.response;
 
 import com.talearnt.enums.post.PostType;
 import com.talearnt.enums.user.UserRole;
-import com.talearnt.util.common.PostUtil;
-import com.talearnt.util.common.SplitUtil;
-import lombok.*;
+import com.talearnt.util.common.S3Util;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,7 +43,7 @@ public class CommunityPostDetailResDTO {
         this.title = title;
         this.content = content;
         this.postType = postType;
-        this.imageUrls = SplitUtil.splitStringToList(imageUrls);
+        this.imageUrls = S3Util.splitStringToList(imageUrls);
         this.count = count;
         this.isLike = isLike;
         this.likeCount = likeCount;

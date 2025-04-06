@@ -16,4 +16,15 @@ public interface CommunityPostMapper {
     @Mapping(source = "userInfo.userNo",target = "user.userNo")
     CommunityPost toEntity(CommunityPostReqDTO reqDTO);
 
+
+    @Mappings({
+            @Mapping(source = "reqDTO.userInfo.userNo", target = "user.userNo"),
+            @Mapping(source = "postNo", target = "communityPostNo"),
+            @Mapping(source = "reqDTO.title", target = "title"),
+            @Mapping(source = "reqDTO.content", target = "content"),
+            @Mapping(source = "reqDTO.postType", target = "postType")
+    })
+    CommunityPost updateEntity(Long postNo,CommunityPostReqDTO reqDTO);
+
+
 }

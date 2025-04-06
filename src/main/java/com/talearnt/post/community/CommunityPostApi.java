@@ -154,7 +154,7 @@ public interface CommunityPostApi {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "401",ref="EXPIRED_TOKEN"),
             @ApiResponse(responseCode = "403",ref="POST_ACCESS_DENIED"),
-            @ApiResponse(responseCode = "400",ref="POST_FAILED_UPDATE"),
+            @ApiResponse(responseCode = "404",ref="POST_NOT_FOUND"),
     })
     public ResponseEntity<CommonResponse<Void>> updateCommunityPost(@PathVariable Long postNo, @RequestBody CommunityPostReqDTO communityPostReqDTO);
 
@@ -168,7 +168,7 @@ public interface CommunityPostApi {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "401",ref="EXPIRED_TOKEN"),
             @ApiResponse(responseCode = "403",ref="POST_ACCESS_DENIED"),
-            @ApiResponse(responseCode = "400",ref="POST_FAILED_DELETE"),
+            @ApiResponse(responseCode = "404",ref="POST_NOT_FOUND"),
     })
     public ResponseEntity<CommonResponse<Void>> deleteCommunityPost(@PathVariable Long postNo, Authentication authentication);
 

@@ -9,7 +9,6 @@ import com.talearnt.chat.repository.ChatRoomRepository;
 import com.talearnt.enums.chat.RoomMode;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.post.PostType;
-import com.talearnt.util.pagination.PagedListWrapper;
 import com.talearnt.post.exchange.entity.ExchangePost;
 import com.talearnt.post.exchange.entity.GiveTalent;
 import com.talearnt.post.exchange.entity.ReceiveTalent;
@@ -17,8 +16,8 @@ import com.talearnt.post.exchange.repository.ExchangePostQueryRepository;
 import com.talearnt.post.exchange.repository.ExchangePostRepository;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
-import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
+import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.s3.FileUploadService;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
 import com.talearnt.util.common.PageUtil;
@@ -26,6 +25,7 @@ import com.talearnt.util.common.PostUtil;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
+import com.talearnt.util.pagination.PagedListWrapper;
 import com.talearnt.util.response.PaginatedResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -281,7 +283,7 @@ public class ExchangePostService {
         Map<String, List<Tuple>> codes = exchangePostQueryRepository.getGiveAndReceiveTalentCodesByPostNo(postNo);
         updateGiveAndReceiveTalents(postNo, codes, exchangePostReqDTO.getGiveTalents(), exchangePostReqDTO.getReceiveTalents());
 
-        //해당 게시글의 업로드된 이미지 가져오기
+        //TODO:해당 게시글의 업로드된 이미지 가져오고 수정 및 삭제
 
 
         log.info("재능 교환 게시글 수정 끝 : {}",postNo);
@@ -389,6 +391,9 @@ public class ExchangePostService {
             log.error("재능 교환 게시글 삭제 실패 - 삭제된 게시글이 0개 또는 여러 개입니다 : {}",ErrorCode.POST_FAILED_DELETE);
             throw new CustomRuntimeException(ErrorCode.POST_FAILED_DELETE);
         }
+
+        //TODO: 이미지 삭제 메소드 미구현
+
 
         log.info("재능 교환 게시글 삭제 끝");
         return "재능 교환 게시글이 성공적으로 삭제 되었습니다.";

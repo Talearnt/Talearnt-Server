@@ -3,7 +3,6 @@ package com.talearnt.s3;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.common.Regex;
 import com.talearnt.s3.request.S3FilesReqDTO;
-import com.talearnt.util.common.LoginUtil;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +23,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 /**
- * 1. Presigned URL 을 생성해서 보내준다
- * 2. 삭제 시 해당 DB 게시글에 있는 URL을 삭제해준다.
- * 3. 수정 시 해당 DB에 중복되어 있는 값을 제외한 값을 삭제해준다.
- *
- * FE에서 해야할 일
- * 1. 이미지 업로드 성공 후 유저가 게시글 지웟을 경우 List로 URL 모아두기
- * 2. 게시글 등록할 경우에 DB에 저장할 URL 목록을 보내주고, 삭제할 URL list는 S3에 요청한다.
+ * 이미지를 삭제했을 경우에 deletedAt을 추가하고, 스케쥴러를 통해서 주기적으로 삭제한다.
+ * 물리적으로 삭제가 완료 되었을 경우에 논리적으로도 삭제를 진행한다.
  * */
 @Service
 @Log4j2
