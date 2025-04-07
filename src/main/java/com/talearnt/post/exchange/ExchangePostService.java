@@ -19,9 +19,11 @@ import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.s3.FileUploadService;
+import com.talearnt.s3.entity.FileUpload;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
 import com.talearnt.util.common.PageUtil;
 import com.talearnt.util.common.PostUtil;
+import com.talearnt.util.common.S3Util;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
@@ -283,8 +285,27 @@ public class ExchangePostService {
         Map<String, List<Tuple>> codes = exchangePostQueryRepository.getGiveAndReceiveTalentCodesByPostNo(postNo);
         updateGiveAndReceiveTalents(postNo, codes, exchangePostReqDTO.getGiveTalents(), exchangePostReqDTO.getReceiveTalents());
 
-        //TODO:해당 게시글의 업로드된 이미지 가져오고 수정 및 삭제
+        //TODO:해당 게시글의 업로드된 이미지 가져오고 추가 및 삭제
+        //이미지 호출
+        List<FileUpload> fileUploads = fileUploadService.findFileUploads(postNo, PostType.EXCHANGE,exchangePostReqDTO.getUserInfo().getUserNo());
 
+        //추가할 이미지 추출
+        List<String> addFileUploadUrls = S3Util.willAddFileUploadUrls(fileUploads, exchangePostReqDTO.getImageUrls());
+
+        //추가할 이미지가 있는 경우
+        if (!addFileUploadUrls.isEmpty()) {
+            //추가할 이미지 추가
+            fileUploadService.addPostFileUploads(postNo, PostType.EXCHANGE, exchangePostReqDTO.getUserInfo().getUserNo(), addFileUploadUrls);
+        }
+
+        //삭제할 이미지 추출
+        List<FileUpload> deleteFileUploads = S3Util.willDeleteFileUploads(fileUploads, exchangePostReqDTO.getImageUrls());
+
+        //삭제할 이미지가 있는 경우
+        if (!deleteFileUploads.isEmpty()) {
+            //삭제할 이미지 삭제
+            fileUploadService.deleteFileUploads(deleteFileUploads, exchangePostReqDTO.getUserInfo().getUserNo());
+        }
 
         log.info("재능 교환 게시글 수정 끝 : {}",postNo);
         return null;
