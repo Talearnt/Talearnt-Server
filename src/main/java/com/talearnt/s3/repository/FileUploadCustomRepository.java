@@ -17,13 +17,16 @@ public class FileUploadCustomRepository {
     private final JPAQueryFactory factory;
     private final QFileUpload fileUpload = QFileUpload.fileUpload;
 
-    public List<FileUpload> getFileUploadsByExchangePostNo(Long postNo){
 
+    /**이미지 파일 목록 호출하기*/
+    public List<FileUpload> findFileUploadsByPostNo(Long postNo, PostType postType, Long userNo){
         return factory.selectFrom(fileUpload)
-                .where(fileUpload.postNo.eq(postNo),
-                        fileUpload.postType.eq(PostType.EXCHANGE))
-                .fetch();
+                .where(
+                        fileUpload.deletedAt.isNull(),
+                        fileUpload.postNo.eq(postNo),
+                        fileUpload.userNo.eq(userNo),
+                        fileUpload.postType.eq(postType)
+                ).fetch();
     }
-
 
 }
