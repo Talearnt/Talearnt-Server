@@ -72,6 +72,7 @@ public enum ErrorCode {
     FILE_UPLOAD_LENGTH_MISSING("400-REQ-05","업로드는 한 번에 최소 1개, 최대 5개까지 가능합니다."),
     FILE_UPLOAD_SIZE_OVER("413-REQ-06","5MB 이하의 파일만 업로드 가능합니다."),
     FILE_FAILED_UPLOAD("400-REQ-07","이미지 업로드에 실패하였습니다."),
+    FILE_ACCESS_DENIED("403-REQ-08","해당 파일에 대한 접근 권한이 없습니다."),
 
     // 시스템 및 알 수 없는 오류
     SERVICE_UNAVAILABLE("503-SYSTEM-01", "서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요."),
