@@ -1,9 +1,14 @@
 package com.talearnt.s3;
 
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.post.PostType;
 import com.talearnt.s3.entity.FileUpload;
+import com.talearnt.s3.repository.FileUploadCustomRepository;
 import com.talearnt.s3.repository.FileUploadRepository;
 import com.talearnt.util.common.S3Util;
+import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.log.LogRunningTime;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,6 +24,7 @@ import java.util.List;
 public class FileUploadService {
 
     private final FileUploadRepository fileUploadRepository;
+    private final FileUploadCustomRepository fileUploadCustomRepository;
     private final JdbcTemplate jdbcTemplate;
 
     /** 이미지 파일 업로드<br>
@@ -44,6 +50,51 @@ public class FileUploadService {
                 });
 
         return added.length;
+    }
+
+    /** 이미지 파일 목록 불러오기*/
+    @LogRunningTime
+    public List<FileUpload> findFileUploads(Long postNo, PostType postType, Long userNo){
+        log.info("이미지 파일 목록 불러오기 시작 - {}, {}, {}", postNo, postType, userNo);
+
+        //이미지 파일 목록 호출
+        List<FileUpload> uploadedFiles = fileUploadCustomRepository.findFileUploadsByPostNo(postNo, postType, userNo);
+
+        log.info("이미지 파일 목록 불러오기 끝");
+        return uploadedFiles;
+    }
+
+    /** 이미지 다중 삭제
+     * 조건)
+     * -이미지에 대한 권한이 유효한가?
+     * @param fileUploads Entities
+     * @param userNo 삭제하려는 유저
+     * */
+    @LogRunningTime
+    @Transactional
+    public void deleteFileUploads(List<FileUpload> fileUploads, Long userNo){
+        log.info("이미지 파일 다중 삭제 시작 - {}", userNo);
+
+        //이미지 권한 체크
+        boolean isAllMatch = fileUploads.stream().allMatch(fileUpload -> fileUpload.getUserNo().equals(userNo));
+
+        if (!isAllMatch) {
+            log.error("이미지 파일 다중 삭제 실패 - 삭제하려는 파일과 유저가 일치하지 않음 : {}", userNo);
+            throw new CustomRuntimeException(ErrorCode.FILE_ACCESS_DENIED);
+        }
+        //현재 시간 (삭제 시간)
+        LocalDateTime now = LocalDateTime.now();
+
+        //SQL문 작성
+        String sql = "UPDATE FILE_UPLOAD SET deleted_at = ? WHERE file_upload_no = ?";
+        //DB 이미지 소프트 삭제 시작
+        int[][] deleted = jdbcTemplate.batchUpdate(sql, fileUploads, 10,
+                (ps, entity) -> {
+                    ps.setTimestamp(1, Timestamp.valueOf(now));
+                    ps.setLong(2, entity.getFileUploadNo());
+                });
+
+        log.info("이미지 파일 다중 삭제 끝");
     }
 
 
