@@ -166,7 +166,6 @@ public class CommunityPostService {
         //게시글 수정
         communityPostRepository.save(communityPost);
 
-        //TODO: 이미지 수정 메소드 미구현
         //이미지 호출
         List<FileUpload> fileUploads = fileUploadService.findFileUploads(postNo, communityPostReqDTO.getPostType(),communityPostReqDTO.getUserInfo().getUserNo());
 
@@ -214,7 +213,16 @@ public class CommunityPostService {
 
         //게시물 삭제
         communityPost.setDeletedAt(LocalDateTime.now());
-        //TODO: 이미지 삭제 메소드 미구현
+
+        //이미지 호출
+        List<FileUpload> deleteFileUploads = fileUploadService.findFileUploads(postNo, communityPost.getPostType(), userInfo.getUserNo());
+
+        //삭제할 이미지가 있는 경우
+        if (!deleteFileUploads.isEmpty()) {
+            //삭제할 이미지 삭제
+            fileUploadService.deleteFileUploads(deleteFileUploads,userInfo.getUserNo());
+        }
+
 
         log.info("커뮤니티 게시글 삭제 끝");
         return null;

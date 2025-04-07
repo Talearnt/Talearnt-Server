@@ -285,7 +285,6 @@ public class ExchangePostService {
         Map<String, List<Tuple>> codes = exchangePostQueryRepository.getGiveAndReceiveTalentCodesByPostNo(postNo);
         updateGiveAndReceiveTalents(postNo, codes, exchangePostReqDTO.getGiveTalents(), exchangePostReqDTO.getReceiveTalents());
 
-        //TODO:해당 게시글의 업로드된 이미지 가져오고 추가 및 삭제
         //이미지 호출
         List<FileUpload> fileUploads = fileUploadService.findFileUploads(postNo, PostType.EXCHANGE,exchangePostReqDTO.getUserInfo().getUserNo());
 
@@ -413,8 +412,14 @@ public class ExchangePostService {
             throw new CustomRuntimeException(ErrorCode.POST_FAILED_DELETE);
         }
 
-        //TODO: 이미지 삭제 메소드 미구현
+        //이미지 호출
+        List<FileUpload> deleteFileUploads = fileUploadService.findFileUploads(postNo, PostType.EXCHANGE,userInfo.getUserNo());
 
+        //삭제할 이미지가 있는 경우
+        if (!deleteFileUploads.isEmpty()) {
+            //삭제할 이미지 삭제
+            fileUploadService.deleteFileUploads(deleteFileUploads,userInfo.getUserNo());
+        }
 
         log.info("재능 교환 게시글 삭제 끝");
         return "재능 교환 게시글이 성공적으로 삭제 되었습니다.";
