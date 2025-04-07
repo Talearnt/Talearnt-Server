@@ -9,8 +9,10 @@ import com.talearnt.post.community.request.CommunityPostSearchConditionDTO;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
 import com.talearnt.post.community.response.CommunityPostListResDTO;
 import com.talearnt.s3.FileUploadService;
+import com.talearnt.s3.entity.FileUpload;
 import com.talearnt.util.common.PageUtil;
 import com.talearnt.util.common.PostUtil;
+import com.talearnt.util.common.S3Util;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
@@ -160,11 +162,31 @@ public class CommunityPostService {
 
         //Mapper -> Enitity 
         communityPost = CommunityPostMapper.INSTANCE.updateEntity(postNo, communityPostReqDTO);
-        //TODO: 이미지 수정 메소드 미구현
         
         //게시글 수정
         communityPostRepository.save(communityPost);
 
+        //TODO: 이미지 수정 메소드 미구현
+        //이미지 호출
+        List<FileUpload> fileUploads = fileUploadService.findFileUploads(postNo, communityPostReqDTO.getPostType(),communityPostReqDTO.getUserInfo().getUserNo());
+
+        //추가할 이미지 추출
+        List<String> addFileUploadUrls = S3Util.willAddFileUploadUrls(fileUploads, communityPostReqDTO.getImageUrls());
+
+        //추가할 이미지가 있는 경우
+        if (!addFileUploadUrls.isEmpty()) {
+            //추가할 이미지 추가
+            fileUploadService.addPostFileUploads(postNo, communityPostReqDTO.getPostType(), communityPostReqDTO.getUserInfo().getUserNo(), addFileUploadUrls);
+        }
+
+        //삭제할 이미지 추출
+        List<FileUpload> deleteFileUploads = S3Util.willDeleteFileUploads(fileUploads, communityPostReqDTO.getImageUrls());
+
+        //삭제할 이미지가 있는 경우
+        if (!deleteFileUploads.isEmpty()) {
+            //삭제할 이미지 삭제
+            fileUploadService.deleteFileUploads(deleteFileUploads, communityPostReqDTO.getUserInfo().getUserNo());
+        }
 
         log.info("커뮤니티 게시글 수정 끝");
         return null;
