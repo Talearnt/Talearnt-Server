@@ -222,7 +222,8 @@ public class ExchangePostQueryRepository {
                         .leftJoin(giveCategory).on(giveCategory.talentCode.eq(giveTalent.talentCode.talentCode))
                         .leftJoin(receiveCategory).on(receiveCategory.talentCode.eq(receiveTalent.talentCode.talentCode))
                         .leftJoin(fileUpload).on(fileUpload.postNo.eq(exchangePost.exchangePostNo),
-                                fileUpload.postType.eq(PostType.EXCHANGE))
+                                fileUpload.postType.eq(PostType.EXCHANGE),
+                                fileUpload.deletedAt.isNull())
                         .leftJoin(chatRoom).on(chatRoom.exchangePost.eq(exchangePost))
                         .leftJoin(chatRequest).on(chatRequest.chatRoom.eq(chatRoom))
                         .where(exchangePost.exchangePostNo.eq(postNo),

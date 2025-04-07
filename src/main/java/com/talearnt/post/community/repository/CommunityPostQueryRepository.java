@@ -130,8 +130,11 @@ public class CommunityPostQueryRepository {
                         .leftJoin(communityReply).on(communityReply.communityComment.eq(communityComment))
                         .leftJoin(likeCommunity).on(likeCommunity.communityPost.eq(communityPost)
                                 .and(likeCommunity.canceledAt.isNull()))
-                        .leftJoin(fileUpload).on(fileUpload.postNo.eq(currentPostNo),
-                                fileUpload.postType.eq(communityPost.postType))
+                        .leftJoin(fileUpload).on(
+                                fileUpload.deletedAt.isNull(),
+                                fileUpload.postNo.eq(currentPostNo),
+                                fileUpload.postType.eq(communityPost.postType)
+                        )
                         .where(communityPost.deletedAt.isNull(),
                                 communityPost.communityPostNo.eq(currentPostNo))
                         .groupBy(communityPost)
