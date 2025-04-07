@@ -25,7 +25,7 @@ public class S3Util {
      * 요청 받은 이미지에서 DB에 존재하지 않은 데이터는 추가할 파일*/
     public static List<String> willAddFileUploadUrls(List<FileUpload> fileUploads, List<String>  requestUrls){
         return requestUrls.stream()
-                .filter(requestUrl -> fileUploads.stream().noneMatch(fileUpload -> fileUpload.getUrl().equals(requestUrl)))
+                .filter(requestUrl -> fileUploads.stream().noneMatch(fileUpload -> fileUpload.getUrl().equals(requestUrl.substring(S3_DOMAIN_BASE_URL.length()))))
                 .toList();
     }
 
