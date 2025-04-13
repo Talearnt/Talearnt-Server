@@ -46,8 +46,8 @@ dependencies {
 	// Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 	// DTO <-> Entity 변환 Mapper
-	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
 	// Dynamic Qeury를 위한 Query DSL
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	implementation 'com.querydsl:querydsl-apt:5.0.0:jakarta'
@@ -76,6 +76,10 @@ compileJava {
 
 tasks.withType(JavaCompile) {
 	options.generatedSourceOutputDirectory = file(querydslSrcDir)
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.annotationProcessorPath = configurations.annotationProcessor
 }
 clean {
 	// clean 실행 시 생성된 QClass 삭제
