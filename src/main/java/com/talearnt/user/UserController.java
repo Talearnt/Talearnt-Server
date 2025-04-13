@@ -2,14 +2,12 @@ package com.talearnt.user;
 
 
 import com.talearnt.user.infomation.UserService;
+import com.talearnt.user.infomation.request.ProfileReqDTO;
+import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
 import com.talearnt.user.infomation.response.UserHeaderResDTO;
 import com.talearnt.user.talent.MyTalentService;
-import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
 import com.talearnt.user.talent.request.MyTalentReqDTO;
-import com.talearnt.user.talent.response.MyTalentsListResDTO;
-import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.util.response.CommonResponse;
-import com.talearnt.util.role.AllowedUsers;
 import com.talearnt.util.version.RestControllerV1;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -20,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "Users",description = "유저 관련")
@@ -48,6 +47,16 @@ public class UserController implements UserApi{
     @PostMapping("/users/my-talents")
     public ResponseEntity<CommonResponse<String>> addMyTalents(@RequestBody @Valid MyTalentReqDTO talents){
         return CommonResponse.success(myTalentService.addMyTalents(talents));
+    }
+
+    //나의 정보 수정 == 키워드 및 닉네임 & 프로필 이미지
+    @PutMapping("/users/profile")
+    public ResponseEntity<CommonResponse<UserHeaderResDTO>> updateMyInfo(@RequestBody @Valid ProfileReqDTO profileReqDTO){
+        return CommonResponse.success(userService.updateProfile(profileReqDTO.getUserInfo(),
+                profileReqDTO.getNickname(),
+                profileReqDTO.getProfileImg(),
+                profileReqDTO.getGiveTalents(),
+                profileReqDTO.getReceiveTalents()));
     }
 
 }
