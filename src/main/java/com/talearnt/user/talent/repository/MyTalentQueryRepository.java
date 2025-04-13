@@ -3,12 +3,13 @@ package com.talearnt.user.talent.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.admin.category.entity.QTalentCategory;
+import com.talearnt.user.talent.entity.MyTalent;
 import com.talearnt.user.talent.entity.QMyTalent;
 import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.user.talent.response.QMyTalentsResDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import static com.talearnt.user.talent.entity.QMyTalent.myTalent;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,8 @@ import java.util.Optional;
 public class MyTalentQueryRepository {
     private final JPAQueryFactory factory;
 
+    private final QMyTalent myTalent = QMyTalent.myTalent;
+    private final QTalentCategory talentCategory = QTalentCategory.talentCategory;
 
 
     /** 받고 싶은 재능 코드 반환하는 메소드*/
@@ -47,7 +50,6 @@ public class MyTalentQueryRepository {
      * - TalentCategory Table에 isActive로 존재하는가? <br>
      * 모든 키워드가 존재하지 않으면 True, 존재하면 False*/
     public Boolean validateIsCategory(List<Integer> codes){
-        QTalentCategory talentCategory = QTalentCategory.talentCategory;
 
         long rightCodes = Optional.ofNullable(
                 factory
@@ -67,8 +69,6 @@ public class MyTalentQueryRepository {
      *  유저의 나의 재능 중에 재능 키워드에서 활성화 된 것들만 가져옴.
      * */
     public List<MyTalentsResDTO> getActivatedTalentsForMyTalents(Long userNo){
-        QMyTalent myTalent = QMyTalent.myTalent;
-        QTalentCategory talentCategory = QTalentCategory.talentCategory;
         return factory
                 .select(new QMyTalentsResDTO(talentCategory.talentCode, talentCategory.talentName))
                 .from(myTalent)
@@ -78,6 +78,16 @@ public class MyTalentQueryRepository {
                 .where(myTalent.user.userNo.eq(userNo)
                         .and(myTalent.isActive.eq(true)) // 나의 재능이 활성화된 상태
                         .and(myTalent.type.eq(false))) // 주고 싶은 재능
+                .fetch();
+    }
+
+    /** 나의 재능 키워드를 모두 가져오기
+     * 비활성화된 것들을 활성화 시켜야 할 수 있으므로 비활성화된 것들도 가져온다.*/
+    public List<MyTalent> getAllMyTalents(Long userNo){
+        return factory
+                .selectFrom(myTalent)
+                .join(myTalent.talentCategory, talentCategory).fetchJoin()
+                .where(myTalent.user.userNo.eq(userNo))
                 .fetch();
     }
 
