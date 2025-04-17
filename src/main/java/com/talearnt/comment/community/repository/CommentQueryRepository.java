@@ -117,7 +117,7 @@ public class CommentQueryRepository {
                         .where(
                                 comment.deletedAt.isNull(),
                                 comment.communityPost.communityPostNo.eq(postNo),
-                                lastNoGt(condition.getLastNo())
+                                lastNoLt(condition.getLastNo())
                         ).fetchOne()
         ).orElse(0L);
 
