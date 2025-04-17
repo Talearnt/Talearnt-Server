@@ -97,7 +97,7 @@ public class CommentQueryRepository {
                 .where(
                         comment.deletedAt.isNull(),
                         comment.communityPost.communityPostNo.eq(postNo),
-                        lastNoGt(condition.getLastNo()) // LastNo가 있을 경우 보다 큰거 거 반환 - 오래된 순임
+                        lastNoLt(condition.getLastNo()) // LastNo가 있을 경우 보다 큰거 거 반환 - 오래된 순임
                 )
                 .groupBy(comment.commentNo)
                 .orderBy(orderByPathAndLastNo(path, condition.getLastNo()))// 최신순, 오래된 순
@@ -178,8 +178,8 @@ public class CommentQueryRepository {
     /**
      * 커뮤니티 게시글 LastNo가 있을 경우 현재 댓글 번호보다 큰 거, 오래된 순으로 가져오기 때문에
      */
-    private BooleanExpression lastNoGt(Long lastNo) {
-        return lastNo != null ? comment.commentNo.gt(lastNo) : null;
+    private BooleanExpression lastNoLt(Long lastNo) {
+        return lastNo != null ? comment.commentNo.lt(lastNo) : null;
     }
 
     /**
