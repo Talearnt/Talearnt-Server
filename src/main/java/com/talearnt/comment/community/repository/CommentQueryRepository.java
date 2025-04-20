@@ -100,16 +100,15 @@ public class CommentQueryRepository {
                         lastNoLt(condition.getLastNo()) // LastNo가 있을 경우 보다 큰거 거 반환 - 오래된 순임
                 )
                 .groupBy(comment.commentNo)
-                .orderBy(orderByPathAndLastNo(path, condition.getLastNo()))// 최신순, 오래된 순
+                .orderBy(comment.commentNo.desc())// 최신순, 오래된 순
                 .limit(condition.getPage().getPageSize())
                 .fetch();
 
         //데이터 정렬이 최신순일 때 오래된 순으로 변경
-        if ("mobile".equalsIgnoreCase(path) && condition.getLastNo() == null) {
-            data = data.stream()
-                    .sorted((d1, d2) -> d1.getCommentNo().compareTo(d2.getCommentNo()))
-                    .toList();
-        }
+        data = data.stream()
+                .sorted((d1, d2) -> d1.getCommentNo().compareTo(d2.getCommentNo()))
+                .toList();
+
 
         Long total = Optional.ofNullable(
                 factory.select(comment.countDistinct())
