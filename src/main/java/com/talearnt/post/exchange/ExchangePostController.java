@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Tag(name = "Post-Exchange")
 @RestControllerV1
@@ -76,6 +77,12 @@ public class ExchangePostController implements ExchangePostApi{
     @DeleteMapping("/posts/exchanges/{postNo}")
     public ResponseEntity<CommonResponse<String>> deleteExchangePost(@PathVariable Long postNo, Authentication auth){
         return CommonResponse.success(exchangePostService.deleteExchangePost(postNo, auth));
+    }
+
+    //찜 게시글
+    @PostMapping("/posts/exchanges/{postNo}/favorite")
+    public ResponseEntity<CommonResponse<CompletableFuture<Void>>> favoriteExchangePost(@PathVariable Long postNo, Authentication auth){
+        return CommonResponse.success(exchangePostService.favoriteExchangePost(postNo, auth));
     }
 
 }
