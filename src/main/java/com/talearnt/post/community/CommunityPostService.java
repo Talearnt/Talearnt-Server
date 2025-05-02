@@ -2,8 +2,11 @@ package com.talearnt.post.community;
 
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.post.community.entity.CommunityPost;
+import com.talearnt.post.community.entity.LikeCommunity;
 import com.talearnt.post.community.repository.CommunityPostQueryRepository;
 import com.talearnt.post.community.repository.CommunityPostRepository;
+import com.talearnt.post.community.repository.LikeCommunityQueryRepository;
+import com.talearnt.post.community.repository.LikeCommunityRepository;
 import com.talearnt.post.community.request.CommunityPostReqDTO;
 import com.talearnt.post.community.request.CommunityPostSearchConditionDTO;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
@@ -24,11 +27,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Log4j2
@@ -38,6 +43,8 @@ public class CommunityPostService {
     private final CommunityPostRepository communityPostRepository;
     private final FileUploadService fileUploadService;
     private final CommunityPostQueryRepository communityPostQueryRepository;
+    private final LikeCommunityRepository  likeCommunityRepository;
+    private final LikeCommunityQueryRepository likeCommunityQueryRepository;
 
     /**
      * 커뮤니티 게시글 목록 조회
@@ -226,6 +233,57 @@ public class CommunityPostService {
 
         log.info("커뮤니티 게시글 삭제 끝");
         return null;
+    }
+
+
+    /**
+     * 커뮤니티 게시글 좋아요
+     * 조건)
+     * - 로그인 했는가?
+     * - 게시글 존재 여부 확인
+     * - 삭제된 게시글인가?
+     * 클라이언트 쪽에서 한 번 이벤트 발생후 최소 2초 이상의 시간을 두고 다시 이벤트를 보내도록 설정하지 않으면 비동기 통신에서 스케쥴러가 쌓일 가능성이 높다.
+     */
+    @Async
+    @LogRunningTime
+    @Transactional
+    public CompletableFuture<Void> likeCommunityPost(Long postNo, Authentication authentication) {
+        log.info("커뮤니티 게시글 좋아요 시작 : {}", postNo);
+
+        //로그인 여부 검증
+        UserInfo userInfo = UserUtil.validateAuthentication("커뮤니티 게시글 좋아요", authentication);
+
+
+        //게시글 존재 여부 확인
+        CommunityPost communityPost = communityPostRepository.findById(postNo).orElseThrow(()->{
+            log.error("커뮤니티 게시글 좋아요 실패 - 찾는 게시글이 없음 : {}", ErrorCode.POST_NOT_FOUND);
+            return new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
+        });
+
+        //게시글 삭제 여부 확인
+        if (communityPost.getDeletedAt() != null) {
+            log.error("커뮤니티 게시글 좋아요 실패 - 삭제된 게시글 : {}", ErrorCode.POST_NOT_FOUND);
+            throw new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
+        }
+
+        //좋아요 여부 확인
+        LikeCommunity likeCommunity = likeCommunityQueryRepository.findByPostNoAndUserNo(postNo, userInfo.getUserNo()).orElse(null);
+
+        //좋아요을 누른 경우
+        if (likeCommunity != null){
+            //좋아요 토글
+            LocalDateTime isCanceled = likeCommunity.getCanceledAt() != null ? null: LocalDateTime.now();
+            likeCommunity.setCanceledAt(isCanceled);
+        }else{
+            //좋아요 엔티티 생성
+            likeCommunity= new LikeCommunity(null, communityPost, userInfo.getUserNo(), null, null);
+        }
+
+        //엔티티 등록 또는 수정
+        likeCommunityRepository.save(likeCommunity);
+
+        log.info("커뮤니티 게시글 좋아요 끝");
+        return CompletableFuture.runAsync(() -> {});
     }
 
 
