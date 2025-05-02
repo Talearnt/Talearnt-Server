@@ -126,6 +126,7 @@ public interface CommunityPostApi {
             "<li>isLike : 게시글 좋아요 여부</li>" +
             "<li>likeCount : 게시글 좋아요 개수</li>" +
             "<li>commentCount : 총 댓글 개수(댓글 수+답글 수)</li>" +
+            "<li>commentLastPage : 게시글 댓글의 마지막 페이지 번호</li>" +
             "<li>createdAt : 게시글 생성 일시</li>" +
             "<li>updatedAt : 게시글 수정 일시</li>" +
             "</ul>")
