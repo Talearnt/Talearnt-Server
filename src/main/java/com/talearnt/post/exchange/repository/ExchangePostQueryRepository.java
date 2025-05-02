@@ -218,7 +218,7 @@ public class ExchangePostQueryRepository {
                         .leftJoin(user).on(user.eq(exchangePost.user))
                         .leftJoin(giveTalent).on(giveTalent.exchangePost.eq(exchangePost))
                         .leftJoin(receiveTalent).on(receiveTalent.exchangePost.eq(exchangePost))
-                        .leftJoin(favoriteExchangePost).on(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
+                        .leftJoin(favoriteExchangePost).on(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo), favoriteExchangePost.deletedAt.isNull())
                         .leftJoin(giveCategory).on(giveCategory.talentCode.eq(giveTalent.talentCode.talentCode))
                         .leftJoin(receiveCategory).on(receiveCategory.talentCode.eq(receiveTalent.talentCode.talentCode))
                         .leftJoin(fileUpload).on(fileUpload.postNo.eq(exchangePost.exchangePostNo),
@@ -239,7 +239,6 @@ public class ExchangePostQueryRepository {
     public Page<ExchangePostListResDTO> getFilteredExchangePostListToMobile(ExchangeSearchConditionDTO searchConditionDTO, Long currentUserNo) {
         List<ExchangePostListResDTO> data = getListSelected(currentUserNo)
                 .where(
-                        favoriteExchangePost.deletedAt.isNull(), // 찜 게시글이 삭제되지 않았고, -> favoriteExchangePost를 위함
                         exchangePost.deletedAt.isNull(), //게시글이 삭제되지 않았고,
                         giveTalentsCodeEq(searchConditionDTO.getGiveTalents()),//주고 싶은 재능 분류의 코드가 일치하고,
                         receiveTalentCodesEq(searchConditionDTO.getReceiveTalents()),//받고 싶은 재능 분류의 코드가 일치할 경우
@@ -279,7 +278,6 @@ public class ExchangePostQueryRepository {
 
         List<ExchangePostListResDTO> data = getListSelected(currentUserNo)
                 .where(
-                        favoriteExchangePost.deletedAt.isNull(), // 찜 게시글이 삭제되지 않았고, -> favoriteExchangePost를 위함
                         exchangePost.deletedAt.isNull(), //게시글이 삭제되지 않았고,
                         giveTalentsCodeEq(searchConditionDTO.getGiveTalents()),//주고 싶은 재능 분류의 코드가 일치하고,
                         receiveTalentCodesEq(searchConditionDTO.getReceiveTalents()),//받고 싶은 재능 분류의 코드가 일치할 경우
@@ -344,7 +342,8 @@ public class ExchangePostQueryRepository {
                 .leftJoin(user).on(user.eq(exchangePost.user))
                 .leftJoin(giveTalent).on(giveTalent.exchangePost.eq(exchangePost))
                 .leftJoin(receiveTalent).on(receiveTalent.exchangePost.eq(exchangePost))
-                .leftJoin(favoriteExchangePost).on(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
+                .leftJoin(favoriteExchangePost).on(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo),
+                        favoriteExchangePost.deletedAt.isNull())
                 .leftJoin(giveCategory).on(giveCategory.talentCode.eq(giveTalent.talentCode.talentCode))
                 .leftJoin(receiveCategory).on(receiveCategory.talentCode.eq(receiveTalent.talentCode.talentCode))
                 .leftJoin(chatRoom).on(chatRoom.exchangePost.eq(exchangePost))
