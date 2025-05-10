@@ -9,18 +9,15 @@ import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.version.RestControllerV1;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Tag(name = "Post-Exchange")
 @RestControllerV1
@@ -81,8 +78,9 @@ public class ExchangePostController implements ExchangePostApi{
 
     //찜 게시글
     @PostMapping("/posts/exchanges/{postNo}/favorite")
-    public ResponseEntity<CommonResponse<CompletableFuture<Void>>> favoriteExchangePost(@PathVariable Long postNo, Authentication auth){
-        return CommonResponse.success(exchangePostService.favoriteExchangePost(postNo, auth));
+    public ResponseEntity<CommonResponse<Void>> favoriteExchangePost(@PathVariable Long postNo, Authentication auth){
+        exchangePostService.favoriteExchangePost(postNo, auth);
+        return CommonResponse.success(null);
     }
 
 }

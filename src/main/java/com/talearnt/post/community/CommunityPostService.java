@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @Log4j2
@@ -247,7 +246,7 @@ public class CommunityPostService {
     @Async
     @LogRunningTime
     @Transactional
-    public CompletableFuture<Void> likeCommunityPost(Long postNo, Authentication authentication) {
+    public void likeCommunityPost(Long postNo, Authentication authentication) {
         log.info("커뮤니티 게시글 좋아요 시작 : {}", postNo);
 
         //로그인 여부 검증
@@ -283,7 +282,6 @@ public class CommunityPostService {
         likeCommunityRepository.save(likeCommunity);
 
         log.info("커뮤니티 게시글 좋아요 끝");
-        return CompletableFuture.runAsync(() -> {});
     }
 
 

@@ -47,7 +47,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -435,17 +434,20 @@ public class ExchangePostService {
         return "재능 교환 게시글이 성공적으로 삭제 되었습니다.";
     }
 
-    /**재능 교환 게시글 찜하기 시작 (Toggle) <br>
+    /**
+     * 재능 교환 게시글 찜하기 시작 (Toggle) <br>
      * 조건 )<br>
      * - 로그인이 되어 있는가?<br>
      * - 게시글이 존재하는가?<br>
      * - 삭제된 게시글이 아닌가?
+     *
      * @param postNo 재능교환 게시글 번호
-     * @param auth 유저 Authentication*/
+     * @param auth   유저 Authentication
+     */
     @Async
     @Transactional
     @LogRunningTime
-    public CompletableFuture<Void> favoriteExchangePost(Long postNo, Authentication auth){
+    public void favoriteExchangePost(Long postNo, Authentication auth){
         log.info("재능 교환 게시글 찜하기 시작 - {}",postNo);
 
         //로그인 여부 확인
@@ -483,7 +485,6 @@ public class ExchangePostService {
         favoriteExchangePostRepository.save(favoriteExchangePost);
 
         log.info("재능 교환 게시글 찜하기 끝");
-        return CompletableFuture.runAsync(()->{});
     }
 
 }

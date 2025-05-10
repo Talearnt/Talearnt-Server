@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -65,8 +64,9 @@ public class CommunityPostController implements CommunityPostApi{
 
     //커뮤니티 게시글 좋아요
     @PostMapping("/posts/communities/{postNo}/like")
-    public ResponseEntity<CommonResponse<CompletableFuture<Void>>> likeCommunityPost(@PathVariable Long postNo, Authentication authentication){
-        return CommonResponse.success(communityPostService.likeCommunityPost(postNo, authentication));
+    public ResponseEntity<CommonResponse<Void>> likeCommunityPost(@PathVariable Long postNo, Authentication authentication){
+        communityPostService.likeCommunityPost(postNo, authentication);
+        return CommonResponse.success(null);
     }
 
 }

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public interface CommunityPostApi {
 
@@ -188,5 +187,5 @@ public interface CommunityPostApi {
             @ApiResponse(responseCode = "401",ref="EXPIRED_TOKEN"),
             @ApiResponse(responseCode = "404",ref="POST_NOT_FOUND")
     })
-    public ResponseEntity<CommonResponse<CompletableFuture<Void>>> likeCommunityPost(@PathVariable Long postNo, Authentication authentication);
+    public ResponseEntity<CommonResponse<Void>> likeCommunityPost(@PathVariable Long postNo, Authentication authentication);
 }

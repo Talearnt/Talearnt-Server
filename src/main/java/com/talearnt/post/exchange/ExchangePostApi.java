@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public interface ExchangePostApi {
 
@@ -273,7 +272,7 @@ public interface ExchangePostApi {
             @ApiResponse(responseCode = "401",ref="EXPIRED_TOKEN"),
             @ApiResponse(responseCode = "404",ref="POST_NOT_FOUND")
     })
-    public ResponseEntity<CommonResponse<CompletableFuture<Void>>> favoriteExchangePost(@PathVariable Long postNo, Authentication auth);
+    public ResponseEntity<CommonResponse<Void>> favoriteExchangePost(@PathVariable Long postNo, Authentication auth);
 
 }
 
