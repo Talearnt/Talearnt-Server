@@ -57,10 +57,15 @@ public class ReplyQueryRepository {
                 .where(
                         reply.deletedAt.isNull(), // 삭제된 답글 제외
                         reply.communityComment.commentNo.eq(commentNo),// 댓글 번호 같은 것
-                        lastNoGt(condition.getLastNo()) // 마지막 답글 번호보다 큰 것
+                        lastNoLt(condition.getLastNo()) // 첫 답글 번호보다 작은 것
                 )
+                .orderBy(reply.replyNo.desc())
                 .limit(condition.getPage().getPageSize())
                 .fetch();
+
+        data = data.stream()
+                .sorted((d1, d2) -> d1.getReplyNo().compareTo(d2.getReplyNo()))
+                .toList();
 
         long total = Optional.ofNullable(
                 factory.select(reply.countDistinct())
@@ -68,7 +73,7 @@ public class ReplyQueryRepository {
                         .where(
                                 reply.deletedAt.isNull(), // 삭제된 답글 제외
                                 reply.communityComment.commentNo.eq(commentNo),// 댓글 번호 같은 것
-                                lastNoGt(condition.getLastNo()) // 마지막 답글 번호보다 큰 것
+                                lastNoLt(condition.getLastNo()) // 첫 답글 번호보다 작은 것
                         ).fetchOne()
         ).orElse(0L);
 
@@ -81,7 +86,7 @@ public class ReplyQueryRepository {
      * @param lastNo 마지막 답글 번호
      * @return BooleanExpression
      */
-    private BooleanExpression lastNoGt(Long lastNo) {
-        return lastNo != null ? reply.replyNo.gt(lastNo) : null;
+    private BooleanExpression lastNoLt(Long lastNo) {
+        return lastNo != null ? reply.replyNo.lt(lastNo) : null;
     }
 }

@@ -21,7 +21,7 @@ public interface ReplyApi {
     @Operation(summary = "커뮤니티 게시글 답글 목록", description = "<h2>내용</h2>" +
             "<p>답글 목록을 조회합니다.</p>" +
             "<p>모바일과 웹의 작동 방식이 같아서 Cursor 방식으로 구현했습니다.</p>" +
-            "<p>LastNo가 있을 경우 마지막에 있는 번호보다 큰 No값(오래된 순)으로 가져옵니다.</p>" +
+            "<p>LastNo가 있을 경우 목록의 첫 번째 값보다 작은 값을 가져옵니다 (가져오기->최신순 , 보여줄 땐 오래된 순)</p>" +
             "<h2>Response</h2>" +
             "<ul>" +
                 "<li>userNo : 회원 번호</li>" +
