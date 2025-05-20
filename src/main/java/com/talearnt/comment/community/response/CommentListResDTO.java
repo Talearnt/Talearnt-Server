@@ -18,6 +18,7 @@ public class CommentListResDTO {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean isDeleted;
 
     private Long replyCount;
 }
