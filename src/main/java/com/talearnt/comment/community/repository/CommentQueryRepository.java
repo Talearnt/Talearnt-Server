@@ -3,6 +3,7 @@ package com.talearnt.comment.community.repository;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -93,7 +94,7 @@ public class CommentQueryRepository {
     public Page<CommentListResDTO> getCommentListToMobile(Long postNo, CommentSearchCondition condition, String path) {
 
         //최신순, 오래된순
-        List<CommentListResDTO> data = getListSeleted()
+        List<CommentListResDTO> data = getListSelected()
                 .where(
                         comment.deletedAt.isNull(),
                         comment.communityPost.communityPostNo.eq(postNo),
@@ -128,9 +129,9 @@ public class CommentQueryRepository {
      * 커뮤니티 댓글 목록 - 웹 전용
      */
     public PagedListWrapper<CommentListResDTO> getCommentListToWeb(Long postNo, CommentSearchCondition condition) {
-        List<CommentListResDTO> data = getListSeleted()
+        List<CommentListResDTO> data = getListSelected()
                 .where(
-                        comment.deletedAt.isNull(),// 댓글이 삭제되지 않았고,
+                        deletedAtIsNull(condition.getDeletedAt()),// 최초 댓글 삭제 시간이 포함되어 있으면, 삭제 시간 이후에 삭제한 것도 가져와서 페이지네이션 진행.
                         comment.communityPost.communityPostNo.eq(postNo)//커뮤니티 게시글 번호가 같고
                 )
                 .groupBy(comment.commentNo)
@@ -145,7 +146,7 @@ public class CommentQueryRepository {
                                 comment.createdAt)))
                 .from(comment)
                 .where(
-                        comment.deletedAt.isNull(),// 삭제되지 않은 댓글
+                        deletedAtIsNull(condition.getDeletedAt()),// 최초 댓글 삭제 시간이 포함되어 있으면, 삭제 시간 이후에 삭제한 것도 가져와서 페이지네이션 진행.
                         comment.communityPost.communityPostNo.eq(postNo)//게시물 번호와 같은 댓글
                 )
                 .fetchOne();
@@ -156,21 +157,43 @@ public class CommentQueryRepository {
     /**
      * 커뮤니티 댓글 목록 조회 공통 Select 반환
      */
-    public JPAQuery<CommentListResDTO> getListSeleted() {
+    public JPAQuery<CommentListResDTO> getListSelected() {
         return factory.select(Projections.constructor(CommentListResDTO.class,
-                        user.userNo,
-                        user.nickname,
-                        user.profileImg,
-
+                        new CaseBuilder()
+                                .when(comment.deletedAt.isNull())
+                                .then(user.userNo)
+                                .otherwise(Expressions.nullExpression(Long.class)),
+                        new CaseBuilder()
+                                .when(comment.deletedAt.isNull())
+                                .then(user.nickname)
+                                .otherwise(Expressions.nullExpression(String.class)),
+                        new CaseBuilder()
+                                .when(comment.deletedAt.isNull())
+                                .then(user.profileImg)
+                                .otherwise(Expressions.nullExpression(String.class)),
                         comment.commentNo,
-                        comment.content,
-                        comment.createdAt,
-                        comment.updatedAt,
+                        new CaseBuilder()
+                                .when(comment.deletedAt.isNull())
+                                .then(comment.content)
+                                .otherwise(Expressions.nullExpression(String.class)),
+                        new CaseBuilder()
+                                .when(comment.deletedAt.isNull())
+                                .then(comment.createdAt)
+                                .otherwise(Expressions.nullExpression(LocalDateTime.class)),
+                        new CaseBuilder()
+                                .when(comment.deletedAt.isNull())
+                                .then(comment.updatedAt)
+                                .otherwise(Expressions.nullExpression(LocalDateTime.class)),
+                        new CaseBuilder()
+                                .when(comment.deletedAt.isNull())
+                                .then(false)
+                                .otherwise(true),
                         reply.countDistinct()
                 ))
                 .from(comment)
                 .leftJoin(communityPost).on(communityPost.eq(comment.communityPost))
-                .leftJoin(reply).on(reply.communityComment.eq(comment))
+                .leftJoin(reply).on(reply.communityComment.eq(comment),
+                        reply.deletedAt.isNull())
                 .leftJoin(user).on(user.eq(comment.user));
     }
 
@@ -179,6 +202,16 @@ public class CommentQueryRepository {
      */
     private BooleanExpression lastNoLt(Long lastNo) {
         return lastNo != null ? comment.commentNo.lt(lastNo) : null;
+    }
+
+    /**
+     * 최초 댓글 삭제 시간이 포함되어 있으면, 삭제 시간 이후에 삭제한 것도 가져와서 페이지네이션을 실행한다. <br>
+     * 삭제 시간이 없으면 삭제된 댓글은 제외한다.
+     * @param deletedAt 최초 댓글 삭제 시간
+     * @return BooleanExpression
+     */
+    private BooleanExpression deletedAtIsNull(LocalDateTime deletedAt) {
+        return deletedAt != null ? comment.deletedAt.isNull().or(comment.deletedAt.goe(deletedAt)) : comment.deletedAt.isNull();
     }
 
     /**
