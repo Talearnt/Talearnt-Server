@@ -14,7 +14,7 @@ import com.talearnt.enums.post.PostType;
 import com.talearnt.post.community.entity.CommunityPost;
 import com.talearnt.post.community.entity.QCommunityPost;
 import com.talearnt.post.community.entity.QLikeCommunity;
-import com.talearnt.post.community.request.CommunityPostSearchConditionDTO;
+import com.talearnt.post.community.request.CommunityPostSearchCondition;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
 import com.talearnt.post.community.response.CommunityPostListResDTO;
 import com.talearnt.post.community.response.CommunityPostMobileListResDTO;
@@ -143,7 +143,7 @@ public class CommunityPostQueryRepository {
         );
     }
 
-    public PagedListWrapper<CommunityPostListResDTO> getCommunityPostListToWeb(Long userNo, CommunityPostSearchConditionDTO condition){
+    public PagedListWrapper<CommunityPostListResDTO> getCommunityPostListToWeb(Long userNo, CommunityPostSearchCondition condition){
         JPAQuery<CommunityPostListResDTO> selected = getSeletedList(condition.getPath(), condition.getOrder(), userNo);
 
         List<CommunityPostListResDTO> data = selected.from(communityPost)
@@ -180,7 +180,7 @@ public class CommunityPostQueryRepository {
 
 
     //커뮤니티 게시글 목록 조회 - 모바일
-    public Page<CommunityPostListResDTO> getCommunityPostListToMobile(Long userNo, CommunityPostSearchConditionDTO condition) {
+    public Page<CommunityPostListResDTO> getCommunityPostListToMobile(Long userNo, CommunityPostSearchCondition condition) {
         //마지막 게시글 인기 점수 뽑기 - 커서 기반 페이지네이션
         Double lastPopularScore = null;
         if (condition.getOrder().equalsIgnoreCase("hot") && condition.getLastNo() != null) {

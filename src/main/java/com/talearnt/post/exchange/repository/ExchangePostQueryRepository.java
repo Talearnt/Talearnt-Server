@@ -15,12 +15,12 @@ import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.enums.post.PostType;
 import com.talearnt.post.exchange.entity.QExchangePost;
-import com.talearnt.post.exchange.entity.QFavoriteExchangePost;
 import com.talearnt.post.exchange.entity.QGiveTalent;
 import com.talearnt.post.exchange.entity.QReceiveTalent;
-import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
+import com.talearnt.post.exchange.request.ExchangeSearchCondition;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
+import com.talearnt.post.favorite.entity.QFavoriteExchangePost;
 import com.talearnt.s3.entity.QFileUpload;
 import com.talearnt.user.infomation.entity.QUser;
 import com.talearnt.user.talent.entity.QMyTalent;
@@ -236,7 +236,7 @@ public class ExchangePostQueryRepository {
     /**
      * 재능 교환 목록 불러오기 - 모바일 전용(Filter 조건)<br>
      */
-    public Page<ExchangePostListResDTO> getFilteredExchangePostListToMobile(ExchangeSearchConditionDTO searchConditionDTO, Long currentUserNo) {
+    public Page<ExchangePostListResDTO> getFilteredExchangePostListToMobile(ExchangeSearchCondition searchConditionDTO, Long currentUserNo) {
         List<ExchangePostListResDTO> data = getListSelected(currentUserNo)
                 .where(
                         exchangePost.deletedAt.isNull(), //게시글이 삭제되지 않았고,
@@ -274,7 +274,7 @@ public class ExchangePostQueryRepository {
     /**
      * 재능 교환 목록 불러오기 - 웹 전용(Filter 조건)<br>
      */
-    public PagedListWrapper<ExchangePostListResDTO> getFilteredExchangePostListToWeb(ExchangeSearchConditionDTO searchConditionDTO, Long currentUserNo) {
+    public PagedListWrapper<ExchangePostListResDTO> getFilteredExchangePostListToWeb(ExchangeSearchCondition searchConditionDTO, Long currentUserNo) {
 
         List<ExchangePostListResDTO> data = getListSelected(currentUserNo)
                 .where(

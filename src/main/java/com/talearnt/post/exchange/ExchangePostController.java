@@ -76,11 +76,5 @@ public class ExchangePostController implements ExchangePostApi{
         return CommonResponse.success(exchangePostService.deleteExchangePost(postNo, auth));
     }
 
-    //찜 게시글
-    @PostMapping("/posts/exchanges/{postNo}/favorite")
-    public ResponseEntity<CommonResponse<Void>> favoriteExchangePost(@PathVariable Long postNo, Authentication auth){
-        exchangePostService.favoriteExchangePost(postNo, auth);
-        return CommonResponse.success(null);
-    }
 
 }

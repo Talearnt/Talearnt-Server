@@ -8,7 +8,7 @@ import com.talearnt.post.community.repository.CommunityPostRepository;
 import com.talearnt.post.community.repository.LikeCommunityQueryRepository;
 import com.talearnt.post.community.repository.LikeCommunityRepository;
 import com.talearnt.post.community.request.CommunityPostReqDTO;
-import com.talearnt.post.community.request.CommunityPostSearchConditionDTO;
+import com.talearnt.post.community.request.CommunityPostSearchCondition;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
 import com.talearnt.post.community.response.CommunityPostListResDTO;
 import com.talearnt.s3.FileUploadService;
@@ -59,7 +59,7 @@ public class CommunityPostService {
         Long userNo = PostUtil.getCurrentUserNo("커뮤니티 게시글 목록 조회", authentication);
 
         //Search Condition 생성
-        CommunityPostSearchConditionDTO condition = CommunityPostSearchConditionDTO.builder()
+        CommunityPostSearchCondition condition = CommunityPostSearchCondition.builder()
                 .postType(postType)
                 .order(order)
                 .path(path)

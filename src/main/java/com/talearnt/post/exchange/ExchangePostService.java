@@ -10,15 +10,12 @@ import com.talearnt.enums.chat.RoomMode;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.post.PostType;
 import com.talearnt.post.exchange.entity.ExchangePost;
-import com.talearnt.post.exchange.entity.FavoriteExchangePost;
 import com.talearnt.post.exchange.entity.GiveTalent;
 import com.talearnt.post.exchange.entity.ReceiveTalent;
 import com.talearnt.post.exchange.repository.ExchangePostQueryRepository;
 import com.talearnt.post.exchange.repository.ExchangePostRepository;
-import com.talearnt.post.exchange.repository.FavoriteExchagePostQueryRepository;
-import com.talearnt.post.exchange.repository.FavoriteExchangePostRepository;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
-import com.talearnt.post.exchange.request.ExchangeSearchConditionDTO;
+import com.talearnt.post.exchange.request.ExchangeSearchCondition;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.s3.FileUploadService;
@@ -30,7 +27,6 @@ import com.talearnt.util.common.S3Util;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
-import com.talearnt.util.log.LogRunningTime;
 import com.talearnt.util.pagination.PagedListWrapper;
 import com.talearnt.util.response.PaginatedResponse;
 import jakarta.transaction.Transactional;
@@ -39,11 +35,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -66,8 +60,6 @@ public class ExchangePostService {
     private final TalentCategoryRepository talentCategoryRepository;
     private final FileUploadService fileUploadService;
     private final ChatRoomRepository chatRoomRepository;
-    private final FavoriteExchangePostRepository favoriteExchangePostRepository;
-    private final FavoriteExchagePostQueryRepository favoriteExchagePostQueryRepository;
 
 
     /** 재능 교환 게시글 작성 <br>
@@ -183,7 +175,7 @@ public class ExchangePostService {
         Long currentUserNo = PostUtil.getCurrentUserNo("재능 교환 게시글 목록 불러오기",auth);
 
         //DTO로 변환 하면서 값 유효한 값으로 생성자에서 변경
-        ExchangeSearchConditionDTO condition = ExchangeSearchConditionDTO.builder()
+        ExchangeSearchCondition condition = ExchangeSearchCondition.builder()
                 .giveTalents(giveTalents)
                 .receiveTalents(receiveTalents)
                 .order(order)
@@ -434,57 +426,6 @@ public class ExchangePostService {
         return "재능 교환 게시글이 성공적으로 삭제 되었습니다.";
     }
 
-    /**
-     * 재능 교환 게시글 찜하기 시작 (Toggle) <br>
-     * 조건 )<br>
-     * - 로그인이 되어 있는가?<br>
-     * - 게시글이 존재하는가?<br>
-     * - 삭제된 게시글이 아닌가?
-     *
-     * @param postNo 재능교환 게시글 번호
-     * @param auth   유저 Authentication
-     */
-    @Async
-    @Transactional
-    @LogRunningTime
-    public void favoriteExchangePost(Long postNo, Authentication auth){
-        log.info("재능 교환 게시글 찜하기 시작 - {}",postNo);
 
-        //로그인 여부 확인
-        UserInfo userInfo = UserUtil.validateAuthentication("재능교환 게시글 찜하기", auth);
-
-        //게시글이 존재하는가?
-        ExchangePost exchangePost = exchangePostRepository.findById(postNo)
-                .orElseThrow(()->{
-                    log.error("재능 교환 게시글 찜하기 실패 - 해당 게시글 없음 : {}",ErrorCode.POST_NOT_FOUND);
-                    return new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
-                });
-
-        //삭제된 게시글이 아닌가?
-        if (exchangePost.getDeletedAt() != null){
-            log.error("재능 교환 게시글 찜하기 실패 - 삭제된 게시글 : {}",ErrorCode.POST_NOT_FOUND);
-            throw new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
-        }
-
-        //찜 게시글 등록 여부 확인
-        FavoriteExchangePost favoriteExchangePost = favoriteExchagePostQueryRepository.findByPostNoAndUserId(postNo, userInfo.getUserNo())
-                .orElse(null);
-
-        //찜 게시글이 존재하는 경우
-        if(favoriteExchangePost != null){
-            //삭제되었는지 확인
-            LocalDateTime deletedAt = favoriteExchangePost.getDeletedAt() == null ? LocalDateTime.now() : null;
-            favoriteExchangePost.setDeletedAt(deletedAt);
-        }
-        //찜 게시글이 존재하지 않은 경우
-        else{
-            favoriteExchangePost = new FavoriteExchangePost(null, exchangePost.getExchangePostNo(), userInfo.getUserNo(), null, null);
-        }
-
-        //찜 게시글 추가 / 수정
-        favoriteExchangePostRepository.save(favoriteExchangePost);
-
-        log.info("재능 교환 게시글 찜하기 끝");
-    }
 
 }
