@@ -1,4 +1,4 @@
-package com.talearnt.post.exchange.entity;
+package com.talearnt.post.favorite.entity;
 
 
 import jakarta.persistence.*;

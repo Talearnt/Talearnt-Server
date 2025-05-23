@@ -1,8 +1,8 @@
-package com.talearnt.post.exchange.repository;
+package com.talearnt.post.favorite.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.talearnt.post.exchange.entity.FavoriteExchangePost;
-import com.talearnt.post.exchange.entity.QFavoriteExchangePost;
+import com.talearnt.post.favorite.entity.FavoriteExchangePost;
+import com.talearnt.post.favorite.entity.QFavoriteExchangePost;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
