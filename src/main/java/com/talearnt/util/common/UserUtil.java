@@ -16,10 +16,6 @@ import java.util.List;
 @Log4j2
 public class UserUtil {
 
-
-
-
-
     /** 정지, 탈퇴 회원 인지 판단하는 메소드 입니다.
      * */
     public static void validateUserRole(String errorLocation, User user){
@@ -47,17 +43,6 @@ public class UserUtil {
         }
 
         return (UserInfo) authentication.getPrincipal();
-    }
-
-    /**
-     * 회원 정보를 검증하는 메소드입니다.<br>
-     * UserInfo의 객체 검증이 필요한 곳에서 사용하면 됩니다.
-     * @param userInfo JWT 토큰 안에 있는 유저의 정보입니다.
-     * */
-    public static void validateUserInfo(UserInfo userInfo) {
-        if (userInfo == null || userInfo.getUserId() == null || userInfo.getUserId() == null) {
-            throw new CustomRuntimeException(ErrorCode.EXPIRED_TOKEN);
-        }
     }
 
 
