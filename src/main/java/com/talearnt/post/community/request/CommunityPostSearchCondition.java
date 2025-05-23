@@ -2,16 +2,17 @@ package com.talearnt.post.community.request;
 
 import com.talearnt.enums.post.PostType;
 import com.talearnt.util.common.PostUtil;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.domain.Pageable;
-
-import java.time.LocalDateTime;
 
 
 @Getter
 @NoArgsConstructor
 @ToString
-public class CommunityPostSearchConditionDTO {
+public class CommunityPostSearchCondition {
     private PostType postType;
     private String order;
     private String path;
@@ -19,7 +20,7 @@ public class CommunityPostSearchConditionDTO {
     private Pageable page;
 
     @Builder
-    public CommunityPostSearchConditionDTO(String postType, String order, String path, String lastNo, String page, String size) {
+    public CommunityPostSearchCondition(String postType, String order, String path, String lastNo, String page, String size) {
         this.postType = PostUtil.filterValidPostType(postType);
         this.order = PostUtil.filterValidOrderValue(order);
         this.path = PostUtil.filterValidPath(path);

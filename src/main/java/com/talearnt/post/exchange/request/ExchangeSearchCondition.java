@@ -3,8 +3,10 @@ package com.talearnt.post.exchange.request;
 import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.util.common.PostUtil;
-import com.talearnt.util.common.SplitUtil;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @ToString
-public class ExchangeSearchConditionDTO {
+public class ExchangeSearchCondition {
     private List<Integer> giveTalents; //Integer로 변환 필요
     private List<Integer> receiveTalents; //Integer로 변환 필요
     private String order; //recent,popular 로 변환 필요
@@ -24,7 +26,7 @@ public class ExchangeSearchConditionDTO {
     private Pageable page;
 
     @Builder
-    public ExchangeSearchConditionDTO(List<String> giveTalents, List<String> receiveTalents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String lastNo) {
+    public ExchangeSearchCondition(List<String> giveTalents, List<String> receiveTalents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String lastNo) {
         this.giveTalents = PostUtil.filterValidIntegers(giveTalents);
         this.receiveTalents = PostUtil.filterValidIntegers(receiveTalents);
         this.order = PostUtil.filterValidOrderValue(order);
