@@ -1,10 +1,14 @@
 package com.talearnt.configure;
 
+import com.talearnt.util.resolver.ClientPathResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.ForwardedHeaderFilter;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -25,6 +29,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("*") // 허용할 헤더
                 .allowCredentials(true) // 쿠키를 포함한 자격 증명 허용
                 .maxAge(36000); // 캐싱 시간 (초)
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(new ClientPathResolver()); // ClientPathResolver 추가
     }
 
     @Bean
