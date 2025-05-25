@@ -98,16 +98,20 @@ public class UserService {
                     return new CustomRuntimeException(ErrorCode.USER_NOT_FOUND);
                 });
 
-        //닉네임 중복 확인
-        if (userRepository.existsByNickname(nickname)) {
+        //닉네임 중복 확인 && 현재 닉네임과 요청한 닉네임이 다른 경우
+        if (userRepository.existsByNickname(nickname) && !user.getNickname().equalsIgnoreCase(nickname)) {
             log.error("회원 프로필 수정 실패 - 닉네임 중복 : {}", nickname);
             throw new CustomRuntimeException(ErrorCode.DUPLICATE_USER_NICKNAME);
         }
 
-        //user 정보 변경
-        user.setNickname(nickname);
-        user.setProfileImg(profileImg);
-
+        //user 닉네임이 바뀌었으면 변경
+        if (!user.getNickname().equalsIgnoreCase(nickname)){
+            user.setNickname(nickname);
+        }
+        //프로필 이미지가 바뀌었으면 변경
+        if (!user.getProfileImg().equalsIgnoreCase(profileImg)) {
+            user.setProfileImg(profileImg);
+        }
         //mytalent service 에서 Mytalents 변경
         myTalentService.updateMyTalents(userInfo, giveTalents, receiveTalents);
 
