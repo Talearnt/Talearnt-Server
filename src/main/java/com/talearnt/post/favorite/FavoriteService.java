@@ -87,6 +87,8 @@ public class FavoriteService {
             //삭제되었는지 확인
             LocalDateTime deletedAt = favoriteExchangePost.getDeletedAt() == null ? LocalDateTime.now() : null;
             favoriteExchangePost.setDeletedAt(deletedAt);
+            //삭제가 안되었다면 현재시간 대입 -> 새로운 찜 게시글인 것처럼 느껴지도록
+            if (deletedAt == null) favoriteExchangePost.setCreatedAt(LocalDateTime.now());
         }
         //찜 게시글이 존재하지 않은 경우
         else{
