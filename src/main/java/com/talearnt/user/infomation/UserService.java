@@ -1,6 +1,7 @@
 package com.talearnt.user.infomation;
 
 import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.common.Regex;
 import com.talearnt.user.infomation.entity.User;
 import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Log4j2
 @Service
@@ -98,6 +100,12 @@ public class UserService {
                     return new CustomRuntimeException(ErrorCode.USER_NOT_FOUND);
                 });
 
+        //프로필 이미지가 null이 아니고, 파일 확장자가 잘못된 경우
+        if(profileImg != null && profileImg.matches(Regex.FILE_EXTENSION.getPattern())){
+            log.error("회원 프로필 수정 실패 - 프로필 이미지 확장자 오류 : {}", profileImg);
+            throw new CustomRuntimeException(ErrorCode.FILE_UPLOAD_TYPE_NOT_MATCH);
+        }
+
         //닉네임 중복 확인 && 현재 닉네임과 요청한 닉네임이 다른 경우
         if (userRepository.existsByNickname(nickname) && !user.getNickname().equalsIgnoreCase(nickname)) {
             log.error("회원 프로필 수정 실패 - 닉네임 중복 : {}", nickname);
@@ -109,7 +117,7 @@ public class UserService {
             user.setNickname(nickname);
         }
         //프로필 이미지가 바뀌었으면 변경
-        if (!user.getProfileImg().equalsIgnoreCase(profileImg)) {
+        if (!Objects.equals(user.getProfileImg(), profileImg)) {
             user.setProfileImg(profileImg);
         }
         //mytalent service 에서 Mytalents 변경

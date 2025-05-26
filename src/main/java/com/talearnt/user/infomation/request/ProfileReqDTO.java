@@ -26,7 +26,6 @@ public class ProfileReqDTO {
     @DynamicValid(errorCode = ErrorCode.USER_NICKNAME_MISMATCH, pattern = Regex.NICKNAME)
     private String nickname;
 
-    @DynamicValid(errorCode = ErrorCode.FILE_UPLOAD_TYPE_NOT_MATCH, pattern = Regex.FILE_EXTENSION)
     private String profileImg;
 
     @ListValid(errorCode = ErrorCode.POST_REQUEST_MISSING, minLength = 1)
