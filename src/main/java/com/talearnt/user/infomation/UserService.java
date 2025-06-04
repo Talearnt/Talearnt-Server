@@ -101,7 +101,7 @@ public class UserService {
                 });
 
         //프로필 이미지가 null이 아니고, 파일 확장자가 잘못된 경우
-        if(profileImg != null && profileImg.matches(Regex.FILE_EXTENSION.getPattern())){
+        if(profileImg != null && !profileImg.matches(Regex.FILE_EXTENSION.getPattern())){
             log.error("회원 프로필 수정 실패 - 프로필 이미지 확장자 오류 : {}", profileImg);
             throw new CustomRuntimeException(ErrorCode.FILE_UPLOAD_TYPE_NOT_MATCH);
         }
