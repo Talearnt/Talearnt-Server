@@ -1,14 +1,30 @@
 package com.talearnt.post.favorite;
 
+import com.talearnt.post.exchange.response.ExchangePostListResDTO;
+import com.talearnt.util.common.ClientPath;
 import com.talearnt.util.response.CommonResponse;
+import com.talearnt.util.response.PaginatedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 public interface FavoriteApi {
+
+    @Operation(summary = "내가 찜한 게시글 목록",
+            tags = {"Post-Exchange"},
+            description = "<h2>내용</h2>" +
+                    "<p>구현중입니다</p>")
+    public ResponseEntity<CommonResponse<PaginatedResponse<List<ExchangePostListResDTO>>>> getFavoriteExchanges(@RequestParam(required = false, defaultValue = "1") String page,
+                                                                                                                @RequestParam(required = false, defaultValue = "15") String size,
+                                                                                                                @ClientPath String path,
+                                                                                                                Authentication auth);
+
 
 
     @Operation(summary = "재능 교환 게시글 찜하기",
