@@ -75,7 +75,7 @@ public interface CommentApi {
             description = "<h2>내용</h2>" +
                     "<p>댓글 목록입니다.</p>" +
                     "<p>커뮤니티 게시글 번호에 해당하는 댓글을 가져옵니다.</p>" +
-                    "<p>댓글 삭제 시 답글이 없을 경우 안 보여주기와 댓글 삭제 시 답글이 있을 경우 메세지 가림 처리 아직 미완료...</p>" +
+                    "<p><strong>삭제된 댓글 + 답글 존재</strong>일 경우 replyCount와 commentNo, isDeleted 제외한 값이 모두 Null 보입니다.</p>" +
                     "<hr>" +
                     "<h2>웹 참고 내용</h2>" +
                     "<p>lastNo 포함 시 제대로 된 결과 값이 반환되지 않아 예외적으로 Exception을 발생 시킵니다.</p>" +

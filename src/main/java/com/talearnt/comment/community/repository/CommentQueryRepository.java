@@ -5,6 +5,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.comment.community.entity.QCommunityComment;
@@ -76,8 +77,10 @@ public class CommentQueryRepository {
                 .fetchOne() != null;
     }
 
-    /**댓글 추가 시 웹에서 Offset을 설정하기 위해 총 댓글 수를 호출*/
-    public Long getCommentTotalCount(Long postNo){
+    /**
+     * 댓글 추가 시 웹에서 Offset을 설정하기 위해 총 댓글 수를 호출
+     */
+    public Long getCommentTotalCount(Long postNo) {
         return Optional.ofNullable(
                 factory.select(comment.countDistinct())
                         .from(comment)
@@ -207,11 +210,25 @@ public class CommentQueryRepository {
     /**
      * 최초 댓글 삭제 시간이 포함되어 있으면, 삭제 시간 이후에 삭제한 것도 가져와서 페이지네이션을 실행한다. <br>
      * 삭제 시간이 없으면 삭제된 댓글은 제외한다.
+     *
      * @param deletedAt 최초 댓글 삭제 시간
      * @return BooleanExpression
      */
     private BooleanExpression deletedAtIsNull(LocalDateTime deletedAt) {
-        return deletedAt != null ? comment.deletedAt.isNull().or(comment.deletedAt.goe(deletedAt)) : comment.deletedAt.isNull();
+        return deletedAt != null ? comment.deletedAt.isNull().or(comment.deletedAt.goe(deletedAt))
+                : comment.deletedAt.isNull() //삭제되었거나
+                .or(comment.deletedAt.isNotNull() //삭제되지 않고
+                        .and( // 답글이 있는 댓글만 가져오기
+                                JPAExpressions
+                                        .selectOne()
+                                        .from(reply)
+                                        .where(
+                                                reply.communityComment.eq(comment),
+                                                reply.deletedAt.isNull()
+                                        )
+                                        .exists()
+                        )
+                );
     }
 
     /**
