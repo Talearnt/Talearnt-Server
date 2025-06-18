@@ -4,6 +4,7 @@ package com.talearnt.user;
 import com.talearnt.user.infomation.UserService;
 import com.talearnt.user.infomation.request.ProfileReqDTO;
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
+import com.talearnt.user.infomation.response.UserActivityCountsResDTO;
 import com.talearnt.user.infomation.response.UserHeaderResDTO;
 import com.talearnt.user.talent.MyTalentService;
 import com.talearnt.user.talent.request.MyTalentReqDTO;
@@ -31,6 +32,11 @@ public class UserController implements UserApi{
     private final UserService userService;
     private final MyTalentService myTalentService;
 
+    //회원 웹 프로필 화면에서 작성한 게시글등 숫자를 보여주는 API
+    @GetMapping("/users/profile/activity-counts")
+    public ResponseEntity<CommonResponse<UserActivityCountsResDTO>> getMyActivityCounts(Authentication authentication) {
+        return CommonResponse.success(userService.getMyActivityCounts(authentication));
+    }
 
     //회원의 기본 정보를 가져오는 API
     @GetMapping("/users/header/profile")
