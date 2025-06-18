@@ -131,6 +131,7 @@ public class UserService {
         log.info("회원 프로필 수정 끝");
         return UserHeaderResDTO.builder()
                 .userNo(userInfo.getUserNo())
+                .userId(userInfo.getUserId())
                 .nickname(nickname)
                 .profileImg(profileImg)
                 .giveTalents(giveTalents)
