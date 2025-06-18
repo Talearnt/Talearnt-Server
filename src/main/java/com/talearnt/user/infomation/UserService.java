@@ -3,8 +3,10 @@ package com.talearnt.user.infomation;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.common.Regex;
 import com.talearnt.user.infomation.entity.User;
+import com.talearnt.user.infomation.repository.UserQueryRepository;
 import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
+import com.talearnt.user.infomation.response.UserActivityCountsResDTO;
 import com.talearnt.user.infomation.response.UserHeaderResDTO;
 import com.talearnt.user.talent.MyTalentService;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
@@ -34,6 +36,7 @@ public class UserService {
 
     //Repositories
     private final UserRepository userRepository;
+    private final UserQueryRepository userQueryRepository;
     private final MyTalentQueryRepository myTalentQueryRepository;
     private final MyTalentService myTalentService;
 
@@ -53,6 +56,7 @@ public class UserService {
         log.info("Header의 회원 기본 정보 불러오기 끝");
         return UserHeaderResDTO.builder()
                 .userNo(userInfo.getUserNo())
+                .userId(userInfo.getUserId())
                 .nickname(userInfo.getNickname())
                 .profileImg(userInfo.getProfileImg())
                 .giveTalents(myTalentQueryRepository.getGiveTalentCodesByUserNo(userInfo.getUserNo()))
@@ -134,4 +138,17 @@ public class UserService {
                 .build();
     }
 
+    @LogRunningTime
+    public UserActivityCountsResDTO getMyActivityCounts(Authentication authentication) {
+        log.info("회원 활동 카운트 조회 시작");
+
+        //회원이 로그인한 상태인지 확인
+        UserInfo userInfo = UserUtil.validateAuthentication("회원 활동 카운트 조회", authentication);
+
+        //활동 카운트 조회
+        UserActivityCountsResDTO activityCounts = userQueryRepository.getMyActivityCounts(userInfo.getUserNo());
+
+        log.info("회원 활동 카운트 조회 끝");
+        return activityCounts;
+    }
 }

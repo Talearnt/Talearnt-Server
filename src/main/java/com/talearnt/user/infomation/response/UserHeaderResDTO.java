@@ -12,6 +12,7 @@ import java.util.List;
 @ToString
 public class UserHeaderResDTO {
     private Long userNo;
+    private String userId;
     private String profileImg;
     private String nickname;
     private List<Integer> giveTalents;
