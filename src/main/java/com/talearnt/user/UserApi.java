@@ -2,6 +2,7 @@ package com.talearnt.user;
 
 import com.talearnt.user.infomation.request.ProfileReqDTO;
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
+import com.talearnt.user.infomation.response.UserActivityCountsResDTO;
 import com.talearnt.user.infomation.response.UserHeaderResDTO;
 import com.talearnt.user.talent.request.MyTalentReqDTO;
 import com.talearnt.util.response.CommonResponse;
@@ -25,6 +26,7 @@ public interface UserApi {
                     "<h2>Response</h2>" +
                     "<ul>" +
                     "<li>userNo : 로그인한 유저 번호 - 본인 게시글 판단 여부 및 API 호출 용도</li>" +
+                    "<li>userId : 로그인한 유저 아이디 - 이메일 형식 아이디</li>" +
                     "<li>profileImg : 유저의 프로필 이미지 경로</li>" +
                     "<li>nickname : 유저의 닉네임</li>" +
                     "<li>giveTalents : 유저 주고 싶은 재능 코드</li>" +
@@ -75,6 +77,7 @@ public interface UserApi {
                     "<h2>Response</h2>" +
                     "<ul>" +
                         "<li>userNo : 로그인한 유저 번호 - 본인 게시글 판단 여부 및 API 호출 용도</li>" +
+                        "<li>userId : 로그인한 유저 아이디 - 이메일 형식 아이디</li>" +
                         "<li>profileImg : 유저의 프로필 이미지 경로</li>" +
                         "<li>nickname : 유저의 닉네임</li>" +
                         "<li>giveTalents : 유저 주고 싶은 재능 코드</li>" +
@@ -88,5 +91,20 @@ public interface UserApi {
     })
     public ResponseEntity<CommonResponse<UserHeaderResDTO>> updateMyInfo(@RequestBody @Valid ProfileReqDTO profileReqDTO);
 
+
+    @Operation(summary = "나의 활동 정보 조회",
+            description = "<h2>내용</h2>" +
+                    "<p>나의 활동 정보를 조회합니다.</p>" +
+                    "<h2>Response</h2>" +
+                    "<ul>" +
+                        "<li>favoritePostCount : 내가 찜한 게시글 수</li>" +
+                        "<li>myPostCount : 내가 작성한 재능 교환 게시글 + 커뮤니티 게시글 수</li>" +
+                        "<li>myCommentCount : 내가 작성한 댓글 + 답글 수</li>" +
+                    "</ul>")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
+    })
+    public ResponseEntity<CommonResponse<UserActivityCountsResDTO>> getMyActivityCounts(Authentication authentication);
 
 }

@@ -32,12 +32,6 @@ public class UserController implements UserApi{
     private final UserService userService;
     private final MyTalentService myTalentService;
 
-    //회원 웹 프로필 화면에서 작성한 게시글등 숫자를 보여주는 API
-    @GetMapping("/users/profile/activity-counts")
-    public ResponseEntity<CommonResponse<UserActivityCountsResDTO>> getMyActivityCounts(Authentication authentication) {
-        return CommonResponse.success(userService.getMyActivityCounts(authentication));
-    }
-
     //회원의 기본 정보를 가져오는 API
     @GetMapping("/users/header/profile")
     public ResponseEntity<CommonResponse<UserHeaderResDTO>> getHeaderUserInfo(Authentication authentication){
@@ -63,6 +57,12 @@ public class UserController implements UserApi{
                 profileReqDTO.getProfileImg(),
                 profileReqDTO.getGiveTalents(),
                 profileReqDTO.getReceiveTalents()));
+    }
+
+    //회원 웹 프로필 화면에서 작성한 게시글등 숫자를 보여주는 API
+    @GetMapping("/users/profile/activity-counts")
+    public ResponseEntity<CommonResponse<UserActivityCountsResDTO>> getMyActivityCounts(Authentication authentication) {
+        return CommonResponse.success(userService.getMyActivityCounts(authentication));
     }
 
 }
