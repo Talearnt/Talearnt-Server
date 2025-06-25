@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberTemplate;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.comment.community.entity.QCommunityComment;
@@ -121,14 +122,29 @@ public class CommunityPostQueryRepository {
                                 Expressions.booleanTemplate("MAX(CASE WHEN {0} THEN 1 ELSE 0 END) = 1", likeCommunity.userNo.eq(currentUserNo)),
                                 likeCommunity.countDistinct(),
                                 communityComment.countDistinct().add(communityReply.countDistinct()),
-                                communityComment.countDistinct().divide(30).add(1).longValue(),
+                                Expressions.numberTemplate(Long.class, "CEIL({0} / 30.0)", communityComment.countDistinct()),
                                 communityPost.createdAt,
                                 communityPost.updatedAt
                         ))
                         .from(communityPost)
                         .leftJoin(user).on(user.eq(communityPost.user))
-                        .leftJoin(communityComment).on(communityComment.communityPost.eq(communityPost))
-                        .leftJoin(communityReply).on(communityReply.communityComment.eq(communityComment))
+                        .leftJoin(communityComment).on(communityComment.communityPost.eq(communityPost),
+                                communityComment.deletedAt.isNull()
+                                        .or(communityComment.deletedAt.isNotNull()
+                                                        .and(
+                                                                JPAExpressions.
+                                                                        selectOne()
+                                                                        .from(communityReply)
+                                                                        .where(
+                                                                                communityReply.communityComment.eq(communityComment),
+                                                                                communityReply.deletedAt.isNull()
+                                                                        )
+                                                                        .exists()
+                                                        )
+                                                )
+                        )
+                        .leftJoin(communityReply).on(communityReply.communityComment.eq(communityComment),
+                                communityReply.deletedAt.isNull())
                         .leftJoin(likeCommunity).on(likeCommunity.communityPost.eq(communityPost)
                                 .and(likeCommunity.canceledAt.isNull()))
                         .leftJoin(fileUpload).on(

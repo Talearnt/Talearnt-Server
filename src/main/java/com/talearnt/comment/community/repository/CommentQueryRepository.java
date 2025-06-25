@@ -84,7 +84,19 @@ public class CommentQueryRepository {
         return Optional.ofNullable(
                 factory.select(comment.countDistinct())
                         .from(comment)
-                        .where(comment.deletedAt.isNull(),
+                        .where(comment.deletedAt.isNull()
+                                        .or(comment.deletedAt.isNotNull() //삭제되고
+                                                .and( // 답글이 있는 댓글만 가져오기
+                                                        JPAExpressions
+                                                                .selectOne()
+                                                                .from(reply)
+                                                                .where(
+                                                                        reply.communityComment.eq(comment),
+                                                                        reply.deletedAt.isNull()
+                                                                )
+                                                                .exists()
+                                                )
+                                        ),
                                 comment.communityPost.communityPostNo.eq(postNo))
                         .fetchOne()
         ).orElse(0L);
@@ -216,8 +228,8 @@ public class CommentQueryRepository {
      */
     private BooleanExpression deletedAtIsNull(LocalDateTime deletedAt) {
         return deletedAt != null ? comment.deletedAt.isNull().or(comment.deletedAt.goe(deletedAt))
-                : comment.deletedAt.isNull() //삭제되었거나
-                .or(comment.deletedAt.isNotNull() //삭제되지 않고
+                : comment.deletedAt.isNull() //삭제되지 않았거나
+                .or(comment.deletedAt.isNotNull() //삭제되고
                         .and( // 답글이 있는 댓글만 가져오기
                                 JPAExpressions
                                         .selectOne()

@@ -108,7 +108,8 @@ public class CommentService {
             
             //사이즈 설정
             int size = 30;
-            
+            log.info("totalCount : {}", commentTotalCount);
+
             //마지막 페이지 설정 == 토탈 페이지 수가 마지막 수인 것을 알 수 있다.
             int totalPage = (int) Math.ceil((double) commentTotalCount / size);
             
