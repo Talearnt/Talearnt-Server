@@ -10,6 +10,7 @@ public enum ClientPathType {
 
     public static ClientPathType from(String value) {
         try{
+            log.info("Client Path : {}", value);
             return ClientPathType.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException e) {
             log.error("Client Path가 잘못되었습니다. path : {}", value);

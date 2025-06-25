@@ -1,5 +1,6 @@
 package com.talearnt.post.favorite;
 
+import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.util.common.ClientPath;
 import com.talearnt.util.response.CommonResponse;
@@ -22,7 +23,7 @@ public interface FavoriteApi {
                     "<p>구현중입니다</p>")
     public ResponseEntity<CommonResponse<PaginatedResponse<List<ExchangePostListResDTO>>>> getFavoriteExchanges(@RequestParam(required = false, defaultValue = "1") String page,
                                                                                                                 @RequestParam(required = false, defaultValue = "15") String size,
-                                                                                                                @ClientPath String path,
+                                                                                                                @ClientPath ClientPathType path,
                                                                                                                 Authentication auth);
 
 

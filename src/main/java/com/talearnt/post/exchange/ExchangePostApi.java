@@ -1,9 +1,11 @@
 package com.talearnt.post.exchange;
 
+import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.user.talent.response.MyTalentsResDTO;
+import com.talearnt.util.common.ClientPath;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -208,7 +210,7 @@ public interface ExchangePostApi {
                                                                                                                @RequestParam(value = "page",required = false,defaultValue = "1") @Schema(description = "모바일 사용 X (모바일은 언제나 1이어야 함), 웹만 사용") String page,
                                                                                                                @RequestParam(value = "size", required = false, defaultValue = "15") @Schema(description = "입력 안할 경우 기본 15개 반환, 필요시 50개 이하 호출 가능, 그 이상 불가능") String size,
                                                                                                                @RequestParam(value = "lastNo", required = false) @Schema(description = "마지막 게시글 번호") String lastNo,
-                                                                                                               @RequestParam(value = "path", required = false, defaultValue = "web") @Schema(description = "(mobile|web)") String path,
+                                                                                                               @Schema(hidden = true) @ClientPath ClientPathType path,
                                                                                                                Authentication auth);
 
 

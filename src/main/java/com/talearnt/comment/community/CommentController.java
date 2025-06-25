@@ -3,8 +3,10 @@ package com.talearnt.comment.community;
 import com.talearnt.comment.community.request.CommentReqDTO;
 import com.talearnt.comment.community.request.CommentUpdateReqDTO;
 import com.talearnt.comment.community.response.CommentListResDTO;
+import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.common.Regex;
+import com.talearnt.util.common.ClientPath;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.valid.DynamicValid;
@@ -38,12 +40,12 @@ public class CommentController implements CommentApi {
     @GetMapping("/communities/{postNo}/comments")
     public ResponseEntity<CommonResponse<PaginatedResponse<List<CommentListResDTO>>>> getCommentList(
             @PathVariable Long postNo,
-            @RequestParam(required = false, defaultValue = "web") String path,
+            @ClientPath ClientPathType path,
             @RequestParam(required = false) String deletedAt,
             @RequestParam(required = false) String lastNo,
             @RequestParam(required = false, defaultValue = "1") String page,
             @RequestParam(required = false, defaultValue = "30") String size) {
-        return CommonResponse.success(commentService.getCommunityComments(postNo, path,deletedAt, lastNo, page, size));
+        return CommonResponse.success(commentService.getCommunityComments(postNo, path.name(),deletedAt, lastNo, page, size));
     }
 
 

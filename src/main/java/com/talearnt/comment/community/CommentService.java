@@ -37,7 +37,7 @@ public class CommentService {
 
 
     @LogRunningTime
-    public PaginatedResponse<List<CommentListResDTO>> getCommunityComments(Long communityPostNo,String path, String deletedAt,String lastNo, String page, String size) {
+    public PaginatedResponse<List<CommentListResDTO>> getCommunityComments(Long communityPostNo, String path, String deletedAt,String lastNo, String page, String size) {
         log.info("커뮤니티 댓글 목록 조회 시작 : {} - {} - {}",communityPostNo,path,page);
 
         //Search Condition 생성

@@ -1,11 +1,13 @@
 package com.talearnt.post.exchange;
 
 
+import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.user.talent.MyTalentService;
 import com.talearnt.user.talent.response.MyTalentsResDTO;
+import com.talearnt.util.common.ClientPath;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.version.RestControllerV1;
@@ -52,9 +54,9 @@ public class ExchangePostController implements ExchangePostApi{
                                                                                             @RequestParam(value = "page",required = false,defaultValue = "1") String page,
                                                                                             @RequestParam(value = "size",required = false,defaultValue = "15") String size,
                                                                                             @RequestParam(value = "lastNo", required = false) String lastNo,
-                                                                                            @RequestParam(value = "path", required = false, defaultValue = "web") String path,
+                                                                                            @ClientPath ClientPathType path,
                                                                                             Authentication auth){
-        return CommonResponse.success(exchangePostService.getExchangePostList(giveTalents,receiveTalents,order,duration,type,requiredBadge,status,page,size,lastNo, auth, path));
+        return CommonResponse.success(exchangePostService.getExchangePostList(giveTalents,receiveTalents,order,duration,type,requiredBadge,status,page,size,lastNo, auth, path.name()));
     }
 
     //게시글 작성

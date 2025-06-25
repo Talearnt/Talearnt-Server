@@ -3,8 +3,10 @@ package com.talearnt.comment.community;
 import com.talearnt.comment.community.request.CommentReqDTO;
 import com.talearnt.comment.community.request.CommentUpdateReqDTO;
 import com.talearnt.comment.community.response.CommentListResDTO;
+import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.common.Regex;
+import com.talearnt.util.common.ClientPath;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.valid.DynamicValid;
@@ -118,7 +120,7 @@ public interface CommentApi {
     })
     public ResponseEntity<CommonResponse<PaginatedResponse<List<CommentListResDTO>>>> getCommentList(
             @PathVariable @Schema(description = "커뮤니티 게시글 번호") Long postNo,
-            @RequestParam(required = false, defaultValue = "web") @Schema(defaultValue = "web", description = "web|mobile") String path,
+            @Schema(hidden = true) @ClientPath ClientPathType path,
             @RequestParam(required = false) @Schema(description = "최초 댓글 삭제 시간") String deletedAt,
             @RequestParam(required = false) @Schema(description = "마지막 게시글 번호") String lastNo,
             @RequestParam(required = false, defaultValue = "1") @Schema(defaultValue = "1", description = "Mobile은 무조건 1") String page,
