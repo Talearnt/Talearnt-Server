@@ -43,10 +43,7 @@ public interface ReplyApi {
     @Operation(summary = "커뮤니티 게시글 답글 작성",
             description = "<h2>내용</h2>" +
                     "<p>답글을 작성합니다.</p>" +
-                    "<p>답글 작성 후 최신화된 답글 목록을 가져옵니다.</p>" +
-                    "<p>지금은 최신 데이터 50개까지 반환합니다.</p>" +
-                    "<p>50개의 답글이 넘게 달렸을 경우 답글을 작성해도 오래된 순으로 50개 가져옵니다</p>" +
-                    "<p>이 부분은 기획 + 디자인의 변경이 필요할 것 같아 안건으로 남겨두겠습니다.</p>" +
+                    "<p>답글 작성 후 답글 번호를 포함한 값을 넘깁니다.</p>" +
                     "<h2>Request</h2>" +
                     "<ul>" +
                         "<li>commentNo : 부모 댓글 번호</li>" +
@@ -62,8 +59,6 @@ public interface ReplyApi {
                         "<li>content : 답글 내용 </li>" +
                         "<li>createdAt : 답글 작성일</li>" +
                         "<li>updatedAt : 답글 수정일 (null이 아닐 경우 수정됨 표시)</li>" +
-                        "<br>" +
-                        "<li>hasNext : 다음 답글 더보기 가능 여부</li>" +
                     "</ul>"
     )
     @ApiResponses(value = {
@@ -71,7 +66,7 @@ public interface ReplyApi {
             @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
             @ApiResponse(responseCode = "404", ref = "COMMENT_MISMATCH_REPLY_NUMBER")
     })
-    ResponseEntity<CommonResponse<PaginatedResponse<List<ReplyListResDTO>>>> createReply(@RequestBody ReplyCreateReqDTO replyCreateReqDTO);
+    ResponseEntity<CommonResponse<ReplyListResDTO>> createReply(@RequestBody ReplyCreateReqDTO replyCreateReqDTO);
 
 
     @Operation(summary = "커뮤니티 게시글 답글 수정",

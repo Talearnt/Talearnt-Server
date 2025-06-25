@@ -73,7 +73,7 @@ public class ReplyService {
      */
     @LogRunningTime
     @Transactional
-    public PaginatedResponse<List<ReplyListResDTO>> createReply(Long userNo, Long commentNo, String content) {
+    public ReplyListResDTO createReply(Long userNo, Long commentNo, String content) {
         log.info("커뮤니티 답글 작성 시작 , userNo : {}, commentNo : {}, content : {}", userNo, commentNo, content);
 
         //댓글 번호 확인
@@ -86,19 +86,19 @@ public class ReplyService {
         CommunityReply reply = ReplyMapper.INSTANCE.toEntity(userNo, commentNo, content);
 
         //답글 작성
-        replyRepository.save(reply);
-
-        //최신 데이터 조회
-        //FIXME : 페이지 사이즈를 50으로 고정해뒀으나 50개 이상일 경우 이곳을 바꿔야할 수 있음
-        ReplySearchCondition condition = ReplySearchCondition.builder()
-                .page("1")
-                .size("50")
-                .build();
-
-        Page<ReplyListResDTO> result = replyQueryRepository.getReplies(commentNo, condition);
+        reply = replyRepository.save(reply);
 
         log.info("커뮤니티 답글 작성 끝");
-        return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToMobile(result));
+        return ReplyListResDTO
+                .builder()
+                .userNo(reply.getUser().getUserNo())
+                .nickname(reply.getUser().getNickname())
+                .profileImg(reply.getUser().getProfileImg())
+                .replyNo(reply.getReplyNo())
+                .commentNo(reply.getCommunityComment().getCommentNo())
+                .content(reply.getContent())
+                .createdAt(reply.getCreatedAt())
+                .build();
     }
 
     /**

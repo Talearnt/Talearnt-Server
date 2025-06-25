@@ -36,7 +36,7 @@ public class ReplyController implements ReplyApi {
 
     //커뮤니티 답글 작성
     @PostMapping("/communities/replies")
-    public ResponseEntity<CommonResponse<PaginatedResponse<List<ReplyListResDTO>>>> createReply(@RequestBody ReplyCreateReqDTO replyCreateReqDTO) {
+    public ResponseEntity<CommonResponse<ReplyListResDTO>> createReply(@RequestBody ReplyCreateReqDTO replyCreateReqDTO) {
         return CommonResponse.success(replyService.createReply(replyCreateReqDTO.getUserInfo().getUserNo(), replyCreateReqDTO.getCommentNo(), replyCreateReqDTO.getContent()));
     }
 
