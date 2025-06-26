@@ -117,7 +117,7 @@ public class LoginService {
                     .secure(true)     // HTTPS에서만 전송
                     .sameSite("None") // CORS 요청에서도 쿠키 전송 허용
                     .path("/")        // 쿠키 경로 설정
-                    .maxAge(Duration.ofMillis(cookieExpirationMilliseconds))
+                    .maxAge(Duration.ofSeconds(cookieExpirationMilliseconds))
                     .build();
         }else{
             refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
