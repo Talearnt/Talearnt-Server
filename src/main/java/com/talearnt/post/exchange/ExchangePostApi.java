@@ -176,6 +176,7 @@ public interface ExchangePostApi {
                 "<li>giveTalents : 게시글 주고 싶은 재능</li>" +
                 "<li>receiveTalents : 게시글 받고 싶은 재능</li>" +
                 "<li>createdAt : 게시글 작성일</li>" +
+                "<li>count : 게시글 조회수</li>" +
                 "<li>openedChatRoomCount : 신청된 채팅방 갯수</li>" +
                 "<li>favoriteCount : 게시글 찜 갯수</li>" +
                 "<li>isFavorite : 게시글 찜 여부</li>" +
