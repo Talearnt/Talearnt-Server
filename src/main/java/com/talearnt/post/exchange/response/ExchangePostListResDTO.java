@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @ToString
 @NoArgsConstructor
-public class ExchangePostListResDTO {
+public class  ExchangePostListResDTO {
 
     private String profileImg;
     private String nickname;
@@ -34,11 +34,12 @@ public class ExchangePostListResDTO {
 
     private LocalDateTime createdAt;
     private Long openedChatRoomCount;
+    private Long count;
     private Long favoriteCount;
     private Boolean isFavorite;
 
     @Builder
-    public ExchangePostListResDTO(String profileImg, String nickname, UserRole authority, Long exchangePostNo, ExchangePostStatus status, ExchangeType exchangeType, String duration, boolean requiredBadge, String title, String content, String giveTalents, String receiveTalents, LocalDateTime createdAt, Long openedChatRoomCount, Long favoriteCount, Boolean isFavorite) {
+    public ExchangePostListResDTO(String profileImg, String nickname, UserRole authority, Long exchangePostNo, ExchangePostStatus status, ExchangeType exchangeType, String duration, boolean requiredBadge, String title, String content, String giveTalents, String receiveTalents, LocalDateTime createdAt, Long count, Long openedChatRoomCount, Long favoriteCount, Boolean isFavorite) {
         this.profileImg = profileImg;
         this.nickname = nickname;
         this.authority = authority;
@@ -52,6 +53,7 @@ public class ExchangePostListResDTO {
         this.giveTalents = SplitUtil.splitStringToList(giveTalents);
         this.receiveTalents = SplitUtil.splitStringToList(receiveTalents);
         this.createdAt = createdAt;
+        this.count = count;
         this.openedChatRoomCount = openedChatRoomCount;
         this.favoriteCount = favoriteCount;
         this.isFavorite = isFavorite;

@@ -333,6 +333,7 @@ public class ExchangePostQueryRepository {
                                 Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", giveCategory.talentName),
                                 Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", receiveCategory.talentName),
                                 exchangePost.createdAt,
+                                exchangePost.count,
                                 chatRequest.countDistinct(),
                                 favoriteExchangePost.countDistinct(),
                                 Expressions.booleanTemplate("MAX(CASE WHEN {0} THEN 1 ELSE 0 END) = 1", favoriteExchangePost.userNo.eq(userNo))
