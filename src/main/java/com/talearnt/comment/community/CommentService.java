@@ -38,7 +38,7 @@ public class CommentService {
 
     @LogRunningTime
     public PaginatedResponse<List<CommentListResDTO>> getCommunityComments(Long communityPostNo, String path, String deletedAt,String lastNo, String page, String size) {
-        log.info("커뮤니티 댓글 목록 조회 시작 : {} - {} - {}",communityPostNo,path,page);
+        log.info("커뮤니티 댓글 목록 조회 시작 : {} - {} - {} - {}",communityPostNo,path,page, deletedAt);
 
         //Search Condition 생성
         CommentSearchCondition condition = CommentSearchCondition.builder()
@@ -47,6 +47,8 @@ public class CommentService {
                 .page(page)
                 .size(size)
                 .build();
+
+        log.info("커뮤니티 댓글 목록 삭제 포함 시간 조회 : {}", condition.getDeletedAt());
 
         // path로 웹 OR Mobile 분기
         if ("web".equalsIgnoreCase(path)) {
