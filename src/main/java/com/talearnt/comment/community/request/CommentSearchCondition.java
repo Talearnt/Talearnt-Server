@@ -22,7 +22,7 @@ public class CommentSearchCondition {
     @Builder
     public CommentSearchCondition(String lastNo,String deletedAt, String page, String size) {
         this.lastNo = PostUtil.parseLong(lastNo);
-        this.deletedAt = deletedAt != null? LocalDateTime.parse(deletedAt, DateTimeFormatter.ISO_DATE_TIME) : null;
+        this.deletedAt = deletedAt != null? LocalDateTime.parse(deletedAt, DateTimeFormatter.ISO_DATE_TIME).plusHours(9) : null;
         this.page = PostUtil.filterValidPagination(page, size);
     }
 }
