@@ -34,12 +34,12 @@ public class  ExchangePostListResDTO {
 
     private LocalDateTime createdAt;
     private Long openedChatRoomCount;
-    private Long count;
+    private Integer count;
     private Long favoriteCount;
     private Boolean isFavorite;
 
     @Builder
-    public ExchangePostListResDTO(String profileImg, String nickname, UserRole authority, Long exchangePostNo, ExchangePostStatus status, ExchangeType exchangeType, String duration, boolean requiredBadge, String title, String content, String giveTalents, String receiveTalents, LocalDateTime createdAt, Long count, Long openedChatRoomCount, Long favoriteCount, Boolean isFavorite) {
+    public ExchangePostListResDTO(String profileImg, String nickname, UserRole authority, Long exchangePostNo, ExchangePostStatus status, ExchangeType exchangeType, String duration, boolean requiredBadge, String title, String content, String giveTalents, String receiveTalents, LocalDateTime createdAt, Integer count, Long openedChatRoomCount, Long favoriteCount, Boolean isFavorite) {
         this.profileImg = profileImg;
         this.nickname = nickname;
         this.authority = authority;
