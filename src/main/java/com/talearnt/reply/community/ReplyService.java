@@ -7,6 +7,8 @@ import com.talearnt.reply.community.repository.ReplyQueryRepository;
 import com.talearnt.reply.community.repository.ReplyRepository;
 import com.talearnt.reply.community.request.ReplySearchCondition;
 import com.talearnt.reply.community.response.ReplyListResDTO;
+import com.talearnt.user.infomation.entity.User;
+import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.util.common.PageUtil;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
@@ -28,6 +30,7 @@ import java.util.List;
 @Log4j2
 public class ReplyService {
 
+    private final UserRepository userRepository;
     private final ReplyQueryRepository replyQueryRepository;
     private final ReplyRepository replyRepository;
     private final CommentRepository commentRepository;
@@ -82,22 +85,25 @@ public class ReplyService {
             throw new CustomRuntimeException(ErrorCode.COMMENT_MISMATCH_REPLY_NUMBER);
         }
 
+        User user = userRepository.findByUserNo(userNo)
+                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
+
         //Entity로 변환
-        CommunityReply reply = ReplyMapper.INSTANCE.toEntity(userNo, commentNo, content);
+        CommunityReply reply = ReplyMapper.INSTANCE.toEntity(user, commentNo, content);
 
         //답글 작성
-        reply = replyRepository.save(reply);
+        CommunityReply createdReply = replyRepository.save(reply);
 
-        log.info("커뮤니티 답글 작성 끝");
+        log.info("커뮤니티 답글 작성 끝 : {}", createdReply);
         return ReplyListResDTO
                 .builder()
-                .userNo(reply.getUser().getUserNo())
-                .nickname(reply.getUser().getNickname())
-                .profileImg(reply.getUser().getProfileImg())
-                .replyNo(reply.getReplyNo())
-                .commentNo(reply.getCommunityComment().getCommentNo())
-                .content(reply.getContent())
-                .createdAt(reply.getCreatedAt())
+                .userNo(createdReply.getUser().getUserNo())
+                .nickname(createdReply.getUser().getNickname())
+                .profileImg(createdReply.getUser().getProfileImg())
+                .replyNo(createdReply.getReplyNo())
+                .commentNo(createdReply.getCommunityComment().getCommentNo())
+                .content(createdReply.getContent())
+                .createdAt(createdReply.getCreatedAt())
                 .build();
     }
 

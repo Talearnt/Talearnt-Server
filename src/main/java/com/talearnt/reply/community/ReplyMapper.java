@@ -1,6 +1,7 @@
 package com.talearnt.reply.community;
 
 import com.talearnt.reply.community.entity.CommunityReply;
+import com.talearnt.user.infomation.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -13,9 +14,9 @@ public interface ReplyMapper {
     ReplyMapper INSTANCE = Mappers.getMapper(ReplyMapper.class);
 
     @Mappings({
-            @Mapping(source = "userNo", target = "user.userNo"),
+            @Mapping(source = "user", target = "user"),
             @Mapping(source = "commentNo", target = "communityComment.commentNo"),
             @Mapping(source = "content", target = "content")
     })
-    CommunityReply toEntity(Long userNo, Long commentNo, String content);
+    CommunityReply toEntity(User user, Long commentNo, String content);
 }
