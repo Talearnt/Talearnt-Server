@@ -21,7 +21,7 @@ import java.util.List;
 @Log4j2
 @RequiredArgsConstructor
 @Tag(name = "Notice & Event")
-public class NoticeController {
+public class NoticeController implements NoticeApi {
 
     private final NoticeService noticeService;
 
