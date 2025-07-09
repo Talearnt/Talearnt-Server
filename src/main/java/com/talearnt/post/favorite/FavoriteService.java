@@ -4,17 +4,25 @@ package com.talearnt.post.favorite;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.post.exchange.entity.ExchangePost;
 import com.talearnt.post.exchange.repository.ExchangePostRepository;
+import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.post.favorite.entity.FavoriteExchangePost;
 import com.talearnt.post.favorite.repository.FavoriteExchagePostQueryRepository;
 import com.talearnt.post.favorite.repository.FavoriteExchangePostRepository;
+import com.talearnt.post.favorite.request.FavoriteSearchCondition;
+import com.talearnt.util.common.PageUtil;
+import com.talearnt.util.common.PostUtil;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.log.LogRunningTime;
+import com.talearnt.util.pagination.PagedListWrapper;
 import com.talearnt.util.response.PaginatedResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -33,15 +41,34 @@ public class FavoriteService {
 
 
     @LogRunningTime
-    public PaginatedResponse<List<FavoriteExchangePost>> getFavoriteExchanges(String path, String page, String size,Authentication auth) {
-        log.info("찜 게시글 목록 조회 시작");
+    public PaginatedResponse<List<ExchangePostListResDTO>> getFavoriteExchanges(String path, String page, String size,Authentication auth) {
+        log.info("찜 게시글 목록 조회 시작 - path: {}, page: {}, size: {}", path, page, size);
 
         //로그인 여부 확인
         UserInfo userInfo = UserUtil.validateAuthentication("찜 게시글 목록 조회 실패 - 로그인 안함 : {}", auth);
 
+        //서치 컨디션 생성
+        FavoriteSearchCondition condition = FavoriteSearchCondition
+                .builder()
+                .page(page)
+                .size(size)
+                .build();
+
+        if ("web".equalsIgnoreCase(path)) {
+            //웹 찜 게시글 목록 조회
+            PagedListWrapper<ExchangePostListResDTO> wrapper = favoriteExchagePostQueryRepository.getFavoriteExchangePostsToWeb(userInfo.getUserNo(), condition);
+            //페이지 정보로 변환
+            Page<ExchangePostListResDTO> result = new PageImpl<>(wrapper.getList(), condition.getPage(),wrapper.getPagedData().getTotal());
+
+            log.info("찜 게시글 목록 조회 끝 - 웹");
+            //반환
+            return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToWeb(result, wrapper.getPagedData().getLatestCreatedAt()));
+        }
 
 
-        return null;
+        Page<ExchangePostListResDTO> result = favoriteExchagePostQueryRepository.getFavoriteExchangePostsToMobile(userInfo.getUserNo(), condition);
+        log.info("찜 게시글 목록 조회 끝 - 모바일");
+        return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToMobile(result));
     }
 
 

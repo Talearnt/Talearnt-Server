@@ -30,7 +30,7 @@ public class FavoriteController implements FavoriteApi {
                                                                                                                 @RequestParam(required = false, defaultValue = "15") String size,
                                                                                                                 @ClientPath ClientPathType path,
                                                                                                                 Authentication auth) {
-        return null;
+        return CommonResponse.success(favoriteService.getFavoriteExchanges(path.name(), page, size, auth));
     }
 
 

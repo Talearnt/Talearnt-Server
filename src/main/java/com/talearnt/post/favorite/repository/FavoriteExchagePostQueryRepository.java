@@ -19,6 +19,8 @@ import com.talearnt.util.pagination.PagedData;
 import com.talearnt.util.pagination.PagedListWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -54,9 +56,27 @@ public class FavoriteExchagePostQueryRepository {
         );
     }
 
-    public PagedListWrapper<ExchangePostListResDTO> getFavoriteExchagePostsToWeb(Long userNo, FavoriteSearchCondition condition) {
+    public PagedListWrapper<ExchangePostListResDTO> getFavoriteExchangePostsToWeb(Long userNo, FavoriteSearchCondition condition) {
         List<ExchangePostListResDTO> data = getListSelected(userNo)
-                .where(exchangePost.deletedAt.isNull())//게시글이 삭제되지 않았고
+                .where(exchangePost.deletedAt.isNull(),//게시글이 삭제되지 않았고
+                        favoriteExchangePost.deletedAt.isNull(),
+                        favoriteExchangePost.userNo.eq(userNo),
+                        favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
+                .groupBy(
+                        user.profileImg,
+                        user.nickname,
+                        user.authority,
+                        exchangePost.exchangePostNo,
+                        exchangePost.status,
+                        exchangePost.exchangeType,
+                        exchangePost.duration,
+                        exchangePost.requiredBadge,
+                        exchangePost.title,
+                        exchangePost.content,
+                        exchangePost.createdAt,
+                        exchangePost.count,
+                        favoriteExchangePost.createdAt
+                )
                 .orderBy(favoriteExchangePost.createdAt.desc())
                 .offset(condition.getPage().getOffset())
                 .limit(condition.getPage().getPageSize())
@@ -65,17 +85,59 @@ public class FavoriteExchagePostQueryRepository {
         PagedData pagedData = Optional.ofNullable(
                 factory
                         .select(Projections.constructor(PagedData.class,
-                                exchangePost.count(),
+                                favoriteExchangePost.count(),
                                 Expressions.dateTemplate(LocalDateTime.class,
                                         "MAX({0})",
-                                        exchangePost.createdAt)))
-                        .from(exchangePost)
+                                        favoriteExchangePost.createdAt)))
+                        .from(favoriteExchangePost)
+                        .leftJoin(exchangePost).on(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
                         .where(
+                                favoriteExchangePost.userNo.eq(userNo),
                                 exchangePost.deletedAt.isNull()//게시글이 삭제되지 않았고
                         ).fetchOne()
         ).orElse(null);
 
         return PagedListWrapper.<ExchangePostListResDTO>builder().list(data).pagedData(pagedData).build();
+    }
+
+
+    public Page<ExchangePostListResDTO> getFavoriteExchangePostsToMobile(Long userNo, FavoriteSearchCondition condition) {
+        List<ExchangePostListResDTO> data = getListSelected(userNo)
+                .where(exchangePost.deletedAt.isNull(),//게시글이 삭제되지 않았고
+                        favoriteExchangePost.deletedAt.isNull(),
+                        favoriteExchangePost.userNo.eq(userNo),
+                        favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
+                .groupBy(
+                        user.profileImg,
+                        user.nickname,
+                        user.authority,
+                        exchangePost.exchangePostNo,
+                        exchangePost.status,
+                        exchangePost.exchangeType,
+                        exchangePost.duration,
+                        exchangePost.requiredBadge,
+                        exchangePost.title,
+                        exchangePost.content,
+                        exchangePost.createdAt,
+                        exchangePost.count,
+                        favoriteExchangePost.createdAt
+                )
+                .orderBy(favoriteExchangePost.createdAt.desc())
+                .offset(condition.getPage().getOffset())
+                .limit(condition.getPage().getPageSize())
+                .fetch();
+
+        Long total = Optional.ofNullable(
+                factory
+                        .select(favoriteExchangePost.count())
+                        .from(favoriteExchangePost)
+                        .where(
+                                favoriteExchangePost.userNo.eq(userNo),
+                                favoriteExchangePost.deletedAt.isNull()//게시글이 삭제되지 않았고
+                        ).fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(data, condition.getPage(), total);
     }
 
     /** 찜 교환 게시글 목록을 불러올 때 사용 (웹/모바일 중복 방지) */
@@ -94,6 +156,7 @@ public class FavoriteExchagePostQueryRepository {
                                 Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", giveCategory.talentName),
                                 Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", receiveCategory.talentName),
                                 exchangePost.createdAt,
+                                exchangePost.count,
                                 chatRequest.countDistinct(),
                                 favoriteExchangePost.countDistinct(),
                                 Expressions.constant(true) // 무조건 True
