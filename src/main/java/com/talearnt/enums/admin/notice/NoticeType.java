@@ -1,5 +1,10 @@
 package com.talearnt.enums.admin.notice;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum NoticeType {
     NOTICE("공지"),
     EVENT("이벤트 당첨"),
@@ -10,6 +15,7 @@ public enum NoticeType {
         this.type = type;
     }
 
+    @JsonValue
     public String getType() {
         return type;
     }
