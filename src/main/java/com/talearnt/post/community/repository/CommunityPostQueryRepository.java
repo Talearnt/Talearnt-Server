@@ -308,7 +308,85 @@ public class CommunityPostQueryRepository {
         }
         return selected;
     }
-    /***/
+
+
+    /** 내가 작성한 커뮤니티 게시글 목록 조회 - 웹
+     * */
+    public PagedListWrapper<CommunityPostListResDTO> getCommunityPostListToWebByMyUserNo(Long userNo, CommunityPostSearchCondition condition) {
+        JPAQuery<CommunityPostListResDTO> selected = getSeletedList(condition.getPath(), condition.getOrder(), userNo);
+
+        List<CommunityPostListResDTO> data = selected.from(communityPost)
+                .leftJoin(user).on(communityPost.user.userNo.eq(user.userNo))
+                .leftJoin(likeCommunity).on(likeCommunity.communityPost.communityPostNo.eq(communityPost.communityPostNo),
+                        likeCommunity.canceledAt.isNull())
+                .leftJoin(communityComment).on(communityPost.communityPostNo.eq(communityComment.communityPost.communityPostNo),
+                        communityComment.deletedAt.isNull())
+                .leftJoin(communityReply).on(communityComment.commentNo.eq(communityReply.communityComment.commentNo),
+                        communityReply.deletedAt.isNull())
+                .where(
+                        communityPost.deletedAt.isNull(),
+                        postTypeEq(condition.getPostType()),
+                        communityPost.user.userNo.eq(userNo) // 내가 작성한 게시글만
+                )
+                .groupBy(communityPost.communityPostNo)
+                .orderBy(orderEq(condition.getOrder()).toArray(new OrderSpecifier[0]))
+                .offset(condition.getPage().getOffset())
+                .limit(condition.getPage().getPageSize())
+                .fetch();
+
+        PagedData pagedData = factory.select(Projections.constructor(PagedData.class,
+                        communityPost.countDistinct(),
+                        Expressions.dateTemplate(LocalDateTime.class, "MAX({0})", communityPost.createdAt)))
+                .from(communityPost)
+                .where(
+                        communityPost.deletedAt.isNull(),
+                        postTypeEq(condition.getPostType()),
+                        communityPost.user.userNo.eq(userNo)
+                ).fetchOne();
+
+        return PagedListWrapper.<CommunityPostListResDTO>builder().list(data).pagedData(pagedData).build();
+    }
+
+    /**
+     * 내가 작성한 커뮤니티 게시글 목록 조회 - 모바일
+     * */
+    public Page<CommunityPostListResDTO> getCommunityPostListToMobileByMyUserNo(Long userNo, CommunityPostSearchCondition condition) {
+        JPAQuery<CommunityPostListResDTO> selected = getSeletedList(condition.getPath(), condition.getOrder(), userNo);
+
+        List<CommunityPostListResDTO> data = selected.from(communityPost)
+                .leftJoin(user).on(communityPost.user.userNo.eq(user.userNo))
+                .leftJoin(likeCommunity).on(likeCommunity.communityPost.communityPostNo.eq(communityPost.communityPostNo),
+                        likeCommunity.canceledAt.isNull())
+                .leftJoin(communityComment).on(communityPost.communityPostNo.eq(communityComment.communityPost.communityPostNo),
+                        communityComment.deletedAt.isNull())
+                .leftJoin(communityReply).on(communityComment.commentNo.eq(communityReply.communityComment.commentNo),
+                        communityReply.deletedAt.isNull())
+                .where(
+                        communityPost.deletedAt.isNull(),
+                        postTypeEq(condition.getPostType()),
+                        communityPost.user.userNo.eq(userNo) // 내가 작성한 게시글만
+                )
+                .groupBy(communityPost.communityPostNo)
+                .orderBy(orderEq(condition.getOrder()).toArray(new OrderSpecifier[0]))
+                .limit(condition.getPage().getPageSize())
+                .fetch();
+
+        Long total = Optional.ofNullable(
+                factory.select(communityPost.countDistinct())
+                        .from(communityPost)
+                        .where(
+                                communityPost.deletedAt.isNull(),
+                                postTypeEq(condition.getPostType()),
+                                communityPost.user.userNo.eq(userNo) // 내가 작성한 게시글만
+                        )
+                        .fetchOne()
+        ).orElse(0L);
+        return new PageImpl<>(data, condition.getPage(), total);
+    }
+
+
+
+
 
     /**
      * 인기순위 점수 구하기 좋아요 * 0.7 + 조회수 * 0.3

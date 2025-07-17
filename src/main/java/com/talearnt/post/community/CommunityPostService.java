@@ -45,6 +45,7 @@ public class CommunityPostService {
     private final LikeCommunityRepository  likeCommunityRepository;
     private final LikeCommunityQueryRepository likeCommunityQueryRepository;
 
+
     /**
      * 커뮤니티 게시글 목록 조회
      * 조건)
@@ -285,6 +286,44 @@ public class CommunityPostService {
     }
 
 
+
+    /**
+     * 내가 작성한 커뮤니티 게시글 목록 조회
+     * 조건)
+     * - 로그인 했는가?
+     * - 내가 작성한 게시글인가?
+     * - 웹, 모바일 구분
+     */
+    public PaginatedResponse<List<CommunityPostListResDTO>> getMyCommunityPostList(Authentication authentication, String postType, String order, String path, String lastNo, String page, String size) {
+        log.info("내가 작성한 커뮤니티 게시글 목록 조회 시작 : {} - {} - {}", postType, order, path);
+
+        UserInfo userInfo = UserUtil.validateAuthentication("내가 작성한 커뮤니티 게시글 목록 조회", authentication);
+
+        CommunityPostSearchCondition condition = CommunityPostSearchCondition.builder()
+                .postType(postType)
+                .order(order)
+                .path(path)
+                .page(page)
+                .size(size)
+                .lastNo(lastNo)
+                .build();
+
+        // 내가 작성한 게시글만 조회
+        if ("web".equalsIgnoreCase(path)) {
+            PagedListWrapper<CommunityPostListResDTO> wrapper = communityPostQueryRepository.getCommunityPostListToWebByMyUserNo(userInfo.getUserNo(), condition);
+            Page<CommunityPostListResDTO> result = new PageImpl<>(wrapper.getList(), condition.getPage(), wrapper.getPagedData().getTotal());
+            return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToWeb(result, wrapper.getPagedData().getLatestCreatedAt()));
+        }
+
+        Page<CommunityPostListResDTO> result = communityPostQueryRepository.getCommunityPostListToMobileByMyUserNo(userInfo.getUserNo(), condition);
+
+        log.info("내가 작성한 커뮤니티 게시글 목록 조회 끝");
+        return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToMobile(result));
+    }
+
+
+
+
     private CommunityPost validatePostAccess(String errorLocation, Long postNo, Long userNo) {
         //게시물이 삭제하지 않고 존재하는가?
         CommunityPost communityPost = communityPostQueryRepository.findByPostNo(postNo).orElseThrow(() -> {
@@ -300,4 +339,9 @@ public class CommunityPostService {
 
         return communityPost;
     }
+
+
+
+
+
 }
