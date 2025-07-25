@@ -426,6 +426,39 @@ public class ExchangePostService {
         return "재능 교환 게시글이 성공적으로 삭제 되었습니다.";
     }
 
+    /** 내가 작성한 재능 교환 게시글 목록 불러오기 <br>
+     * 조건 )<br>
+     * - 로그인이 되어 있는가?
+     * */
+    public PaginatedResponse<List<ExchangePostListResDTO>> getMyExchangePostList(
+            String order, String duration, String type, String requiredBadge, String status,
+            String page, String size, String lastNo, Authentication auth, String path) {
+
+        UserInfo userInfo = UserUtil.validateAuthentication("내가 작성한 재능교환 게시글 목록 조회", auth);
+
+        ExchangeSearchCondition condition = ExchangeSearchCondition.builder()
+                .order(order)
+                .duration(duration)
+                .type(type)
+                .requiredBadge(requiredBadge)
+                .status(status)
+                .page(page)
+                .size(size)
+                .lastNo(lastNo)
+                .build();
+
+        if (path.equalsIgnoreCase("web")) {
+            if (condition.getLastNo() != null) {
+                throw new CustomRuntimeException(ErrorCode.POST_FAILED_CALL_LIST);
+            }
+            PagedListWrapper<ExchangePostListResDTO> wrapper = exchangePostQueryRepository.getMyExchangePostListToWeb(userInfo.getUserNo(), condition);
+            Page<ExchangePostListResDTO> result = new PageImpl<>(wrapper.getList(), condition.getPage(), wrapper.getPagedData().getTotal());
+            return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToWeb(result, wrapper.getPagedData().getLatestCreatedAt()));
+        }
+
+        Page<ExchangePostListResDTO> result = exchangePostQueryRepository.getMyExchangePostListToMobile(userInfo.getUserNo(), condition);
+        return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToMobile(result));
+    }
 
 
 }

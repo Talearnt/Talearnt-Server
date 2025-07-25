@@ -316,6 +316,66 @@ public class ExchangePostQueryRepository {
 
 
     /**
+     * 내가 작성한 재능 교환 게시글 목록 불러오기 - 웹 전용
+     * */
+    public PagedListWrapper<ExchangePostListResDTO> getMyExchangePostListToWeb(Long userNo, ExchangeSearchCondition condition) {
+        List<ExchangePostListResDTO> data = getListSelected(userNo)
+                .where(
+                        exchangePost.deletedAt.isNull(),
+                        exchangePost.user.userNo.eq(userNo), // 본인 게시글만
+                        durationEq(condition.getDuration()),
+                        exchangeTypeEq(condition.getType()),
+                        requiredBadgeEq(condition.getRequiredBadge()),
+                        exchangePostStatusEq(condition.getStatus())
+                )
+                .orderBy(orderEq(condition.getOrder()).toArray(new OrderSpecifier[0]))
+                .groupBy(exchangePost.exchangePostNo)
+                .offset(condition.getPage().getOffset())
+                .limit(condition.getPage().getPageSize())
+                .fetch();
+
+        PagedData pagedData = factory.select(Projections.constructor(PagedData.class,
+                        exchangePost.count(),
+                        Expressions.dateTemplate(LocalDateTime.class, "MAX({0})", exchangePost.createdAt)))
+                .from(exchangePost)
+                .where(
+                        exchangePost.deletedAt.isNull(),
+                        exchangePost.user.userNo.eq(userNo),
+                        durationEq(condition.getDuration()),
+                        exchangeTypeEq(condition.getType()),
+                        requiredBadgeEq(condition.getRequiredBadge()),
+                        exchangePostStatusEq(condition.getStatus())
+                ).fetchOne();
+
+        return PagedListWrapper.<ExchangePostListResDTO>builder().list(data).pagedData(pagedData).build();
+    }
+
+
+    /**
+     * 내가 작성한 재능 교환 게시글 목록 불러오기 - 모바일 전용
+     */
+    public Page<ExchangePostListResDTO> getMyExchangePostListToMobile(Long userNo, ExchangeSearchCondition condition) {
+        List<ExchangePostListResDTO> data = getListSelected(userNo)
+                .where(
+                        exchangePost.deletedAt.isNull(),
+                        exchangePost.user.userNo.eq(userNo), // 본인 게시글만
+                        durationEq(condition.getDuration()),
+                        exchangeTypeEq(condition.getType()),
+                        requiredBadgeEq(condition.getRequiredBadge()),
+                        exchangePostStatusEq(condition.getStatus()),
+                        lastNoLt(condition.getLastNo())
+                )
+                .orderBy(orderEq(condition.getOrder()).toArray(new OrderSpecifier[0]))
+                .groupBy(exchangePost.exchangePostNo)
+                .limit(condition.getPage().getPageSize())
+                .fetch();
+
+        Long total = (long) data.size();
+        return new PageImpl<>(data, condition.getPage(), total);
+    }
+
+
+    /**
      * 재능 교환 목록 Select 공통 사용 함수
      */
     private JPAQuery<ExchangePostListResDTO> getListSelected(Long userNo) {
@@ -440,5 +500,7 @@ public class ExchangePostQueryRepository {
     private BooleanExpression exchangePostStatusEq(ExchangePostStatus status) {
         return status != null ? exchangePost.status.eq(status) : null;
     }
+
+
 
 }

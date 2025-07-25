@@ -78,5 +78,7 @@ public class ExchangePostController implements ExchangePostApi{
         return CommonResponse.success(exchangePostService.deleteExchangePost(postNo, auth));
     }
 
+    //내가 작성한 재능교환 게시글 목록
+
 
 }
