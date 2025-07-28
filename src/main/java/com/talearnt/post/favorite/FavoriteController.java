@@ -24,16 +24,6 @@ public class FavoriteController implements FavoriteApi {
 
     private final FavoriteService favoriteService;
 
-    //찜 게시글 목록
-    @GetMapping("/posts/exchanges/favorites")
-    public ResponseEntity<CommonResponse<PaginatedResponse<List<ExchangePostListResDTO>>>> getFavoriteExchanges(@RequestParam(required = false, defaultValue = "1") String page,
-                                                                                                                @RequestParam(required = false, defaultValue = "15") String size,
-                                                                                                                @ClientPath ClientPathType path,
-                                                                                                                Authentication auth) {
-        return CommonResponse.success(favoriteService.getFavoriteExchanges(path.name(), page, size, auth));
-    }
-
-
     //찜 게시글 추가/삭제
     @PostMapping("/posts/exchanges/{postNo}/favorite")
     public ResponseEntity<CommonResponse<Void>> favoriteExchangePost(@PathVariable Long postNo, Authentication auth){

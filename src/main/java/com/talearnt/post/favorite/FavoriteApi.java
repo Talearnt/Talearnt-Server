@@ -17,54 +17,7 @@ import java.util.List;
 
 public interface FavoriteApi {
 
-    @Operation(summary = "내가 찜한 재능 교환 게시글 목록",
-            tags = {"Post-Exchange"}
-            , description = "<h2>내용</h2>" +
-            "<p>로그인한 사용자가 찜한 재능 교환 게시글 목록을 조회합니다.</p>" +
-            "<p>path 는 헤더 X-Client-Path 에 담으세요. 기본 값은 WEB 입니다.</p>" +
-            "<hr/>" +
-            "<h2>Response - 공통</h2>" +
-            "<ul>" +
-            "<li>profileImg : 작성자 프로필 이미지</li>" +
-            "<li>nickname : 작성자 닉네임</li>" +
-            "<li>authority : 작성자 권한</li>" +
-            "<li>exchangePostNo : 게시글 번호</li>" +
-            "<li>status : 모집 상태</li>" +
-            "<li>exchangeType : 진행 방식</li>" +
-            "<li>duration : 진행 기간</li>" +
-            "<li>requiredBadge : 인증 뱃지 필요 여부</li>" +
-            "<li>title : 게시글 제목</li>" +
-            "<li>content : 게시글 내용(100자 이내)</li>" +
-            "<li>giveTalents : 주고 싶은 재능 목록</li>" +
-            "<li>receiveTalents : 받고 싶은 재능 목록</li>" +
-            "<li>createdAt : 게시글 작성일</li>" +
-            "<li>count : 조회수</li>" +
-            "<li>openedChatRoomCount : 신청된 채팅방 개수</li>" +
-            "<li>favoriteCount : 찜 개수</li>" +
-            "<li>isFavorite : 찜 여부(항상 true)</li>" +
-            "</ul>" +
-            "<hr/>" +
-            "<h2>pagination - Mobile</h2>" +
-            "<ul>" +
-            "<li>hasNext : 다음 페이지 이동 가능 여부</li>" +
-            "</ul>" +
-            "<h2>pagination - Web</h2>" +
-            "<ul>" +
-            "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
-            "<li>hasPrevious - 이전 페이지 이동 가능 여부</li>" +
-            "<li>totalCount - 총 데이터 개수</li>" +
-            "<li>totalPages - 총 페이지 개수</li>" +
-            "<li>currentPage - 현재 페이지 번호</li>" +
-            "<li>latestCreatedAt - 가장 최근 Data 작성일</li>" +
-            "</ul>")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
-    })
-    public ResponseEntity<CommonResponse<PaginatedResponse<List<ExchangePostListResDTO>>>> getFavoriteExchanges(@RequestParam(required = false, defaultValue = "1") String page,
-                                                                                                                @RequestParam(required = false, defaultValue = "15") String size,
-                                                                                                                @ClientPath ClientPathType path,
-                                                                                                                Authentication auth);
+
 
 
 

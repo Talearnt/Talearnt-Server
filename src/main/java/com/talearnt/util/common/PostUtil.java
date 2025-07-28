@@ -24,6 +24,10 @@ public class PostUtil {
     /** String 에서 Integer 로 유효한 값만 변환하는 Method <br>
      * List<Integer> 반환*/
     public static List<Integer> filterValidIntegers(List<String> strings){
+        if (strings == null || strings.isEmpty()) {
+            return null;
+        }
+
         return strings.stream().filter(PostUtil::isInteger)
                 .map(Integer::valueOf).toList();
     }
@@ -81,6 +85,7 @@ public class PostUtil {
     public static String filterValidOrderValue(String value){
         value = getTrimString(value);
         //Recent,Popular가 아니라면 recent 반환
+        if (value == null || value.isEmpty()) return "recent";
         return switch (value.toLowerCase()){
             case "popular", "hot" -> value;
             default -> "recent";

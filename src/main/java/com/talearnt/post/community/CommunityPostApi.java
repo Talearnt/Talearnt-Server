@@ -194,61 +194,6 @@ public interface CommunityPostApi {
 
 
 
-    @Operation(summary = "내가 작성한 커뮤니티 게시글 목록"
-            , description = "<h2>내용</h2>" +
-            "<p>로그인한 사용자가 작성한 커뮤니티 게시글 목록을 조회합니다.</p>" +
-            "<p>웹과 모바일의 Response에 차이가 있습니다. Mobile에는 content가 추가됩니다.</p>" +
-            "<p>path에 (mobile|web) 으로 보내주셔야 하며, 기본값은 web입니다.</p>" +
-            "<p>order는 (recent|hot)으로 구성되어 있고, 기본 값은 recent입니다.</p>" +
-            "<p>postType은 나중에 내가 작성한 게시글 목록에도 필터 기능이 생길 가능성을 염두에 두어 추가해 두었습니다.</p>" +
-            "<hr/>" +
-            "<h2>Response - 공통</h2>" +
-            "<ul>" +
-            "<li>profileImg : 작성자의 프로필 이미지 경로</li>" +
-            "<li>nickname : 작성자의 닉네임</li>" +
-            "<li>authority : 작성자의 권한</li>" +
-            "<li>communityPostNo : 게시글 번호</li>" +
-            "<li>postType : 커뮤니티 게시글 타입</li>" +
-            "<li>title : 게시글 제목</li>" +
-            "<li>count : 게시글 조회수</li>" +
-            "<li>commentCount : (댓글 수+답글 수) 개수</li>" +
-            "<li>likeCount : 게시글 좋아요 개수</li>" +
-            "<li>isLike : 게시글 좋아요 여부</li>" +
-            "<li>createdAt : 게시글 작성일</li>" +
-            "</ul>" +
-            "<hr/>" +
-            "<h2>Response - 모바일에서 추가</h2>" +
-            "<ul>" +
-            "<li>content : 게시글 내용</li>" +
-            "</ul>" +
-            "<hr/>" +
-            "<h2>pagination - Mobile</h2>" +
-            "<ul>" +
-            "<li>hasNext : 다음 게시글 이동 가능 여부</li>" +
-            "</ul>" +
-            "<h2>pagination - Web</h2>" +
-            "<ul>" +
-            "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
-            "<li>hasPrevious - 이전 페이지 이동 가능 여부</li>" +
-            "<li>totalCount - 총 데이터 개수</li>" +
-            "<li>totalPages - 총 페이지 개수</li>" +
-            "<li>currentPage - 현재 페이지 번호</li>" +
-            "<li>latestCreatedAt - 가장 최근 Data 작성일</li>" +
-            "</ul>")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
-    })
-    ResponseEntity<CommonResponse<PaginatedResponse<List<CommunityPostListResDTO>>>> getMyCommunityPostList(
-            @RequestParam(required = false) String postType,
-            @RequestParam(required = false, defaultValue = "recent") String order,
-            @Schema(hidden = true) @ClientPath ClientPathType path,
-            @RequestParam(required = false, defaultValue = "1") String page,
-            @RequestParam(required = false, defaultValue = "12") String size,
-            @RequestParam(required = false) String lastNo,
-            Authentication authentication);
-
-
 }
 
 

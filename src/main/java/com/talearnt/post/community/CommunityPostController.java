@@ -71,18 +71,5 @@ public class CommunityPostController implements CommunityPostApi{
         return CommonResponse.success(null);
     }
 
-    //내가 작성한 커뮤니티 게시글 목록
-    @GetMapping("/posts/communities/mine")
-    public ResponseEntity<CommonResponse<PaginatedResponse<List<CommunityPostListResDTO>>>> getMyCommunityPostList(
-            @RequestParam(required = false) String postType,
-            @RequestParam(required = false, defaultValue = "recent") String order,
-            @ClientPath ClientPathType path,
-            @RequestParam(required = false, defaultValue = "1") String page,
-            @RequestParam(required = false, defaultValue = "12") String size,
-            @RequestParam(required = false) String lastNo,
-            Authentication authentication) {
-
-        return CommonResponse.success(communityPostService.getMyCommunityPostList(authentication, postType,order, path.name(), lastNo, page, size));
-    }
 
 }
