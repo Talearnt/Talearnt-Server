@@ -313,7 +313,20 @@ public class CommunityPostQueryRepository {
     /** 내가 작성한 커뮤니티 게시글 목록 조회 - 웹
      * */
     public PagedListWrapper<CommunityPostListResDTO> getCommunityPostListToWebByMyUserNo(Long userNo, CommunityPostSearchCondition condition) {
-        JPAQuery<CommunityPostListResDTO> selected = getSeletedList(condition.getPath(), condition.getOrder(), userNo);
+        JPAQuery<CommunityPostListResDTO> selected = factory.select(Projections.constructor(CommunityPostMobileListResDTO.class,
+                user.profileImg,
+                user.nickname,
+                user.authority,
+                communityPost.communityPostNo,
+                communityPost.postType,
+                communityPost.title,
+                communityPost.count,
+                communityComment.countDistinct().add(communityReply.countDistinct()),
+                likeCommunity.countDistinct(),
+                Expressions.booleanTemplate("MAX(CASE WHEN {0} THEN 1 ELSE 0 END) = 1", likeCommunity.userNo.eq(userNo)),
+                communityPost.createdAt,
+                Expressions.stringTemplate("SUBSTRING(CAST(REGEXP_REPLACE({0}, '<[^>]*>', '') AS STRING), 1, 100)", communityPost.content)
+        ));
 
         List<CommunityPostListResDTO> data = selected.from(communityPost)
                 .leftJoin(user).on(communityPost.user.userNo.eq(user.userNo))
