@@ -370,7 +370,20 @@ public class ExchangePostQueryRepository {
                 .limit(condition.getPage().getPageSize())
                 .fetch();
 
-        Long total = (long) data.size();
+        Long total = Optional.ofNullable(
+                factory
+                        .select(exchangePost.count())
+                        .from(exchangePost)
+                        .where(
+                                exchangePost.deletedAt.isNull(),
+                                exchangePost.user.userNo.eq(userNo), // 본인 게시글만
+                                durationEq(condition.getDuration()),
+                                exchangeTypeEq(condition.getType()),
+                                requiredBadgeEq(condition.getRequiredBadge()),
+                                exchangePostStatusEq(condition.getStatus()),
+                                lastNoLt(condition.getLastNo())
+                        ).fetchOne()
+        ).orElse(0L);
         return new PageImpl<>(data, condition.getPage(), total);
     }
 
