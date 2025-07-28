@@ -29,6 +29,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -99,6 +101,21 @@ public class AuthController implements AuthApi{
     public ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakao(@RequestParam("code")String code, HttpServletResponse response) {
         return CommonResponse.success(kakaoLoginService.loginKakao(code,response));
     }
+
+    @PostMapping("/auth/logout")
+    public ResponseEntity<CommonResponse<Void>> logout(HttpServletResponse response) {
+        // refreshToken 쿠키 만료 처리
+        ResponseCookie expiredCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .build();
+        response.setHeader(HttpHeaders.SET_COOKIE, expiredCookie.toString());
+        return CommonResponse.success(null);
+    }
+
     /*############################## 로그인 관련 끝 ##############################*/
 
     /*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 인증 문자 관련 시작 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/

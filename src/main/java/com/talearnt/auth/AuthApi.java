@@ -191,6 +191,21 @@ public interface AuthApi {
     })
     public ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakao(@RequestParam("code")String code, HttpServletResponse response);
 
+
+    @Operation(
+            summary = "로그아웃",
+            description = "<h3>내용</h3>" +
+                    "<p>클라이언트의 리프레시 토큰 쿠키를 만료시켜 로그아웃 처리합니다.</p>" +
+                    "<p>어세스 토큰은 클라이언트에서 삭제를 시켜줘야 정상적으로 로그아웃됩니다.</p>"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "로그아웃 성공"
+    )
+    @PostMapping("/auth/logout")
+    public ResponseEntity<CommonResponse<Void>> logout(HttpServletResponse response);
+
+
     /*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 인증 문자 관련 시작 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
     @Operation(summary = "인증 번호 문자 전송 통합" ,
             description = "<h3>Body 설명</h3>" +
