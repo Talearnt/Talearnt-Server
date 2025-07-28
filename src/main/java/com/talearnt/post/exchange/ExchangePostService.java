@@ -430,18 +430,11 @@ public class ExchangePostService {
      * 조건 )<br>
      * - 로그인이 되어 있는가?
      * */
-    public PaginatedResponse<List<ExchangePostListResDTO>> getMyExchangePostList(
-            String order, String duration, String type, String requiredBadge, String status,
-            String page, String size, String lastNo, Authentication auth, String path) {
+    public PaginatedResponse<List<ExchangePostListResDTO>> getMyExchangePostList(String page, String size, String lastNo, Authentication auth, String path) {
 
         UserInfo userInfo = UserUtil.validateAuthentication("내가 작성한 재능교환 게시글 목록 조회", auth);
 
         ExchangeSearchCondition condition = ExchangeSearchCondition.builder()
-                .order(order)
-                .duration(duration)
-                .type(type)
-                .requiredBadge(requiredBadge)
-                .status(status)
                 .page(page)
                 .size(size)
                 .lastNo(lastNo)

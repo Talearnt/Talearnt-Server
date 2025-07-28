@@ -11,6 +11,7 @@ import com.talearnt.util.common.ClientPath;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.version.RestControllerV1;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -77,8 +78,5 @@ public class ExchangePostController implements ExchangePostApi{
     public ResponseEntity<CommonResponse<String>> deleteExchangePost(@PathVariable Long postNo, Authentication auth){
         return CommonResponse.success(exchangePostService.deleteExchangePost(postNo, auth));
     }
-
-    //내가 작성한 재능교환 게시글 목록
-
 
 }
