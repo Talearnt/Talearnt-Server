@@ -41,11 +41,10 @@ public class CommentController implements CommentApi {
     public ResponseEntity<CommonResponse<PaginatedResponse<List<CommentListResDTO>>>> getCommentList(
             @PathVariable Long postNo,
             @ClientPath ClientPathType path,
-            @RequestParam(required = false) String deletedAt,
             @RequestParam(required = false) String lastNo,
             @RequestParam(required = false, defaultValue = "1") String page,
             @RequestParam(required = false, defaultValue = "30") String size) {
-        return CommonResponse.success(commentService.getCommunityComments(postNo, path.name(),deletedAt, lastNo, page, size));
+        return CommonResponse.success(commentService.getCommunityComments(postNo, path.name(), lastNo, page, size));
     }
 
 

@@ -79,11 +79,6 @@ public interface CommentApi {
                     "<p>커뮤니티 게시글 번호에 해당하는 댓글을 가져옵니다.</p>" +
                     "<p><strong>삭제된 댓글 + 답글 존재</strong>일 경우 replyCount와 commentNo, isDeleted 제외한 값이 모두 Null 보입니다.</p>" +
                     "<hr>" +
-                    "<h2>웹 참고 내용</h2>" +
-                    "<p>lastNo 포함 시 제대로 된 결과 값이 반환되지 않아 예외적으로 Exception을 발생 시킵니다.</p>" +
-                    "<p>DeletdAt 최초 삭제 시간입니다. null 일 경우 삭제된 댓글은 미포함하여 데이터를 보내줍니다.</p>" +
-                    "<p>DeletdAt의 데이터 포멧 형식은 yyy-MM-ddTHH:mm:ss 로 보내셔야 합니다. (ISO_DATE_TIME 포멧임)</p>" +
-                    "<hr>" +
                     "<h2>모바일 참고 내용</h2>" +
                     "<p>Page가 2이상일 경우 제대로 된 결과 값이 반환되지 않아 예외적으로 Exception을 발생 시킵니다.</p>" +
                     "<hr>" +
@@ -121,7 +116,6 @@ public interface CommentApi {
     public ResponseEntity<CommonResponse<PaginatedResponse<List<CommentListResDTO>>>> getCommentList(
             @PathVariable @Schema(description = "커뮤니티 게시글 번호") Long postNo,
             @Schema(hidden = true) @ClientPath ClientPathType path,
-            @RequestParam(required = false) @Schema(description = "최초 댓글 삭제 시간") String deletedAt,
             @RequestParam(required = false) @Schema(description = "마지막 게시글 번호") String lastNo,
             @RequestParam(required = false, defaultValue = "1") @Schema(defaultValue = "1", description = "Mobile은 무조건 1") String page,
             @RequestParam(required = false, defaultValue = "10") @Schema(defaultValue = "10", description = "댓글 개수") String size);

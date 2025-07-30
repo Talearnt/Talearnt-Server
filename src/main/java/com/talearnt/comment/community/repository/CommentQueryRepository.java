@@ -227,7 +227,7 @@ public class CommentQueryRepository {
      * @return BooleanExpression
      */
     private BooleanExpression deletedAtIsNull(LocalDateTime deletedAt) {
-        return deletedAt != null ? comment.deletedAt.isNull().or(comment.deletedAt.goe(deletedAt))
+        return deletedAt != null ? null
                 : comment.deletedAt.isNull() //삭제되지 않았거나
                 .or(comment.deletedAt.isNotNull() //삭제되고
                         .and( // 답글이 있는 댓글만 가져오기
