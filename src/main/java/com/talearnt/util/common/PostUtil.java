@@ -25,7 +25,7 @@ public class PostUtil {
      * List<Integer> 반환*/
     public static List<Integer> filterValidIntegers(List<String> strings){
         if (strings == null || strings.isEmpty()) {
-            return null;
+            return List.of();
         }
 
         return strings.stream().filter(PostUtil::isInteger)
