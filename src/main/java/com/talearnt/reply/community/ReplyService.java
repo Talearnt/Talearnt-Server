@@ -1,11 +1,14 @@
 package com.talearnt.reply.community;
 
 import com.talearnt.comment.community.repository.CommentRepository;
+import com.talearnt.comment.community.request.CommentSearchCondition;
+import com.talearnt.comment.community.response.MyCommentsResDTO;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.reply.community.entity.CommunityReply;
 import com.talearnt.reply.community.repository.ReplyQueryRepository;
 import com.talearnt.reply.community.repository.ReplyRepository;
 import com.talearnt.reply.community.request.ReplySearchCondition;
+import com.talearnt.reply.community.response.MyRepliesResDTO;
 import com.talearnt.reply.community.response.ReplyListResDTO;
 import com.talearnt.user.infomation.entity.User;
 import com.talearnt.user.infomation.repository.UserRepository;
@@ -14,11 +17,13 @@ import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.log.LogRunningTime;
+import com.talearnt.util.pagination.PagedListWrapper;
 import com.talearnt.util.response.PaginatedResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -179,4 +184,47 @@ public class ReplyService {
         log.info("커뮤니티 답글 삭제 끝");
         return null;
     }
+
+    /** 커뮤니티 게시글 답글이 나의 답글인지 확인
+     * 조건 )
+     * - 로그인을 했는가?
+     * - 나의 답글이 맞고, 삭제한 게시글이 아닌가?
+     * */
+    @LogRunningTime
+    public PaginatedResponse<List<MyRepliesResDTO>> getMyReplies(Authentication auth, String lastNo, String path,String page, String size) {
+        log.info("나의 댓글 목록 조회 시작 :  {} - {}",lastNo, size);
+
+        UserInfo userInfo = UserUtil.validateAuthentication("나의 댓글 목록 조회", auth);
+
+        ReplySearchCondition condition = ReplySearchCondition.builder()
+                .lastNo(lastNo)
+                .page(page)
+                .size(size)
+                .build();
+
+        //나의 댓글 목록 조회 - 웹
+        if (path.equals("WEB")) {
+            //웹에서 조회할 경우
+            if (lastNo != null) {
+                log.error("나의 답글 목록 조회 실패 - LastNo가 포함되어 제대로 된 값 호출 X : {} - {}", userInfo.getUserNo(), ErrorCode.REPLY_FAILED_CALL_LIST);
+                throw new CustomRuntimeException(ErrorCode.REPLY_FAILED_CALL_LIST);
+            }
+            PagedListWrapper<MyRepliesResDTO> wrapper = replyQueryRepository.getMyRepliesToWeb(userInfo.getUserNo(), condition);
+
+            Page<MyRepliesResDTO> result = new PageImpl<>(wrapper.getList(), condition.getPage(), wrapper.getPagedData().getTotal());
+
+            return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToWeb(result, wrapper.getPagedData().getLatestCreatedAt()));
+        }
+
+        if (condition.getPage().getPageNumber() > 0) {
+            log.error("나의 답글 목록 조회 실패 - Page가 2 이상이어서 제대로 된 값 호출 X : {} - {}", userInfo.getUserNo(), ErrorCode.REPLY_FAILED_CALL_LIST);
+            throw new CustomRuntimeException(ErrorCode.REPLY_FAILED_CALL_LIST);
+        }
+        //나의 댓글 목록 조회 - 모바일
+        Page<MyRepliesResDTO> result = replyQueryRepository.getMyRepliesToMobile(userInfo.getUserNo(), condition);
+
+        return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToMobile(result));
+    }
+
+
 }

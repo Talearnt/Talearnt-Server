@@ -9,6 +9,9 @@ import com.talearnt.post.community.response.CommunityPostListResDTO;
 import com.talearnt.post.exchange.ExchangePostService;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.post.favorite.FavoriteService;
+import com.talearnt.reply.community.ReplyService;
+import com.talearnt.reply.community.response.MyRepliesResDTO;
+import com.talearnt.reply.community.response.ReplyListResDTO;
 import com.talearnt.user.infomation.UserService;
 import com.talearnt.user.infomation.request.ProfileReqDTO;
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
@@ -45,6 +48,7 @@ public class UserController implements UserApi{
     private final FavoriteService favoriteService;
     private final CommunityPostService communityPostService;
     private final CommentService commentService;
+    private final ReplyService replyService;
 
 
     //회원의 기본 정보를 가져오는 API
@@ -128,6 +132,14 @@ public class UserController implements UserApi{
         return CommonResponse.success(commentService.getMyComments(authentication, path.name(), lastNo, page, size));
     }
 
+    @GetMapping("/users/replies")
+    public ResponseEntity<CommonResponse<PaginatedResponse<List<MyRepliesResDTO>>>> getMyReplies(Authentication authentication,
+                                                                                                 @RequestParam(required = false) String lastNo,
+                                                                                                 @ClientPath ClientPathType path,
+                                                                                                 @RequestParam(required = false, defaultValue = "1") String page,
+                                                                                                 @RequestParam(required = false, defaultValue = "10") String size) {
+        return CommonResponse.success(replyService.getMyReplies(authentication, lastNo, path.name(), page,size));
+    }
 
 
 }
