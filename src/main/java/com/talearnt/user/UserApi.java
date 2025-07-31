@@ -1,5 +1,6 @@
 package com.talearnt.user;
 
+import com.talearnt.comment.community.response.MyCommentsResDTO;
 import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.post.community.response.CommunityPostListResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
@@ -272,6 +273,57 @@ public interface UserApi {
             @RequestParam(required = false) String lastNo,
             Authentication authentication);
 
+
+
+    @Operation(summary = "내가 작성한 커뮤니티 댓글 목록"
+            , description = "<h2>내용</h2>" +
+            "<p>로그인한 사용자가 작성한 커뮤니티 댓글 목록을 조회합니다.</p>" +
+            "<p>path에 (mobile|web) 으로 보내주셔야 하며, 기본값은 web입니다.</p>" +
+            "<hr/>" +
+            "<h2>Request</h2>" +
+            "<ul>" +
+                "<li>path : 호출 경로 (web/mobile) <b>필수</b></li>" +
+                "<li>lastNo : 마지막 댓글 번호(모바일 페이징용, 모바일만 사용)</li>" +
+                "<li>page : 페이지 번호(모바일은 무조건 1)</li>" +
+                "<li>size : 페이지당 데이터 개수(기본 30)</li>" +
+            "</ul>" +
+            "<hr/>" +
+            "<h2>Response - 공통</h2>" +
+            "<ul>" +
+                "<li>postNo : 커뮤니티 게시글 번호</li>" +
+                "<li>postType : 게시글 타입</li>" +
+                "<li>postTitle : 게시글 제목</li>" +
+                "<li>commentNo : 댓글 번호</li>" +
+                "<li>commentContent : 댓글 내용</li>" +
+                "<li>commentCreatedAt : 댓글 작성일</li>" +
+                "<li>commentUpdatedAt : 댓글 수정일</li>" +
+            "</ul>" +
+            "<hr/>" +
+            "<h2>pagination - Mobile</h2>" +
+            "<ul>" +
+            "<li>hasNext : 다음 데이터 이동 가능 여부</li>" +
+            "</ul>" +
+            "<h2>pagination - Web</h2>" +
+            "<ul>" +
+                "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
+                "<li>hasPrevious - 이전 페이지 이동 가능 여부</li>" +
+                "<li>totalCount - 총 데이터 개수</li>" +
+                "<li>totalPages - 총 페이지 개수</li>" +
+                "<li>currentPage - 현재 페이지 번호</li>" +
+                "<li>latestCreatedAt - 가장 최근 Data 작성일</li>" +
+            "</ul>"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
+    })
+    ResponseEntity<CommonResponse<PaginatedResponse<List<MyCommentsResDTO>>>> getMyComments(
+            @RequestParam(required = false, defaultValue = "1") String page,
+            @RequestParam(required = false, defaultValue = "15") String size,
+            @RequestParam(required = false) String lastNo,
+            @Schema(hidden = true) @ClientPath ClientPathType path,
+            Authentication authentication
+    );
 
 
 }
