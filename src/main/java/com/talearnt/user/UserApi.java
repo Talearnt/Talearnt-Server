@@ -4,6 +4,7 @@ import com.talearnt.comment.community.response.MyCommentsResDTO;
 import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.post.community.response.CommunityPostListResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
+import com.talearnt.reply.community.response.MyRepliesResDTO;
 import com.talearnt.user.infomation.request.ProfileReqDTO;
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
 import com.talearnt.user.infomation.response.UserActivityCountsResDTO;
@@ -128,36 +129,36 @@ public interface UserApi {
             "<hr/>" +
             "<h2>Response - 공통</h2>" +
             "<ul>" +
-            "<li>profileImg : 작성자의 프로필 이미지 경로</li>" +
-            "<li>nickname : 작성자의 닉네임</li>" +
-            "<li>authority : 작성자의 권한</li>" +
-            "<li>exchangePostNo : 게시글 번호</li>" +
-            "<li>status : 게시글 모집 상태</li>" +
-            "<li>exchangeType : 게시글 진행 방식</li>" +
-            "<li>duration : 게시글 진행 기간</li>" +
-            "<li>title : 게시글 제목</li>" +
-            "<li>content : 게시글 내용</li>" +
-            "<li>giveTalents : 주고 싶은 재능</li>" +
-            "<li>receiveTalents : 받고 싶은 재능</li>" +
-            "<li>createdAt : 게시글 작성일</li>" +
-            "<li>count : 게시글 조회수</li>" +
-            "<li>openedChatRoomCount : 신청된 채팅방 갯수</li>" +
-            "<li>favoriteCount : 게시글 찜 갯수</li>" +
-            "<li>isFavorite : 게시글 찜 여부</li>" +
+                "<li>profileImg : 작성자의 프로필 이미지 경로</li>" +
+                "<li>nickname : 작성자의 닉네임</li>" +
+                "<li>authority : 작성자의 권한</li>" +
+                "<li>exchangePostNo : 게시글 번호</li>" +
+                "<li>status : 게시글 모집 상태</li>" +
+                "<li>exchangeType : 게시글 진행 방식</li>" +
+                "<li>duration : 게시글 진행 기간</li>" +
+                "<li>title : 게시글 제목</li>" +
+                "<li>content : 게시글 내용</li>" +
+                "<li>giveTalents : 주고 싶은 재능</li>" +
+                "<li>receiveTalents : 받고 싶은 재능</li>" +
+                "<li>createdAt : 게시글 작성일</li>" +
+                "<li>count : 게시글 조회수</li>" +
+                "<li>openedChatRoomCount : 신청된 채팅방 갯수</li>" +
+                "<li>favoriteCount : 게시글 찜 갯수</li>" +
+                "<li>isFavorite : 게시글 찜 여부</li>" +
             "</ul>" +
             "<hr/>" +
             "<h2>pagination - Mobile</h2>" +
             "<ul>" +
-            "<li>hasNext : 다음 게시글 이동 가능 여부</li>" +
+                "<li>hasNext : 다음 게시글 이동 가능 여부</li>" +
             "</ul>" +
             "<h2>pagination - Web</h2>" +
             "<ul>" +
-            "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
-            "<li>hasPrevious - 이전 페이지 이동 가능 여부</li>" +
-            "<li>totalCount - 총 데이터 개수</li>" +
-            "<li>totalPages - 총 페이지 개수</li>" +
-            "<li>currentPage - 현재 페이지 번호</li>" +
-            "<li>latestCreatedAt - 가장 최근 Data 작성일</li>" +
+                "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
+                "<li>hasPrevious - 이전 페이지 이동 가능 여부</li>" +
+                "<li>totalCount - 총 데이터 개수</li>" +
+                "<li>totalPages - 총 페이지 개수</li>" +
+                "<li>currentPage - 현재 페이지 번호</li>" +
+                "<li>latestCreatedAt - 가장 최근 Data 작성일</li>" +
             "</ul>")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
@@ -178,37 +179,37 @@ public interface UserApi {
             "<hr/>" +
             "<h2>Response - 공통</h2>" +
             "<ul>" +
-            "<li>profileImg : 작성자 프로필 이미지</li>" +
-            "<li>nickname : 작성자 닉네임</li>" +
-            "<li>authority : 작성자 권한</li>" +
-            "<li>exchangePostNo : 게시글 번호</li>" +
-            "<li>status : 모집 상태</li>" +
-            "<li>exchangeType : 진행 방식</li>" +
-            "<li>duration : 진행 기간</li>" +
-            "<li>requiredBadge : 인증 뱃지 필요 여부</li>" +
-            "<li>title : 게시글 제목</li>" +
-            "<li>content : 게시글 내용(100자 이내)</li>" +
-            "<li>giveTalents : 주고 싶은 재능 목록</li>" +
-            "<li>receiveTalents : 받고 싶은 재능 목록</li>" +
-            "<li>createdAt : 게시글 작성일</li>" +
-            "<li>count : 조회수</li>" +
-            "<li>openedChatRoomCount : 신청된 채팅방 개수</li>" +
-            "<li>favoriteCount : 찜 개수</li>" +
-            "<li>isFavorite : 찜 여부(항상 true)</li>" +
+                "<li>profileImg : 작성자 프로필 이미지</li>" +
+                "<li>nickname : 작성자 닉네임</li>" +
+                "<li>authority : 작성자 권한</li>" +
+                "<li>exchangePostNo : 게시글 번호</li>" +
+                "<li>status : 모집 상태</li>" +
+                "<li>exchangeType : 진행 방식</li>" +
+                "<li>duration : 진행 기간</li>" +
+                "<li>requiredBadge : 인증 뱃지 필요 여부</li>" +
+                "<li>title : 게시글 제목</li>" +
+                "<li>content : 게시글 내용(100자 이내)</li>" +
+                "<li>giveTalents : 주고 싶은 재능 목록</li>" +
+                "<li>receiveTalents : 받고 싶은 재능 목록</li>" +
+                "<li>createdAt : 게시글 작성일</li>" +
+                "<li>count : 조회수</li>" +
+                "<li>openedChatRoomCount : 신청된 채팅방 개수</li>" +
+                "<li>favoriteCount : 찜 개수</li>" +
+                "<li>isFavorite : 찜 여부(항상 true)</li>" +
             "</ul>" +
             "<hr/>" +
             "<h2>pagination - Mobile</h2>" +
             "<ul>" +
-            "<li>hasNext : 다음 페이지 이동 가능 여부</li>" +
+                "<li>hasNext : 다음 페이지 이동 가능 여부</li>" +
             "</ul>" +
             "<h2>pagination - Web</h2>" +
             "<ul>" +
-            "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
-            "<li>hasPrevious - 이전 페이지 이동 가능 여부</li>" +
-            "<li>totalCount - 총 데이터 개수</li>" +
-            "<li>totalPages - 총 페이지 개수</li>" +
-            "<li>currentPage - 현재 페이지 번호</li>" +
-            "<li>latestCreatedAt - 가장 최근 Data 작성일</li>" +
+                "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
+                "<li>hasPrevious - 이전 페이지 이동 가능 여부</li>" +
+                "<li>totalCount - 총 데이터 개수</li>" +
+                "<li>totalPages - 총 페이지 개수</li>" +
+                "<li>currentPage - 현재 페이지 번호</li>" +
+                "<li>latestCreatedAt - 가장 최근 Data 작성일</li>" +
             "</ul>")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
@@ -229,36 +230,36 @@ public interface UserApi {
             "<hr/>" +
             "<h2>Response - 공통</h2>" +
             "<ul>" +
-            "<li>profileImg : 작성자의 프로필 이미지 경로</li>" +
-            "<li>nickname : 작성자의 닉네임</li>" +
-            "<li>authority : 작성자의 권한</li>" +
-            "<li>communityPostNo : 게시글 번호</li>" +
-            "<li>postType : 커뮤니티 게시글 타입</li>" +
-            "<li>title : 게시글 제목</li>" +
-            "<li>count : 게시글 조회수</li>" +
-            "<li>commentCount : (댓글 수+답글 수) 개수</li>" +
-            "<li>likeCount : 게시글 좋아요 개수</li>" +
-            "<li>isLike : 게시글 좋아요 여부</li>" +
-            "<li>createdAt : 게시글 작성일</li>" +
+                "<li>profileImg : 작성자의 프로필 이미지 경로</li>" +
+                "<li>nickname : 작성자의 닉네임</li>" +
+                "<li>authority : 작성자의 권한</li>" +
+                "<li>communityPostNo : 게시글 번호</li>" +
+                "<li>postType : 커뮤니티 게시글 타입</li>" +
+                "<li>title : 게시글 제목</li>" +
+                "<li>count : 게시글 조회수</li>" +
+                "<li>commentCount : (댓글 수+답글 수) 개수</li>" +
+                "<li>likeCount : 게시글 좋아요 개수</li>" +
+                "<li>isLike : 게시글 좋아요 여부</li>" +
+                "<li>createdAt : 게시글 작성일</li>" +
             "</ul>" +
             "<hr/>" +
             "<h2>Response - 모바일에서 추가</h2>" +
             "<ul>" +
-            "<li>content : 게시글 내용</li>" +
+                "<li>content : 게시글 내용</li>" +
             "</ul>" +
             "<hr/>" +
             "<h2>pagination - Mobile</h2>" +
             "<ul>" +
-            "<li>hasNext : 다음 게시글 이동 가능 여부</li>" +
+                "<li>hasNext : 다음 게시글 이동 가능 여부</li>" +
             "</ul>" +
             "<h2>pagination - Web</h2>" +
             "<ul>" +
-            "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
-            "<li>hasPrevious - 이전 페이지 이동 가능 여부</li>" +
-            "<li>totalCount - 총 데이터 개수</li>" +
-            "<li>totalPages - 총 페이지 개수</li>" +
-            "<li>currentPage - 현재 페이지 번호</li>" +
-            "<li>latestCreatedAt - 가장 최근 Data 작성일</li>" +
+                "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
+                "<li>hasPrevious - 이전 페이지 이동 가능 여부</li>" +
+                "<li>totalCount - 총 데이터 개수</li>" +
+                "<li>totalPages - 총 페이지 개수</li>" +
+                "<li>currentPage - 현재 페이지 번호</li>" +
+                "<li>latestCreatedAt - 가장 최근 Data 작성일</li>" +
             "</ul>")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
@@ -323,6 +324,52 @@ public interface UserApi {
             @RequestParam(required = false) String lastNo,
             @Schema(hidden = true) @ClientPath ClientPathType path,
             Authentication authentication
+    );
+
+
+    @Operation(summary = "내가 작성한 커뮤니티 답글 목록"
+            , description = "<h2>내용</h2>" +
+            "<p>로그인한 사용자가 작성한 커뮤니티 답글 목록을 조회합니다.</p>" +
+            "<p>모바일은 최신순 10개 반환이 기본 값입니다.</p>" +
+            "<p>게시글이 삭제된 경우 해당 답글은 목록에 포함되지 않습니다.</p>" +
+            "<p>웹은 바로가기 용도가 필요하다면 추후 CommentNo와 CommentNo의 페이지 위치 등 보낼 수 있습니다.</p>" +
+            "<p>문제는 무한 스크롤이라면 어떻게 CommentNo위치로 보내야할 지 고민이 됩니다. 추후 기획을 보고 진행하겠습니다.</p>" +
+            "<hr/>" +
+            "<h2>Response - 공통</h2>" +
+            "<ul>" +
+                "<li>postNo : 커뮤니티 게시글 번호</li>" +
+                "<li>postType : 게시글 타입</li>" +
+                "<li>postTitle : 게시글 제목</li>" +
+                "<li>replyNo : 답글 번호 (페이지네이션 전용 또는 추후 바로가기 용도 예정)</li>" +
+                "<li>replyContent : 답글 내용</li>" +
+                "<li>replyCreatedAt : 답글 작성일</li>" +
+                "<li>replyUpdatedAt : 답글 수정일</li>" +
+            "</ul>" +
+            "<hr/>" +
+            "<h2>pagination - Mobile</h2>" +
+            "<ul>" +
+                "<li>hasNext : 다음 데이터 이동 가능 여부</li>" +
+            "</ul>" +
+            "<h2>pagination - Web</h2>" +
+            "<ul>" +
+                "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
+                "<li>hasPrevious - 이전 페이지 이동 가능 여부</li>" +
+                "<li>totalCount - 총 데이터 개수</li>" +
+                "<li>totalPages - 총 페이지 개수</li>" +
+                "<li>currentPage - 현재 페이지 번호</li>" +
+                "<li>latestCreatedAt - 가장 최근 Data 작성일</li>" +
+            "</ul>"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
+    })
+    ResponseEntity<CommonResponse<PaginatedResponse<List<MyRepliesResDTO>>>> getMyReplies(
+            Authentication authentication,
+            @RequestParam(required = false) String lastNo,
+            @ClientPath ClientPathType path,
+            @RequestParam(required = false, defaultValue = "1") String page,
+            @RequestParam(required = false, defaultValue = "10") String size
     );
 
 
