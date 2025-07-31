@@ -1,6 +1,8 @@
 package com.talearnt.user;
 
 
+import com.talearnt.comment.community.CommentService;
+import com.talearnt.comment.community.response.MyCommentsResDTO;
 import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.post.community.CommunityPostService;
 import com.talearnt.post.community.response.CommunityPostListResDTO;
@@ -42,6 +44,7 @@ public class UserController implements UserApi{
     private final ExchangePostService exchangePostService;
     private final FavoriteService favoriteService;
     private final CommunityPostService communityPostService;
+    private final CommentService commentService;
 
 
     //회원의 기본 정보를 가져오는 API
@@ -113,6 +116,16 @@ public class UserController implements UserApi{
             Authentication authentication) {
 
         return CommonResponse.success(communityPostService.getMyCommunityPostList(authentication, postType,order, path.name(), lastNo, page, size));
+    }
+
+    @GetMapping("/users/comments")
+    public ResponseEntity<CommonResponse<PaginatedResponse<List<MyCommentsResDTO>>>> getMyComments(
+            @RequestParam(required = false, defaultValue = "1") String page,
+            @RequestParam(required = false, defaultValue = "30") String size,
+            @RequestParam(required = false) String lastNo,
+            @ClientPath ClientPathType path,
+            Authentication authentication) {
+        return CommonResponse.success(commentService.getMyComments(authentication, path.name(), lastNo, page, size));
     }
 
 

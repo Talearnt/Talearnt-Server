@@ -11,6 +11,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.comment.community.entity.QCommunityComment;
 import com.talearnt.comment.community.request.CommentSearchCondition;
 import com.talearnt.comment.community.response.CommentListResDTO;
+import com.talearnt.comment.community.response.MyCommentsResDTO;
 import com.talearnt.post.community.entity.QCommunityPost;
 import com.talearnt.reply.community.entity.QCommunityReply;
 import com.talearnt.user.infomation.entity.QUser;
@@ -19,6 +20,7 @@ import com.talearnt.util.pagination.PagedListWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -168,6 +170,72 @@ public class CommentQueryRepository {
 
         return PagedListWrapper.<CommentListResDTO>builder().list(data).pagedData(pagedData).build();
     }
+
+    /** 나의 커뮤니티 댓글 목록 조회 - 웹 전용
+     * */
+    public PagedListWrapper<MyCommentsResDTO> getMyCommentListToWeb(Long userNo, CommentSearchCondition condition) {
+        List<MyCommentsResDTO> data = factory.select(Projections.constructor(MyCommentsResDTO.class,
+                        communityPost.communityPostNo,
+                        communityPost.postType,
+                        communityPost.title,
+                        comment.commentNo,
+                        comment.content,
+                        comment.createdAt,
+                        comment.updatedAt
+                ))
+                .from(comment)
+                .leftJoin(communityPost).on(communityPost.eq(comment.communityPost),
+                        communityPost.deletedAt.isNull())
+                .where(comment.user.userNo.eq(userNo),
+                        comment.deletedAt.isNull())
+                .orderBy(comment.createdAt.desc())
+                .offset(condition.getPage().getOffset())
+                .limit(condition.getPage().getPageSize())
+                .fetch();
+
+        PagedData pagedData = factory.select(Projections.constructor(PagedData.class,
+                        comment.countDistinct(),
+                        Expressions.dateTemplate(LocalDateTime.class,
+                                "MAX({0})",
+                                comment.createdAt)))
+                .from(comment)
+                .where(comment.user.userNo.eq(userNo),
+                        comment.deletedAt.isNull())
+                .fetchOne();
+
+        return PagedListWrapper.<MyCommentsResDTO>builder().list(data).pagedData(pagedData).build();
+    }
+
+    public Page<MyCommentsResDTO> getMyCommentListToMobile(Long userNo, CommentSearchCondition condition) {
+        List<MyCommentsResDTO> data = factory.select(Projections.constructor(MyCommentsResDTO.class,
+                        communityPost.communityPostNo,
+                        communityPost.postType,
+                        communityPost.title,
+                        comment.commentNo,
+                        comment.content,
+                        comment.createdAt,
+                        comment.updatedAt
+                ))
+                .from(comment)
+                .leftJoin(communityPost).on(communityPost.eq(comment.communityPost),
+                        communityPost.deletedAt.isNull())
+                .where(comment.user.userNo.eq(userNo),
+                        comment.deletedAt.isNull())
+                .orderBy(comment.createdAt.desc())
+                .limit(condition.getPage().getPageSize())
+                .fetch();
+
+        Long total = Optional.ofNullable(
+                factory.select(comment.countDistinct())
+                        .from(comment)
+                        .where(comment.user.userNo.eq(userNo),
+                                comment.deletedAt.isNull())
+                        .fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(data, condition.getPage(), total);
+    }
+
 
     /**
      * 커뮤니티 댓글 목록 조회 공통 Select 반환

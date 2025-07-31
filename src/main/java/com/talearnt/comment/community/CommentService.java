@@ -6,6 +6,7 @@ import com.talearnt.comment.community.repository.CommentQueryRepository;
 import com.talearnt.comment.community.repository.CommentRepository;
 import com.talearnt.comment.community.request.CommentSearchCondition;
 import com.talearnt.comment.community.response.CommentListResDTO;
+import com.talearnt.comment.community.response.MyCommentsResDTO;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.post.community.repository.CommunityPostQueryRepository;
 import com.talearnt.util.common.PageUtil;
@@ -196,5 +197,52 @@ public class CommentService {
 
         log.info("커뮤니티 게시글 댓글 삭제 끝");
         return null;
+    }
+
+
+    /** 커뮤니티 게시글 댓글이 나의 댓글인지 확인
+     * 조건 )
+     * - 로그인을 했는가?
+     * - 나의 댓글이 맞고, 삭제한 게시글이 아닌가?
+     * */
+    @LogRunningTime
+    public PaginatedResponse<List<MyCommentsResDTO>> getMyComments(Authentication auth,  String path, String lastNo,String page, String size) {
+        log.info("나의 댓글 목록 조회 시작 :  {} - {}",  page, size);
+
+        UserInfo userInfo = UserUtil.validateAuthentication("나의 댓글 목록 조회", auth);
+
+
+        //Search Condition 생성
+        CommentSearchCondition condition = CommentSearchCondition.builder()
+                .lastNo(lastNo)
+                .page(page)
+                .size(size)
+                .build();
+
+        if ("web".equalsIgnoreCase(path)) {
+            //웹에서 조회할 경우
+            if (lastNo != null) {
+                log.error("나의 댓글 목록 조회 실패 - LastNo가 포함되어 제대로 된 값 호출 X : {} - {}", userInfo.getUserNo(), ErrorCode.COMMENT_FAILED_CALL_LIST);
+                throw new CustomRuntimeException(ErrorCode.COMMENT_FAILED_CALL_LIST);
+            }
+
+            //나의 댓글 목록 조회
+            PagedListWrapper<MyCommentsResDTO> wrapper = commentQueryRepository.getMyCommentListToWeb(userInfo.getUserNo(), condition);
+
+            //Page로 값 변환
+            Page<MyCommentsResDTO> result = new PageImpl<>(wrapper.getList(), condition.getPage(), wrapper.getPagedData().getTotal());
+
+            log.info("나의 댓글 목록 조회 끝");
+            return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToWeb(result, wrapper.getPagedData().getLatestCreatedAt()));
+        }
+        //모바일에서 조회할 경우
+        if (condition.getPage().getPageNumber() > 0) {
+            log.error("나의 댓글 목록 조회 실패 - Page가 2 이상이어서 제대로 된 값 호출 X : {} - {}", userInfo.getUserNo(), ErrorCode.COMMENT_FAILED_CALL_LIST);
+            throw new CustomRuntimeException(ErrorCode.COMMENT_FAILED_CALL_LIST);
+        }
+        //나의 댓글 목록 조회 - 모바일
+        Page<MyCommentsResDTO> result = commentQueryRepository.getMyCommentListToMobile(userInfo.getUserNo(), condition);
+
+        return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToMobile(result));
     }
 }
