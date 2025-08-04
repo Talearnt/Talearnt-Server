@@ -184,7 +184,7 @@ public class CommentQueryRepository {
                         comment.updatedAt
                 ))
                 .from(comment)
-                .leftJoin(communityPost).on(communityPost.eq(comment.communityPost),
+                .innerJoin(communityPost).on(communityPost.eq(comment.communityPost),
                         communityPost.deletedAt.isNull())
                 .where(comment.user.userNo.eq(userNo),
                         comment.deletedAt.isNull())
@@ -217,7 +217,7 @@ public class CommentQueryRepository {
                         comment.updatedAt
                 ))
                 .from(comment)
-                .leftJoin(communityPost).on(communityPost.eq(comment.communityPost),
+                .innerJoin(communityPost).on(communityPost.eq(comment.communityPost),
                         communityPost.deletedAt.isNull())
                 .where(comment.user.userNo.eq(userNo),
                         comment.deletedAt.isNull())
