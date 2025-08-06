@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>STOMP WebSocket 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<h2>STOMP WebSocket 테스트</h2>
+<button onclick="connect()">연결</button>
+<button onclick="disconnect()">연결 해제</button>
+<br><br>
+<input type="text" id="message" placeholder="알림 내용 입력" />
+<button onclick="sendMessage()">알림 전송</button>
+<br><br>
+<div id="output"></div>
+
+<script>
+    let stompClient = null;
+
+    function connect() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            document.getElementById('output').innerHTML += '<p>연결됨: ' + frame + '</p>';
+            stompClient.subscribe('/sub/notification', function (message) {
+                const body = JSON.parse(message.body);
+                document.getElementById('output').innerHTML += '<p>알림 수신: ' + body.content + '</p>';
+            });
+        });
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+            document.getElementById('output').innerHTML += '<p>연결 해제됨</p>';
+        }
+    }
+
+    function sendMessage() {
+        const content = document.getElementById('message').value;
+        const notification = {
+            notificationNo: 1,
+            senderNo: 2,
+            receiverNo: 3,
+            targetNo: 4,
+            content: content,
+            notificationType: "COMMENT",
+            url: "/test",
+            isRead: false,
+            unreadCount: 1
+        };
+        stompClient.send("/pub/notifications", {}, JSON.stringify(notification));
+    }
+</script>
+</body>
+</html>

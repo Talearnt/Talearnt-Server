@@ -3,6 +3,7 @@ package com.talearnt.configure;
 
 import com.talearnt.util.filter.NotificationPreHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -10,6 +11,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+@Log4j2
 @Configuration
 @EnableWebSocketMessageBroker
 @RequiredArgsConstructor
@@ -36,6 +38,7 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
             * 예시) @SubscribeMapping("/post/{id}")
             *      -> 클라이언트에서 "/sub/post/1"로 메세지를 구독하면 이 메소드가 호출됩니다.
          */
+        log.info("/sub/ 접두사로 시작하는 메세지 구독 설정");
         registry.enableSimpleBroker("/sub");
 
         /* 메세지 전송(발행) : 접두사로 시작하는 메세지
@@ -47,6 +50,7 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
             * 예시) @MessageMapping("/post/{id}")
             *      -> 클라이언트에서 "/pub/post/1"로 메세지를 전송하면 이 메소드가 호출됩니다.
         * */
+        log.info("/pub/ 접두사로 시작하는 메세지 전송 설정");
         registry.setApplicationDestinationPrefixes("/pub");
     }
 

@@ -34,18 +34,20 @@ public class NotificationPreHandler implements ChannelInterceptor {
     public Message<?> preSend(@NotNull Message<?> message, @NotNull MessageChannel channel) {
 
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-
+        log.info("WebSocket STOMP Command: {}", accessor.getCommand());
         // CONNECT 프레임일 때만 토큰 검증
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String authHeader = accessor.getFirstNativeHeader("Authorization");
-
+            log.info("Authorization Header: {}", authHeader);
             if (authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
                 String token = authHeader.substring(7);
-
+                log.info("Token: {}", token);
                 if (jwtTokenUtil.isTokenValid(token)) {
                     String userId = jwtTokenUtil.extractUserId(token);
                     UserInfo userInfo = (UserInfo)userInfoService.loadUserByUsername(userId);
 
+                    log.info("Authenticated UserInfo: {}", userInfo);
+                    log.info("User: {}", userId);
                     Authentication authentication = new UsernamePasswordAuthenticationToken(
                             userInfo, null, userInfo.getAuthorities()
                     );
