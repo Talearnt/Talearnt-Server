@@ -39,7 +39,7 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
             *      -> 클라이언트에서 "/sub/post/1"로 메세지를 구독하면 이 메소드가 호출됩니다.
          */
         log.info("/sub/ 접두사로 시작하는 메세지 구독 설정");
-        registry.enableSimpleBroker("/sub");
+        registry.enableSimpleBroker("/queue", "/topic");
 
         /* 메세지 전송(발행) : 접두사로 시작하는 메세지
             * 예시) /pub/post/1
