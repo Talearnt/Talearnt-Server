@@ -2,7 +2,9 @@ package com.talearnt.stomp.notification;
 
 
 import com.talearnt.comment.community.entity.CommunityComment;
+import com.talearnt.comment.community.repository.CommentQueryRepository;
 import com.talearnt.comment.community.repository.CommentRepository;
+import com.talearnt.comment.community.response.CommentNotificationDTO;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.stomp.NotificationType;
 import com.talearnt.stomp.notification.entity.Notification;
@@ -26,6 +28,7 @@ public class NotificationService {
     private final SimpMessagingTemplate template;
     private final NotificationRepository notificationRepository;
     private final CommentRepository commentRepository;
+    private final CommentQueryRepository commentQueryRepository;
 
 
 
@@ -57,11 +60,7 @@ public class NotificationService {
         log.info("댓글 알림 전송 시작 : {}", commentNo);
 
 
-        CommunityComment comment = commentRepository.findById(commentNo)
-                .orElseThrow(() -> {
-                    log.error("해당 댓글이 존재하지 않습니다 : {}", commentNo);
-                    return new CustomRuntimeException(ErrorCode.COMMENT_NOT_FOUND);
-                });
+        CommentNotificationDTO comment = commentQueryRepository.getCommentNotification(commentNo);
 
 //        //게시글 작성자와 보내는 사람의 이름이 같을 경우 그냥 종료
 //        if(comment.getCommunityPost().getUser().getUserNo().equals(comment.getUser().getUserNo())){
@@ -76,16 +75,14 @@ public class NotificationService {
 
         //DTO로 변환
         NotificationResDTO notificationResDTO = NotificationMapper.INSTANCE
-                .toNotificationResDTOFromCommentNotificationEntity(notification,comment.getUser().getNickname());
+                .toNotificationResDTOFromCommentNotificationEntity(notification,comment.getSenderNickname());
         log.info("댓글 알림 DTO로 변환 : {}",notificationResDTO);
 
         //해당 유저에게 알림 전송
-        //template.convertAndSendToUser(comment.getCommunityPost().getUser().getUserId(), "/queue/notifications",notificationResDTO);
-        template.convertAndSendToUser("sub-0", "/queue/notifications",notificationResDTO);
-
+        template.convertAndSendToUser(comment.getReceiverId(), "/queue/notifications",notificationResDTO);
 
         log.info("댓글 알림 전송 끝 - \n 받을 유저 : {}, \n 받는 정보 : {}, \n 구독 경로 : {}",
-                comment.getCommunityPost().getUser().getUserId(),
+                comment.getReceiverId(),
                 notificationResDTO,
                 "/queue/notifications");
     }

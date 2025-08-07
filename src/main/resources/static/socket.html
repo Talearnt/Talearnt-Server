@@ -11,6 +11,7 @@
 <button onclick="connect()">연결</button>
 <button onclick="disconnect()">연결 해제</button>
 <br><br>
+<input type="text" id="jwt" placeholder="토큰" />
 <input type="text" id="message" placeholder="알림 내용 입력" />
 <button onclick="sendMessage()">알림 전송</button>
 <br><br>
@@ -21,10 +22,14 @@
 
     function connect() {
         const socket = new SockJS('/ws');
+        const jwt = "Bearer "+document.getElementById('jwt').value;
         stompClient = Stomp.over(socket);
-        stompClient.connect({}, function (frame) {
+        stompClient.connect({
+            Authorization: jwt
+        }, function (frame) {
             document.getElementById('output').innerHTML += '<p>연결됨: ' + frame + '</p>';
-            stompClient.subscribe('/sub/notification', function (message) {
+            stompClient.subscribe('/user/queue/notifications', function (message) {
+                console.log("알림 수신: ", message);
                 const body = JSON.parse(message.body);
                 document.getElementById('output').innerHTML += '<p>알림 수신: ' + body.content + '</p>';
             });
