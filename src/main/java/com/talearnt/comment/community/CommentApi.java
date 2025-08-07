@@ -28,9 +28,7 @@ public interface CommentApi {
     @Operation(summary = "커뮤니티 댓글 작성",
             description = "<h2>내용</h2>" +
                     "<p>커뮤니티 댓글 작성입니다.</p>" +
-                    "<p>게시글 작성 시 최신화 된 데이터 목록을 반환합니다.</p>" +
-                    "<p>웹은 마지막 페이지의 정보를 전달합니다.</p>" +
-                    "<p>모바일은 최신 게시글 30개를 오래된 순으로 반환합니다.</p>" +
+                    "<p>작성된 댓글의 정보를 반환합니다.</p>" +
                     "<h2>Request</h2>" +
                     "<ul>" +
                     "<li>communityPostNo : 게시글 번호</li>" +
@@ -46,21 +44,6 @@ public interface CommentApi {
                         "<li>createdAt : 댓글 작성일</li>" +
                         "<li>updatedAt : 댓글 수정일 (수정 안했을 시 null 반환)</li>" +
                         "<li>replyCount : 댓글의 답글 갯수</li>" +
-                    "</ul>" +
-                    "<hr>" +
-                    "<h2>pagination - Mobile</h2>" +
-                    "<ul>" +
-                        "<li>hasNext : 다음 게시글 이동 가능 여부</li>" +
-                    "</ul>" +
-                    "<hr>" +
-                    "<h2>pagination - Web</h2>" +
-                    "<ul>" +
-                        "<li>hasNext - 다음 페이지 이동 가능 여부</li>" +
-                        "<li>hasPrevious - 이전 페이지 이동 가능 여부</li>" +
-                        "<li>totalCount - 총 데이터 개수</li>" +
-                        "<li>totalPages - 총 페이지 개수</li>" +
-                        "<li>currentPage - 현재 페이지 번호</li>" +
-                        "<li>latestCreatedAt - 가장 최근 Data 작성일</li>" +
                     "</ul>"
     )
     @ApiResponses(value = {
@@ -70,7 +53,7 @@ public interface CommentApi {
             @ApiResponse(responseCode = "400-2", ref = "COMMENT_CONTENT_OVER_LENGTH"),
             @ApiResponse(responseCode = "404", ref = "COMMENT_NOT_FOUND_POST")
     })
-    public ResponseEntity<CommonResponse<PaginatedResponse<List<CommentListResDTO>>>> addComment(@RequestBody @Valid CommentReqDTO commentReqDTO);
+    public ResponseEntity<CommonResponse<CommentListResDTO>> addComment(@RequestBody @Valid CommentReqDTO commentReqDTO);
 
 
     @Operation(summary = "커뮤니티 게시글 댓글 목록",
