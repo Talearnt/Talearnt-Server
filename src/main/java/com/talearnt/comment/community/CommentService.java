@@ -85,7 +85,7 @@ public class CommentService {
      * */
     @LogRunningTime
     @Transactional
-    public PaginatedResponse<List<CommentListResDTO>> addComment(Long userNo, Long communityPostNo, String content, String path) {
+    public CommentListResDTO addComment(Long userNo, Long communityPostNo, String content, String path) {
         log.info("커뮤니티 게시글 댓글 추가 시작 : {}", communityPostNo);
 
         //커뮤니티 게시글이 있는지 조회 있을 경우 : true 반환, 없을 경우 false 반환
@@ -100,43 +100,20 @@ public class CommentService {
         //댓글 저장
         comment = commentRepository.save(comment);
 
-        /*웹은 마지막 페이지에 있는 게시글을 보여줘야 한다.
-        * 보여줘야 하는 댓글 갯수는 30개 오래된 순으로 가져오도록 한다.*/
-        if ("web".equalsIgnoreCase(path)) {
-            //게시글 총 갯수 가져오기
-            Long commentTotalCount = commentQueryRepository.getCommentTotalCount(communityPostNo);
-            
-            //사이즈 설정
-            int size = 30;
-            log.info("totalCount : {}", commentTotalCount);
-
-            //마지막 페이지 설정 == 토탈 페이지 수가 마지막 수인 것을 알 수 있다.
-            int totalPage = (int) Math.ceil((double) commentTotalCount / size);
-            
-            //Search Condition 생성
-            CommentSearchCondition condition = CommentSearchCondition.builder()
-                    .page(Integer.toString(totalPage))
-                    .size(Integer.toString(size))
-                    .build();
-            
-            // 목록 데이터 가져오기
-            PagedListWrapper<CommentListResDTO> wrapper = commentQueryRepository.getCommentListToWeb(communityPostNo, condition);
-
-            //Page로 값 변환
-            Page<CommentListResDTO> result = new PageImpl<>(wrapper.getList(), condition.getPage(), wrapper.getPagedData().getTotal());
-
-            return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToWeb(result,wrapper.getPagedData().getLatestCreatedAt()));
-
-        }
-        /*모바일은 최신 댓글 목록을 보여준다. 30개를 가져오되 최신순으로 가져오고 Sorted로 오래된 순으로 변경하고 보내준다.*/
-        //Condition 조건 설정
-        CommentSearchCondition condition = CommentSearchCondition.builder().page("1").size("30").build();
-
-        //댓글 목록 조회 - 모바일
-        Page<CommentListResDTO> result = commentQueryRepository.getCommentListToMobile(communityPostNo, condition, path);
+        CommentListResDTO commentListResDTO = CommentListResDTO.builder()
+                .userNo(comment.getUser().getUserNo())
+                .nickname(comment.getUser().getNickname())
+                .profileImg(comment.getUser().getProfileImg())
+                .commentNo(comment.getCommentNo())
+                .content(comment.getContent())
+                .createdAt(comment.getCreatedAt())
+                .updatedAt(null)
+                .isDeleted(null)
+                .replyCount(0L)
+                .build();
 
         log.info("커뮤니티 게시글 댓글 추가 끝");
-        return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToMobile(result));
+        return commentListResDTO;
     }
 
     /**커뮤니티 게시글 댓글 수정
