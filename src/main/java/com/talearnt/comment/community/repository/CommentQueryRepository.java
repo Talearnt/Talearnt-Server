@@ -37,6 +37,15 @@ public class CommentQueryRepository {
     private final QCommunityReply reply = QCommunityReply.communityReply;
     private final QUser user = QUser.user;
 
+    //커뮤니티 댓글 작성 시 작성 유저 정보 가져오기
+    public CommentListResDTO getCommentByUserNoAndCommentNo(Long userNo, Long commentNo) {
+        return getListSelected()
+                .where(comment.user.userNo.eq(userNo),
+                        comment.commentNo.eq(commentNo),
+                        comment.deletedAt.isNull())
+                .fetchOne();
+    }
+
     //커뮤니티 댓글 삭제
     public Long deleteCommentByUserNoAndCommentNo(Long userNo, Long commentNo) {
         return factory.update(comment)

@@ -100,17 +100,7 @@ public class CommentService {
         //댓글 저장
         comment = commentRepository.save(comment);
 
-        CommentListResDTO commentListResDTO = CommentListResDTO.builder()
-                .userNo(comment.getUser().getUserNo())
-                .nickname(comment.getUser().getNickname())
-                .profileImg(comment.getUser().getProfileImg())
-                .commentNo(comment.getCommentNo())
-                .content(comment.getContent())
-                .createdAt(comment.getCreatedAt())
-                .updatedAt(null)
-                .isDeleted(null)
-                .replyCount(0L)
-                .build();
+        CommentListResDTO commentListResDTO = commentQueryRepository.getCommentByUserNoAndCommentNo(userNo, comment.getCommentNo());
 
         log.info("커뮤니티 게시글 댓글 추가 끝");
         return commentListResDTO;
