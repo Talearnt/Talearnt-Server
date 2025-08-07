@@ -11,6 +11,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.comment.community.entity.QCommunityComment;
 import com.talearnt.comment.community.request.CommentSearchCondition;
 import com.talearnt.comment.community.response.CommentListResDTO;
+import com.talearnt.comment.community.response.CommentNotificationDTO;
 import com.talearnt.comment.community.response.MyCommentsResDTO;
 import com.talearnt.post.community.entity.QCommunityPost;
 import com.talearnt.reply.community.entity.QCommunityReply;
@@ -36,6 +37,26 @@ public class CommentQueryRepository {
     private final QCommunityPost communityPost = QCommunityPost.communityPost;
     private final QCommunityReply reply = QCommunityReply.communityReply;
     private final QUser user = QUser.user;
+
+    //커뮤니티 게시글에 댓글 달렸을 때 댓글 정보 조회
+    public CommentNotificationDTO getCommentNotification(Long commentNo) {
+        return factory.select(Projections.constructor(CommentNotificationDTO.class,
+                        comment.user.userNo,
+                        comment.user.nickname,
+                        comment.communityPost.user.userNo,
+                        comment.communityPost.user.userId,
+                        comment.communityPost.communityPostNo,
+                        comment.content
+                ))
+                .from(comment)
+                .innerJoin(communityPost).on(comment.communityPost.eq(communityPost),
+                        communityPost.deletedAt.isNull())
+                .innerJoin(user).on(comment.user.eq(user))
+                .where(comment.commentNo.eq(commentNo),
+                        comment.deletedAt.isNull())
+                .fetchOne();
+    }
+
 
     //커뮤니티 댓글 작성 시 작성 유저 정보 가져오기
     public CommentListResDTO getCommentByUserNoAndCommentNo(Long userNo, Long commentNo) {
