@@ -1,6 +1,7 @@
 package com.talearnt.stomp.notification;
 
 import com.talearnt.comment.community.entity.CommunityComment;
+import com.talearnt.enums.stomp.NotificationType;
 import com.talearnt.stomp.notification.entity.Notification;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
 import org.mapstruct.Mapper;
@@ -26,7 +27,7 @@ public interface NotificationMapper {
             @Mapping(target = "createdAt", ignore = true),
             @Mapping(target = "deletedAt", ignore = true)
     })
-    Notification toNotificationFromComment(CommunityComment comment);
+    Notification toNotificationFromComment(CommunityComment comment, NotificationType notificationType);
 
 
     @Mapping(target = "senderNickname", source = "senderNickname")

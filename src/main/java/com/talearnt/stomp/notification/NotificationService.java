@@ -4,6 +4,7 @@ package com.talearnt.stomp.notification;
 import com.talearnt.comment.community.entity.CommunityComment;
 import com.talearnt.comment.community.repository.CommentRepository;
 import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.stomp.NotificationType;
 import com.talearnt.stomp.notification.entity.Notification;
 import com.talearnt.stomp.notification.repository.NotificationRepository;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
@@ -62,16 +63,16 @@ public class NotificationService {
                     return new CustomRuntimeException(ErrorCode.COMMENT_NOT_FOUND);
                 });
 
-        //게시글 작성자와 보내는 사람의 이름이 같을 경우 그냥 종료
-        if(comment.getCommunityPost().getUser().getUserNo().equals(comment.getUser().getUserNo())){
-            log.info("댓글 작성자와 게시글 작성자가 동일합니다. 알림 전송을 생략합니다.");
-            return;
-        }
+//        //게시글 작성자와 보내는 사람의 이름이 같을 경우 그냥 종료
+//        if(comment.getCommunityPost().getUser().getUserNo().equals(comment.getUser().getUserNo())){
+//            log.info("댓글 작성자와 게시글 작성자가 동일합니다. 알림 전송을 생략합니다.");
+//            return;
+//        }
 
         //알림 로그 저장
-        Notification notification = NotificationMapper.INSTANCE.toNotificationFromComment(comment);
+        Notification notification = NotificationMapper.INSTANCE.toNotificationFromComment(comment, NotificationType.COMMENT);
         log.info("댓글 알림 매퍼 엔티티로 변환 : {}",notification);
-        notificationRepository.save(notification);
+        //Notification savedNotification = notificationRepository.save(notification);
 
         //DTO로 변환
         NotificationResDTO notificationResDTO = NotificationMapper.INSTANCE
@@ -79,13 +80,14 @@ public class NotificationService {
         log.info("댓글 알림 DTO로 변환 : {}",notificationResDTO);
 
         //해당 유저에게 알림 전송
-        template.convertAndSendToUser(comment.getCommunityPost().getUser().getUserId(), "/queue/notification",notificationResDTO);
+        //template.convertAndSendToUser(comment.getCommunityPost().getUser().getUserId(), "/queue/notifications",notificationResDTO);
+        template.convertAndSendToUser("sub-0", "/queue/notifications",notificationResDTO);
 
 
         log.info("댓글 알림 전송 끝 - \n 받을 유저 : {}, \n 받는 정보 : {}, \n 구독 경로 : {}",
                 comment.getCommunityPost().getUser().getUserId(),
-                null,
-                "/queue/notification");
+                notificationResDTO,
+                "/queue/notifications");
     }
 
 }
