@@ -6,6 +6,7 @@ import com.talearnt.comment.community.response.CommentListResDTO;
 import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.common.Regex;
+import com.talearnt.stomp.notification.NotificationService;
 import com.talearnt.util.common.ClientPath;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
@@ -28,13 +29,19 @@ import java.util.List;
 public class CommentController implements CommentApi {
 
     private final CommentService commentService;
+    private final NotificationService notificationService;
 
     @PostMapping("/communities/comments")
-    public ResponseEntity<CommonResponse<PaginatedResponse<List<CommentListResDTO>>>> addComment(@RequestBody @Valid CommentReqDTO commentReqDTO) {
-        return CommonResponse.success(commentService.addComment(commentReqDTO.getUserInfo().getUserNo(),
+    public ResponseEntity<CommonResponse<CommentListResDTO>> addComment(@RequestBody @Valid CommentReqDTO commentReqDTO) {
+        CommentListResDTO data = commentService.addComment(commentReqDTO.getUserInfo().getUserNo(),
                 commentReqDTO.getCommunityPostNo(),
                 commentReqDTO.getContent(),
-                commentReqDTO.getPath()));
+                commentReqDTO.getPath());
+
+        //댓글 작성 알림 전송
+        notificationService.sendNotificationForMyPostComment(data.getCommentNo());
+
+        return CommonResponse.success(data);
     }
 
     @GetMapping("/communities/{postNo}/comments")
