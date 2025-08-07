@@ -15,9 +15,14 @@ import com.talearnt.util.log.LogRunningTime;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.user.SimpUser;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 
 @Service
@@ -29,6 +34,9 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final CommentRepository commentRepository;
     private final CommentQueryRepository commentQueryRepository;
+    @Autowired
+    private SimpUserRegistry simpUserRegistry; // 추가
+
 
 
 
@@ -53,25 +61,22 @@ public class NotificationService {
      * @param commentNo 알림을 발생시킬 댓글의 PK
      * @throws CustomRuntimeException 댓글이 존재하지 않을 때
      */
-    @Async
     @Transactional
     @LogRunningTime
     public void sendNotificationForMyPostComment(Long commentNo){
         log.info("댓글 알림 전송 시작 : {}", commentNo);
 
-
         CommentNotificationDTO comment = commentQueryRepository.getCommentNotification(commentNo);
 
-//        //게시글 작성자와 보내는 사람의 이름이 같을 경우 그냥 종료
-//        if(comment.getCommunityPost().getUser().getUserNo().equals(comment.getUser().getUserNo())){
-//            log.info("댓글 작성자와 게시글 작성자가 동일합니다. 알림 전송을 생략합니다.");
-//            return;
-//        }
+        //게시글 작성자와 보내는 사람의 이름이 같을 경우 그냥 종료
+        if(comment.getSenderNo() == comment.getReceiverNo()){
+            return;
+        }
 
         //알림 로그 저장
         Notification notification = NotificationMapper.INSTANCE.toNotificationFromComment(comment, NotificationType.COMMENT);
         log.info("댓글 알림 매퍼 엔티티로 변환 : {}",notification);
-        //Notification savedNotification = notificationRepository.save(notification);
+        Notification savedNotification = notificationRepository.save(notification);
 
         //DTO로 변환
         NotificationResDTO notificationResDTO = NotificationMapper.INSTANCE
@@ -79,7 +84,7 @@ public class NotificationService {
         log.info("댓글 알림 DTO로 변환 : {}",notificationResDTO);
 
         //해당 유저에게 알림 전송
-        template.convertAndSendToUser(comment.getReceiverId(), "/queue/notifications",notificationResDTO);
+        template.convertAndSendToUser(comment.getReceiverId(), "/queue/notifications", notificationResDTO);
 
         log.info("댓글 알림 전송 끝 - \n 받을 유저 : {}, \n 받는 정보 : {}, \n 구독 경로 : {}",
                 comment.getReceiverId(),
