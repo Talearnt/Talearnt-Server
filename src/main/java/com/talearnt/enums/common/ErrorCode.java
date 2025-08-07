@@ -101,6 +101,7 @@ public enum ErrorCode {
     COMMENT_MISMATCH_REPLY_NUMBER("404-COMMENT-09","해당 댓글 번호가 없거나 삭제되어 댓글을 달 수 없습니다."),
     REPLY_NOT_FOUND("404-COMMENT-10","해당 답글 번호가 없거나 이미 삭제된 답글 번호입니다."),
     REPLY_FAILED_CALL_LIST("400-COMMENT-11","답글 목록 조회에 실패했습니다. 필요 값을 확인하세요. (Page-Web) OR (LastNo-Mobile)"),
+    COMMENT_NOT_FOUND("404-COMMENT-12","해당 댓글을 찾을 수 없습니다."),
 
     //게시글 관련 오류
     POST_TITLE_LENGTH_MISSING("400-POST-01", "제목을 2글자 이상 입력해 주세요."),
