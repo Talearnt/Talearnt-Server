@@ -1,6 +1,7 @@
 package com.talearnt.stomp.notification;
 
 import com.talearnt.comment.community.entity.CommunityComment;
+import com.talearnt.comment.community.response.CommentNotificationDTO;
 import com.talearnt.enums.stomp.NotificationType;
 import com.talearnt.stomp.notification.entity.Notification;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
@@ -17,9 +18,9 @@ public interface NotificationMapper {
 
     @Mappings({
             @Mapping(target = "notificationNo", ignore = true),
-            @Mapping(source = "comment.user.userNo", target = "senderNo"),
-            @Mapping(source = "comment.communityPost.user.userNo", target = "receiverNo"),
-            @Mapping(source = "comment.communityPost.communityPostNo", target = "targetNo"),
+            @Mapping(source = "comment.senderNo", target = "senderNo"),
+            @Mapping(source = "comment.receiverNo", target = "receiverNo"),
+            @Mapping(source = "comment.targetNo", target = "targetNo"),
             @Mapping(source = "comment.content", target = "content"),
             @Mapping(target = "notificationType", expression = "java(notificationType)"),
             @Mapping(target = "isRead", constant = "false"),
@@ -27,7 +28,7 @@ public interface NotificationMapper {
             @Mapping(target = "createdAt", ignore = true),
             @Mapping(target = "deletedAt", ignore = true)
     })
-    Notification toNotificationFromComment(CommunityComment comment, NotificationType notificationType);
+    Notification toNotificationFromComment(CommentNotificationDTO comment, NotificationType notificationType);
 
 
     @Mapping(target = "senderNickname", source = "senderNickname")
