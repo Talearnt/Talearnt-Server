@@ -52,6 +52,9 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
         * */
         log.info("/pub/ 접두사로 시작하는 메세지 전송 설정");
         registry.setApplicationDestinationPrefixes("/pub");
+
+        log.info("/user 접두사로 시작하는 메세지 구독 설정");
+        registry.setUserDestinationPrefix("/user");
     }
 
     @Override
