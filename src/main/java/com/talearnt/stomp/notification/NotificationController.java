@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Log4j2
 public class NotificationController implements NotificationApi {
 
-    @GetMapping("/sub/notifications")
+    @GetMapping("/queue/notifications")
     public NotificationResDTO dummyNotification(NotificationResDTO notification) {
         return null;
     }
