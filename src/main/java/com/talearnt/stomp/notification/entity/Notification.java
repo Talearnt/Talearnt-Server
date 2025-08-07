@@ -27,7 +27,6 @@ public class Notification {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private NotificationType notificationType; // 알림 타입 (관심 키워드, 댓글 등)
-    private String url; // 알림 클릭 시 이동할 URL
     private Boolean isRead; // 알림 읽음 여부
     private int unreadCount; // 읽지 않은 알림의 개수
 
