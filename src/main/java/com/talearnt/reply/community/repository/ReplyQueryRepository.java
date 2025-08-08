@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.comment.community.entity.CommunityComment;
 import com.talearnt.comment.community.entity.QCommunityComment;
+import com.talearnt.comment.community.response.CommentNotificationDTO;
 import com.talearnt.post.community.entity.QCommunityPost;
 import com.talearnt.reply.community.entity.CommunityReply;
 import com.talearnt.reply.community.entity.QCommunityReply;
@@ -34,6 +35,31 @@ public class ReplyQueryRepository {
     private final QCommunityPost communityPost = QCommunityPost.communityPost;
     private final QUser user = QUser.user;
     private final QCommunityComment comment = QCommunityComment.communityComment;
+
+
+    //커뮤니티 게시글에 달린 댓글에 대한 답글 알림을 조회합니다.
+    public Optional<CommentNotificationDTO> getReplyNotification(Long replyNo) {
+        return Optional.ofNullable(
+                factory.select(Projections.constructor(CommentNotificationDTO.class,
+                        reply.user.userNo,
+                        reply.user.nickname,
+                        reply.communityComment.user.userNo,
+                        reply.communityComment.user.userId,
+                        reply.communityComment.commentNo,
+                        reply.content))
+                        .from(reply)
+                        .innerJoin(comment).on(comment.commentNo.eq(reply.communityComment.commentNo),
+                                comment.deletedAt.isNull())
+                        .innerJoin(communityPost).on(communityPost.communityPostNo.eq(comment.communityPost.communityPostNo),
+                                communityPost.deletedAt.isNull())
+                        .where(
+                                reply.replyNo.eq(replyNo),
+                                reply.deletedAt.isNull()
+                        )
+                        .fetchOne()
+        );
+    }
+
 
     public Optional<CommunityReply> findByIdAndNotDeleted(Long replyNo) {
         return Optional.ofNullable(
