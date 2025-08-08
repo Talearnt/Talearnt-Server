@@ -3,6 +3,7 @@ package com.talearnt.reply.community;
 import com.talearnt.reply.community.request.ReplyCreateReqDTO;
 import com.talearnt.reply.community.request.ReplyUpdateReqDTO;
 import com.talearnt.reply.community.response.ReplyListResDTO;
+import com.talearnt.stomp.notification.NotificationService;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.version.RestControllerV1;
@@ -22,6 +23,7 @@ import java.util.List;
 public class ReplyController implements ReplyApi {
 
     private final ReplyService replyService;
+    private final NotificationService notificationService;
 
 
     //커뮤니티 답글 목록 조회
@@ -37,7 +39,12 @@ public class ReplyController implements ReplyApi {
     //커뮤니티 답글 작성
     @PostMapping("/communities/replies")
     public ResponseEntity<CommonResponse<ReplyListResDTO>> createReply(@RequestBody ReplyCreateReqDTO replyCreateReqDTO) {
-        return CommonResponse.success(replyService.createReply(replyCreateReqDTO.getUserInfo().getUserNo(), replyCreateReqDTO.getCommentNo(), replyCreateReqDTO.getContent()));
+        ReplyListResDTO data = replyService.createReply(replyCreateReqDTO.getUserInfo().getUserNo(), replyCreateReqDTO.getCommentNo(), replyCreateReqDTO.getContent());
+
+        // 알림 전송
+        notificationService.sendNotificationForMyCommentReply(data.getReplyNo());
+
+        return CommonResponse.success(data);
     }
 
     //커뮤니티 답글 수정
