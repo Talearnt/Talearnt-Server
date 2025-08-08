@@ -6,8 +6,10 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public enum NotificationType {
+
     INTERESTING_KEYWORD("관심 키워드"),
-    COMMENT("댓글");
+    COMMENT("댓글"),
+    REPLY("답글");
 
     private final String type;
 
