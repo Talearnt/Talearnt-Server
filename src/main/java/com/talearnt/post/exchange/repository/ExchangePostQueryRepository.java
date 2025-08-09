@@ -20,6 +20,7 @@ import com.talearnt.post.exchange.entity.QReceiveTalent;
 import com.talearnt.post.exchange.request.ExchangeSearchCondition;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
+import com.talearnt.post.exchange.response.ExchangeReceiveTalentDTO;
 import com.talearnt.post.favorite.entity.QFavoriteExchangePost;
 import com.talearnt.s3.entity.QFileUpload;
 import com.talearnt.user.infomation.entity.QUser;
@@ -56,6 +57,43 @@ public class ExchangePostQueryRepository {
     private final QTalentCategory talentCategory = QTalentCategory.talentCategory;
     private final QTalentCategory giveCategory = new QTalentCategory("giveCategory");
     private final QTalentCategory receiveCategory = new QTalentCategory("receiveCategory");
+
+
+
+
+    /**
+     * 특정 교환 게시글의 작성자 ID와 해당 게시글에 등록된 주고 싶은 재능 코드 목록을 조회합니다.
+     *
+     * <p>주고 싶은 재능 코드는 GROUP_CONCAT 함수를 사용하여 쉼표로 구분된 문자열로 반환됩니다.
+     * 예: "1001,1002,1003"</p>
+     *
+     * <p>조회 조건:</p>
+     * <ul>
+     *   <li>게시글 번호가 일치해야 함</li>
+     *   <li>게시글이 삭제되지 않아야 함(deletedAt이 null)</li>
+     * </ul>
+     *
+     * <p>내부적으로 교환 게시글 테이블과 주고 싶은 재능 테이블을 조인하여 데이터를 조회합니다.</p>
+     *
+     * @param postNo 조회할 교환 게시글 번호
+     * @return 사용자 ID와 주고 싶은 재능 코드 목록이 담긴 DTO 객체
+     * (해당 게시글이 없거나 조건을 만족하지 않는 경우 null 반환)
+     */
+    public Optional<ExchangeReceiveTalentDTO> getGiveTalentAndUserIdInExchangePostByPostNo(Long postNo) {
+        return Optional.ofNullable(
+                factory.
+                        select(Projections.constructor(ExchangeReceiveTalentDTO.class,
+                                exchangePost.user.userNo,
+                                exchangePost.user.userId,
+                                Expressions.stringTemplate("GROUP_CONCAT({0})", giveTalent.talentCode)))
+                        .from(exchangePost)
+                        .innerJoin(giveTalent).on(giveTalent.exchangePost.eq(giveTalent.exchangePost))
+                        .where(exchangePost.exchangePostNo.eq(postNo),
+                                exchangePost.deletedAt.isNull())
+                        .fetchOne()
+        );
+    }
+
 
     //재능 교환 게시글 삭제
     public long deleteExchangePostByPostNo(Long postNo) {
@@ -292,7 +330,7 @@ public class ExchangePostQueryRepository {
                 .limit(searchConditionDTO.getPage().getPageSize())
                 .fetch();
 
-         PagedData pagedData = Optional.ofNullable(
+        PagedData pagedData = Optional.ofNullable(
                 factory
                         .select(Projections.constructor(PagedData.class,
                                 exchangePost.count(),
@@ -310,14 +348,14 @@ public class ExchangePostQueryRepository {
                                 exchangePostStatusEq(searchConditionDTO.getStatus()) // 모집 상태가 일치하고
                         ).fetchOne()
         ).orElse(null);
-         
+
         return PagedListWrapper.<ExchangePostListResDTO>builder().list(data).pagedData(pagedData).build();
     }
 
 
     /**
      * 내가 작성한 재능 교환 게시글 목록 불러오기 - 웹 전용
-     * */
+     */
     public PagedListWrapper<ExchangePostListResDTO> getMyExchangePostListToWeb(Long userNo, ExchangeSearchCondition condition) {
         List<ExchangePostListResDTO> data = getListSelected(userNo)
                 .where(
@@ -513,7 +551,6 @@ public class ExchangePostQueryRepository {
     private BooleanExpression exchangePostStatusEq(ExchangePostStatus status) {
         return status != null ? exchangePost.status.eq(status) : null;
     }
-
 
 
 }
