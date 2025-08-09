@@ -4,10 +4,14 @@ import com.talearnt.comment.community.repository.CommentQueryRepository;
 import com.talearnt.comment.community.response.CommentNotificationDTO;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.stomp.NotificationType;
+import com.talearnt.post.exchange.repository.ExchangePostQueryRepository;
+import com.talearnt.post.exchange.response.ExchangeReceiveTalentDTO;
+import com.talearnt.post.exchange.response.WantedReceiveTalentsUserDTO;
 import com.talearnt.reply.community.repository.ReplyQueryRepository;
 import com.talearnt.stomp.notification.entity.Notification;
 import com.talearnt.stomp.notification.repository.NotificationRepository;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
+import com.talearnt.user.talent.repository.MyTalentQueryRepository;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.log.LogRunningTime;
 import jakarta.transaction.Transactional;
@@ -16,6 +20,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 @Log4j2
@@ -26,7 +32,35 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final CommentQueryRepository commentQueryRepository;
     private final ReplyQueryRepository replyQueryRepository;
+    private final ExchangePostQueryRepository exchangePostQueryRepository;
+    private final MyTalentQueryRepository myTalentQueryRepository;
 
+
+    @Async
+    @Transactional
+    @LogRunningTime
+    public void sendNotificationForMatchedKeyword(Long postNo){
+        //게시글의 주고 싶은 재능들을 추출합니다.
+        ExchangeReceiveTalentDTO userReceiveTalents = exchangePostQueryRepository.getGiveTalentAndUserIdInExchangePostByPostNo(postNo)
+                .orElseThrow(() -> {
+                    log.error("알림을 보내기 위한 게시글을 조회할 수 없습니다. postNo: {} - {} ", postNo,ErrorCode.POST_NOT_FOUND);
+                    return new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
+                });
+
+        //게시글의 주고 싶은 재능과 유저가 받고 싶은 재능이 일치한 사람들의 아이디와 재능 일치하는 재능 코드들을 가져옵니다.
+        Set<WantedReceiveTalentsUserDTO> wantedReceiveTalentsUser = myTalentQueryRepository.getWantedReceiveTalentsUserByTalentCodes(
+                userReceiveTalents.getUserNo(),
+                userReceiveTalents.getReceiveTalentNos());
+        log.info("알림을 보내기 위한 유저 정보: {}", wantedReceiveTalentsUser);
+
+        //받고 싶은 재능이 일치하는 유저가 없으면 종료
+        if (wantedReceiveTalentsUser.isEmpty()){
+            return;
+        }
+        
+        //알림을 생성하고 전송합니다.
+
+    }
 
 
     /**
