@@ -32,5 +32,6 @@ public class Notification {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt; // 알림 생성 시간
+    private LocalDateTime updatedAt; // 변경 시간
     private LocalDateTime deletedAt; // 알림 삭제 시간 (null == 삭제되지 않음)
 }
