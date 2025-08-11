@@ -15,7 +15,12 @@ import java.time.LocalDateTime;
 @ToString
 public class Notification {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_seq")
+    @SequenceGenerator(
+            name = "notification_seq",
+            sequenceName = "notification_sequence",
+            allocationSize = 50
+    )
     private Long notificationNo; // 알림 번호
     private Long senderNo; // 알림을 보낸 사람의 번호
     private Long receiverNo; // 알림을 받는 사람의 번호
