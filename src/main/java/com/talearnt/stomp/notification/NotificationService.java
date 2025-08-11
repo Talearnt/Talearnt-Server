@@ -75,19 +75,23 @@ public class NotificationService {
             notifications.add(notification);
         }
 
-        //알림을 벌크 인서트로 저장합니다.
-        String sql = "INSERT INTO notification (receiver_no, sender_no, post_no, notification_type, is_read) " +
-                "VALUES (?, ?, ?, ?, ?)";
+        //알림 저장
+        List<Notification> savedNotifications = notificationRepository.saveAll(notifications);
 
-        jdbcTemplate.batchUpdate(sql, notifications, 50, (ps, notification) -> {
-            ps.setLong(1, notification.getReceiverNo());
-            ps.setLong(2, notification.getSenderNo());
-            ps.setLong(3, notification.getTargetNo());
-            ps.setString(4, notification.getNotificationType().name());
-            ps.setBoolean(5, notification.getIsRead());
-        });
+        // 저장된 알림 엔티티로 실시간 알림 전송
+        int i = 0;
+        for (WantedReceiveTalentsUserDTO user : wantedReceiveTalentsUser) {
+            Notification savedNotification = savedNotifications.get(i++);
 
-        //알림을 DTO로 변환하여 전송합니다.
+            // 알림 DTO 변환
+            NotificationResDTO notificationResDTO = NotificationMapper.INSTANCE.toNotificationResDTO(savedNotification, user.getReceiveTalentNos(), user.getUserId());
+
+            // WebSocket으로 알림 전송
+            template.convertAndSendToUser(user.getUserId(), "/queue/notifications", notificationResDTO);
+
+            log.debug("키워드 매칭 알림 전송 완료 - 받는 사용자: {}, 알림 ID: {}",
+                    user.getUserId(), savedNotification.getNotificationNo());
+        }
 
 
     }

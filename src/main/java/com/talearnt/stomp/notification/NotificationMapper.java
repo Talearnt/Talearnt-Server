@@ -11,6 +11,8 @@ import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface NotificationMapper {
@@ -46,6 +48,17 @@ public interface NotificationMapper {
     @Mapping(target = "talentCodes", ignore = true) // 필요시 매핑
     NotificationResDTO toNotificationResDTOFromCommentNotificationEntity(Notification notification, String senderNickname);
 
+    @Mappings({
+            @Mapping(source = "notification.notificationNo", target = "notificationNo"),
+            @Mapping(source = "notification.targetNo", target = "targetNo"),
+            @Mapping(source = "notification.content", target = "content"),
+            @Mapping(source = "notification.notificationType", target = "notificationType"),
+            @Mapping(source = "notification.isRead", target = "isRead"),
+            @Mapping(source = "notification.createdAt", target = "createdAt"),
+            @Mapping(source = "senderNickname", target = "senderNickname"),
+            @Mapping(source = "talentCodes",target = "talentCodes")
+    })
+    NotificationResDTO toNotificationResDTO(Notification notification, List<Integer> talentCodes, String senderNickname);
 
 
 

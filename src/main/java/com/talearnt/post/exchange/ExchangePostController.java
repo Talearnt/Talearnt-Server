@@ -5,6 +5,7 @@ import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
+import com.talearnt.stomp.notification.NotificationService;
 import com.talearnt.user.talent.MyTalentService;
 import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.util.common.ClientPath;
@@ -30,6 +31,7 @@ public class ExchangePostController implements ExchangePostApi{
 
     private final MyTalentService myTalentService;
     private final ExchangePostService exchangePostService;
+    private final NotificationService notificationService;
 
     //게시글 주고 싶은 재능 불러오기
     @GetMapping("/posts/exchange/talents/offered")
@@ -63,7 +65,12 @@ public class ExchangePostController implements ExchangePostApi{
     //게시글 작성
     @PostMapping("/posts/exchanges")
     public ResponseEntity<CommonResponse<Long>> writeExchangePost(@RequestBody @Valid ExchangePostReqDTO exchangePostReqDTO){
-        return CommonResponse.success(exchangePostService.writeExchangePost(exchangePostReqDTO));
+        Long postNo = exchangePostService.writeExchangePost(exchangePostReqDTO);
+
+        // 게시글 작성 후 알림 전송
+        notificationService.sendNotificationForMatchedKeyword(postNo);
+
+        return CommonResponse.success(postNo);
     }
 
 
