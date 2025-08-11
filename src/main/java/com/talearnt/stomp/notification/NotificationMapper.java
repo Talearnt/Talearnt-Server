@@ -24,16 +24,29 @@ public interface NotificationMapper {
             @Mapping(source = "comment.content", target = "content"),
             @Mapping(target = "notificationType", expression = "java(notificationType)"),
             @Mapping(target = "isRead", constant = "false"),
-            @Mapping(target = "unreadCount", constant = "0"),
             @Mapping(target = "createdAt", ignore = true),
             @Mapping(target = "deletedAt", ignore = true)
     })
     Notification toNotificationFromComment(CommentNotificationDTO comment, NotificationType notificationType);
 
+    @Mappings({
+            @Mapping(target = "notificationNo", ignore = true),
+            @Mapping(source = "senderNo", target = "senderNo"),
+            @Mapping(source = "receiverNo", target = "receiverNo"),
+            @Mapping(source = "targetNo", target = "targetNo"),
+            @Mapping(target = "content", ignore = true),
+            @Mapping(source = "notificationType", target = "notificationType"),
+            @Mapping(target = "isRead", constant = "false"),
+            @Mapping(target = "createdAt", ignore = true),
+            @Mapping(target = "deletedAt", ignore = true)
+    })
+    Notification toNotificationFromExchangePost(Long senderNo, Long receiverNo, Long targetNo, NotificationType notificationType);
 
     @Mapping(target = "senderNickname", source = "senderNickname")
     @Mapping(target = "talentCodes", ignore = true) // 필요시 매핑
     NotificationResDTO toNotificationResDTOFromCommentNotificationEntity(Notification notification, String senderNickname);
+
+
 
 
 }

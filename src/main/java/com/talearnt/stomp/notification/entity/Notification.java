@@ -26,7 +26,6 @@ public class Notification {
     @Column(nullable = false)
     private NotificationType notificationType; // 알림 타입 (관심 키워드, 댓글 등)
     private Boolean isRead; // 알림 읽음 여부
-    private int unreadCount; // 읽지 않은 알림의 개수
 
 
     @CreationTimestamp

@@ -17,10 +17,13 @@ import com.talearnt.util.log.LogRunningTime;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -28,6 +31,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class NotificationService {
 
+    private final JdbcTemplate jdbcTemplate;
     private final SimpMessagingTemplate template;
     private final NotificationRepository notificationRepository;
     private final CommentQueryRepository commentQueryRepository;
@@ -57,8 +61,34 @@ public class NotificationService {
         if (wantedReceiveTalentsUser.isEmpty()){
             return;
         }
-        
+
+        //벌크 인서트 전용 List 생성
+        List<Notification> notifications = new ArrayList<>();
+
         //알림을 생성하고 전송합니다.
+        for (WantedReceiveTalentsUserDTO user : wantedReceiveTalentsUser) {
+            //알림 로그 저장
+            Notification notification = NotificationMapper.INSTANCE.toNotificationFromExchangePost(user.getUserNo(), userReceiveTalents.getUserNo(),
+                    postNo, NotificationType.INTERESTING_KEYWORD);
+
+            //알림 엔티티를 리스트에 추가
+            notifications.add(notification);
+        }
+
+        //알림을 벌크 인서트로 저장합니다.
+        String sql = "INSERT INTO notification (receiver_no, sender_no, post_no, notification_type, is_read) " +
+                "VALUES (?, ?, ?, ?, ?)";
+
+        jdbcTemplate.batchUpdate(sql, notifications, 50, (ps, notification) -> {
+            ps.setLong(1, notification.getReceiverNo());
+            ps.setLong(2, notification.getSenderNo());
+            ps.setLong(3, notification.getTargetNo());
+            ps.setString(4, notification.getNotificationType().name());
+            ps.setBoolean(5, notification.getIsRead());
+        });
+
+        //알림을 DTO로 변환하여 전송합니다.
+
 
     }
 
