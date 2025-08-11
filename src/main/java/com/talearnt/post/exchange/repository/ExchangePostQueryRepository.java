@@ -85,11 +85,13 @@ public class ExchangePostQueryRepository {
                         select(Projections.constructor(ExchangeReceiveTalentDTO.class,
                                 exchangePost.user.userNo,
                                 exchangePost.user.userId,
-                                Expressions.stringTemplate("GROUP_CONCAT({0})", giveTalent.talentCode)))
+                                Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", giveTalent.talentCode)))
                         .from(exchangePost)
-                        .innerJoin(giveTalent).on(giveTalent.exchangePost.eq(giveTalent.exchangePost))
+                        .innerJoin(giveTalent).on(giveTalent.exchangePost.eq(exchangePost))
                         .where(exchangePost.exchangePostNo.eq(postNo),
                                 exchangePost.deletedAt.isNull())
+                        .groupBy(exchangePost.user.userNo, exchangePost.user.userId)
+                        .orderBy(exchangePost.user.userNo.asc())
                         .fetchOne()
         );
     }

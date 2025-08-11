@@ -54,7 +54,7 @@ public class MyTalentQueryRepository {
                 .select(Projections.constructor(WantedReceiveTalentsUserDTO.class,
                         myTalent.user.userNo,
                         myTalent.user.userId,
-                        Expressions.stringTemplate("GROUP_CONCAT({0})", myTalent.talentCategory.talentCode)))
+                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", myTalent.talentCategory.talentCode)))
                 .from(myTalent)
                 .where(
                         myTalent.user.userNo.ne(authorUserNo), // 글 작성자 제외
@@ -62,6 +62,8 @@ public class MyTalentQueryRepository {
                         myTalent.type.eq(true), // 받고 싶은 재능
                         myTalent.talentCategory.talentCode.in(talentCodes) // 재능 코드가 일치하는 경우
                 )
+                .groupBy(myTalent.user.userNo, myTalent.user.userId)
+                .orderBy(myTalent.user.userNo.asc())
                 .fetch());
     }
 
