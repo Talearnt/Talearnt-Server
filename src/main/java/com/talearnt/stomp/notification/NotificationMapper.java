@@ -26,6 +26,7 @@ public interface NotificationMapper {
             @Mapping(source = "comment.content", target = "content"),
             @Mapping(target = "notificationType", expression = "java(notificationType)"),
             @Mapping(target = "isRead", constant = "false"),
+            @Mapping(target = "talentCodes", ignore = true), // 필요시 매핑
             @Mapping(target = "createdAt", ignore = true),
             @Mapping(target = "deletedAt", ignore = true)
     })
@@ -39,10 +40,11 @@ public interface NotificationMapper {
             @Mapping(target = "content", ignore = true),
             @Mapping(source = "notificationType", target = "notificationType"),
             @Mapping(target = "isRead", constant = "false"),
+            @Mapping(source = "talentCodes", target = "talentCodes"), // 필요시 매핑
             @Mapping(target = "createdAt", ignore = true),
             @Mapping(target = "deletedAt", ignore = true)
     })
-    Notification toNotificationFromExchangePost(Long senderNo, Long receiverNo, Long targetNo, NotificationType notificationType);
+    Notification toNotificationFromExchangePost(Long senderNo, Long receiverNo, Long targetNo, List<Integer> talentCodes, NotificationType notificationType);
 
     @Mapping(target = "senderNickname", source = "senderNickname")
     @Mapping(target = "talentCodes", ignore = true) // 필요시 매핑

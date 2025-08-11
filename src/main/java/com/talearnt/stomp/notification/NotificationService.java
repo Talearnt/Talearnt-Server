@@ -67,9 +67,13 @@ public class NotificationService {
 
         //알림을 생성하고 전송합니다.
         for (WantedReceiveTalentsUserDTO user : wantedReceiveTalentsUser) {
+            List<Integer> receiveTalentNos = userReceiveTalents.getReceiveTalentNos().stream().filter(
+                    talentCode -> user.getReceiveTalentNos().contains(talentCode)
+            ).toList();
+
             //알림 로그 저장
             Notification notification = NotificationMapper.INSTANCE.toNotificationFromExchangePost(user.getUserNo(), userReceiveTalents.getUserNo(),
-                    postNo, NotificationType.INTERESTING_KEYWORD);
+                    postNo, receiveTalentNos,NotificationType.INTERESTING_KEYWORD);
 
             //알림 엔티티를 리스트에 추가
             notifications.add(notification);
@@ -83,14 +87,14 @@ public class NotificationService {
         for (WantedReceiveTalentsUserDTO user : wantedReceiveTalentsUser) {
             Notification savedNotification = savedNotifications.get(i++);
 
+            List<Integer> receiveTalentNos = userReceiveTalents.getReceiveTalentNos().stream().filter(
+                    talentCode -> user.getReceiveTalentNos().contains(talentCode)
+            ).toList();
             // 알림 DTO 변환
             NotificationResDTO notificationResDTO = NotificationMapper.INSTANCE.toNotificationResDTO(savedNotification, user.getReceiveTalentNos(), user.getUserId());
 
             // WebSocket으로 알림 전송
             template.convertAndSendToUser(user.getUserId(), "/queue/notifications", notificationResDTO);
-
-            log.debug("키워드 매칭 알림 전송 완료 - 받는 사용자: {}, 알림 ID: {}",
-                    user.getUserId(), savedNotification.getNotificationNo());
         }
 
 
