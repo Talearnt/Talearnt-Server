@@ -13,13 +13,16 @@ import com.talearnt.stomp.notification.repository.NotificationQueryRepository;
 import com.talearnt.stomp.notification.repository.NotificationRepository;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
+import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.log.LogRunningTime;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,6 +42,46 @@ public class NotificationService {
     private final ExchangePostQueryRepository exchangePostQueryRepository;
     private final MyTalentQueryRepository myTalentQueryRepository;
     private final NotificationQueryRepository notificationQueryRepository;
+
+
+
+    /**
+     * 알림을 삭제합니다.
+     * @param notificationNo 삭제할 알림 번호 리스트
+     * @param authentication 인증 정보
+     */
+    @LogRunningTime
+    @Transactional
+    public void readNotification(List<Long> notificationNo, Authentication authentication) {
+        log.info("알림 읽음 처리 시작: {}", notificationNo);
+
+        UserInfo userInfo = UserUtil.validateAuthentication("알림 읽음 처리", authentication);
+
+        //알림 번호로 알림을 조회하고 읽음 상태로 업데이트
+        List<Notification> notifications = notificationRepository.findAllById(notificationNo);
+        if (notifications.isEmpty()) {
+            log.warn("읽음 처리할 알림이 없습니다. 알림 번호: {}", notificationNo);
+            return;
+        }
+
+        notifications.forEach(notification -> {
+            //알림이 존재하지 않거나, 알림의 수신자가 현재 사용자와 일치하지 않는 경우 예외 처리
+            if (!notification.getReceiverNo().equals(userInfo.getUserNo())) {
+                log.error("알림에 대한 권한이 없습니다. 알림 번호: {}, 알림 주인 사용자: {}, 현재 사용자: {}",
+                        notification.getNotificationNo(), notification.getReceiverNo(), userInfo.getUserNo());
+                throw new CustomRuntimeException(ErrorCode.NOTIFICATION_ACCESS_DENIED);
+            }
+
+            notification.setIsRead(true); // 알림을 읽음 상태로 변경
+            notification.setUnreadCount(0); // 읽음 상태로 변경 시 읽지 않은 개수 초기화
+        });
+
+        //알림 저장
+        notificationRepository.saveAll(notifications);
+        log.info("알림 읽음 처리 완료: {}", notificationNo);
+    }
+
+    
 
 
     @Async
@@ -191,13 +234,18 @@ public class NotificationService {
      * @param notificationType 알림 유형(COMMENT, REPLY 등)
      */
     private void createAndSendNotification(CommentNotificationDTO notificationInfo, NotificationType notificationType) {
+        log.info("알림 생성 시작 - 알림 정보: {}, 알림 타입: {}", notificationInfo, notificationType);
+
         //알림 로그 저장
         Notification notification = notificationQueryRepository
                 .findByNotificationTypeAndTargetNoAndReceiverNo(notificationType, notificationInfo.getTargetNo(), notificationInfo.getReceiverNo()) // 있으면 기존 회원 알림 조회
                 .orElse(NotificationMapper.INSTANCE.toNotificationFromComment(notificationInfo, notificationType));// 없으면 새로 생성
 
+        log.info("알림 생성 또는 조회 완료 - 알림 정보: {}", notification);
+
         //기존 알림이라면 내용을 업데이트
         if (notification.getNotificationNo() != null) {
+            log.info("기존 알림이 존재하여 업데이트 진행 - 알림 번호: {}", notification.getNotificationNo());
             notification.setSenderNo(notificationInfo.getSenderNo()); // 알림을 보낸 사람의 번호
             notification.setContent(notificationInfo.getContent());
             notification.setIsRead(false);
