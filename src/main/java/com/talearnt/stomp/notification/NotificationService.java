@@ -9,6 +9,7 @@ import com.talearnt.post.exchange.response.ExchangeReceiveTalentDTO;
 import com.talearnt.post.exchange.response.WantedReceiveTalentsUserDTO;
 import com.talearnt.reply.community.repository.ReplyQueryRepository;
 import com.talearnt.stomp.notification.entity.Notification;
+import com.talearnt.stomp.notification.repository.NotificationQueryRepository;
 import com.talearnt.stomp.notification.repository.NotificationRepository;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
@@ -17,11 +18,11 @@ import com.talearnt.util.log.LogRunningTime;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,13 +32,13 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class NotificationService {
 
-    private final JdbcTemplate jdbcTemplate;
     private final SimpMessagingTemplate template;
     private final NotificationRepository notificationRepository;
     private final CommentQueryRepository commentQueryRepository;
     private final ReplyQueryRepository replyQueryRepository;
     private final ExchangePostQueryRepository exchangePostQueryRepository;
     private final MyTalentQueryRepository myTalentQueryRepository;
+    private final NotificationQueryRepository notificationQueryRepository;
 
 
     @Async
@@ -191,7 +192,21 @@ public class NotificationService {
      */
     private void createAndSendNotification(CommentNotificationDTO notificationInfo, NotificationType notificationType) {
         //알림 로그 저장
-        Notification notification = NotificationMapper.INSTANCE.toNotificationFromComment(notificationInfo, notificationType);
+        Notification notification = notificationQueryRepository
+                .findByNotificationTypeAndTargetNoAndReceiverNo(notificationType, notificationInfo.getTargetNo(), notificationInfo.getReceiverNo()) // 있으면 기존 회원 알림 조회
+                .orElse(NotificationMapper.INSTANCE.toNotificationFromComment(notificationInfo, notificationType));// 없으면 새로 생성
+
+        //기존 알림이라면 내용을 업데이트
+        if (notification.getNotificationNo() != null) {
+            notification.setSenderNo(notificationInfo.getSenderNo()); // 알림을 보낸 사람의 번호
+            notification.setContent(notificationInfo.getContent());
+            notification.setIsRead(false);
+            notification.setCreatedAt(LocalDateTime.now()); // 생성 시간을 현재 시간으로 업데이트
+        }
+
+        //읽지 않은 개수 +1 (초기 값도 1로 셋팅)
+        notification.setUnreadCount(notification.getUnreadCount() + 1);
+
         Notification savedNotification = notificationRepository.save(notification);
 
         //DTO로 변환

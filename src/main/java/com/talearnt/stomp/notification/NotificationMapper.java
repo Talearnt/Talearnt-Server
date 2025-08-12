@@ -27,8 +27,8 @@ public interface NotificationMapper {
             @Mapping(target = "notificationType", expression = "java(notificationType)"),
             @Mapping(target = "isRead", constant = "false"),
             @Mapping(target = "talentCodes", ignore = true), // 필요시 매핑
-            @Mapping(target = "createdAt", ignore = true),
-            @Mapping(target = "deletedAt", ignore = true)
+            @Mapping(target = "unreadCount", ignore = true),
+            @Mapping(target = "createdAt", ignore = true)
     })
     Notification toNotificationFromComment(CommentNotificationDTO comment, NotificationType notificationType);
 
@@ -41,8 +41,7 @@ public interface NotificationMapper {
             @Mapping(source = "notificationType", target = "notificationType"),
             @Mapping(target = "isRead", constant = "false"),
             @Mapping(source = "talentCodes", target = "talentCodes"), // 필요시 매핑
-            @Mapping(target = "createdAt", ignore = true),
-            @Mapping(target = "deletedAt", ignore = true)
+            @Mapping(target = "createdAt", ignore = true)
     })
     Notification toNotificationFromExchangePost(Long senderNo, Long receiverNo, Long targetNo, List<Integer> talentCodes, NotificationType notificationType);
 
