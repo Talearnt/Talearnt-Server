@@ -81,7 +81,39 @@ public class NotificationService {
         log.info("알림 읽음 처리 완료: {}", notificationNo);
     }
 
-    
+    /**
+     * 알림을 삭제합니다.
+     * @param notificationNo 삭제할 알림 번호 리스트
+     * @param authentication 인증 정보
+     */
+    @LogRunningTime
+    @Transactional
+    public void deleteNotification(List<Long> notificationNo, Authentication authentication) {
+        log.info("알림 삭제 시작: {}", notificationNo);
+
+        UserInfo userInfo = UserUtil.validateAuthentication("알림 삭제", authentication);
+
+        //알림 번호로 알림을 조회
+        List<Notification> notifications = notificationRepository.findAllById(notificationNo);
+        if (notifications.isEmpty()) {
+            log.warn("삭제할 알림이 없습니다. 알림 번호: {}", notificationNo);
+            return;
+        }
+
+        notifications.stream()
+                .filter(notification -> !notification.getReceiverNo().equals(userInfo.getUserNo()))
+                .findFirst()
+                .ifPresent(notification -> {
+                    log.error("알림에 대한 권한이 없습니다 - 알림 번호: {}, 알림 주인 사용자: {}, 현재 사용자: {}",
+                            notification.getNotificationNo(), notification.getReceiverNo(), userInfo.getUserNo());
+                    throw new CustomRuntimeException(ErrorCode.NOTIFICATION_ACCESS_DENIED);
+                });
+
+        //알림 삭제
+        notificationRepository.deleteAll(notifications);
+        log.info("알림 삭제 완료: {}", notificationNo);
+    }
+
 
 
     @Async

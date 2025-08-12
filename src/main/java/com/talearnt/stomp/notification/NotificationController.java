@@ -41,6 +41,10 @@ public class NotificationController implements NotificationApi {
         return CommonResponse.success(null);
     }
 
-    
+    @DeleteMapping("/notifications")
+    public ResponseEntity<CommonResponse<Void>> deleteNotification(List<Long> notificationNo, Authentication authentication) {
+        notificationService.deleteNotification(notificationNo,authentication);
+        return CommonResponse.success(null);
+    }
 
 }
