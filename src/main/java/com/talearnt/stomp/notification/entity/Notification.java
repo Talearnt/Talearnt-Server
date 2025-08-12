@@ -43,11 +43,9 @@ public class Notification {
     @Column(nullable = false)
     private NotificationType notificationType; // 알림 타입 (관심 키워드, 댓글 등)
     private Boolean isRead; // 알림 읽음 여부
-
+    private int unreadCount; // 읽지 않은 알림의 개수
 
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private LocalDateTime createdAt; // 알림 생성 시간
-    private LocalDateTime updatedAt; // 변경 시간
-    private LocalDateTime deletedAt; // 알림 삭제 시간 (null == 삭제되지 않음)
 }
