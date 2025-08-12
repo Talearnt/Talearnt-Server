@@ -1,15 +1,63 @@
 package com.talearnt.stomp.notification;
 
 import com.talearnt.stomp.notification.response.NotificationResDTO;
+import com.talearnt.util.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+
+import java.util.List;
 
 public interface NotificationApi {
 
 
+    @Operation(summary = "알림 목록 조회",
+            tags = "Notification",
+            description = "<h2>내용</h2>" +
+                    "<p>현재 로그인한 사용자의 알림 목록을 조회합니다.</p>" +
+                    "<p>인증된 사용자만 알림을 조회할 수 있습니다.</p>" +
+                    "<p>알림은 최신순으로 정렬되어 반환됩니다.</p>" +
+                    "<p>최대 50개의 알림만 조회됩니다.</p>"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "알림 목록 조회 성공"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
+    })
+    public ResponseEntity<CommonResponse<List<NotificationResDTO>>> getNotifications(Authentication authentication);
+
+    @Operation(summary = "알림 읽음 처리",
+            tags = "Notification",
+            description = "<h2>내용</h2>" +
+                    "<p>지정한 알림을 읽음 상태로 변경합니다.</p>" +
+                    "<p>여러 개의 알림을 한 번에 읽음 처리할 수 있습니다.</p>" +
+                    "<p>본인 것만 알림을 읽음 처리할 수 있습니다.</p>" +
+                    "<p>자신의 알림만 읽음 처리할 수 있습니다.</p>" +
+                    "<p>존재하지 않는 알림을 처리하려고 하면 무시됩니다.</p>"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "알림 읽음 처리 성공"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
+    })
+    public ResponseEntity<CommonResponse<Void>> readNotification(List<Long> notificationNo, Authentication authentication);
+
+
+    @Operation(summary = "알림 삭제",
+            tags = "Notification",
+            description = "<h2>내용</h2>" +
+                    "<p>지정한 알림을 삭제합니다.</p>" +
+                    "<p>여러 개의 알림을 한 번에 삭제할 수 있습니다.</p>" +
+                    "<p>본인 것만 알림을 삭제할 수 있습니다.</p>" +
+                    "<p>존재하지 않는 알림을 삭제하려고 하면 무시됩니다.</p>"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "알림 삭제 성공"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
+    })
+    public ResponseEntity<CommonResponse<Void>> deleteNotification(List<Long> notificationNo, Authentication authentication);
 
     @Operation(summary = "게시글에 작성된 댓글 알림 전송",
             tags = "Notification",
@@ -56,9 +104,8 @@ public interface NotificationApi {
                     "</ul>"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "알림 전송 성공",
-                    content = @Content(schema = @Schema(implementation = NotificationResDTO.class))),
-            @ApiResponse(responseCode = "401", description = "인증 실패")
+            @ApiResponse(responseCode = "200", description = "알림 전송 성공"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
     })
     public NotificationResDTO dummyNotification(NotificationResDTO notification);
 }
