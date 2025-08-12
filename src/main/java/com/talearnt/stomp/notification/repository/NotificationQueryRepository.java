@@ -24,7 +24,7 @@ public class NotificationQueryRepository {
                 .selectFrom(notification)
                 .where(notification.notificationType.eq(notificationType) // 알림 타입
                         .and(notification.targetNo.eq(targetNo)) // 게시글 또는 댓글 번호
-                        .and(notification.senderNo.eq(receiverNo))) // 수신자 번호
+                        .and(notification.receiverNo.eq(receiverNo))) // 수신자 번호
                 .fetchOne());
     }
 
