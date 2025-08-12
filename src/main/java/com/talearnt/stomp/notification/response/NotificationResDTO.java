@@ -8,9 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 public class NotificationResDTO {
 
@@ -23,5 +21,21 @@ public class NotificationResDTO {
     private Boolean isRead; // 알림 읽음 여부
     private int unreadCount; // 읽지 않은 알림의 개수
     private LocalDateTime createdAt; // 알림 생성 시간
+
+
+    @Builder
+    public NotificationResDTO(Long notificationNo, String senderNickname, Long targetNo, String content,
+                              NotificationType notificationType, List<Integer> talentCodes, Boolean isRead,
+                              int unreadCount, LocalDateTime createdAt) {
+        this.notificationNo = notificationNo;
+        this.senderNickname = senderNickname;
+        this.targetNo = targetNo;
+        this.content = content;
+        this.notificationType = notificationType;
+        this.talentCodes = talentCodes;
+        this.isRead = isRead;
+        this.unreadCount = unreadCount;
+        this.createdAt = createdAt;
+    }
 
 }

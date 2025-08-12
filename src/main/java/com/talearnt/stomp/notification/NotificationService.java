@@ -43,6 +43,23 @@ public class NotificationService {
     private final MyTalentQueryRepository myTalentQueryRepository;
     private final NotificationQueryRepository notificationQueryRepository;
 
+    /**
+     * 현재 사용자의 알림을 조회합니다.
+     * 최대 50개만 조회합니다.
+     * @param authentication 인증 정보
+     * @return 알림 리스트
+     */
+    @LogRunningTime
+    public List<NotificationResDTO> getNotifications(Authentication authentication) {
+        log.info("알림 조회 시작");
+        UserInfo userInfo = UserUtil.validateAuthentication("알림 조회", authentication);
+
+        //사용자의 알림을 조회
+        List<NotificationResDTO> notifications = notificationQueryRepository.getNotifications(userInfo.getUserNo());
+
+        log.info("알림 조회 완료: {}개 알림", notifications.size());
+        return notifications;
+    }
 
 
     /**

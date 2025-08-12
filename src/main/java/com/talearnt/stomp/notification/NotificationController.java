@@ -35,6 +35,12 @@ public class NotificationController implements NotificationApi {
     }
 
 
+    @GetMapping("/notifications")
+    public ResponseEntity<CommonResponse<List<NotificationResDTO>>> getNotifications(Authentication authentication) {
+        List<NotificationResDTO> notifications = notificationService.getNotifications(authentication);
+        return CommonResponse.success(notifications);
+    }
+
     @PutMapping("/notifications/read")
     public ResponseEntity<CommonResponse<Void>> readNotification(List<Long> notificationNo, Authentication authentication) {
         notificationService.readNotification(notificationNo, authentication);
