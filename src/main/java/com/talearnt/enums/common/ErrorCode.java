@@ -25,6 +25,10 @@ public enum ErrorCode {
     AUTH_SMS_TOO_MANY_REQUEST("429-AUTH-12","많은 요청이 왔습니다. 10분 후에 다시 시도해주세요."),
     EXPIRED_REFRESH_TOKEN("401-AUTH-13", "리프레시 토큰의 기간이 만료되었습니다."),
 
+    //알림 관련 오류
+    NOTIFICATION_NOT_FOUND("404-NOTIFICATION-01", "해당 알림을 찾을 수 없습니다."),
+    NOTIFICATION_ACCESS_DENIED("403-NOTIFICATION-02", "해당 알림에 대한 접근 권한이 없습니다."),
+
     //메세지 관련 오류,
     MESSAGE_NOT_RESPONSE("500-MESSAGE-01", "메세지 전송에 실패했습니다. 잠시 후 다시 시도해 주세요."),
 
