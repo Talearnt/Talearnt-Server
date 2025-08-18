@@ -221,7 +221,7 @@ public class NotificationService {
                     talentCode -> user.getReceiveTalentNos().contains(talentCode)
             ).toList();
             // 알림 DTO 변환
-            NotificationResDTO notificationResDTO = NotificationMapper.INSTANCE.toNotificationResDTO(savedNotification, user.getReceiveTalentNos(), user.getUserId());
+            NotificationResDTO notificationResDTO = NotificationMapper.INSTANCE.toNotificationResDTO(savedNotification, user.getReceiveTalentNos(), user.getSenderNickname());
 
             // WebSocket으로 알림 전송
             template.convertAndSendToUser(user.getUserId(), "/queue/notifications", notificationResDTO);

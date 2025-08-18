@@ -41,7 +41,7 @@ public interface NotificationMapper {
             @Mapping(source = "notificationType", target = "notificationType"),
             @Mapping(target = "isRead", constant = "false"),
             @Mapping(source = "talentCodes", target = "talentCodes"), // 필요시 매핑
-            @Mapping(target = "createdAt", ignore = true)
+            @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     })
     Notification toNotificationFromExchangePost(Long senderNo, Long receiverNo, Long targetNo, List<Integer> talentCodes, NotificationType notificationType);
 
