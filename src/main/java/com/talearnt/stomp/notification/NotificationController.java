@@ -2,6 +2,7 @@ package com.talearnt.stomp.notification;
 
 
 import com.talearnt.stomp.notification.response.NotificationResDTO;
+import com.talearnt.stomp.notification.response.NotificationSettingResDTO;
 import com.talearnt.util.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -51,6 +52,11 @@ public class NotificationController implements NotificationApi {
     public ResponseEntity<CommonResponse<Void>> deleteNotification(List<Long> notificationNo, Authentication authentication) {
         notificationService.deleteNotification(notificationNo,authentication);
         return CommonResponse.success(null);
+    }
+
+    @GetMapping("/notifications/settings")
+    public ResponseEntity<CommonResponse<NotificationSettingResDTO>> getNotificationSettings(Authentication authentication) {
+        return CommonResponse.success(notificationService.getNotificationSettings(authentication));
     }
 
 }

@@ -14,6 +14,7 @@ import com.talearnt.stomp.notification.repository.NotificationQueryRepository;
 import com.talearnt.stomp.notification.repository.NotificationRepository;
 import com.talearnt.stomp.notification.repository.NotificationSettingRepository;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
+import com.talearnt.stomp.notification.response.NotificationSettingResDTO;
 import com.talearnt.user.infomation.entity.User;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
 import com.talearnt.util.common.UserUtil;
@@ -46,6 +47,38 @@ public class NotificationService {
     private final MyTalentQueryRepository myTalentQueryRepository;
     private final NotificationQueryRepository notificationQueryRepository;
     private final NotificationSettingRepository notificationSettingRepository;
+
+
+    public NotificationSettingResDTO getNotificationSettings(Authentication authentication) {
+        log.info("알림 설정 조회 시작");
+
+        UserInfo userInfo = UserUtil.validateAuthentication("알림 설정 조회", authentication);
+
+        NotificationSettingResDTO notificationSettingResDTO = notificationQueryRepository.getNotificationSettings(userInfo.getUserNo())
+                .orElseGet(()->{
+                    User user = new User();
+                    user.setUserNo(userInfo.getUserNo());
+
+                    //알림 설정이 없으면 기본값으로 생성
+                    NotificationSetting notificationSetting = new NotificationSetting();
+                    notificationSetting.setUser(user);
+                    notificationSetting.setAllowCommentNotifications(true); // 기본적으로 댓글 알림 허용
+                    notificationSetting.setAllowKeywordNotifications(true); // 기본적으로 키워드 알림 허용
+
+                    //알림 설정 저장
+                    NotificationSetting savedSetting = notificationSettingRepository.save(notificationSetting);
+
+                    //DTO로 변환하여 반환
+                    return NotificationSettingResDTO.builder()
+                            .allowKeywordNotifications(true)
+                            .allowCommentNotifications(true)
+                            .build();
+                });
+
+        log.info("알림 설정 조회 완료: {}", notificationSettingResDTO);
+        return notificationSettingResDTO;
+    }
+
 
     /**
      * 현재 사용자의 알림을 조회합니다.

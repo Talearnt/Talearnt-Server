@@ -9,6 +9,7 @@ import com.talearnt.stomp.notification.entity.NotificationSetting;
 import com.talearnt.stomp.notification.entity.QNotification;
 import com.talearnt.stomp.notification.entity.QNotificationSetting;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
+import com.talearnt.stomp.notification.response.NotificationSettingResDTO;
 import com.talearnt.user.infomation.entity.QUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -25,6 +26,25 @@ public class NotificationQueryRepository {
     private final QUser user = QUser.user;
     private final QNotificationSetting notificationSetting = QNotificationSetting.notificationSetting;
 
+
+    /**
+     * 특정 사용자의 알림 설정을 조회합니다.
+     *
+     * @param userNo 사용자 번호
+     * @return Optional<NotificationSettingResDTO> 해당 사용자의 알림 설정이 존재하면 Optional에 담아 반환, 없으면 빈 Optional 반환
+     */
+    public Optional<NotificationSettingResDTO> getNotificationSettings(Long userNo) {
+        // 특정 사용자의 알림 설정을 조회합니다.
+        return Optional.ofNullable(
+                factory.select(Projections.constructor(NotificationSettingResDTO.class,
+                                notificationSetting.allowCommentNotifications, // 댓글 알림 허용 여부
+                                notificationSetting.allowKeywordNotifications // 관심 키워드 알림 허용 여부
+                        ))
+                        .from(notificationSetting)
+                        .where(notificationSetting.user.userNo.eq(userNo)) // 사용자 번호로 필터링
+                        .fetchOne() // 결과를 단일 객체로 반환
+        );
+    }
 
 
     /**
