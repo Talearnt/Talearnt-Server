@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.admin.category.entity.QTalentCategory;
 import com.talearnt.post.exchange.response.WantedReceiveTalentsUserDTO;
+import com.talearnt.stomp.notification.entity.QNotificationSetting;
 import com.talearnt.user.talent.entity.MyTalent;
 import com.talearnt.user.talent.entity.QMyTalent;
 import com.talearnt.user.talent.response.MyTalentsResDTO;
@@ -26,6 +27,8 @@ public class MyTalentQueryRepository {
 
     private final QMyTalent myTalent = QMyTalent.myTalent;
     private final QTalentCategory talentCategory = QTalentCategory.talentCategory;
+    private final QNotificationSetting notificationSetting = QNotificationSetting.notificationSetting;
+
 
     /**
      * 지정된 재능 코드 목록에 해당하는 '받고 싶은 재능'으로 등록한 사용자 정보를 조회합니다.
@@ -56,11 +59,14 @@ public class MyTalentQueryRepository {
                         myTalent.user.userId,
                         Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", myTalent.talentCategory.talentCode)))
                 .from(myTalent)
+                .leftJoin(notificationSetting).on(notificationSetting.user.eq(myTalent.user)) // 알림 설정에서 키워드 알림 허용 여부 확인용 테이블
                 .where(
                         myTalent.user.userNo.ne(authorUserNo), // 글 작성자 제외
                         myTalent.isActive.eq(true), // 나의 재능이 활성화된 상태
                         myTalent.type.eq(true), // 받고 싶은 재능
-                        myTalent.talentCategory.talentCode.in(talentCodes) // 재능 코드가 일치하는 경우
+                        myTalent.talentCategory.talentCode.in(talentCodes), // 재능 코드가 일치하는 경우
+                        notificationSetting.allowKeywordNotifications.isTrue()
+                                .or(notificationSetting.isNull()) // 알림 설정이 없거나 키워드 알림 허용
                 )
                 .groupBy(myTalent.user.userNo, myTalent.user.userId)
                 .orderBy(myTalent.user.userNo.asc())

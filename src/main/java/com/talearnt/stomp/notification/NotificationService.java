@@ -9,9 +9,12 @@ import com.talearnt.post.exchange.response.ExchangeReceiveTalentDTO;
 import com.talearnt.post.exchange.response.WantedReceiveTalentsUserDTO;
 import com.talearnt.reply.community.repository.ReplyQueryRepository;
 import com.talearnt.stomp.notification.entity.Notification;
+import com.talearnt.stomp.notification.entity.NotificationSetting;
 import com.talearnt.stomp.notification.repository.NotificationQueryRepository;
 import com.talearnt.stomp.notification.repository.NotificationRepository;
+import com.talearnt.stomp.notification.repository.NotificationSettingRepository;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
+import com.talearnt.user.infomation.entity.User;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
@@ -42,6 +45,7 @@ public class NotificationService {
     private final ExchangePostQueryRepository exchangePostQueryRepository;
     private final MyTalentQueryRepository myTalentQueryRepository;
     private final NotificationQueryRepository notificationQueryRepository;
+    private final NotificationSettingRepository notificationSettingRepository;
 
     /**
      * 현재 사용자의 알림을 조회합니다.
@@ -284,6 +288,27 @@ public class NotificationService {
      */
     private void createAndSendNotification(CommentNotificationDTO notificationInfo, NotificationType notificationType) {
         log.info("알림 생성 시작 - 알림 정보: {}, 알림 타입: {}", notificationInfo, notificationType);
+
+        //알림 받을 사람의 알림 설정을 체크 ==> 댓글,답글 확인 여부
+        NotificationSetting notificationSetting = notificationQueryRepository
+                .findNotificationSettingByReceiverNo(notificationInfo.getReceiverNo())
+                .orElseGet(() -> {
+                    User user = new User();
+                    user.setUserNo(notificationInfo.getReceiverNo());
+
+                    NotificationSetting setting = new NotificationSetting();
+                    setting.setUser(user);
+                    setting.setAllowCommentNotifications(true); // 기본적으로 댓글 알림 허용
+                    setting.setAllowKeywordNotifications(true); // 기본적으로 키워드 알림 허용
+                    return notificationSettingRepository.save(setting);
+                });
+
+
+        //알림 설정에서 댓글 알림이 허용되지 않은 경우 알림을 보내지 않음
+        if (!notificationSetting.isAllowCommentNotifications()) {
+            log.info("댓글 알림이 허용되지 않아 알림을 전송하지 않습니다 - 알림 정보: {}", notificationInfo);
+            return;
+        }
 
         //알림 로그 저장
         Notification notification = notificationQueryRepository

@@ -5,7 +5,9 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talearnt.enums.stomp.NotificationType;
 import com.talearnt.stomp.notification.entity.Notification;
+import com.talearnt.stomp.notification.entity.NotificationSetting;
 import com.talearnt.stomp.notification.entity.QNotification;
+import com.talearnt.stomp.notification.entity.QNotificationSetting;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
 import com.talearnt.user.infomation.entity.QUser;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class NotificationQueryRepository {
     private final JPAQueryFactory factory;
     private final QNotification notification = QNotification.notification;
     private final QUser user = QUser.user;
+    private final QNotificationSetting notificationSetting = QNotificationSetting.notificationSetting;
 
 
 
@@ -69,6 +72,21 @@ public class NotificationQueryRepository {
                 .where(notification.notificationType.eq(notificationType) // 알림 타입
                         .and(notification.targetNo.eq(targetNo)) // 게시글 또는 댓글 번호
                         .and(notification.receiverNo.eq(receiverNo))) // 수신자 번호
+                .fetchOne());
+    }
+
+
+    /**
+     * 특정 사용자의 알림 설정을 조회합니다.
+     *
+     * @param receiverNo 사용자 번호
+     * @return Optional<NotificationSetting> 해당 사용자의 알림 설정이 존재하면 Optional에 담아 반환, 없으면 빈 Optional 반환
+     */
+    public Optional<NotificationSetting> findNotificationSettingByReceiverNo(Long receiverNo) {
+        // 특정 사용자의 알림 설정을 조회합니다.
+        return Optional.ofNullable(factory
+                .selectFrom(notificationSetting)
+                .where(notificationSetting.user.userNo.eq(receiverNo)) // 사용자 번호로 필터링
                 .fetchOne());
     }
 
