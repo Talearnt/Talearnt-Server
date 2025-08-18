@@ -1,6 +1,7 @@
 package com.talearnt.stomp.notification;
 
 import com.talearnt.stomp.notification.response.NotificationResDTO;
+import com.talearnt.stomp.notification.response.NotificationSettingResDTO;
 import com.talearnt.util.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,6 +14,23 @@ import org.springframework.security.core.Authentication;
 import java.util.List;
 
 public interface NotificationApi {
+
+
+
+    @Operation(summary = "알림 설정 조회",
+            tags = "Notification",
+            description = "<h2>내용</h2>" +
+                    "<p>현재 로그인한 사용자의 알림 설정을 조회합니다.</p>" +
+                    "<p>알림 설정은 댓글 알림과 관심 키워드 알림 허용 여부를 포함합니다.</p>"+
+                    "<p>알림 설정 미설정한 상태로 조회할 경우에 해당 유저는 모든 알림 허용 상태로 DB에 저장됩니다.</p>"+
+                    "<p>알림 설정은 회원가입과 동시에 모두 허용 상태로 저장됩니다.</p>"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "알림 설정 조회 성공"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
+    })
+    public ResponseEntity<CommonResponse<NotificationSettingResDTO>> getNotificationSettings(Authentication authentication);
+
 
 
     @Operation(summary = "알림 목록 조회",
