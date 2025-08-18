@@ -57,6 +57,7 @@ public class MyTalentQueryRepository {
                 .select(Projections.constructor(WantedReceiveTalentsUserDTO.class,
                         myTalent.user.userNo,
                         myTalent.user.userId,
+                        myTalent.user.nickname,
                         Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", myTalent.talentCategory.talentCode)))
                 .from(myTalent)
                 .leftJoin(notificationSetting).on(notificationSetting.user.eq(myTalent.user)) // 알림 설정에서 키워드 알림 허용 여부 확인용 테이블
