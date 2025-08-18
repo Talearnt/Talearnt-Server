@@ -1,6 +1,7 @@
 package com.talearnt.stomp.notification;
 
 
+import com.talearnt.stomp.notification.request.NotificationReqDTO;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
 import com.talearnt.stomp.notification.response.NotificationSettingResDTO;
 import com.talearnt.util.response.CommonResponse;
@@ -9,10 +10,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,14 +41,14 @@ public class NotificationController implements NotificationApi {
     }
 
     @PutMapping("/notifications/read")
-    public ResponseEntity<CommonResponse<Void>> readNotification(List<Long> notificationNo, Authentication authentication) {
-        notificationService.readNotification(notificationNo, authentication);
+    public ResponseEntity<CommonResponse<Void>> readNotification(@RequestBody NotificationReqDTO notificationReqDTO, Authentication authentication) {
+        notificationService.readNotification(notificationReqDTO.getNotificationNos(), authentication);
         return CommonResponse.success(null);
     }
 
     @DeleteMapping("/notifications")
-    public ResponseEntity<CommonResponse<Void>> deleteNotification(List<Long> notificationNo, Authentication authentication) {
-        notificationService.deleteNotification(notificationNo,authentication);
+    public ResponseEntity<CommonResponse<Void>> deleteNotification(@RequestBody NotificationReqDTO notificationReqDTO, Authentication authentication) {
+        notificationService.deleteNotification(notificationReqDTO.getNotificationNos(),authentication);
         return CommonResponse.success(null);
     }
 
