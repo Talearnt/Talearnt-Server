@@ -1,5 +1,6 @@
 package com.talearnt.stomp.notification;
 
+import com.talearnt.stomp.notification.request.NotificationReqDTO;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
 import com.talearnt.stomp.notification.response.NotificationSettingResDTO;
 import com.talearnt.util.response.CommonResponse;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -60,7 +62,7 @@ public interface NotificationApi {
             @ApiResponse(responseCode = "200", description = "알림 읽음 처리 성공"),
             @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
     })
-    public ResponseEntity<CommonResponse<Void>> readNotification(List<Long> notificationNo, Authentication authentication);
+    public ResponseEntity<CommonResponse<Void>> readNotification(@RequestBody NotificationReqDTO notificationReqDTO, Authentication authentication);
 
 
     @Operation(summary = "알림 삭제",
@@ -75,7 +77,7 @@ public interface NotificationApi {
             @ApiResponse(responseCode = "200", description = "알림 삭제 성공"),
             @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
     })
-    public ResponseEntity<CommonResponse<Void>> deleteNotification(List<Long> notificationNo, Authentication authentication);
+    public ResponseEntity<CommonResponse<Void>> deleteNotification(@RequestBody NotificationReqDTO notificationReqDTO, Authentication authentication);
 
     @Operation(summary = "게시글에 작성된 댓글 알림 전송",
             tags = "Notification",
