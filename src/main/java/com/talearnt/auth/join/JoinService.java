@@ -9,6 +9,8 @@ import com.talearnt.admin.agree.repository.AgreeCodeRepository;
 import com.talearnt.admin.agree.repository.AgreeRepository;
 import com.talearnt.auth.join.request.JoinReqDTO;
 import com.talearnt.auth.join.request.KakaoJoinReqDTO;
+import com.talearnt.stomp.notification.entity.NotificationSetting;
+import com.talearnt.stomp.notification.repository.NotificationSettingRepository;
 import com.talearnt.user.infomation.entity.User;
 import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.util.common.UserUtil;
@@ -33,6 +35,7 @@ public class JoinService {
     private final AgreeRepository agreeRepository;
     private final AgreeCodeRepository agreeCodeRepository;
     private final VerificationService verificationService;
+    private final NotificationSettingRepository notificationSettingRepository;
     private final PasswordEncoder passwordEncoder;
 
     /**아이디 중복 체크*/
@@ -147,6 +150,16 @@ public class JoinService {
 
         //유저 저장
         user = userRepository.save(user);
+
+        //알림 설정 초기화
+        NotificationSetting notificationSetting = new NotificationSetting();
+
+        notificationSetting.setUser(user);
+        notificationSetting.setAllowCommentNotifications(true);
+        notificationSetting.setAllowKeywordNotifications(true);
+
+        //알림 설정 저장
+        notificationSettingRepository.save(notificationSetting);
 
         return user;
     }
