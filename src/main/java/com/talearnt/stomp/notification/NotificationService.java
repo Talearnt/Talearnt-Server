@@ -13,6 +13,7 @@ import com.talearnt.stomp.notification.entity.NotificationSetting;
 import com.talearnt.stomp.notification.repository.NotificationQueryRepository;
 import com.talearnt.stomp.notification.repository.NotificationRepository;
 import com.talearnt.stomp.notification.repository.NotificationSettingRepository;
+import com.talearnt.stomp.notification.request.NotificationSettingReqDTO;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
 import com.talearnt.stomp.notification.response.NotificationSettingResDTO;
 import com.talearnt.user.infomation.entity.User;
@@ -77,6 +78,53 @@ public class NotificationService {
 
         log.info("알림 설정 조회 완료: {}", notificationSettingResDTO);
         return notificationSettingResDTO;
+    }
+
+    /**
+     * 사용자의 알림 설정을 수정합니다.
+     * 맞춤 키워드 알림 설정과 댓글/답글 알림 설정을 포함합니다.
+     * 댓글과 답글 알림은 하나의 설정으로 통합 관리됩니다.
+     * 
+     * @param notificationSettingReqDTO 수정할 알림 설정 정보
+     * @param authentication 인증 정보
+     * @return 수정된 알림 설정
+     */
+    @Async
+    @Transactional
+    @LogRunningTime
+    public void updateNotificationSettings(NotificationSettingReqDTO notificationSettingReqDTO, Authentication authentication) {
+        log.info("알림 설정 수정 시작: {}", notificationSettingReqDTO);
+
+        UserInfo userInfo = UserUtil.validateAuthentication("알림 설정 수정", authentication);
+
+        // 사용자의 기존 알림 설정을 조회하거나 새로 생성
+        NotificationSetting notificationSetting = notificationQueryRepository
+                .findNotificationSettingByReceiverNo(userInfo.getUserNo())
+                .orElseGet(() -> {
+                    User user = new User();
+                    user.setUserNo(userInfo.getUserNo());
+
+                    NotificationSetting setting = new NotificationSetting();
+                    setting.setUser(user);
+                    setting.setAllowCommentNotifications(true);
+                    setting.setAllowKeywordNotifications(true);
+                    return notificationSettingRepository.save(setting);
+                });
+
+        // 알림 설정 업데이트
+        notificationSetting.setAllowKeywordNotifications(notificationSettingReqDTO.isAllowKeywordNotifications());
+        notificationSetting.setAllowCommentNotifications(notificationSettingReqDTO.isAllowCommentNotifications());
+
+        // 설정 저장
+        NotificationSetting savedSetting = notificationSettingRepository.save(notificationSetting);
+
+        // DTO로 변환하여 반환
+        NotificationSettingResDTO updatedSettings = NotificationSettingResDTO.builder()
+                .allowKeywordNotifications(savedSetting.isAllowKeywordNotifications())
+                .allowCommentNotifications(savedSetting.isAllowCommentNotifications())
+                .build();
+
+        log.info("알림 설정 수정 완료: {}", updatedSettings);
     }
 
 
@@ -195,8 +243,9 @@ public class NotificationService {
         //벌크 인서트 전용 List 생성
         List<Notification> notifications = new ArrayList<>();
 
-        //알림을 생성하고 전송합니다.
+        //알림을 생성합니다.
         for (WantedReceiveTalentsUserDTO user : wantedReceiveTalentsUser) {
+            //재능 코드가 동일한 것들만 추출
             List<Integer> receiveTalentNos = userReceiveTalents.getReceiveTalentNos().stream().filter(
                     talentCode -> user.getReceiveTalentNos().contains(talentCode)
             ).toList();
@@ -217,17 +266,12 @@ public class NotificationService {
         for (WantedReceiveTalentsUserDTO user : wantedReceiveTalentsUser) {
             Notification savedNotification = savedNotifications.get(i++);
 
-            List<Integer> receiveTalentNos = userReceiveTalents.getReceiveTalentNos().stream().filter(
-                    talentCode -> user.getReceiveTalentNos().contains(talentCode)
-            ).toList();
             // 알림 DTO 변환
-            NotificationResDTO notificationResDTO = NotificationMapper.INSTANCE.toNotificationResDTO(savedNotification, user.getReceiveTalentNos(), user.getSenderNickname());
+            NotificationResDTO notificationResDTO = NotificationMapper.INSTANCE.toNotificationResDTO(savedNotification, savedNotification.getTalentCodes(), user.getSenderNickname());
 
             // WebSocket으로 알림 전송
             template.convertAndSendToUser(user.getUserId(), "/queue/notifications", notificationResDTO);
         }
-
-
     }
 
 
@@ -366,7 +410,7 @@ public class NotificationService {
 
         //DTO로 변환
         NotificationResDTO notificationResDTO = NotificationMapper.INSTANCE
-                .toNotificationResDTOFromCommentNotificationEntity(notification, notificationInfo.getSenderNickname());
+                .toNotificationResDTOFromCommentNotificationEntity(savedNotification, notificationInfo.getSenderNickname());
 
         //해당 유저에게 알림 전송
         template.convertAndSendToUser(notificationInfo.getReceiverId(), "/queue/notifications", notificationResDTO);
