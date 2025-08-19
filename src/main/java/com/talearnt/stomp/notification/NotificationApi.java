@@ -1,12 +1,11 @@
 package com.talearnt.stomp.notification;
 
 import com.talearnt.stomp.notification.request.NotificationReqDTO;
+import com.talearnt.stomp.notification.request.NotificationSettingReqDTO;
 import com.talearnt.stomp.notification.response.NotificationResDTO;
 import com.talearnt.stomp.notification.response.NotificationSettingResDTO;
 import com.talearnt.util.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +31,21 @@ public interface NotificationApi {
             @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
     })
     public ResponseEntity<CommonResponse<NotificationSettingResDTO>> getNotificationSettings(Authentication authentication);
+
+    @Operation(summary = "알림 설정 수정",
+            tags = "Notification",
+            description = "<h2>내용</h2>" +
+                    "<p>현재 로그인한 사용자의 알림 설정을 수정합니다.(비동기 작동)</p>" +
+                    "<p>맞춤 키워드 알림 설정과 댓글/답글 알림 설정을 포함합니다.</p>"+
+                    "<p>댓글과 답글 알림은 하나의 설정으로 통합 관리됩니다.</p>"+
+                    "<p>인증된 사용자만 알림 설정을 수정할 수 있습니다.</p>"+
+                    "<p>설정이 없는 경우 기본값으로 새로 생성됩니다.</p>"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "알림 설정 수정 성공"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
+    })
+    public ResponseEntity<CommonResponse<Void>> updateNotificationSettings(@RequestBody NotificationSettingReqDTO notificationSettingReqDTO, Authentication authentication);
 
 
 
