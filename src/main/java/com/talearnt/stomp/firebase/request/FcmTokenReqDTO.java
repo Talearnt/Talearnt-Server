@@ -1,7 +1,6 @@
 package com.talearnt.stomp.firebase.request;
 
 import com.talearnt.enums.common.ErrorCode;
-import com.talearnt.enums.common.Regex;
 import com.talearnt.util.common.RequiredJwtValueDTO;
 import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.valid.DynamicValid;

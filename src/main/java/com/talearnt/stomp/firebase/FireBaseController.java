@@ -1,10 +1,11 @@
 package com.talearnt.stomp.firebase;
 
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.stomp.firebase.request.FcmTokenReqDTO;
 import com.talearnt.stomp.firebase.service.FcmService;
+import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.version.RestControllerV1;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Log4j2
 @RequiredArgsConstructor
 @Tag(name = "FireBase Cloud Message", description = "FCM 토큰 관리 및 메시지 전송")
-public class FireBaseController {
+public class FireBaseController implements FireBaseApi {
 
     private final FcmService fcmService;
 
@@ -29,7 +30,6 @@ public class FireBaseController {
      * - 디바이스별로 하나의 토큰만 유지한다.
      */
     @PostMapping("/fcm/token")
-    @Operation(summary = "FCM 토큰 저장", description = "사용자의 FCM 토큰을 저장하거나 업데이트합니다.")
     public ResponseEntity<CommonResponse<String>> saveFcmToken(@RequestBody @Valid FcmTokenReqDTO requestDTO) {
         log.info("FCM 토큰 저장 요청: userNo={}, deviceIdentifier={}", 
                 requestDTO.getUserInfo().getUserNo(), requestDTO.getDeviceIdentifier());
@@ -48,8 +48,8 @@ public class FireBaseController {
             return CommonResponse.success("FCM 토큰이 성공적으로 저장되었습니다.");
             
         } catch (Exception e) {
-            log.error("FCM 토큰 저장 실패: {}", e.getMessage(), e);
-            throw e;
+            log.error("FCM 토큰 저장 실패: {}", ErrorCode.FIREBASE_CANNOT_SAVE_TOKEN);
+            throw new CustomRuntimeException(ErrorCode.FIREBASE_CANNOT_SAVE_TOKEN);
         }
     }
 
