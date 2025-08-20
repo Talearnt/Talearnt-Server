@@ -60,6 +60,9 @@ dependencies {
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'//AWS 관련
 	implementation 'org.springframework:spring-messaging'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'// STOMP 관련
+	
+	// Firebase Admin SDK
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
 }
 // queryDSL 설정 시작
 def querydslSrcDir = 'src/main/generated'
