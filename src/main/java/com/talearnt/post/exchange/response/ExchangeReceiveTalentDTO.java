@@ -1,7 +1,6 @@
 package com.talearnt.post.exchange.response;
 
 
-import com.talearnt.util.common.PostUtil;
 import com.talearnt.util.common.SplitUtil;
 import lombok.*;
 
@@ -17,11 +16,13 @@ import java.util.List;
  * 이 receiveTalentNos는 ExchangePost의 주고 싶은 재능이 들어갑니다.
  * */
 public class ExchangeReceiveTalentDTO {
+    private String postTitle;
     private Long userNo; // 유저 번호
     private String userId; // 유저 아이디
     private List<Integer> receiveTalentNos; // 재능 PK 리스트
 
-    public ExchangeReceiveTalentDTO(Long userNo, String userId, String receiveTalentNos) {
+    public ExchangeReceiveTalentDTO(String postTitle, Long userNo, String userId, String receiveTalentNos) {
+        this.postTitle = postTitle;
         this.userNo = userNo;
         this.userId = userId;
         this.receiveTalentNos = SplitUtil.splitToIntegerList(receiveTalentNos);

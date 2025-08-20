@@ -83,6 +83,7 @@ public class ExchangePostQueryRepository {
         return Optional.ofNullable(
                 factory.
                         select(Projections.constructor(ExchangeReceiveTalentDTO.class,
+                                exchangePost.title,
                                 exchangePost.user.userNo,
                                 exchangePost.user.userId,
                                 Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", giveTalent.talentCode)))
