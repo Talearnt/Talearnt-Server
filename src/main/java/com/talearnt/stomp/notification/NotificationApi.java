@@ -99,12 +99,20 @@ public interface NotificationApi {
                     "<p>WebSocket을 통한 실시간 알림 시스템입니다.</p>" +
                     "<p>JWT 토큰을 사용하기 때문에 Bearer 방식으로 Header 에 넣어주세요!</p>" +
                     "<p>댓글, 좋아요 등의 이벤트가 발생할 때 해당 사용자에게 실시간으로 알림을 전달합니다.</p>" +
+                    "<hr/>"+
                     "<h2>WebSocket 연결 설정</h2>" +
                     "<ul>" +
                         "<li>연결 엔드포인트: /ws</li>" +
                         "<li>구독 경로: /user/queue/notifications</li>" +
                     "</ul>" +
-                    "<h2>수신되는 메시지 형식</h2>" +
+                    "<hr/>"+
+                    "<h2>Firebase Cloud Message 연결 설정</h2>" +
+                        "<p>Firebase 토큰을 발급 받으신 다음, 그 토큰을 로그인 후 한 번은 Firebase 문서를 참고하여 등록해주셔야 합니다.</p>"+
+                        "<p>그러면 이후 게시글 작성이나 이벤트 시에 WebSocket이 연결되어있지 않다면 FCM으로 알림이 전송됩니다.</p>"+
+                        "<p>FCM은 Response를 강제하고 있습니다."+
+                        "<p> data에서 값을 추출하여 원하는 결과를 얻으셔야 할 수 있습니다.</p>"+
+                    "<hr/>"+
+                    "<h2>WebSocket 수신되는 메시지 형식</h2>" +
                     "<pre>" +
                     "{\n" +
                     "  \"notificationNo\": 6,\n" +
@@ -118,6 +126,7 @@ public interface NotificationApi {
                     "  \"createdAt\": \"2025-08-08T00:35:52.753409\"\n" +
                     "}" +
                     "</pre>" +
+                    "<hr/>"+
                     "<h2>Response 필드 설명</h2>" +
                     "<ul>" +
                         "<li>notificationNo : 알림 고유 번호</li>" +
@@ -130,6 +139,7 @@ public interface NotificationApi {
                         "<li>unreadCount : 읽지 않은 알림 수</li>" +
                         "<li>createdAt : 알림 생성 시간</li>" +
                     "</ul>" +
+                    "<hr/>"+
                     "<h2>주의사항</h2>" +
                     "<ul>" +
                         "<li>WebSocket 연결 시 유효한 JWT 토큰이 필요합니다. 헤더에 넣어주세요.</li>" +
