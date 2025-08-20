@@ -371,3 +371,6 @@ compose.yml
 
 ## GENERATED
 /src/main/generated
+
+## Firebase Service Account Key
+/src/main/resources/firebaseServiceAccountKey.json
