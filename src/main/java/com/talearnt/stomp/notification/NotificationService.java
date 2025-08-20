@@ -8,6 +8,7 @@ import com.talearnt.post.exchange.repository.ExchangePostQueryRepository;
 import com.talearnt.post.exchange.response.ExchangeReceiveTalentDTO;
 import com.talearnt.post.exchange.response.WantedReceiveTalentsUserDTO;
 import com.talearnt.reply.community.repository.ReplyQueryRepository;
+import com.talearnt.stomp.firebase.FcmService;
 import com.talearnt.stomp.notification.entity.Notification;
 import com.talearnt.stomp.notification.entity.NotificationSetting;
 import com.talearnt.stomp.notification.repository.NotificationQueryRepository;
@@ -26,6 +27,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.user.SimpUser;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -41,6 +44,7 @@ import java.util.Set;
 public class NotificationService {
 
     private final SimpMessagingTemplate template;
+    private final SimpUserRegistry userRegistry;
     private final NotificationRepository notificationRepository;
     private final CommentQueryRepository commentQueryRepository;
     private final ReplyQueryRepository replyQueryRepository;
@@ -48,6 +52,7 @@ public class NotificationService {
     private final MyTalentQueryRepository myTalentQueryRepository;
     private final NotificationQueryRepository notificationQueryRepository;
     private final NotificationSettingRepository notificationSettingRepository;
+    private final FcmService fcmService;
 
 
     public NotificationSettingResDTO getNotificationSettings(Authentication authentication) {
@@ -223,7 +228,7 @@ public class NotificationService {
     @LogRunningTime
     public void sendNotificationForMatchedKeyword(Long postNo){
         //게시글의 주고 싶은 재능들을 추출합니다.
-        ExchangeReceiveTalentDTO userReceiveTalents = exchangePostQueryRepository.getGiveTalentAndUserIdInExchangePostByPostNo(postNo)
+        ExchangeReceiveTalentDTO exchangePostInfo = exchangePostQueryRepository.getGiveTalentAndUserIdInExchangePostByPostNo(postNo)
                 .orElseThrow(() -> {
                     log.error("알림을 보내기 위한 게시글을 조회할 수 없습니다. postNo: {} - {} ", postNo,ErrorCode.POST_NOT_FOUND);
                     return new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
@@ -231,8 +236,8 @@ public class NotificationService {
 
         //게시글의 주고 싶은 재능과 유저가 받고 싶은 재능이 일치한 사람들의 아이디와 재능 일치하는 재능 코드들을 가져옵니다.
         Set<WantedReceiveTalentsUserDTO> wantedReceiveTalentsUser = myTalentQueryRepository.getWantedReceiveTalentsUserByTalentCodes(
-                userReceiveTalents.getUserNo(),
-                userReceiveTalents.getReceiveTalentNos());
+            exchangePostInfo.getUserNo(),
+            exchangePostInfo.getReceiveTalentNos());
         log.info("알림을 보내기 위한 유저 정보: {}", wantedReceiveTalentsUser);
 
         //받고 싶은 재능이 일치하는 유저가 없으면 종료
@@ -246,12 +251,12 @@ public class NotificationService {
         //알림을 생성합니다.
         for (WantedReceiveTalentsUserDTO user : wantedReceiveTalentsUser) {
             //재능 코드가 동일한 것들만 추출
-            List<Integer> receiveTalentNos = userReceiveTalents.getReceiveTalentNos().stream().filter(
+            List<Integer> receiveTalentNos = exchangePostInfo.getReceiveTalentNos().stream().filter(
                     talentCode -> user.getReceiveTalentNos().contains(talentCode)
             ).toList();
 
             //알림 로그 저장
-            Notification notification = NotificationMapper.INSTANCE.toNotificationFromExchangePost(userReceiveTalents.getUserNo(), user.getUserNo(),
+            Notification notification = NotificationMapper.INSTANCE.toNotificationFromExchangePost(exchangePostInfo.getUserNo(), user.getUserNo(),
                     postNo, receiveTalentNos,NotificationType.INTERESTING_KEYWORD);
 
             //알림 엔티티를 리스트에 추가
@@ -269,8 +274,30 @@ public class NotificationService {
             // 알림 DTO 변환
             NotificationResDTO notificationResDTO = NotificationMapper.INSTANCE.toNotificationResDTO(savedNotification, savedNotification.getTalentCodes(), user.getSenderNickname());
 
-            // WebSocket으로 알림 전송
-            template.convertAndSendToUser(user.getUserId(), "/queue/notifications", notificationResDTO);
+            // WebSocket 연결 상태 확인
+            boolean isUserConnected = isUserConnectedToWebSocket(user.getUserId());
+            
+            if (isUserConnected) {
+                // WebSocket으로 실시간 알림 전송
+                template.convertAndSendToUser(user.getUserId(), "/queue/notifications", notificationResDTO);
+                log.info("WebSocket으로 실시간 알림 전송 완료 - 받을 유저: {}, 알림 정보: {}", 
+                        user.getUserId(), notificationResDTO);
+            } else {
+                // WebSocket 연결되지 않은 경우 FCM으로 푸시 알림 전송
+                try {
+                    fcmService.sendMessageToUser(
+                            savedNotification.getReceiverNo(), 
+                            "회원님이 원하는 매칭 게시글이 나타났어요!", 
+                            exchangePostInfo.getPostTitle(), 
+                            notificationResDTO.toMap()
+                    );
+                    log.info("FCM으로 푸시 알림 전송 완료 - 받을 유저: {}, 알림 정보: {}", 
+                            savedNotification.getReceiverNo(), notificationResDTO);
+                } catch (Exception e) {
+                    log.error("FCM 알림 전송 실패 - 받을 유저: {}, 오류: {}", 
+                            savedNotification.getReceiverNo(), e.getMessage(), e);
+                }
+            }
         }
     }
 
@@ -412,13 +439,56 @@ public class NotificationService {
         NotificationResDTO notificationResDTO = NotificationMapper.INSTANCE
                 .toNotificationResDTOFromCommentNotificationEntity(savedNotification, notificationInfo.getSenderNickname());
 
-        //해당 유저에게 알림 전송
-        template.convertAndSendToUser(notificationInfo.getReceiverId(), "/queue/notifications", notificationResDTO);
+        // WebSocket 연결 상태 확인
+        boolean isUserConnected = isUserConnectedToWebSocket(notificationInfo.getReceiverId());
+        
+        if (isUserConnected) {
+            // WebSocket으로 실시간 알림 전송
+            template.convertAndSendToUser(notificationInfo.getReceiverId(), "/queue/notifications", notificationResDTO);
+            log.info("WebSocket으로 실시간 알림 전송 완료 - 받을 유저: {}, 알림 정보: {}", 
+                    notificationInfo.getReceiverId(), notificationResDTO);
+        } else {
+            // WebSocket 연결되지 않은 경우 FCM으로 푸시 알림 전송
+            
+            try {
+                fcmService.sendMessageToUser(
+                        notificationInfo.getReceiverNo(),
+                        notificationResDTO.getNotificationType().equals(NotificationType.COMMENT) ? 
+                                    notificationResDTO.getSenderNickname()+"님이 내 게시물에 댓글을 달았어요!" :
+                                    notificationResDTO.getSenderNickname()+"님이 내 댓글에 답글을 달았어요!",
+                        notificationResDTO.getContent(),
+                        notificationResDTO.toMap()
+                );
+                log.info("FCM으로 푸시 알림 전송 완료 - 받을 유저: {}, 알림 정보: {}", 
+                        notificationInfo.getReceiverNo(), notificationResDTO);
+            } catch (Exception e) {
+                log.error("FCM 알림 전송 실패 - 받을 유저: {}, 오류: {}, 오류 메세지: {}", 
+                        notificationInfo.getReceiverNo(), e.getMessage(),ErrorCode.FIREBASE_FAILED_SEND_MSG, e);
+                        throw new CustomRuntimeException(ErrorCode.FIREBASE_FAILED_SEND_MSG);
+            }
+        }
 
-        log.info("알림 전송 완료 - \n 받을 유저 : {}, \n 받는 정보 : {}, \n 구독 경로 : {}",
+        log.info("알림 전송 완료 - \n 받을 유저 : {}, \n 받는 정보 : {}, \n WebSocket 연결 상태: {}, \n 구독 경로 : {}",
                 notificationInfo.getReceiverId(),
                 notificationResDTO,
+                isUserConnected ? "연결됨" : "연결되지 않음",
                 "/queue/notifications");
+    }
+
+    /**
+     * 사용자의 WebSocket 연결 상태를 확인합니다.
+     * 
+     * @param userId 사용자 ID (username)
+     * @return WebSocket 연결 상태 (true: 연결됨, false: 연결되지 않음)
+     */
+    private boolean isUserConnectedToWebSocket(String userId) {
+        try {
+            SimpUser user = userRegistry.getUser(userId);
+            return user != null && user.hasSessions();
+        } catch (Exception e) {
+            log.warn("WebSocket 연결 상태 확인 중 오류 발생 - 사용자: {}, 오류: {}", userId, e.getMessage());
+            return false;
+        }
     }
 
 }

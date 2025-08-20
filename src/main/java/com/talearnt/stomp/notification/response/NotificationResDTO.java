@@ -5,7 +5,9 @@ import com.talearnt.enums.stomp.NotificationType;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @NoArgsConstructor
@@ -36,6 +38,23 @@ public class NotificationResDTO {
         this.isRead = isRead;
         this.unreadCount = unreadCount;
         this.createdAt = createdAt;
+    }
+
+
+    public Map<String, String> toMap() {
+        Map<String, String> map = new HashMap<>();
+        
+        map.put("notificationNo", notificationNo != null ? String.valueOf(notificationNo) : "");
+        map.put("senderNickname", senderNickname != null ? senderNickname : "");
+        map.put("targetNo", targetNo != null ? String.valueOf(targetNo) : "");
+        map.put("content", content != null ? content : "");
+        map.put("notificationType", notificationType != null ? notificationType.name() : "");
+        map.put("talentCodes", talentCodes != null && !talentCodes.isEmpty() ? talentCodes.toString() : "");
+        map.put("isRead", isRead != null ? String.valueOf(isRead) : "");
+        map.put("unreadCount", String.valueOf(unreadCount));
+        map.put("createdAt", createdAt != null ? createdAt.toString() : "");
+        
+        return map;
     }
 
 }
