@@ -120,7 +120,7 @@ public interface NotificationApi {
                     "  \"targetNo\": 33,\n" +
                     "  \"content\": \"오는 방식이 좀 색다른데?\",\n" +
                     "  \"notificationType\": \"댓글\",\n" +
-                    "  \"talentCodes\": null,\n" +
+                    "  \"talentCodes\": [],\n" +
                     "  \"isRead\": false,\n" +
                     "  \"unreadCount\": 0,\n" +
                     "  \"createdAt\": \"2025-08-08T00:35:52.753409\"\n" +

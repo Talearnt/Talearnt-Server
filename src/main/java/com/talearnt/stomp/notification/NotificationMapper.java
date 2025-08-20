@@ -1,6 +1,6 @@
 package com.talearnt.stomp.notification;
 
-import com.talearnt.comment.community.entity.CommunityComment;
+
 import com.talearnt.comment.community.response.CommentNotificationDTO;
 import com.talearnt.enums.stomp.NotificationType;
 import com.talearnt.stomp.notification.entity.Notification;
@@ -46,7 +46,7 @@ public interface NotificationMapper {
     Notification toNotificationFromExchangePost(Long senderNo, Long receiverNo, Long targetNo, List<Integer> talentCodes, NotificationType notificationType);
 
     @Mapping(target = "senderNickname", source = "senderNickname")
-    @Mapping(target = "talentCodes", ignore = true) // 필요시 매핑
+    @Mapping(target = "talentCodes", expression = "java(new java.util.ArrayList<Integer>())") // 빈 리스트로 매핑
     NotificationResDTO toNotificationResDTOFromCommentNotificationEntity(Notification notification, String senderNickname);
 
     @Mappings({
