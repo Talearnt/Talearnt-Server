@@ -2,7 +2,6 @@ package com.talearnt.stomp.firebase;
 
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.stomp.firebase.request.FcmTokenReqDTO;
-import com.talearnt.stomp.firebase.service.FcmService;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.version.RestControllerV1;

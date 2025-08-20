@@ -1,4 +1,4 @@
-package com.talearnt.stomp.firebase.service;
+package com.talearnt.stomp.firebase;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
