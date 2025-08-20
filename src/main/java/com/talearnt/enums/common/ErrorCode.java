@@ -129,6 +129,8 @@ public enum ErrorCode {
     PAGE_MIN_NUMBER("400-PAGE-01", "페이지 번호는 0보다 작을 수 없습니다."),
     PAGE_OVER_MAX_NUMBER("400-PAGE-02", "해당 페이지 번호는 유효하지 않는 번호입니다."),
 
+    //파이어베이스 관련 오류
+    FIREBASE_CANNOT_SETTING("500-FIREBASE-01", "파이어베이스 SDK 설정에 실패했습니다."),
 
     //서버 오류
     ILLEGAL_ARGUMENT_EXCEPTION("400-SERVER-01", "잘못된 값을 입력하셨습니다. 입력 값을 확인하세요."),
