@@ -61,6 +61,11 @@ public enum ErrorCode {
     USER_NAME_MISMATCH("400-USER-18","이름은 최소 2자, 최대 5자까지 입력 가능합니다."),
     USER_NICKNAME_MISMATCH("400-USER-19","한글,영문,숫자는 자유롭게 입력 가능하며, 특수문자는 #만 가능해요"),
 
+    //탈퇴 회원 관련 오류
+    WITHDRAWAL_REASON_EMPTY("400-WITHDRAWAL-01", "탈퇴 사유는 최소 1개 이상 선택해야 합니다."),
+    WITHDRAWAL_REASON_DETAIL_LENGTH_OVER("400-WITHDRAWAL-02", "탈퇴 사유 상세는 500자 이하로 입력해야 합니다."),
+
+
     // 데이터베이스 관련 오류
     DB_CONNECTION_ERROR("500-DB-01", "데이터 베이스에 연결 실패했습니다."),
     DB_QUERY_ERROR("500-DB-02", "데이터 베이스에 잘못된 쿼리 입력되었습니다."),
