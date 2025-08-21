@@ -7,8 +7,10 @@ import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.reply.community.response.MyRepliesResDTO;
 import com.talearnt.user.infomation.request.ProfileReqDTO;
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
+import com.talearnt.user.infomation.request.WithdrawalRequestDTO;
 import com.talearnt.user.infomation.response.UserActivityCountsResDTO;
 import com.talearnt.user.infomation.response.UserHeaderResDTO;
+import com.talearnt.user.infomation.response.WithdrawalCompletionResponseDTO;
 import com.talearnt.user.talent.request.MyTalentReqDTO;
 import com.talearnt.util.common.ClientPath;
 import com.talearnt.util.response.CommonResponse;
@@ -17,6 +19,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -372,5 +375,25 @@ public interface UserApi {
             @RequestParam(required = false, defaultValue = "10") String size
     );
 
+    @Operation(summary = "회원 탈퇴 처리",
+            description = "<h2>내용</h2>" +
+                    "<p>회원 탈퇴를 처리합니다. 탈퇴 후에는 모든 개인정보가 삭제되며 복구가 불가능합니다.</p>" +
+                    "<h2>Request</h2>" +
+                    "<ul>" +
+                        "<li>withdrawalReasons : 탈퇴 사유 텍스트 리스트 (최소 1개 이상)</li>" +
+                        "<li>detailedReason : 상세 사유 (선택사항, 최대 500자)</li>" +
+                    "</ul>" +
+                    "<h2>Response</h2>" +
+                    "<ul>" +
+                        "<li>userId : 탈퇴한 사용자의 ID</li>" +
+                        "<li>withdrawnAt : 탈퇴 일시</li>" +
+                    "</ul>")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 탈퇴 성공"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
+            @ApiResponse(responseCode = "400", ref = "BAD_REQUEST"),
+            @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND")
+    })
+    public ResponseEntity<CommonResponse<WithdrawalCompletionResponseDTO>> processWithdrawal(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO, Authentication authentication, HttpServletResponse response);
 
 }
