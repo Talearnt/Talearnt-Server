@@ -6,6 +6,7 @@ import com.talearnt.auth.verification.repository.IpTraceRepository;
 import com.talearnt.auth.verification.repository.VerificationCodeQueryRepository;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.auth.join.request.JoinReqDTO;
+import com.talearnt.user.infomation.repository.UserQueryRepository;
 import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.auth.find.request.CheckUserVerificationCodeReqDTO;
 import com.talearnt.auth.find.request.FindByPhoneReqDTO;
@@ -44,6 +45,7 @@ public class VerificationService {
     private final VerificationCodeRepository verificationCodeRepository;
     private final VerificationCodeQueryRepository verificationCodeQueryRepository;
     private final UserRepository userRepository;
+    private final UserQueryRepository userQueryRepository;
     private final IpTraceRepository ipTraceRepository;
 
     /**1분 이내 5번 요청했을 경우에 아이피 10분간 차단하는 METHOD
@@ -119,8 +121,12 @@ public class VerificationService {
     @Transactional
     public ResponseEntity<CommonResponse<String>> sendVerificationMessage(FindByPhoneReqDTO findByPhoneReqDTO) {
         log.info("SMS 인증 문자 전송 시작 : {}",findByPhoneReqDTO);
-        //이미 가입한 휴대폰 번호가 있을 경우 Exception 발생
-        UserUtil.validatePhoneDuplication(userRepository,findByPhoneReqDTO.getPhone());
+
+        //기존 회원으로 가입한 경우 또는 탈퇴한 회원 경우 발생 (7일 이내 탈퇴한 회원은 재가입 불가)
+        if(userQueryRepository.isDuplicationPhoneNumberWithUserAndDrawnUser(findByPhoneReqDTO.getPhone())){
+            log.error("휴대폰 번호 중복으로 인한 문자 전송 실패 : {} ",ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
+            throw new CustomRuntimeException(ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
+        }
 
         //인증 코드 설정
         String verificationCode = VerificationUtil.makeRandomVerificationNumber();

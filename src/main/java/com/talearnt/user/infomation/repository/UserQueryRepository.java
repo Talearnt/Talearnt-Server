@@ -11,12 +11,15 @@ import com.talearnt.post.community.entity.QCommunityPost;
 import com.talearnt.post.exchange.entity.QExchangePost;
 import com.talearnt.post.favorite.entity.QFavoriteExchangePost;
 import com.talearnt.reply.community.entity.QCommunityReply;
+import com.talearnt.user.infomation.entity.QUser;
 import com.talearnt.user.infomation.response.UserActivityCountsResDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ import java.util.List;
 public class UserQueryRepository {
     private final JPAQueryFactory factory;
 
+    private final QUser user = QUser.user;
     private final QExchangePost exchangePost = QExchangePost.exchangePost;
     private final QCommunityPost communityPost = QCommunityPost.communityPost;
     private final QFavoriteExchangePost favoriteExchangePost = QFavoriteExchangePost.favoriteExchangePost;
@@ -73,5 +77,45 @@ public class UserQueryRepository {
     }
 
 
+    /**
+     * 회원 가입하려는 사람의 휴대폰 번호의 중복 여부를 조회합니다.
+     * - 해당 휴대폰 번호로 회원 가입한 사람
+     * - 탈퇴한 회원 중 7일이 지나지 않은 휴대폰 번호와 동일한 사람
+     * @param phone 회원 가입 하려는 유저의 휴대폰 번호
+     * @return 회원 가입 가능 여부
+     */
+    public boolean isDuplicationPhoneNumberWithUserAndDrawnUser(String phone){
+        
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+        return factory.selectFrom(user)
+        .where(user.phone.eq(phone) //휴대폰 번호가 같거나
+                .or(
+                        user.isWithdrawn.eq(true) //탈퇴한 회원인데
+                        .and(user.withdrawnAt.goe(sevenDaysAgo)) //7일이 지나지 않아서
+                        .and(user.withdrawnPhoneNumber.eq(phone))) //휴대폰 번호가 동일한 사람
+                )
+        .orderBy(user.registeredAt.desc())
+        .fetchFirst() != null;
+    }
+
+    /**
+     * 회원 가입하려는 사람의 이메일 계정(아이디)의 중복 여부를 조회합니다.
+     * - 해당 아이디로 회원가입한 사람
+     * - 탈퇴한 회원 중 7일이 지나지 않은 아이디 정보와 동일한 사람
+     * @param userId 회원 가입 하려는 유저의 이메일 계정(아이디)
+     * @return 회원가입 가능 여부
+     */
+    public boolean isDuplicationUserIdWithUserAndDrawnUser(String userId){
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+        return factory.selectFrom(user)
+        .where(user.userId.eq(userId) //유저 아이디가 같거나
+                .or(
+                        user.isWithdrawn.eq(true) //탈퇴한 회원인데
+                        .and(user.withdrawnAt.goe(sevenDaysAgo)) //7일이 지나지 않아서
+                        .and(user.widthdrawnUserId.eq(userId))) //유저 아이디가 동일한 사람
+                )
+        .orderBy(user.registeredAt.desc())
+        .fetchFirst() != null;
+    }
 
 }

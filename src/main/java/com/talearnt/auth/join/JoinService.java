@@ -12,6 +12,7 @@ import com.talearnt.auth.join.request.KakaoJoinReqDTO;
 import com.talearnt.stomp.notification.entity.NotificationSetting;
 import com.talearnt.stomp.notification.repository.NotificationSettingRepository;
 import com.talearnt.user.infomation.entity.User;
+import com.talearnt.user.infomation.repository.UserQueryRepository;
 import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
@@ -32,6 +33,7 @@ import java.util.List;
 public class JoinService {
 
     private final UserRepository userRepository;
+    private final UserQueryRepository userQueryRepository;
     private final AgreeRepository agreeRepository;
     private final AgreeCodeRepository agreeCodeRepository;
     private final VerificationService verificationService;
@@ -141,9 +143,17 @@ public class JoinService {
      */
     private User saveUser(User user, String joinType) {
         //이미 가입한 휴대폰 번호가 있는 지 검증 Exception 409
-        UserUtil.validatePhoneDuplication(userRepository, user.getPhone());
+        if(userQueryRepository.isDuplicationPhoneNumberWithUserAndDrawnUser(user.getPhone())){ // 해당 휴대폰으로 가입한 이력이 있으면 발생
+            log.error("휴대폰 번호 중복으로 인한 문자 전송 실패 : {} ",ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
+            throw new CustomRuntimeException(ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
+        }
+        
         //유저 ID가 있을 경우에 회원 가입 실패
-        UserUtil.validateDuplicateUserId(userRepository, user.getUserId());
+        ;
+        if (userQueryRepository.isDuplicationUserIdWithUserAndDrawnUser(user.getUserId())) {
+            log.error("아이디 중복으로 인한 회원 가입 실패 : {} ",ErrorCode.DUPLICATE_USER_ID);
+            throw new CustomRuntimeException(ErrorCode.DUPLICATE_USER_ID);
+        }
 
         user.setJoinType(joinType);
         user.setAuthority(UserRole.ROLE_USER);
