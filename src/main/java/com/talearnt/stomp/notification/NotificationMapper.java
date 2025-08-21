@@ -28,7 +28,7 @@ public interface NotificationMapper {
             @Mapping(target = "isRead", constant = "false"),
             @Mapping(target = "talentCodes", ignore = true), // 필요시 매핑
             @Mapping(target = "unreadCount", ignore = true),
-            @Mapping(target = "createdAt", ignore = true)
+            @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     })
     Notification toNotificationFromComment(CommentNotificationDTO comment, NotificationType notificationType);
 
@@ -37,13 +37,13 @@ public interface NotificationMapper {
             @Mapping(source = "senderNo", target = "senderNo"),
             @Mapping(source = "receiverNo", target = "receiverNo"),
             @Mapping(source = "targetNo", target = "targetNo"),
-            @Mapping(target = "content", ignore = true),
+            @Mapping(source = "postTitle", target="content"),
             @Mapping(source = "notificationType", target = "notificationType"),
             @Mapping(target = "isRead", constant = "false"),
             @Mapping(source = "talentCodes", target = "talentCodes"), // 필요시 매핑
             @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     })
-    Notification toNotificationFromExchangePost(Long senderNo, Long receiverNo, Long targetNo, List<Integer> talentCodes, NotificationType notificationType);
+    Notification toNotificationFromExchangePost(Long senderNo, Long receiverNo, Long targetNo, String postTitle, List<Integer> talentCodes, NotificationType notificationType);
 
     @Mapping(target = "senderNickname", source = "senderNickname")
     @Mapping(target = "talentCodes", expression = "java(new java.util.ArrayList<Integer>())") // 빈 리스트로 매핑
