@@ -72,7 +72,7 @@ public class NotificationService {
                     notificationSetting.setAllowKeywordNotifications(true); // 기본적으로 키워드 알림 허용
 
                     //알림 설정 저장
-                    NotificationSetting savedSetting = notificationSettingRepository.save(notificationSetting);
+                    notificationSettingRepository.save(notificationSetting);
 
                     //DTO로 변환하여 반환
                     return NotificationSettingResDTO.builder()
