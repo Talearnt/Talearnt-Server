@@ -15,16 +15,18 @@ import com.talearnt.reply.community.response.ReplyListResDTO;
 import com.talearnt.user.infomation.UserService;
 import com.talearnt.user.infomation.request.ProfileReqDTO;
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
+import com.talearnt.user.infomation.request.WithdrawalRequestDTO;
+import com.talearnt.user.infomation.response.WithdrawalCompletionResponseDTO;
 import com.talearnt.user.infomation.response.UserActivityCountsResDTO;
 import com.talearnt.user.infomation.response.UserHeaderResDTO;
-import com.talearnt.user.talent.MyTalentService;
-import com.talearnt.user.talent.request.MyTalentReqDTO;
-import com.talearnt.util.common.ClientPath;
+import com.talearnt.util.jwt.UserInfo;
+import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.version.RestControllerV1;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -34,6 +36,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import com.talearnt.user.talent.MyTalentService;
+import com.talearnt.user.talent.request.MyTalentReqDTO;
+import com.talearnt.util.common.ClientPath;
 
 @Tag(name = "Users",description = "유저 관련")
 @RestControllerV1
@@ -82,6 +87,16 @@ public class UserController implements UserApi{
     @GetMapping("/users/profile/activity-counts")
     public ResponseEntity<CommonResponse<UserActivityCountsResDTO>> getMyActivityCounts(Authentication authentication) {
         return CommonResponse.success(userService.getMyActivityCounts(authentication));
+    }
+
+    // 회원 탈퇴 처리
+    @PostMapping("/users/withdrawal")
+    public ResponseEntity<CommonResponse<WithdrawalCompletionResponseDTO>> processWithdrawal(
+            @RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO,
+            Authentication authentication,
+            HttpServletResponse response){
+        UserInfo userInfo = UserUtil.validateAuthentication("회원 탈퇴", authentication);
+        return CommonResponse.success(userService.processWithdrawal(response, userInfo, withdrawalRequestDTO));
     }
 
 

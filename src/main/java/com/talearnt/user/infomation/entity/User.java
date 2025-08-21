@@ -24,7 +24,7 @@ public class User {
     @Column(name = "user_no")
     private Long userNo;
 
-    @Column(nullable = false, updatable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String userId;
 
     @Column //S3에 있는 이미지 기본 경로 입력
@@ -63,4 +63,26 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole authority;
     
+    // 탈퇴 관련 필드들
+    @Column
+    private LocalDateTime withdrawnAt;
+    
+    @Column(length = 500)
+    private String withdrawalReason;
+    
+    @Column(columnDefinition = "TEXT")
+    private String withdrawalReasonCodes; // 선택한 탈퇴 사유들을 쉼표로 구분하여 저장: "서비스를 더 이상 이용하지 않아요,오류가 너무 자주 발생해요"
+    
+    @Column
+    private Boolean isWithdrawn = false;
+    
+    // 탈퇴 회원 표시용 필드 (닉네임 중복 방지)
+    @Column(length = 30)
+    private String withdrawnNickname; // 탈퇴 시 원래 닉네임을 여기에 저장
+
+    @Column(length = 20)
+    private String withdrawnPhoneNumber;// 탈퇴 시 원래 휴대폰 번호를 여기에 저장
+    
+    @Column
+    private String widthdrawnUserId;
 }
