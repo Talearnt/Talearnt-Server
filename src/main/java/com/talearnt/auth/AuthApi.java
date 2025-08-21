@@ -7,6 +7,7 @@ import com.talearnt.auth.find.request.FindByPhoneReqDTO;
 import com.talearnt.auth.join.request.JoinReqDTO;
 import com.talearnt.auth.join.request.KakaoJoinReqDTO;
 import com.talearnt.auth.login.company.LoginReqDTO;
+import com.talearnt.auth.login.kakao.KakaoAccessTokenReqDTO;
 import com.talearnt.auth.login.kakao.KakaoLoginResDTO;
 import com.talearnt.auth.verification.VerificationReqDTO;
 import com.talearnt.enums.common.ErrorCode;
@@ -190,6 +191,65 @@ public interface AuthApi {
             @ApiResponse(responseCode = "409", ref = "USER_PHONE_NUMBER_DUPLICATION"),
     })
     public ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakao(@RequestParam("code")String code, HttpServletResponse response);
+
+
+    @Operation(summary = "Flutter용 모바일 카카오톡 로그인", description = "<p>Flutter 클라이언트에서 카카오 SDK를 통해 직접 받은 Access Token을 사용하여 로그인하는 API입니다.</p>" +
+            "<p>웹 방식과 달리 Redirection 없이 Access Token을 직접 전달받아 처리합니다.</p>" +
+            "<hr/>" +
+            "<h2>Flutter 클라이언트에서의 사용법</h2>" +
+            "<ol>" +
+                "<li>Flutter에서 카카오 SDK를 사용하여 Access Token을 발급받습니다</li>" +
+                "<li>해당 Access Token을 서버의 /auth/login/kakao/mobile 엔드포인트로 전송합니다</li>" +
+                "<li>서버는 카카오 API를 호출하여 사용자 정보를 조회하고 로그인 처리를 합니다</li>" +
+                "<li>결과에 따라 JWT 토큰을 받거나 회원가입 정보를 받습니다</li>" +
+            "</ol>" +
+            "<hr/>" +
+            "<h2>Request Body</h2>" +
+            "<ul>" +
+                "<li><strong>kakaoAccessToken : </strong>Flutter에서 받은 카카오 Access Token (필수)</li>" +
+                "<li><strong>autoLogin : </strong>자동 로그인 여부 (true/false)</li>" +
+            "</ul>" +
+            "<hr/>" +
+            "<h2>회원 가입으로 넘어가기 전 분기점</h2>" +
+            "<p>카카오 로그인 시도 시, 비회원이고 가입한 휴대폰 번호가 존재할 경우에 409 Exception이 발생합니다.</p>" +
+            "<p>비회원이고 휴대폰 번호 중복도 없으면 카카오에서 제공한 값이 반환됩니다.</p>" +
+            "<hr/>" +
+            "<h2>로그인 성공 시 Response</h2>" +
+            "<ul>" +
+                "<li>isRegistered : true</li>" +
+                "<li>accessToken : 자사 JWT Access Token</li>" +
+                "<li>userId : null</li>" +
+                "<li>name : null</li>" +
+                "<li>phone : null</li>" +
+                "<li>gender : null</li>" +
+            "</ul>" +
+            "<hr/>" +
+            "<h2>로그인 실패시 Response (회원가입 필요)</h2>" +
+            "<ul>" +
+                "<li>isRegistered : false</li>" +
+                "<li>accessToken : null</li>" +
+                "<li>userId : 카카오 이메일</li>" +
+                "<li>name : 카카오 이름</li>" +
+                "<li>phone : 카카오 휴대폰 번호</li>" +
+                "<li>gender : 카카오 성별</li>" +
+            "</ul>" +
+            "<hr/>" +
+            "<h2>웹 방식과의 차이점</h2>" +
+            "<ul>" +
+                "<li><strong>웹 방식 : </strong>카카오에서 인가 코드(code)를 받아 서버에서 Access Token을 발급받음</li>" +
+                "<li><strong>모바일 방식 : </strong>Flutter에서 직접 Access Token을 받아 서버로 전송</li>" +
+                "<li><strong>공통점 : </strong>동일한 사용자 정보 조회 및 로그인 처리 로직 사용</li>" +
+            "</ul>" +
+            "<hr/>" +
+            "<p><strong>엔드포인트 :</strong> POST /v1/auth/login/kakao/mobile</p>")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인 성공 또는 회원가입 정보 반환"),
+            @ApiResponse(responseCode = "400", ref = "AUTH_METHOD_CONFLICT"),
+            @ApiResponse(responseCode = "403-1", ref = "USER_SUSPENDED"),
+            @ApiResponse(responseCode = "403-2", ref = "USER_WITH_DRAWN"),
+            @ApiResponse(responseCode = "409", ref = "USER_PHONE_NUMBER_DUPLICATION"),
+    })
+    public ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakaoForMobile(@RequestBody KakaoAccessTokenReqDTO accessTokenReqDTO, HttpServletResponse response);
 
 
     @Operation(
