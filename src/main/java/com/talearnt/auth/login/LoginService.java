@@ -135,5 +135,16 @@ public class LoginService {
         return userInfo;
     }
 
+    public void logout(HttpServletResponse response) {
+        ResponseCookie expiredCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .build();
+        response.setHeader(HttpHeaders.SET_COOKIE, expiredCookie.toString());
+    }
+
 
 }

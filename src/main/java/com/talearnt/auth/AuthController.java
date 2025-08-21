@@ -114,15 +114,7 @@ public class AuthController implements AuthApi{
 
     @PostMapping("/auth/logout")
     public ResponseEntity<CommonResponse<Void>> logout(HttpServletResponse response) {
-        // refreshToken 쿠키 만료 처리
-        ResponseCookie expiredCookie = ResponseCookie.from("refreshToken", "")
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("None")
-                .path("/")
-                .maxAge(0)
-                .build();
-        response.setHeader(HttpHeaders.SET_COOKIE, expiredCookie.toString());
+        loginService.logout(response);
         return CommonResponse.success(null);
     }
 

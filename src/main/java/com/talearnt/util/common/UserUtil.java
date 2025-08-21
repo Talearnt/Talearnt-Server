@@ -54,29 +54,10 @@ public class UserUtil {
             log.error("유저 아이디 찾기 문자 전송 실패 - 정지된 회원 : {}",ErrorCode.USER_SUSPENDED);
             throw new CustomRuntimeException(ErrorCode.USER_SUSPENDED);
         } else if (authority.equals("ROLE_WITHDRAWN")) {
-            log.error("유저 아이디 찾기 문자 전송 실패 - 탈퇴한 회원 : {}",ErrorCode.USER_NOT_FOUND);
-            throw new CustomRuntimeException(ErrorCode.USER_NOT_FOUND);
+            log.error("유저 아이디 찾기 문자 전송 실패 - 탈퇴한 회원 : {}",ErrorCode.USER_WITH_DRAWN);
+            throw new CustomRuntimeException(ErrorCode.USER_WITH_DRAWN);
         }
     }
-
-
-    /**휴대폰 번호 중복 확인하는 메소드*/
-    public static void validatePhoneDuplication(UserRepository userRepository, String phone){
-        if(userRepository.existsByPhone(phone)){ // 해당 휴대폰으로 가입한 이력이 있으면 발생
-            log.error("휴대폰 번호 중복으로 인한 문자 전송 실패 : {} ",ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
-            throw new CustomRuntimeException(ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
-        }
-    }
-
-    /** 회원 가입 시 아이디 중복 체크*/
-    public static void validateDuplicateUserId(UserRepository userRepository,String userId){
-        //유저 ID가 있을 경우에 회원 가입 실패
-        if (userRepository.existsByUserId(userId)) {
-            log.error("아이디 중복으로 인한 회원 가입 실패 : {} ",ErrorCode.DUPLICATE_USER_ID);
-            throw new CustomRuntimeException(ErrorCode.DUPLICATE_USER_ID);
-        }
-    }
-
 
     /**
      * User의 닉네임을 랜덤하게 만들어 반환하는 메소드입니다.
