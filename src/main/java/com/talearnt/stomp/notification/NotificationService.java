@@ -257,7 +257,7 @@ public class NotificationService {
 
             //알림 로그 저장
             Notification notification = NotificationMapper.INSTANCE.toNotificationFromExchangePost(exchangePostInfo.getUserNo(), user.getUserNo(),
-                    postNo, receiveTalentNos,NotificationType.INTERESTING_KEYWORD);
+                    postNo, exchangePostInfo.getPostTitle(), receiveTalentNos,NotificationType.INTERESTING_KEYWORD);
 
             //알림 엔티티를 리스트에 추가
             notifications.add(notification);
