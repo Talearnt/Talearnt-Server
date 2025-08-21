@@ -139,5 +139,56 @@ public class KakaoLoginService {
                 .block();
     }
 
+    /** Flutter용 모바일 카카오 로그인 : Flutter에서 받은 Access Token을 가지고 회원인지, 비회원인지 판단<br>
+     * 회원이면 어세스 토큰 발급,<br>
+     * 비회원이면 회원가입 정보 반환.<br>
+     * @param kakaoAccessToken Flutter에서 받은 카카오 Access Token
+     * @param autoLogin 자동 로그인 여부
+     * @param response RefreshToken Cookie 사용을 위해*/
+    public KakaoLoginResDTO loginKakaoForMobile(String kakaoAccessToken, boolean autoLogin, HttpServletResponse response){
+        log.info("Flutter 모바일 카카오톡 로그인 서비스 시작");
+
+        //카카오톡에서 받은 Access Token으로 유저 정보 추출
+        KakaoUserInfoResDTO kakaoUserInfoResDTO = getKakaoUserInfo(kakaoAccessToken);
+        log.info("KAKAO USER INFO : {} ",kakaoUserInfoResDTO);
+
+        //회원 가입 유무 판단
+        Optional<User> optionalUser = userRepository.findByUserId(kakaoUserInfoResDTO.getKakaoAccount().getEmail());
+
+        //없으면 결과값 리턴
+        if (optionalUser.isEmpty()){
+            //반환할 객체 생성
+            KakaoLoginResDTO resDTO= new KakaoLoginResDTO(false,
+                    kakaoUserInfoResDTO.getKakaoAccount().getEmail(),
+                    kakaoUserInfoResDTO.getKakaoAccount().getName(),
+                    kakaoUserInfoResDTO.getKakaoAccount().getPhoneNumber(),
+                    kakaoUserInfoResDTO.getKakaoAccount().getGender());
+
+            // 휴대폰 중복인지 확인
+            if (userRepository.existsByPhone(resDTO.getPhone())){
+                log.error("카카오톡 로그인 서비스 실패 - 동일한 휴대폰 번호 존재 : {}",ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
+                throw new CustomRuntimeException(ErrorCode.USER_PHONE_NUMBER_DUPLICATION);
+            }
+
+            log.info("Flutter 모바일 카카오톡 로그인 서비스 실패 - 해당 유저는 회원가입 하지 않음: {}", ErrorCode.USER_NOT_FOUND);
+            return resDTO;
+        }
+
+        //자사 JWT 토큰 설정
+        //User Last Login Time 업데이트
+        User user = optionalUser.get();
+
+        //회원가입을 이미 했지만, 카카오톡이 아닌 네이버나 자사로 회원가입을 했을 경우
+        LoginUtil.validateJoinType(user,"카카오톡");
+
+        // 정지 또는 탈퇴 회원 인지 유저 권환 확인
+        UserUtil.validateUserRole("Flutter 모바일 카카오톡 로그인 서비스 시작",user);
+
+        //인증 후 RefreshToken 발급
+        UserInfo userInfo = loginService.checkLoginValueAndSetRefreshToekn(user,autoLogin,response);
+
+        log.info("Flutter 모바일 카카오톡 로그인 서비스 끝");
+        return new KakaoLoginResDTO(true,jwtTokenUtil.createJwtToken(userInfo));
+    }
 
 }

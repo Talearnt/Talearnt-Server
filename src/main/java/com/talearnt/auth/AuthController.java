@@ -8,6 +8,7 @@ import com.talearnt.auth.join.request.KakaoJoinReqDTO;
 import com.talearnt.auth.login.KakaoLoginService;
 import com.talearnt.auth.login.LoginService;
 import com.talearnt.auth.login.company.LoginReqDTO;
+import com.talearnt.auth.login.kakao.KakaoAccessTokenReqDTO;
 import com.talearnt.auth.login.kakao.KakaoLoginResDTO;
 import com.talearnt.auth.find.AuthFindService;
 import com.talearnt.auth.find.reponse.AuthFindResDTO;
@@ -22,6 +23,8 @@ import com.talearnt.util.valid.DynamicValid;
 import com.talearnt.util.version.RestControllerV1;
 import com.talearnt.auth.verification.VerificationReqDTO;
 import com.talearnt.auth.verification.VerificationService;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -97,9 +100,16 @@ public class AuthController implements AuthApi{
     }
 
 
+    //웹 방식 카카오 로그인
     @GetMapping("/auth/login/kakao")
     public ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakao(@RequestParam("code")String code, HttpServletResponse response) {
         return CommonResponse.success(kakaoLoginService.loginKakao(code,response));
+    }
+
+    //모바일 방식 카카오 로그인
+    @PostMapping("/auth/login/kakao/mobile")
+    public ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakaoForMobile(@RequestBody KakaoAccessTokenReqDTO accessTokenReqDTO, HttpServletResponse response){
+        return CommonResponse.success(kakaoLoginService.loginKakaoForMobile(accessTokenReqDTO.getKakaoAccessToken(), accessTokenReqDTO.isAutoLogin(), response));
     }
 
     @PostMapping("/auth/logout")
