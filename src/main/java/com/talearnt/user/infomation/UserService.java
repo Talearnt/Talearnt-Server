@@ -1,5 +1,6 @@
 package com.talearnt.user.infomation;
 
+import com.talearnt.auth.login.LoginService;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.common.Regex;
 import com.talearnt.user.infomation.entity.User;
@@ -8,13 +9,21 @@ import com.talearnt.user.infomation.repository.UserRepository;
 import com.talearnt.user.infomation.request.TestChangePwdReqDTO;
 import com.talearnt.user.infomation.response.UserActivityCountsResDTO;
 import com.talearnt.user.infomation.response.UserHeaderResDTO;
-import com.talearnt.user.talent.MyTalentService;
+import com.talearnt.user.infomation.request.WithdrawalRequestDTO;
+import com.talearnt.user.infomation.response.WithdrawalCompletionResponseDTO;
+import com.talearnt.enums.user.UserRole;
+import com.talearnt.s3.S3Service;
+import com.talearnt.stomp.firebase.repository.FcmTokenRepository;
+import com.talearnt.stomp.notification.repository.NotificationSettingRepository;
+import com.talearnt.user.talent.repository.MyTalentRepository;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
+import com.talearnt.user.talent.MyTalentService;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.log.LogRunningTime;
 import com.talearnt.util.response.CommonResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,8 +32,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Log4j2
 @Service
@@ -39,6 +50,11 @@ public class UserService {
     private final UserQueryRepository userQueryRepository;
     private final MyTalentQueryRepository myTalentQueryRepository;
     private final MyTalentService myTalentService;
+    private final S3Service s3Service;
+    private final FcmTokenRepository fcmTokenRepository;
+    private final NotificationSettingRepository notificationSettingRepository;
+    private final MyTalentRepository myTalentRepository;
+    private final LoginService loginService;
 
     /**
      * FE에서 회원이 사용할 기본 정보와 키워드 설정이 되어 있는지 확인하는 값이 담겨있는 DTO를 반환한다.<br>
@@ -151,5 +167,81 @@ public class UserService {
 
         log.info("회원 활동 카운트 조회 끝");
         return activityCounts;
+    }
+
+    /**
+     * 회원 탈퇴를 처리합니다.
+     */
+    @Transactional
+    @LogRunningTime
+    public WithdrawalCompletionResponseDTO processWithdrawal(HttpServletResponse response, UserInfo userInfo, WithdrawalRequestDTO request) {
+        log.info("회원 탈퇴 처리 시작 : {}", userInfo.getUserId());
+        
+        // 사용자 정보 조회
+        User user = userRepository.findByUserNo(userInfo.getUserNo())
+                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
+        
+        // 이미 탈퇴한 사용자인지 확인
+        if (user.getIsWithdrawn() != null && user.getIsWithdrawn()) {
+            throw new CustomRuntimeException(ErrorCode.USER_WITH_DRAWN);
+        }
+        
+        // 탈퇴 사유들을 쉼표로 구분하여 저장
+        String withdrawalReasonCodes = String.join(",", request.getWithdrawalReasons());
+        
+        // 탈퇴 정보 저장
+        user.setWithdrawalReasonCodes(withdrawalReasonCodes);
+        user.setWithdrawalReason(request.getDetailedReason());
+        user.setWithdrawnAt(LocalDateTime.now());
+        user.setIsWithdrawn(true);
+        user.setAuthority(UserRole.ROLE_WITHDRAWN);
+        
+        // 닉네임 중복 방지를 위해 원래 닉네임을 저장하고 새로운 닉네임 생성
+        String originalNickname = user.getNickname();
+        user.setWithdrawnNickname(originalNickname);
+        user.setNickname("탈퇴회원_" + System.currentTimeMillis());
+
+        // 아이디 중복 방지를 위해 원래 아이디를 저장하고 새로운 아이디 생성
+        String originalUserId = user.getUserId();
+        user.setWidthdrawnUserId(originalUserId);
+        user.setUserId("withdrawn_" + System.currentTimeMillis());
+
+        // 휴대폰 번호 중복 방지를 위해 원래 휴대폰 번호를 저장하고 새로운 번호 생성
+        String originalPhone = user.getPhone();
+        user.setWithdrawnPhoneNumber(originalPhone);
+        user.setPhone("");
+
+        
+        // 프로필 이미지가 있다면 S3에서 삭제
+        if (user.getProfileImg() != null && !user.getProfileImg().isEmpty()) {
+            try {
+                s3Service.deleteFiles(Set.of(user.getProfileImg()));
+            } catch (Exception e) {
+                log.warn("프로필 이미지 삭제 실패: {}", e.getMessage());
+            }
+        }
+        
+        // FCM 토큰 삭제
+        fcmTokenRepository.deleteByUserNo(user.getUserNo());
+        
+        // 알림 설정 삭제
+        notificationSettingRepository.deleteByUserUserNo(user.getUserNo());
+        
+        // 재능 키워드 삭제
+        myTalentRepository.deleteByUserUserNo(user.getUserNo());
+        
+        // 사용자 정보 저장
+        userRepository.save(user);
+
+        //로그아웃 처리
+        loginService.logout(response);
+
+        log.info("회원 탈퇴 처리 완료 : {}", userInfo.getUserId());
+        
+        // 탈퇴 완료 응답 생성
+        return WithdrawalCompletionResponseDTO.builder()
+                .userId(user.getUserId())
+                .withdrawnAt(user.getWithdrawnAt())
+                .build();
     }
 }
