@@ -84,7 +84,12 @@ jobs:
             docker stop talearnt-server || true
             docker rm talearnt-server || true
             docker pull ${{ steps.login-ecr.outputs.registry }}/talearnt-server:latest
-            docker run -d --name talearnt-server -e FIREBASE_ENABLED=true -p 80:80 ${{ steps.login-ecr.outputs.registry }}/talearnt-server:latest
+            docker run -d \
+              --name talearnt-server \
+              -e FIREBASE_ENABLED=true \
+              -v /home/ubuntu/firebaseServiceAccountKey.json:/app/firebaseServiceAccountKey.json \
+              -p 80:80 \
+              ${{ steps.login-ecr.outputs.registry }}/talearnt-server:latest
 
       - name: GitHub Actions IP 삭제
         run: |

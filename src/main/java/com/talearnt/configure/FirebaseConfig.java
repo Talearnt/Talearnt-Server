@@ -3,9 +3,12 @@ package com.talearnt.configure;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -27,24 +30,39 @@ public class FirebaseConfig {
     /**
      * Firebase Admin SDK 초기화
      */
+    @Value("${firebase.service-account-file:/app/firebaseServiceAccountKey.json}")
+    private String serviceAccountFile;
+
     @PostConstruct
     public void initializeFirebase() {
-        log.info("Firebase Admin SDK 초기화 준비 중...");
+        log.info("Firebase Admin SDK 초기화 준비 중... : {}", serviceAccountFile);
         try {
+            File file = new File(serviceAccountFile);
+            log.info("Firebase Admin SDK 파일 경로: {}", file.getAbsolutePath());
+            if (!file.exists()) {
+                log.warn("JSON 파일이 존재하지 않습니다. Firebase Admin SDK 초기화를 건너뜁니다.");
+                return;
+            }
+
             // 이미 초기화된 Firebase 앱이 있는지 확인
             if (FirebaseApp.getApps().isEmpty()) {
-                InputStream serviceAccount = new ClassPathResource("firebaseServiceAccountKey.json").getInputStream();
-                
-                FirebaseOptions options = FirebaseOptions.builder()
-                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                        .build();
+                try (FileInputStream serviceAccount = new FileInputStream(file)) {
+                    FirebaseOptions options = FirebaseOptions.builder()
+                            .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                            .build();
 
-                FirebaseApp.initializeApp(options);
-                log.info("Firebase Admin SDK 초기화 완료");
+                    if (FirebaseApp.getApps().isEmpty()) {
+                        FirebaseApp.initializeApp(options);
+                        log.info("Firebase Admin SDK 초기화 완료");
+                    }
+                } catch (Exception e) {
+                    log.error("Firebase Admin SDK 초기화 중 오류 발생: {}", e.getMessage());
+                    throw new CustomRuntimeException(ErrorCode.FIREBASE_CANNOT_SETTING);
+                }
             } else {
                 log.info("Firebase Admin SDK가 이미 초기화되어 있습니다.");
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Firebase Admin SDK 초기화 실패: {}", ErrorCode.FIREBASE_CANNOT_SETTING);
             throw new CustomRuntimeException(ErrorCode.FIREBASE_CANNOT_SETTING);
         }
