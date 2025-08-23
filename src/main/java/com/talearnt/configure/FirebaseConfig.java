@@ -34,7 +34,7 @@ public class FirebaseConfig {
         try {
             // 이미 초기화된 Firebase 앱이 있는지 확인
             if (FirebaseApp.getApps().isEmpty()) {
-                InputStream serviceAccount = new ClassPathResource("./src/main/resources/firebaseServiceAccountKey.json").getInputStream();
+                InputStream serviceAccount = new ClassPathResource("firebaseServiceAccountKey.json").getInputStream();
                 
                 FirebaseOptions options = FirebaseOptions.builder()
                         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
