@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
@@ -19,6 +20,7 @@ import com.talearnt.util.exception.CustomRuntimeException;
 /**
  * Firebase Admin SDK 설정을 위한 Configuration 클래스
  */
+@ConditionalOnProperty(value = "firebase.enabled", havingValue = "true", matchIfMissing = true)
 @Configuration
 @Log4j2
 public class FirebaseConfig {
