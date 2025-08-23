@@ -25,7 +25,8 @@ jobs:
         run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
 
       - name: FCM Service Account 생성
-        run: echo "${{ secrets.FCM_KEY }}" > ./src/main/resources/firebaseServiceAccountKey.json
+        run: |
+          printf '%s\n' "${{ secrets.FCM_KEY }}" > /home/ubuntu/firebaseServiceAccountKey.json
 
       - name: Gradle 실행 권한 생성
         run: chmod +x ./gradlew
