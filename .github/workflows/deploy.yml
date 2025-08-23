@@ -87,7 +87,6 @@ jobs:
             docker run -d \
               --name talearnt-server \
               -e FIREBASE_ENABLED=true \
-              -v /home/ubuntu/firebaseServiceAccountKey.json:/app/firebaseServiceAccountKey.json \
               -p 80:80 \
               ${{ steps.login-ecr.outputs.registry }}/talearnt-server:latest
 
