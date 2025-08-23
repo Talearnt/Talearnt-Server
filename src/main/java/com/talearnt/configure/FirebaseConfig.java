@@ -30,7 +30,7 @@ public class FirebaseConfig {
     /**
      * Firebase Admin SDK 초기화
      */
-    @Value("${firebase.service-account-file:/app/firebaseServiceAccountKey.json}")
+    @Value("${firebase.service-account-file:firebaseServiceAccountKey.json}")
     private String serviceAccountFile;
 
     @PostConstruct
