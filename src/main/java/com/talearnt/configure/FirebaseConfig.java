@@ -1,11 +1,11 @@
 package com.talearnt.configure;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
@@ -14,6 +14,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.util.exception.CustomRuntimeException;
+
 
 /**
  * Firebase Admin SDK 설정을 위한 Configuration 클래스
@@ -27,10 +28,9 @@ public class FirebaseConfig {
     /**
      * Firebase Admin SDK 초기화
      */
+    @PostConstruct
     public void initializeFirebase() {
         log.info("Firebase Admin SDK 초기화 준비 중...");
-
-        
         try {
             // 이미 초기화된 Firebase 앱이 있는지 확인
             if (FirebaseApp.getApps().isEmpty()) {
