@@ -2,6 +2,8 @@
 FROM eclipse-temurin:17-jdk-alpine
 
 # jar 파일, 컨테이너 최상위 경로로 복사
+COPY src/main/resources/firebaseServiceAccountKey.json /app/firebaseServiceAccountKey.json
+
 COPY build/libs/*SNAPSHOT.jar /app.jar
 
 # Docker 시간대 설정

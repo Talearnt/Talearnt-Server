@@ -20,13 +20,10 @@ import com.talearnt.util.exception.CustomRuntimeException;
 /**
  * Firebase Admin SDK 설정을 위한 Configuration 클래스
  */
-@ConditionalOnProperty(value = "firebase.enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(value = "firebase.enabled", havingValue = "true", matchIfMissing = true)
 @Configuration
 @Log4j2
 public class FirebaseConfig {
-
-
-
     /**
      * Firebase Admin SDK 초기화
      */
