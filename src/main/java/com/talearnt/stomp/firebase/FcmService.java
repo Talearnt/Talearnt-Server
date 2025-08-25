@@ -1,9 +1,6 @@
 package com.talearnt.stomp.firebase;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.stomp.firebase.entity.FireBaseCloudMessage;
 import com.talearnt.stomp.firebase.repository.FcmTokenQueryRepository;
@@ -127,7 +124,22 @@ public class FcmService {
                        .setTitle(title)
                        .setBody(body)
                        .build());
+
+        //안드로이드 설정
+        AndroidNotification androidNotification = AndroidNotification.builder()
+                .setChannelId("default_channel")
+                .build();
+
+        //안드로이드 우선 순위 설정
+        AndroidConfig androidConfig = AndroidConfig.builder()
+                .setNotification(androidNotification)
+                .setPriority(AndroidConfig.Priority.HIGH)
+                .build();
+
+        //메세지 빌더에 안드로이드 설정 추가
+        messageBuilder.setAndroidConfig(androidConfig);
         
+
         //추가 데이터 설정
         if (data != null && !data.isEmpty()) {
             messageBuilder.putAllData(data);
