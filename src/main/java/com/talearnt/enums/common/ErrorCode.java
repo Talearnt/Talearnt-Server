@@ -138,6 +138,7 @@ public enum ErrorCode {
     FIREBASE_CANNOT_SETTING("500-FIREBASE-01", "Firebase SDK 설정에 실패했습니다."),
     FIREBASE_CANNOT_SAVE_TOKEN("400-FIREBASE-02","Firebase Token을 저장하지 못했습니다."),
     FIREBASE_FAILED_SEND_MSG("500-FIREBASE-03","FCM으로 알림을 전송하지 못했습니다."),
+    FIREBASE_CANNOT_DELETE_TOKEN("400-FIREBASE-04","Firebase Token을 삭제하지 못했습니다."),
     //서버 오류
     ILLEGAL_ARGUMENT_EXCEPTION("400-SERVER-01", "잘못된 값을 입력하셨습니다. 입력 값을 확인하세요."),
 
