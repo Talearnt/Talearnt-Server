@@ -60,4 +60,37 @@ public interface FireBaseApi {
     })
     public ResponseEntity<CommonResponse<String>> saveFcmToken(@RequestBody @Valid FcmTokenReqDTO requestDTO);
 
+    @Operation(summary = "FCM 토큰 삭제",
+            description = "<h2>내용</h2>" +
+                    "<p>사용자의 FCM 토큰을 삭제합니다.</p>" +
+                    "<p>FCM 토큰과 동일한 토큰을 삭제합니다.</p>" +
+                    "<hr>" +
+                    "<h2>Request</h2>" +
+                    "<ul>" +
+                    "<li>fcmToken : FCM 토큰 (필수) - Firebase에서 발급받은 고유 토큰</li>" +
+                    "<li>deviceIdentifier : 디바이스 식별자 (선택) - 디바이스를 구분하기 위한 고유 식별자</li>" +
+                    "<li>deviceInfo : 디바이스 정보 (선택) - 디바이스 모델명, OS 버전 등</li>" +
+                    "</ul>" +
+                    "<hr>" +
+                    "<h2>동작 방식</h2>" +
+                    "<ol>" +
+                        "<li>사용자 인증 확인 (JWT 토큰 검증)</li>" +
+                        "<li>기존 디바이스 토큰 존재 여부 확인</li>" +
+                        "<li>기존 토큰이 있으면 삭제, 없으면 Exception 발생</li>" +
+                    "</ol>" +
+                    "<hr>" +
+                    "<h2>사용 시나리오</h2>" +
+                    "<ul>" +
+                        "<li>로그아웃할 경우 해당 FCM 토큰 삭제</li>" +
+                        "<li>앱 삭제 시 해당 기기의 FCM 토큰 삭제</li>" +
+                    "</ul>"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "FCM 토큰 삭제 성공"),
+            @ApiResponse(responseCode = "400", ref = "FIREBASE_FAILED_SEND_MSG"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
+            @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+    })
+    public ResponseEntity<CommonResponse<Void>> deleteFcmToken(@RequestBody @Valid FcmTokenReqDTO requestDTO);
 }
