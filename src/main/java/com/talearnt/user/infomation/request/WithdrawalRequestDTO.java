@@ -17,7 +17,6 @@ import java.util.List;
 @ToString
 public class WithdrawalRequestDTO {
     
-    @DynamicValid(errorCode = ErrorCode.WITHDRAWAL_REASON_EMPTY, minLength = 1)
     private List<String> withdrawalReasons; // 선택한 탈퇴 사유 텍스트들: ["서비스를 더 이상 이용하지 않아요", "오류가 너무 자주 발생해요"]
 
     @DynamicValid(errorCode = ErrorCode.WITHDRAWAL_REASON_DETAIL_LENGTH_OVER, maxLength = 500)
