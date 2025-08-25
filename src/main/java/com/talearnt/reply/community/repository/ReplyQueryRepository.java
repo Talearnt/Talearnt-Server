@@ -41,12 +41,12 @@ public class ReplyQueryRepository {
     public Optional<CommentNotificationDTO> getReplyNotification(Long replyNo) {
         return Optional.ofNullable(
                 factory.select(Projections.constructor(CommentNotificationDTO.class,
-                        reply.user.userNo,
-                        reply.user.nickname,
-                        reply.communityComment.user.userNo,
-                        reply.communityComment.user.userId,
-                        reply.communityComment.commentNo,
-                        reply.content))
+                                reply.user.userNo,
+                                reply.user.nickname,
+                                reply.communityComment.user.userNo,
+                                reply.communityComment.user.userId,
+                                communityPost.communityPostNo,
+                                reply.content))
                         .from(reply)
                         .innerJoin(comment).on(comment.commentNo.eq(reply.communityComment.commentNo),
                                 comment.deletedAt.isNull())
@@ -78,7 +78,7 @@ public class ReplyQueryRepository {
      * @param condition 검색 조건
      * @return Page<ReplyListResDTO>
      */
-    public Page<ReplyListResDTO> getReplies(Long commentNo,ReplySearchCondition condition) {
+    public Page<ReplyListResDTO> getReplies(Long commentNo, ReplySearchCondition condition) {
 
         List<ReplyListResDTO> data = factory.select(Projections.constructor(ReplyListResDTO.class,
                         reply.user.userNo,
@@ -114,10 +114,12 @@ public class ReplyQueryRepository {
                         ).fetchOne()
         ).orElse(0L);
 
-        return new PageImpl<>(data,condition.getPage(), total);
+        return new PageImpl<>(data, condition.getPage(), total);
     }
 
-    /** 내가 작성한 답글 목록 조회 - 웹 */
+    /**
+     * 내가 작성한 답글 목록 조회 - 웹
+     */
     public PagedListWrapper<MyRepliesResDTO> getMyRepliesToWeb(Long userNo, ReplySearchCondition condition) {
         List<MyRepliesResDTO> data = factory
                 .select(Projections.constructor(
@@ -145,10 +147,10 @@ public class ReplyQueryRepository {
                 .fetch();
 
         PagedData pagedData = factory.select(Projections.constructor(PagedData.class,
-                reply.countDistinct(),
-                Expressions.dateTemplate(LocalDateTime.class,
-                        "MAX({0})",
-                        reply.createdAt)))
+                        reply.countDistinct(),
+                        Expressions.dateTemplate(LocalDateTime.class,
+                                "MAX({0})",
+                                reply.createdAt)))
                 .from(reply)
                 .innerJoin(comment).on(comment.commentNo.eq(reply.communityComment.commentNo),
                         comment.deletedAt.isNull())
@@ -163,8 +165,10 @@ public class ReplyQueryRepository {
         return PagedListWrapper.<MyRepliesResDTO>builder().list(data).pagedData(pagedData).build();
 
     }
-    
-    /** 내가 작성한 답글 목록 조회 - 모바일*/
+
+    /**
+     * 내가 작성한 답글 목록 조회 - 모바일
+     */
     public Page<MyRepliesResDTO> getMyRepliesToMobile(Long userNo, ReplySearchCondition condition) {
         List<MyRepliesResDTO> content = factory
                 .select(Projections.constructor(
@@ -202,7 +206,6 @@ public class ReplyQueryRepository {
 
         return new PageImpl<>(content, condition.getPage(), total);
     }
-
 
 
     /***
