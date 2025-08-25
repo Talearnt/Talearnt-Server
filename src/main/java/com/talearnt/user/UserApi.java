@@ -380,7 +380,7 @@ public interface UserApi {
                     "<p>회원 탈퇴를 처리합니다. 탈퇴 후에는 모든 개인정보가 삭제되며 복구가 불가능합니다.</p>" +
                     "<h2>Request</h2>" +
                     "<ul>" +
-                        "<li>withdrawalReasons : 탈퇴 사유 텍스트 리스트 (최소 1개 이상)</li>" +
+                        "<li>withdrawalReasons : 탈퇴 사유 텍스트 리스트</li>" +
                         "<li>detailedReason : 상세 사유 (선택사항, 최대 500자)</li>" +
                     "</ul>" +
                     "<h2>Response</h2>" +
