@@ -52,4 +52,23 @@ public class FireBaseController implements FireBaseApi {
         }
     }
 
+    @DeleteMapping("/fcm/token")
+    public ResponseEntity<CommonResponse<Void>> deleteFcmToken(@RequestBody @Valid FcmTokenReqDTO requestDTO) {
+        log.info("FCM 토큰 삭제 요청: userNo={}, deviceIdentifier={}",
+                requestDTO.getUserInfo().getUserNo(), requestDTO.getDeviceIdentifier());
+
+        try {
+            fcmService.removeToken(requestDTO.getFcmToken());
+
+            log.info("FCM 토큰 삭제 완료: userNo={}, fcmToken={}",
+                    requestDTO.getUserInfo().getUserNo(), requestDTO.getFcmToken());
+
+            return CommonResponse.success(null);
+
+        } catch (Exception e) {
+            log.error("FCM 토큰 삭제 실패: {}", ErrorCode.FIREBASE_CANNOT_DELETE_TOKEN);
+            throw new CustomRuntimeException(ErrorCode.FIREBASE_CANNOT_DELETE_TOKEN);
+        }
+    }
+
 }
