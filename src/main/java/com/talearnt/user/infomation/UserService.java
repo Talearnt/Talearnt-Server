@@ -240,7 +240,7 @@ public class UserService {
         
         // 탈퇴 완료 응답 생성
         return WithdrawalCompletionResponseDTO.builder()
-                .userId(user.getUserId())
+                .userId(userInfo.getUserId())
                 .withdrawnAt(user.getWithdrawnAt())
                 .build();
     }
