@@ -54,7 +54,7 @@ public class UserInfo implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return !(authority == UserRole.ROLE_WITHDRAWN || authority == UserRole.ROLE_SUSPENDED);
     }
 
 }
