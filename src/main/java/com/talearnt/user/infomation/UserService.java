@@ -203,8 +203,7 @@ public class UserService {
 
         // 아이디 중복 방지를 위해 원래 아이디를 저장하고 새로운 아이디 생성
         String originalUserId = user.getUserId();
-        user.setWidthdrawnUserId(originalUserId);
-        user.setUserId("withdrawn_" + System.currentTimeMillis());
+        user.setWidthdrawnUserId("withdrawn_" + System.currentTimeMillis());
 
         // 휴대폰 번호 중복 방지를 위해 원래 휴대폰 번호를 저장하고 새로운 번호 생성
         String originalPhone = user.getPhone();
