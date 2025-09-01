@@ -428,6 +428,12 @@ public class ExchangePostQueryRepository {
         return new PageImpl<>(data, condition.getPage(), total);
     }
 
+    public long updateExchangePostStatus(Long postNo, ExchangePostStatus status) {
+        return factory.update(exchangePost)
+                .set(exchangePost.status, status)
+                .where(exchangePost.exchangePostNo.eq(postNo))
+                .execute();
+    }
 
     /**
      * 재능 교환 목록 Select 공통 사용 함수

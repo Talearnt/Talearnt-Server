@@ -8,6 +8,7 @@ import com.talearnt.chat.entity.ChatRoom;
 import com.talearnt.chat.repository.ChatRoomRepository;
 import com.talearnt.enums.chat.RoomMode;
 import com.talearnt.enums.common.ErrorCode;
+import com.talearnt.enums.post.ExchangePostStatus;
 import com.talearnt.enums.post.PostType;
 import com.talearnt.post.exchange.entity.ExchangePost;
 import com.talearnt.post.exchange.entity.GiveTalent;
@@ -26,7 +27,9 @@ import com.talearnt.util.common.PostUtil;
 import com.talearnt.util.common.S3Util;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.filter.UserRequestLimiter;
 import com.talearnt.util.jwt.UserInfo;
+import com.talearnt.util.log.LogRunningTime;
 import com.talearnt.util.pagination.PagedListWrapper;
 import com.talearnt.util.response.PaginatedResponse;
 import jakarta.transaction.Transactional;
@@ -35,6 +38,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +56,9 @@ public class ExchangePostService {
 
     //JdbcTemplate
     private final JdbcTemplate jdbcTemplate;
+
+    //Async Limiter
+    private final UserRequestLimiter limiter;
 
     //Repositories
     private final ExchangePostQueryRepository exchangePostQueryRepository;
@@ -453,5 +460,31 @@ public class ExchangePostService {
         return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToMobile(result));
     }
 
+
+    @Async
+    @Transactional
+    @LogRunningTime
+    public void patchExchangePostStatus(Long postNo, ExchangePostStatus status, Authentication auth) {
+        //로그인 여부 확인
+        UserInfo userInfo = UserUtil.validateAuthentication("재능교환 게시글 상태 변경", auth);
+
+        if (!limiter.isAllowed(userInfo.getUserNo())){
+            log.error("재능 교환 게시글 상태 변경 실패 - 요청 제한 초과 : {} - {}",userInfo.getUserNo(), ErrorCode.TOO_MANY_REQUESTS);
+            throw new CustomRuntimeException(ErrorCode.TOO_MANY_REQUESTS);
+        }
+
+        //나의 게시글이 맞는가?
+        if(!exchangePostQueryRepository.isMyExchangePost(postNo, userInfo.getUserNo())){
+            log.error("재능 교환 게시글 상태 변경 실패 - 내 게시글이 아님 : {} - {}",postNo,ErrorCode.POST_ACCESS_DENIED);
+            throw new CustomRuntimeException(ErrorCode.POST_ACCESS_DENIED);
+        }
+
+        //게시글 상태 변경
+        long updatedCount = exchangePostQueryRepository.updateExchangePostStatus(postNo, status);
+        if (updatedCount != 1){
+            log.error("재능 교환 게시글 상태 변경 실패 - 변경된 게시글이 0개 또는 여러 개입니다 : {}",ErrorCode.POST_FAILED_UPDATE);
+            throw new CustomRuntimeException(ErrorCode.POST_FAILED_UPDATE);
+        }
+    }
 
 }

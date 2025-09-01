@@ -3,6 +3,7 @@ package com.talearnt.post.exchange;
 
 import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
+import com.talearnt.post.exchange.request.ExchangePostStatusReqDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.stomp.notification.NotificationService;
@@ -84,6 +85,13 @@ public class ExchangePostController implements ExchangePostApi{
     @DeleteMapping("/posts/exchanges/{postNo}")
     public ResponseEntity<CommonResponse<String>> deleteExchangePost(@PathVariable Long postNo, Authentication auth){
         return CommonResponse.success(exchangePostService.deleteExchangePost(postNo, auth));
+    }
+
+    public ResponseEntity<CommonResponse<Void>> patchExchangePostStatus(@PathVariable Long postNo,
+                                                                        @RequestBody ExchangePostStatusReqDTO exchangePostStatusReqDTO,
+                                                                        Authentication auth) {
+        exchangePostService.patchExchangePostStatus(postNo, exchangePostStatusReqDTO.getStatus(), auth);
+        return CommonResponse.success(null);
     }
 
 }
