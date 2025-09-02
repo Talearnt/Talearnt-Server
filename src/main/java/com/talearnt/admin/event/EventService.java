@@ -1,11 +1,16 @@
 package com.talearnt.admin.event;
 
 
+import com.talearnt.admin.event.entity.Event;
 import com.talearnt.admin.event.repository.EventQueryRepository;
+import com.talearnt.admin.event.repository.EventRepository;
+import com.talearnt.admin.event.response.EventDetailResDTO;
 import com.talearnt.admin.event.response.EventListResDTO;
 import com.talearnt.admin.notice.response.NoticeListResDTO;
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.util.common.PageUtil;
 import com.talearnt.util.common.PostUtil;
+import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.pagination.PagedListWrapper;
 import com.talearnt.util.response.PaginatedResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +28,7 @@ import java.util.List;
 public class EventService {
 
     private final EventQueryRepository eventQueryRepository;
+    private final EventRepository eventRepository;
 
     public PaginatedResponse<List<EventListResDTO>> getEventList(String path, String page, String size) {
         log.info("이벤트 목록 불러오기 시작 : path - {}, page - {}, size - {}", path, page, size);
@@ -44,6 +50,28 @@ public class EventService {
 
         log.info("이벤트 목록 불러오기 완료 - 모바일");
         return new PaginatedResponse<>(result.getContent(), PageUtil.separatePaginationFromEntityToMobile(result));
+    }
+
+    public EventDetailResDTO getEventDetail(Long eventNo) {
+        log.info("이벤트 상세 보기 조회 시작 - eventNo : {}", eventNo);
+
+        Event event = eventRepository.findById(eventNo).orElseThrow(() -> {
+            log.error("이벤트 상세 보기 조회 실패 - 존재하지 않는 이벤트 게시글 번호: {}", eventNo);
+            return new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
+        });
+
+        EventDetailResDTO eventDetailResDTO = EventDetailResDTO.builder()
+                .eventNo(event.getEventNo())
+                .content(event.getContent())
+                .bannerUrl(event.getBannerUrl())
+                .startDate(event.getStartDate())
+                .endDate(event.getEndDate())
+                .createdAt(event.getCreatedAt())
+                .isActive(event.getIsActive())
+                .build();
+
+        log.info("이벤트 상세 보기 조회 끝 - result : {}", eventDetailResDTO);
+        return eventDetailResDTO;
     }
 
 }
