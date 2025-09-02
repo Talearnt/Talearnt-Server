@@ -2,6 +2,7 @@ package com.talearnt.post.exchange;
 
 import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
+import com.talearnt.post.exchange.request.ExchangePostStatusReqDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
 import com.talearnt.post.exchange.response.ExchangePostListResDTO;
 import com.talearnt.user.talent.response.MyTalentsResDTO;
@@ -262,6 +263,24 @@ public interface ExchangePostApi {
     })
     public ResponseEntity<CommonResponse<String>> deleteExchangePost(@PathVariable Long postNo, Authentication auth);
 
+    @Operation(summary = "재능 교환 게시글 상태(모집) 변경",
+            description = "<h2>내용</h2>" +
+                    "<p>재능 교환 게시글 상태 변경입니다.</p>" +
+                    "<p>모집중, 모집 완료 상태로 변경 가능합니다.</p>" +
+                    "<hr>" +
+                    "<h2>비동기 방식 요청 제한</h2>" +
+                    "<p>1분에 최대 1개의 요청을 보낼 수 있습니다.</p>"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", ref = "POST_FAILED_UPDATE"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
+            @ApiResponse(responseCode = "403", ref = "POST_ACCESS_DENIED"),
+            @ApiResponse(responseCode = "429", ref = "TOO_MANY_REQUESTS")
+    })
+    public ResponseEntity<CommonResponse<Void>> patchExchangePostStatus(@PathVariable Long postNo,
+                                                                        @RequestBody ExchangePostStatusReqDTO exchangePostStatusReqDTO,
+                                                                        Authentication auth);
 
 }
 

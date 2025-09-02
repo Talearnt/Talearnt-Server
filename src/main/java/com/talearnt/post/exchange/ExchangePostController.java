@@ -87,6 +87,7 @@ public class ExchangePostController implements ExchangePostApi{
         return CommonResponse.success(exchangePostService.deleteExchangePost(postNo, auth));
     }
 
+    @PatchMapping("/posts/exchanges/{postNo}/status")
     public ResponseEntity<CommonResponse<Void>> patchExchangePostStatus(@PathVariable Long postNo,
                                                                         @RequestBody ExchangePostStatusReqDTO exchangePostStatusReqDTO,
                                                                         Authentication auth) {
