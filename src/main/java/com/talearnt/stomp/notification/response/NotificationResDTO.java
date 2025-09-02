@@ -48,7 +48,7 @@ public class NotificationResDTO {
         map.put("senderNickname", senderNickname != null ? senderNickname : "");
         map.put("targetNo", targetNo != null ? String.valueOf(targetNo) : "");
         map.put("content", content != null ? content : "");
-        map.put("notificationType", notificationType != null ? notificationType.name() : "");
+        map.put("notificationType", notificationType != null ? notificationType.getType() : "");
         map.put("talentCodes", talentCodes != null && !talentCodes.isEmpty() ? talentCodes.toString() : "");
         map.put("isRead", isRead != null ? String.valueOf(isRead) : "");
         map.put("unreadCount", String.valueOf(unreadCount));
