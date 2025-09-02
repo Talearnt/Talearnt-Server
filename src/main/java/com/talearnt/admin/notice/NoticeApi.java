@@ -72,9 +72,19 @@ public interface NoticeApi {
     @Operation(summary = "공지사항 작성",
             description = "<h2>내용</h2>" +
                     "<p>공지사항을 작성합니다.</p>" +
-                    "<p>로그인 필수이며 관리자 이상의 권한이 필요합니다.</p>")
+                    "<p>로그인 필수이며 관리자 이상의 권한이 필요합니다.</p>"+
+                    "<hr/>" +
+                    "<h2>Request</h2>" +
+                    "<ul>" +
+                        "<li>title : 제목 (최소 2자, 최대 50자 이상)</li>" +
+                        "<li>content : 내용 (최소 20자 이상)</li>" +
+                        "<li>noticeType : 공지사항 타입 (이벤트 당첨|공지|업데이트)</li>" +
+                    "</ul>"
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400-1", ref = "POST_TITLE_LENGTH_MISSING"),
+            @ApiResponse(responseCode = "400-2", ref = "POST_REQUEST_MISSING"),
             @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
             @ApiResponse(responseCode = "403", ref = "ACCESS_DENIED")
     })

@@ -1,5 +1,7 @@
 package com.talearnt.admin.event;
 
+import com.talearnt.admin.event.request.EventInsertReqDTO;
+import com.talearnt.admin.event.response.EventDetailResDTO;
 import com.talearnt.admin.event.response.EventListResDTO;
 import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.util.common.ClientPath;
@@ -9,6 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -51,4 +55,47 @@ public interface EventApi {
             @RequestParam(value = "size", required = false, defaultValue = "15") String size
     );
 
+
+    @Operation(summary = "이벤트 상세보기"
+            , description = "<h2>내용</h2>" +
+            "<p>이벤트를 상세 조회 합니다.</p>" +
+            "<hr/>" +
+            "<h2>Response</h2>" +
+            "<ul>" +
+                "<li>eventNo : 이벤트 번호</li>" +
+                "<li>content : 내용</li>" +
+                "<li>bannerUrl : 배너 이미지 URL</li>" +
+                "<li>startDate : 시작일시</li>" +
+                "<li>endDate : 종료일시</li>" +
+                "<li>createdAt : 작성 일자</li>" +
+                "<li>isActive : 진행중 여부</li>" +
+            "</ul>")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "404", ref = "POST_NOT_FOUND")
+    })
+    ResponseEntity<CommonResponse<EventDetailResDTO>> getEventDetail(@PathVariable Long eventNo);
+
+
+    @Operation(summary = "이벤트 작성"
+            , description = "<h2>내용</h2>" +
+            "<p>이벤트 게시글을 작성합니다.</p>" +
+            "<p>로그인 필수입니다.</p>" +
+            "<p>관리자 이상의 권한이 필요합니다.</p>" +
+            "<hr/>" +
+            "<h2>Request</h2>" +
+            "<ul>" +
+                "<li>content : 내용 (최소 20자 이상)</li>" +
+                "<li>bannerUrl : 배너 이미지 URL (S3에 올라간 URL)</li>" +
+                "<li>startDate : 시작일시 (Not Null)</li>" +
+                "<li>endDate : 종료일시 (Null 가능)</li>"+
+            "</ul>")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", ref = "POST_CONTENT_MIN_LENGTH"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
+            @ApiResponse(responseCode = "403", ref = "ACCESS_DENIED"),
+            @ApiResponse(responseCode = "415", ref = "FILE_UPLOAD_EXTENSION_MISMATCH")
+    })
+    ResponseEntity<CommonResponse<Void>> createEvent(@RequestBody EventInsertReqDTO insertReqDTO);
 }
