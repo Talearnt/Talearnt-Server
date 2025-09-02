@@ -11,7 +11,7 @@ public enum Regex {
     PHONE_NUMBER("^[0-9]{11}$"),
     PASSWORD("^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*()-_+=<>?]).{8,100}$"),
     GENDER("^(남자|여자)$"),
-    EXCHANGE_TPYE("^(온라인|오프라인|온/오프라인)$"),
+    EXCHANGE_TYPE("^(온라인|오프라인|온/오프라인)$"),
     EXCHANGE_DURATION("^(기간 미정|1개월|2개월|3개월|3개월 이상)$"),
     VERSION("^[0-9]+\\.[0-9]+$"),
     AUTH_CODE("^[0-9]{4}$"),
@@ -25,6 +25,7 @@ public enum Regex {
     FILE_TYPE("^(image/jpeg|image/png|image/tiff|application/pdf)$"),
     FILE_EXTENSION("(?i)^.*\\.(jpg|jpeg|png|tiff|jfif|pdf|webp|gif)$"),
     POST_TYPE("^(EXCHANGE|FREE|QUESTION|STUDY)$"),
-    NUMBER_TYPE_PRIMARY_KEY("^[0-9]$");
+    NUMBER_TYPE_PRIMARY_KEY("^[0-9]$"),
+    NOTICE_TYPE("^(공지|이벤트 당첨|업데이트)$"),;
     private final String pattern;
 }
