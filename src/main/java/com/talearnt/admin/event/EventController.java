@@ -1,5 +1,6 @@
 package com.talearnt.admin.event;
 
+import com.talearnt.admin.event.request.EventInsertReqDTO;
 import com.talearnt.admin.event.response.EventDetailResDTO;
 import com.talearnt.admin.event.response.EventListResDTO;
 import com.talearnt.enums.common.ClientPathType;
@@ -11,9 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,6 +34,12 @@ public class EventController implements EventApi{
     @GetMapping("/events/{eventNo}")
     public ResponseEntity<CommonResponse<EventDetailResDTO>> getEventDetail(@PathVariable Long eventNo){
         return CommonResponse.success(eventService.getEventDetail(eventNo));
+    }
+
+    @PostMapping("/events")
+    public ResponseEntity<CommonResponse<Void>> createEvent(@RequestBody EventInsertReqDTO insertReqDTO) {
+        eventService.createEvent(insertReqDTO);
+        return CommonResponse.success(null);
     }
 
 }
