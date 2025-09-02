@@ -269,7 +269,7 @@ public interface ExchangePostApi {
                     "<p>모집중, 모집 완료 상태로 변경 가능합니다.</p>" +
                     "<hr>" +
                     "<h2>비동기 방식 요청 제한</h2>" +
-                    "<p>1분에 최대 1개의 요청을 보낼 수 있습니다.</p>"
+                    "<p>1분에 최대 10개의 요청을 보낼 수 있습니다.</p>"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
