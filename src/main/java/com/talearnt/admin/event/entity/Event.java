@@ -36,7 +36,7 @@ public class Event {
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(nullable = true)
+    @Column
     private LocalDateTime updatedAt;
 
     @Column(nullable = false)
