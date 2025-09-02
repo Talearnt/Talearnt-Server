@@ -1,5 +1,7 @@
 package com.talearnt.admin.notice;
 
+import com.talearnt.admin.notice.request.NoticeInsertReqDTO;
+import com.talearnt.admin.notice.response.NoticeDetailResDTO;
 import com.talearnt.admin.notice.response.NoticeListResDTO;
 import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.util.common.ClientPath;
@@ -9,6 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -54,4 +58,26 @@ public interface NoticeApi {
             @RequestParam(value = "page", required = false, defaultValue = "1") String page,
             @RequestParam(value = "size", required = false, defaultValue = "15") String size
     );
+
+
+    @Operation(summary = "공지사항 상세 보기",
+            description = "<h2>내용</h2>" +
+                    "<p>공지사항 상세 정보를 조회합니다.</p>")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "404", ref = "POST_NOT_FOUND")
+    })
+    public ResponseEntity<CommonResponse<NoticeDetailResDTO>> getNoticeDetail(@PathVariable Long noticeNo);
+
+    @Operation(summary = "공지사항 작성",
+            description = "<h2>내용</h2>" +
+                    "<p>공지사항을 작성합니다.</p>" +
+                    "<p>로그인 필수이며 관리자 이상의 권한이 필요합니다.</p>")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
+            @ApiResponse(responseCode = "403", ref = "ACCESS_DENIED")
+    })
+    public ResponseEntity<CommonResponse<Void>> createNotice(@RequestBody NoticeInsertReqDTO noticeInsertReqDTO);
+
 }
