@@ -37,7 +37,7 @@ public class ExchangePostReqDTO {
     private List<Integer> receiveTalents;
 
     @Valid
-    @DynamicValid(errorCode = ErrorCode.POST_BAD_REQUEST, pattern = Regex.EXCHANGE_TPYE)
+    @DynamicValid(errorCode = ErrorCode.POST_BAD_REQUEST, pattern = Regex.EXCHANGE_TYPE)
     private ExchangeType exchangeType;
 
     private boolean requiredBadge;

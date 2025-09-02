@@ -20,7 +20,7 @@ public class EventInsertReqDTO {
     @Schema(hidden = true)
     private UserInfo userInfo;
 
-    @DynamicValid(errorCode= ErrorCode.POST_REQUEST_MISSING, notBlank = true)
+    @DynamicValid(errorCode= ErrorCode.POST_CONTENT_MIN_LENGTH,  minLength = 20)
     private String content;
 
     @DynamicValid(errorCode = ErrorCode.FILE_UPLOAD_EXTENSION_MISMATCH, pattern = Regex.FILE_EXTENSION)
