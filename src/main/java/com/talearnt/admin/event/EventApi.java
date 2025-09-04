@@ -63,6 +63,7 @@ public interface EventApi {
             "<h2>Response</h2>" +
             "<ul>" +
                 "<li>eventNo : 이벤트 번호</li>" +
+                "<li>title : 제목</li>" +
                 "<li>content : 내용</li>" +
                 "<li>bannerUrl : 배너 이미지 URL</li>" +
                 "<li>startDate : 시작일시</li>" +
@@ -85,14 +86,17 @@ public interface EventApi {
             "<hr/>" +
             "<h2>Request</h2>" +
             "<ul>" +
+                "<li>title : 제목 (최소 2자 이상, 최대 50자 이하)</li>" +
                 "<li>content : 내용 (최소 20자 이상)</li>" +
                 "<li>bannerUrl : 배너 이미지 URL (S3에 올라간 URL)</li>" +
+                "<li>endBannerUrl : 종료 시 보여줄 배너 이미지 URL (S3에 올라간 URL)</li>" +
                 "<li>startDate : 시작일시 (Not Null)</li>" +
                 "<li>endDate : 종료일시 (Null 가능)</li>"+
             "</ul>")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "400", ref = "POST_CONTENT_MIN_LENGTH"),
+            @ApiResponse(responseCode = "400-1", ref = "POST_TITLE_LENGTH_MISSING"),
+            @ApiResponse(responseCode = "400-2", ref = "POST_CONTENT_MIN_LENGTH"),
             @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN"),
             @ApiResponse(responseCode = "403", ref = "ACCESS_DENIED"),
             @ApiResponse(responseCode = "415", ref = "FILE_UPLOAD_EXTENSION_MISMATCH")
