@@ -82,7 +82,10 @@ public class EventQueryRepository {
     private JPAQuery<EventListResDTO> getSelectedList() {
         return factory.select(Projections.constructor(EventListResDTO.class,
                 event.eventNo,
-                event.bannerUrl,
+                new CaseBuilder()
+                        .when(event.endDate.loe(LocalDateTime.now()))
+                        .then(event.endedBannerUrl)
+                        .otherwise(event.bannerUrl),
                 event.startDate,
                 event.endDate,
                 new CaseBuilder()

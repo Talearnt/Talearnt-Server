@@ -20,12 +20,19 @@ public class EventInsertReqDTO {
     @Schema(hidden = true)
     private UserInfo userInfo;
 
+    @DynamicValid(errorCode = ErrorCode.POST_TITLE_LENGTH_MISSING, minLength = 2,maxLength = 50)
+    private String title;
+
     @DynamicValid(errorCode= ErrorCode.POST_CONTENT_MIN_LENGTH,  minLength = 20)
     private String content;
 
     @DynamicValid(errorCode = ErrorCode.FILE_UPLOAD_EXTENSION_MISMATCH, pattern = Regex.FILE_EXTENSION)
     @DynamicValid(errorCode = ErrorCode.POST_REQUEST_MISSING, notBlank = true)
     private String bannerUrl;
+
+    @DynamicValid(errorCode = ErrorCode.FILE_UPLOAD_EXTENSION_MISMATCH, pattern = Regex.FILE_EXTENSION)
+    @DynamicValid(errorCode = ErrorCode.POST_REQUEST_MISSING, notBlank = true)
+    private String endedBannerUrl;
 
     @DynamicValid(errorCode= ErrorCode.POST_REQUEST_MISSING, notBlank = true)
     private LocalDateTime startDate;

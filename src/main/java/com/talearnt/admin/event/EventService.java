@@ -68,14 +68,18 @@ public class EventService {
             return new CustomRuntimeException(ErrorCode.POST_NOT_FOUND);
         });
 
+        LocalDateTime now = LocalDateTime.now();
+
         EventDetailResDTO eventDetailResDTO = EventDetailResDTO.builder()
+                .title(event.getTitle())
                 .eventNo(event.getEventNo())
                 .content(event.getContent())
                 .bannerUrl(event.getBannerUrl())
                 .startDate(event.getStartDate())
                 .endDate(event.getEndDate())
                 .createdAt(event.getCreatedAt())
-                .isActive(event.getIsActive())
+                .isActive(event.getStartDate() != null &&event.getEndDate() != null &&
+                        !now.isBefore(event.getStartDate()) && now.isBefore(event.getEndDate()))
                 .build();
 
         log.info("이벤트 상세 보기 조회 끝 - result : {}", eventDetailResDTO);
@@ -91,17 +95,14 @@ public class EventService {
             throw new CustomRuntimeException(ErrorCode.ACCESS_DENIED);
         }
 
-        LocalDateTime now = LocalDateTime.now();
-
         Event event = new Event();
+        event.setTitle(insertReqDTO.getTitle());
         event.setContent(insertReqDTO.getContent());
         event.setBannerUrl(insertReqDTO.getBannerUrl());
+        event.setEndedBannerUrl(insertReqDTO.getEndedBannerUrl());
         event.setStartDate(insertReqDTO.getStartDate());
         event.setEndDate(insertReqDTO.getEndDate());
-        event.setCreatedAt(now);
-        event.setIsActive(insertReqDTO.getStartDate() != null &&insertReqDTO.getEndDate() != null &&
-                        !now.isBefore(insertReqDTO.getStartDate()) && now.isBefore(insertReqDTO.getEndDate())
-        );
+        event.setCreatedAt(LocalDateTime.now());
         event.setCreatedBy(insertReqDTO.getUserInfo().getUserNo());
         eventRepository.save(event);
 

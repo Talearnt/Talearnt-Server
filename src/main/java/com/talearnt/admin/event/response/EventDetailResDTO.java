@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 public class EventDetailResDTO {
     private Long eventNo;
+    private String title;
     private String content;
     private String bannerUrl;
     private LocalDateTime startDate;
