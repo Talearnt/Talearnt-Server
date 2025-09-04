@@ -20,11 +20,17 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eventNo;
 
+    @Column(nullable = false, length = 60)
+    private String title;
+
     @Column(nullable = false)
     private String content;
 
     @Column(nullable = false)
     private String bannerUrl;
+
+    @Column(nullable = false)
+    private String endedBannerUrl;
 
     @Column(nullable = false)
     private LocalDateTime startDate;
@@ -38,9 +44,6 @@ public class Event {
     @UpdateTimestamp
     @Column
     private LocalDateTime updatedAt;
-
-    @Column(nullable = false)
-    private Boolean isActive;
 
     private Long createdBy;
 
