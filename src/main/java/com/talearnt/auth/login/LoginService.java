@@ -89,6 +89,9 @@ public class LoginService {
     public UserInfo checkLoginValueAndSetRefreshToekn(User user,boolean isAutoLogin, HttpServletRequest request,HttpServletResponse response){
         String domain = request.getServerName();
 
+        if (domain.contains("talearnt.net")) {
+            domain = ".talearnt.net";  // 점으로 시작하여 모든 서브도메인 포함
+        }
 
         user.setLastLogin(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
         userRepository.save(user);
@@ -143,6 +146,10 @@ public class LoginService {
 
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         String domain = request.getServerName();
+
+        if (domain.contains("talearnt.net")) {
+            domain = ".talearnt.net";  // 점으로 시작하여 모든 서브도메인 포함
+        }
 
         ResponseCookie expiredCookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
