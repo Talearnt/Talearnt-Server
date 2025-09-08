@@ -13,6 +13,7 @@ import com.talearnt.util.jwt.JwtTokenUtil;
 import com.talearnt.util.jwt.TokenResDTO;
 import com.talearnt.util.jwt.UserInfo;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -85,7 +86,9 @@ public class LoginService {
      * @param user user의 정보가 담긴 Entity
      * @param response Cookie에 Refresh토큰 셋팅
      */
-    public UserInfo checkLoginValueAndSetRefreshToekn(User user,boolean isAutoLogin, HttpServletResponse response){
+    public UserInfo checkLoginValueAndSetRefreshToekn(User user,boolean isAutoLogin, HttpServletRequest request,HttpServletResponse response){
+        String domain = request.getServerName();
+
         user.setLastLogin(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
         userRepository.save(user);
 
@@ -116,6 +119,7 @@ public class LoginService {
                     .httpOnly(true)   // HttpOnly 속성 적용
                     .secure(true)     // HTTPS에서만 전송
                     .sameSite("None") // CORS 요청에서도 쿠키 전송 허용
+                    .domain(domain)
                     .path("/")        // 쿠키 경로 설정
                     .maxAge(Duration.ofSeconds(cookieExpirationMilliseconds))
                     .build();
@@ -124,6 +128,7 @@ public class LoginService {
                     .httpOnly(true)   // HttpOnly 속성 적용
                     .secure(true)     // HTTPS에서만 전송
                     .sameSite("None") // CORS 요청에서도 쿠키 전송 허용
+                    .domain(domain)
                     .path("/")        // 쿠키 경로 설정
                     .build();
         }
@@ -135,14 +140,18 @@ public class LoginService {
         return userInfo;
     }
 
-    public void logout(HttpServletResponse response) {
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        String domain = request.getServerName();
+
         ResponseCookie expiredCookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("None")
+                .domain(domain)
                 .path("/")
                 .maxAge(0)
                 .build();
+
         response.setHeader(HttpHeaders.SET_COOKIE, expiredCookie.toString());
     }
 

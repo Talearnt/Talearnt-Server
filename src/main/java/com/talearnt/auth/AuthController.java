@@ -113,8 +113,8 @@ public class AuthController implements AuthApi{
     }
 
     @PostMapping("/auth/logout")
-    public ResponseEntity<CommonResponse<Void>> logout(HttpServletResponse response) {
-        loginService.logout(response);
+    public ResponseEntity<CommonResponse<Void>> logout(HttpServletRequest request,HttpServletResponse response) {
+        loginService.logout(request, response);
         return CommonResponse.success(null);
     }
 

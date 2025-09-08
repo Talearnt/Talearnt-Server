@@ -263,7 +263,7 @@ public interface AuthApi {
             description = "로그아웃 성공"
     )
     @PostMapping("/auth/logout")
-    public ResponseEntity<CommonResponse<Void>> logout(HttpServletResponse response);
+    ResponseEntity<CommonResponse<Void>> logout(HttpServletRequest request,HttpServletResponse response);
 
 
     /*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 인증 문자 관련 시작 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/

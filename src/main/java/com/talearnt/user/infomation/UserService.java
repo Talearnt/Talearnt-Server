@@ -23,6 +23,7 @@ import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.log.LogRunningTime;
 import com.talearnt.util.response.CommonResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -174,7 +175,7 @@ public class UserService {
      */
     @Transactional
     @LogRunningTime
-    public WithdrawalCompletionResponseDTO processWithdrawal(HttpServletResponse response, UserInfo userInfo, WithdrawalRequestDTO request) {
+    public WithdrawalCompletionResponseDTO processWithdrawal(HttpServletRequest httpServletRequest, HttpServletResponse response, UserInfo userInfo, WithdrawalRequestDTO request) {
         log.info("회원 탈퇴 처리 시작 : {}", userInfo.getUserId());
         
         // 사용자 정보 조회
@@ -233,7 +234,7 @@ public class UserService {
         userRepository.save(user);
 
         //로그아웃 처리
-        loginService.logout(response);
+        loginService.logout(httpServletRequest,response);
 
         log.info("회원 탈퇴 처리 완료 : {}", userInfo.getUserId());
         

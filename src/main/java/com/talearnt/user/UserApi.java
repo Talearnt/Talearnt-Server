@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -394,6 +395,9 @@ public interface UserApi {
             @ApiResponse(responseCode = "400", ref = "BAD_REQUEST"),
             @ApiResponse(responseCode = "404", ref = "USER_NOT_FOUND")
     })
-    public ResponseEntity<CommonResponse<WithdrawalCompletionResponseDTO>> processWithdrawal(@RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO, Authentication authentication, HttpServletResponse response);
-
+    ResponseEntity<CommonResponse<WithdrawalCompletionResponseDTO>> processWithdrawal(
+            @RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO,
+            Authentication authentication,
+            HttpServletRequest request,
+            HttpServletResponse response);
 }

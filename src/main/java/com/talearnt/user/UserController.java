@@ -26,6 +26,7 @@ import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.version.RestControllerV1;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -94,9 +95,10 @@ public class UserController implements UserApi{
     public ResponseEntity<CommonResponse<WithdrawalCompletionResponseDTO>> processWithdrawal(
             @RequestBody @Valid WithdrawalRequestDTO withdrawalRequestDTO,
             Authentication authentication,
+            HttpServletRequest request,
             HttpServletResponse response){
         UserInfo userInfo = UserUtil.validateAuthentication("회원 탈퇴", authentication);
-        return CommonResponse.success(userService.processWithdrawal(response, userInfo, withdrawalRequestDTO));
+        return CommonResponse.success(userService.processWithdrawal(request, response, userInfo, withdrawalRequestDTO));
     }
 
 
