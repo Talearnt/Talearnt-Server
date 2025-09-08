@@ -13,12 +13,10 @@ import com.talearnt.auth.verification.VerificationReqDTO;
 import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.enums.common.Regex;
 import com.talearnt.util.exception.CustomException;
-import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.TokenResDTO;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.valid.DynamicValid;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.mail.MessagingException;
@@ -138,7 +136,7 @@ public interface AuthApi {
                     @ApiResponse(responseCode = "403-2", ref = "USER_WITH_DRAWN"),
                     @ApiResponse(responseCode = "400", ref = "AUTH_METHOD_CONFLICT")
             })
-    ResponseEntity<CommonResponse<TokenResDTO>> login(@io.swagger.v3.oas.annotations.parameters.RequestBody @Valid LoginReqDTO loginReqDTO, HttpServletRequest request, HttpServletResponse response);
+    ResponseEntity<CommonResponse<TokenResDTO>> login(@RequestBody @Valid LoginReqDTO loginReqDTO, HttpServletRequest request, HttpServletResponse response);
 
     //리프레시 토큰
     @Operation(summary = "새로운 JWT 토큰 발급 받기",
@@ -249,7 +247,7 @@ public interface AuthApi {
             @ApiResponse(responseCode = "403-2", ref = "USER_WITH_DRAWN"),
             @ApiResponse(responseCode = "409", ref = "USER_PHONE_NUMBER_DUPLICATION"),
     })
-    ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakaoForMobile(@io.swagger.v3.oas.annotations.parameters.RequestBody KakaoAccessTokenReqDTO accessTokenReqDTO, HttpServletRequest request, HttpServletResponse response);
+    ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakaoForMobile(@RequestBody KakaoAccessTokenReqDTO accessTokenReqDTO, HttpServletRequest request, HttpServletResponse response);
 
 
     @Operation(
