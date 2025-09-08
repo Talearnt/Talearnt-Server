@@ -41,7 +41,7 @@ public class LoginService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
 
-    public TokenResDTO authenticateUser(LoginReqDTO loginReqDTO, HttpServletResponse response) {
+    public TokenResDTO authenticateUser(LoginReqDTO loginReqDTO, HttpServletRequest request, HttpServletResponse response) {
         log.info("자사 로그인 서비스 시작 : {}",loginReqDTO);
         // DB에서 사용자 조회
         User user = userRepository.findByUserId(loginReqDTO.getUserId())
@@ -60,7 +60,7 @@ public class LoginService {
         UserUtil.validateUserRole("자사 로그인 서비스 시작",user);
 
         //인증 후 RefreshToken 발급
-        UserInfo userInfo = checkLoginValueAndSetRefreshToekn(user,loginReqDTO.isAutoLogin(),response);
+        UserInfo userInfo = checkLoginValueAndSetRefreshToekn(user,loginReqDTO.isAutoLogin(),request,response);
 
         log.info("자사 로그인 서비스 끝");
         return new TokenResDTO(jwtTokenUtil.createJwtToken(userInfo));

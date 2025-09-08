@@ -138,7 +138,7 @@ public interface AuthApi {
                     @ApiResponse(responseCode = "403-2", ref = "USER_WITH_DRAWN"),
                     @ApiResponse(responseCode = "400", ref = "AUTH_METHOD_CONFLICT")
             })
-    public ResponseEntity<CommonResponse<TokenResDTO>> login(@RequestBody @Valid LoginReqDTO loginReqDTO, HttpServletResponse response);
+    ResponseEntity<CommonResponse<TokenResDTO>> login(@io.swagger.v3.oas.annotations.parameters.RequestBody @Valid LoginReqDTO loginReqDTO, HttpServletRequest request, HttpServletResponse response);
 
     //리프레시 토큰
     @Operation(summary = "새로운 JWT 토큰 발급 받기",
@@ -190,7 +190,7 @@ public interface AuthApi {
             @ApiResponse(responseCode = "403-2", ref = "USER_WITH_DRAWN"),
             @ApiResponse(responseCode = "409", ref = "USER_PHONE_NUMBER_DUPLICATION"),
     })
-    public ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakao(@RequestParam("code")String code, HttpServletResponse response);
+    ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakao(@RequestParam("code")String code,HttpServletRequest request, HttpServletResponse response);
 
 
     @Operation(summary = "Flutter용 모바일 카카오톡 로그인", description = "<p>Flutter 클라이언트에서 카카오 SDK를 통해 직접 받은 Access Token을 사용하여 로그인하는 API입니다.</p>" +
@@ -249,7 +249,7 @@ public interface AuthApi {
             @ApiResponse(responseCode = "403-2", ref = "USER_WITH_DRAWN"),
             @ApiResponse(responseCode = "409", ref = "USER_PHONE_NUMBER_DUPLICATION"),
     })
-    public ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakaoForMobile(@RequestBody KakaoAccessTokenReqDTO accessTokenReqDTO, HttpServletResponse response);
+    ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakaoForMobile(@io.swagger.v3.oas.annotations.parameters.RequestBody KakaoAccessTokenReqDTO accessTokenReqDTO, HttpServletRequest request, HttpServletResponse response);
 
 
     @Operation(

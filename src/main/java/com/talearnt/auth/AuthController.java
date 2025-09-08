@@ -89,8 +89,8 @@ public class AuthController implements AuthApi{
     /*000000000000000000000000000000 회원가입 관련 끝 000000000000000000000000000000*/
     /*############################## 로그인 관련 시작 ##############################*/
     @PostMapping("/auth/login")
-    public ResponseEntity<CommonResponse<TokenResDTO>> login(@RequestBody @Valid LoginReqDTO loginReqDTO, HttpServletResponse response) {
-        return CommonResponse.success(loginService.authenticateUser(loginReqDTO,response));
+    public ResponseEntity<CommonResponse<TokenResDTO>> login(@RequestBody @Valid LoginReqDTO loginReqDTO,HttpServletRequest request, HttpServletResponse response) {
+        return CommonResponse.success(loginService.authenticateUser(loginReqDTO,request,response));
     }
 
     //리프레시 토큰
@@ -102,14 +102,14 @@ public class AuthController implements AuthApi{
 
     //웹 방식 카카오 로그인
     @GetMapping("/auth/login/kakao")
-    public ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakao(@RequestParam("code")String code, HttpServletResponse response) {
-        return CommonResponse.success(kakaoLoginService.loginKakao(code,response));
+    public ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakao(@RequestParam("code")String code,HttpServletRequest request, HttpServletResponse response) {
+        return CommonResponse.success(kakaoLoginService.loginKakao(code,request,response));
     }
 
     //모바일 방식 카카오 로그인
     @PostMapping("/auth/login/kakao/mobile")
-    public ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakaoForMobile(@RequestBody KakaoAccessTokenReqDTO accessTokenReqDTO, HttpServletResponse response){
-        return CommonResponse.success(kakaoLoginService.loginKakaoForMobile(accessTokenReqDTO.getKakaoAccessToken(), accessTokenReqDTO.isAutoLogin(), response));
+    public ResponseEntity<CommonResponse<KakaoLoginResDTO>> loginKakaoForMobile(@RequestBody KakaoAccessTokenReqDTO accessTokenReqDTO, HttpServletRequest request,HttpServletResponse response){
+        return CommonResponse.success(kakaoLoginService.loginKakaoForMobile(accessTokenReqDTO.getKakaoAccessToken(), accessTokenReqDTO.isAutoLogin(), request,response));
     }
 
     @PostMapping("/auth/logout")

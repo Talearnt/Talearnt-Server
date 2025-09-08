@@ -12,6 +12,7 @@ import com.talearnt.util.exception.CustomRuntimeException;
 import com.talearnt.util.jwt.JwtTokenUtil;
 import com.talearnt.util.jwt.UserInfo;
 import io.netty.handler.codec.http.HttpHeaderValues;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -51,7 +52,7 @@ public class KakaoLoginService {
      * 레퍼런스 : https://ddonghyeo.tistory.com/16
      * @param code 카카오톡에서 넘어오는 인자 Code
      * @param response RefreshToken Cookie 사용을 위해*/
-    public KakaoLoginResDTO loginKakao(String code, HttpServletResponse response){
+    public KakaoLoginResDTO loginKakao(String code, HttpServletRequest request, HttpServletResponse response){
         log.info("카카오톡 로그인 서비스 시작 : {}",code);
 
         //카카오톡에서 받은 인가코드로 어세스 토큰 발급 요청
@@ -115,7 +116,7 @@ public class KakaoLoginService {
         UserUtil.validateUserRole("카카오톡 로그인 서비스 시작",user);
 
         //인증 후 RefreshToken 발급
-        UserInfo userInfo = loginService.checkLoginValueAndSetRefreshToekn(user,true,response);
+        UserInfo userInfo = loginService.checkLoginValueAndSetRefreshToekn(user,true, request,response);
 
         log.info("카카오톡 로그인 서비스 끝");
         return new KakaoLoginResDTO(true,jwtTokenUtil.createJwtToken(userInfo));
@@ -145,7 +146,7 @@ public class KakaoLoginService {
      * @param kakaoAccessToken Flutter에서 받은 카카오 Access Token
      * @param autoLogin 자동 로그인 여부
      * @param response RefreshToken Cookie 사용을 위해*/
-    public KakaoLoginResDTO loginKakaoForMobile(String kakaoAccessToken, boolean autoLogin, HttpServletResponse response){
+    public KakaoLoginResDTO loginKakaoForMobile(String kakaoAccessToken, boolean autoLogin, HttpServletRequest request,HttpServletResponse response){
         log.info("Flutter 모바일 카카오톡 로그인 서비스 시작");
 
         //카카오톡에서 받은 Access Token으로 유저 정보 추출
@@ -185,7 +186,7 @@ public class KakaoLoginService {
         UserUtil.validateUserRole("Flutter 모바일 카카오톡 로그인 서비스 시작",user);
 
         //인증 후 RefreshToken 발급
-        UserInfo userInfo = loginService.checkLoginValueAndSetRefreshToekn(user,autoLogin,response);
+        UserInfo userInfo = loginService.checkLoginValueAndSetRefreshToekn(user,autoLogin,request,response);
 
         log.info("Flutter 모바일 카카오톡 로그인 서비스 끝");
         return new KakaoLoginResDTO(true,jwtTokenUtil.createJwtToken(userInfo));
