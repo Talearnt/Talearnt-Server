@@ -87,7 +87,7 @@ public class LoginService {
      * @param response Cookie에 Refresh토큰 셋팅
      */
     public UserInfo checkLoginValueAndSetRefreshToekn(User user,boolean isAutoLogin, HttpServletRequest request,HttpServletResponse response){
-        String domain = "doe331l0de5w8.cloudfront.net";//request.getServerName();
+        String domain = request.getServerName();
 
 
         user.setLastLogin(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
@@ -142,7 +142,7 @@ public class LoginService {
     }
 
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        String domain = "doe331l0de5w8.cloudfront.net";//request.getServerName();
+        String domain = request.getServerName();
 
         ResponseCookie expiredCookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
