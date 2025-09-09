@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 
 @Log4j2
@@ -186,17 +187,17 @@ public class UserService {
         if (user.getIsWithdrawn() != null && user.getIsWithdrawn()) {
             throw new CustomRuntimeException(ErrorCode.USER_WITH_DRAWN);
         }
-        
+
         // 탈퇴 사유들을 쉼표로 구분하여 저장
         String withdrawalReasonCodes = String.join(",", request.getWithdrawalReasons());
-        
+
         // 탈퇴 정보 저장
         user.setWithdrawalReasonCodes(withdrawalReasonCodes);
         user.setWithdrawalReason(request.getDetailedReason());
         user.setWithdrawnAt(LocalDateTime.now());
         user.setIsWithdrawn(true);
         user.setAuthority(UserRole.ROLE_WITHDRAWN);
-        
+
         // 닉네임 중복 방지를 위해 원래 닉네임을 저장하고 새로운 닉네임 생성
         String originalNickname = user.getNickname();
         user.setWithdrawnNickname(originalNickname);
@@ -204,14 +205,15 @@ public class UserService {
 
         // 아이디 중복 방지를 위해 원래 아이디를 저장하고 새로운 아이디 생성
         String originalUserId = user.getUserId();
-        user.setWidthdrawnUserId("withdrawn_" + System.currentTimeMillis());
+        user.setUserId("withdrawn_" + System.currentTimeMillis());
+        user.setWidthdrawnUserId(originalUserId);
 
         // 휴대폰 번호 중복 방지를 위해 원래 휴대폰 번호를 저장하고 새로운 번호 생성
         String originalPhone = user.getPhone();
         user.setWithdrawnPhoneNumber(originalPhone);
-        user.setPhone("");
+        user.setPhone("111" + (new Random().nextInt(90000000) + 10000000)); // 111으로 시작하는 11자리 번호 생성
 
-        
+
         // 프로필 이미지가 있다면 S3에서 삭제
         if (user.getProfileImg() != null && !user.getProfileImg().isEmpty()) {
             try {
