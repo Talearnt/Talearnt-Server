@@ -13,6 +13,7 @@ import com.talearnt.util.common.PageUtil;
 import com.talearnt.util.common.PostUtil;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.filter.UserRequestLimiter;
 import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.log.LogRunningTime;
 import com.talearnt.util.pagination.PagedListWrapper;
@@ -34,6 +35,8 @@ import java.util.List;
 @Log4j2
 @RequiredArgsConstructor
 public class FavoriteService {
+
+    private final UserRequestLimiter limiter;
 
     private final ExchangePostRepository exchangePostRepository;
     private final FavoriteExchangePostRepository favoriteExchangePostRepository;
@@ -91,6 +94,11 @@ public class FavoriteService {
 
         //로그인 여부 확인
         UserInfo userInfo = UserUtil.validateAuthentication("재능교환 게시글 찜하기", auth);
+
+        if (!limiter.isAllowed(userInfo.getUserNo())){
+            log.error("재능 교환 게시글 찜하기 실패 - 요청 제한 초과 : {} - {}",userInfo.getUserNo(), ErrorCode.TOO_MANY_REQUESTS);
+            throw new CustomRuntimeException(ErrorCode.TOO_MANY_REQUESTS);
+        }
 
         //게시글이 존재하는가?
         ExchangePost exchangePost = exchangePostRepository.findById(postNo)

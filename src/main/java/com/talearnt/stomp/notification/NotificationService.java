@@ -21,6 +21,7 @@ import com.talearnt.user.infomation.entity.User;
 import com.talearnt.user.talent.repository.MyTalentQueryRepository;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.filter.UserRequestLimiter;
 import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.log.LogRunningTime;
 import jakarta.transaction.Transactional;
@@ -43,6 +44,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class NotificationService {
 
+    private final UserRequestLimiter limiter;
     private final SimpMessagingTemplate template;
     private final SimpUserRegistry userRegistry;
     private final NotificationRepository notificationRepository;
@@ -101,6 +103,11 @@ public class NotificationService {
         log.info("알림 설정 수정 시작: {}", notificationSettingReqDTO);
 
         UserInfo userInfo = UserUtil.validateAuthentication("알림 설정 수정", authentication);
+
+        if (!limiter.isAllowed(userInfo.getUserNo())){
+            log.error("커뮤니티 게시글 좋아요 실패 - 요청 제한 초과 : {} - {}",userInfo.getUserNo(), ErrorCode.TOO_MANY_REQUESTS);
+            throw new CustomRuntimeException(ErrorCode.TOO_MANY_REQUESTS);
+        }
 
         // 사용자의 기존 알림 설정을 조회하거나 새로 생성
         NotificationSetting notificationSetting = notificationQueryRepository

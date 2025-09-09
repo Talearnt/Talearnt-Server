@@ -18,6 +18,7 @@ import com.talearnt.util.common.PostUtil;
 import com.talearnt.util.common.S3Util;
 import com.talearnt.util.common.UserUtil;
 import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.filter.UserRequestLimiter;
 import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.log.LogRunningTime;
 import com.talearnt.util.pagination.PagedListWrapper;
@@ -39,6 +40,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommunityPostService {
 
+    private final UserRequestLimiter limiter;
     private final CommunityPostRepository communityPostRepository;
     private final FileUploadService fileUploadService;
     private final CommunityPostQueryRepository communityPostQueryRepository;
@@ -253,6 +255,11 @@ public class CommunityPostService {
         //로그인 여부 검증
         UserInfo userInfo = UserUtil.validateAuthentication("커뮤니티 게시글 좋아요", authentication);
 
+
+        if (!limiter.isAllowed(userInfo.getUserNo())){
+            log.error("커뮤니티 게시글 좋아요 실패 - 요청 제한 초과 : {} - {}",userInfo.getUserNo(), ErrorCode.TOO_MANY_REQUESTS);
+            throw new CustomRuntimeException(ErrorCode.TOO_MANY_REQUESTS);
+        }
 
         //게시글 존재 여부 확인
         CommunityPost communityPost = communityPostRepository.findById(postNo).orElseThrow(()->{
