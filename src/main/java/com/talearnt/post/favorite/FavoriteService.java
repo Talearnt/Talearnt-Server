@@ -89,11 +89,8 @@ public class FavoriteService {
     @Async
     @Transactional
     @LogRunningTime
-    public void favoriteExchangePost(Long postNo, Authentication auth){
+    public void favoriteExchangePost(Long postNo, boolean favoriteStatus, UserInfo userInfo){
         log.info("재능 교환 게시글 찜하기 시작 - {}",postNo);
-
-        //로그인 여부 확인
-        UserInfo userInfo = UserUtil.validateAuthentication("재능교환 게시글 찜하기", auth);
 
         if (!limiter.isAllowed(userInfo.getUserNo())){
             log.error("재능 교환 게시글 찜하기 실패 - 요청 제한 초과 : {} - {}",userInfo.getUserNo(), ErrorCode.TOO_MANY_REQUESTS);
@@ -119,8 +116,8 @@ public class FavoriteService {
 
         //찜 게시글이 존재하는 경우
         if(favoriteExchangePost != null){
-            //삭제되었는지 확인
-            LocalDateTime deletedAt = favoriteExchangePost.getDeletedAt() == null ? LocalDateTime.now() : null;
+            //삭제되었는지 확인                      삭제가 되지 않았고                      false라면          삭제시간 현재시간 대입 : null 대입
+            LocalDateTime deletedAt = favoriteExchangePost.getDeletedAt() == null && !favoriteStatus? LocalDateTime.now() : null;
             favoriteExchangePost.setDeletedAt(deletedAt);
             //삭제가 안되었다면 현재시간 대입 -> 새로운 찜 게시글인 것처럼 느껴지도록
             if (deletedAt == null) favoriteExchangePost.setCreatedAt(LocalDateTime.now());
