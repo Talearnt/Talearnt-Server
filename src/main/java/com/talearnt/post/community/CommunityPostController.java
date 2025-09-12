@@ -1,6 +1,7 @@
 package com.talearnt.post.community;
 
 import com.talearnt.enums.common.ClientPathType;
+import com.talearnt.post.community.request.CommunityPostLikeStatusReqDTO;
 import com.talearnt.post.community.request.CommunityPostReqDTO;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
 import com.talearnt.post.community.response.CommunityPostListResDTO;
@@ -66,8 +67,8 @@ public class CommunityPostController implements CommunityPostApi{
 
     //커뮤니티 게시글 좋아요
     @PostMapping("/posts/communities/{postNo}/like")
-    public ResponseEntity<CommonResponse<Void>> likeCommunityPost(@PathVariable Long postNo, Authentication authentication){
-        communityPostService.likeCommunityPost(postNo, authentication);
+    public ResponseEntity<CommonResponse<Void>> likeCommunityPost(@PathVariable Long postNo, @RequestBody CommunityPostLikeStatusReqDTO communityPostLikeStatusReqDTO){
+        communityPostService.likeCommunityPost(postNo, communityPostLikeStatusReqDTO.isLike(), communityPostLikeStatusReqDTO.getUserInfo());
         return CommonResponse.success(null);
     }
 

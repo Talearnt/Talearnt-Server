@@ -249,11 +249,8 @@ public class CommunityPostService {
     @Async
     @LogRunningTime
     @Transactional
-    public void likeCommunityPost(Long postNo, Authentication authentication) {
+    public void likeCommunityPost(Long postNo, boolean isLike, UserInfo userInfo) {
         log.info("커뮤니티 게시글 좋아요 시작 : {}", postNo);
-
-        //로그인 여부 검증
-        UserInfo userInfo = UserUtil.validateAuthentication("커뮤니티 게시글 좋아요", authentication);
 
 
         if (!limiter.isAllowed(userInfo.getUserNo())){
@@ -278,8 +275,8 @@ public class CommunityPostService {
 
         //좋아요을 누른 경우
         if (likeCommunity != null){
-            //좋아요 토글
-            LocalDateTime isCanceled = likeCommunity.getCanceledAt() != null ? null: LocalDateTime.now();
+            //좋아요 토글                        삭제가 되었는데                    좋아요 누르면 좋아요로 변경
+            LocalDateTime isCanceled = likeCommunity.getCanceledAt() != null && isLike ? null: LocalDateTime.now();
             likeCommunity.setCanceledAt(isCanceled);
         }else{
             //좋아요 엔티티 생성
