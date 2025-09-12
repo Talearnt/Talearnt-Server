@@ -1,6 +1,7 @@
 package com.talearnt.post.community;
 
 import com.talearnt.enums.common.ClientPathType;
+import com.talearnt.post.community.request.CommunityPostLikeStatusReqDTO;
 import com.talearnt.post.community.request.CommunityPostReqDTO;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
 import com.talearnt.post.community.response.CommunityPostListResDTO;
@@ -184,13 +185,17 @@ public interface CommunityPostApi {
             "<p>비동기 방식으로 작동하기 때문에 좋아요 버튼을 눌렀을 경우 1~2초간 서버에 요청 보내는 것을 제어해야 합니다.</p>" +
             "<p>제어하지 않을 경우 서버에 부화가 생겨 문제가 발생할 수 있습니다.</p>" +
             "<p>커뮤니티 게시글 좋아요는 반환값이 없습니다.</p>" +
-            "<p>좋아요 갯수를 반환할까도 싶었지만, 실시간으로 좋아요 변동이 필요하지 않을 것이라 판단해 프론트 쪽에서 좋아요 갯수를 제어해주시면 될 것 같습니다.</p>")
+            "<p>좋아요 갯수를 반환할까도 싶었지만, 실시간으로 좋아요 변동이 필요하지 않을 것이라 판단해 프론트 쪽에서 좋아요 갯수를 제어해주시면 될 것 같습니다.</p>" +
+            "<h2>Request</h2>" +
+            "<ul>" +
+                "<li>isLike : 좋아요 여부</li>" +
+            "</ul>")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "401",ref="EXPIRED_TOKEN"),
             @ApiResponse(responseCode = "404",ref="POST_NOT_FOUND")
     })
-    public ResponseEntity<CommonResponse<Void>> likeCommunityPost(@PathVariable Long postNo, Authentication authentication);
+    public ResponseEntity<CommonResponse<Void>> likeCommunityPost(@PathVariable Long postNo, @RequestBody CommunityPostLikeStatusReqDTO communityPostLikeStatusReqDTO);
 
 
 
