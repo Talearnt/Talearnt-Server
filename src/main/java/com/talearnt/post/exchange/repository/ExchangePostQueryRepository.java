@@ -173,6 +173,7 @@ public class ExchangePostQueryRepository {
                 .set(exchangePost.exchangeType, exchangeType)
                 .set(exchangePost.requiredBadge, requiredBadge)
                 .set(exchangePost.duration, duration)
+                .set(exchangePost.updatedAt, LocalDateTime.now())
                 .where(exchangePost.exchangePostNo.eq(postNo)).execute();
     }
 
