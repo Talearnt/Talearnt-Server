@@ -1,6 +1,7 @@
 package com.talearnt.admin.event;
 
 import com.talearnt.admin.event.request.EventInsertReqDTO;
+import com.talearnt.admin.event.response.EventBannerListResDTO;
 import com.talearnt.admin.event.response.EventDetailResDTO;
 import com.talearnt.admin.event.response.EventListResDTO;
 import com.talearnt.enums.common.ClientPathType;
@@ -102,4 +103,21 @@ public interface EventApi {
             @ApiResponse(responseCode = "415", ref = "FILE_UPLOAD_EXTENSION_MISMATCH")
     })
     ResponseEntity<CommonResponse<Void>> createEvent(@RequestBody EventInsertReqDTO insertReqDTO);
+
+    @Operation(summary = "이벤트 배너 목록"
+            , description = "<h2>내용</h2>" +
+            "<p>진행중인 이벤트의 배너 목록을 조회합니다.</p>" +
+            "<p>종료된 이벤트는 노출되지 않습니다.</p>" +
+            "<hr/>" +
+            "<h2>Response</h2>" +
+            "<ul>" +
+                "<li>eventNo : 이벤트 번호</li>" +
+                "<li>bannerUrl : 배너 이미지 URL</li>"+
+            "</ul>")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200")
+    })
+    ResponseEntity<CommonResponse<List<EventBannerListResDTO>>> getEventBanner();
+
+
 }
