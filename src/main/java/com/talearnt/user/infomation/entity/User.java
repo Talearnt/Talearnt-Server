@@ -85,4 +85,9 @@ public class User {
     
     @Column
     private String widthdrawnUserId;
+
+
+    public User(Long userNo) {
+        this.userNo = userNo;
+    }
 }
