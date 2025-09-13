@@ -105,7 +105,7 @@ public class NotificationService {
         UserInfo userInfo = UserUtil.validateAuthentication("알림 설정 수정", authentication);
 
         if (!limiter.isAllowed(userInfo.getUserNo())){
-            log.error("커뮤니티 게시글 좋아요 실패 - 요청 제한 초과 : {} - {}",userInfo.getUserNo(), ErrorCode.TOO_MANY_REQUESTS);
+            log.error("알림 설정 수정 실패 - 요청 제한 초과 : {} - {}",userInfo.getUserNo(), ErrorCode.TOO_MANY_REQUESTS);
             throw new CustomRuntimeException(ErrorCode.TOO_MANY_REQUESTS);
         }
 
