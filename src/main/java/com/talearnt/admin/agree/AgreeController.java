@@ -1,5 +1,6 @@
 package com.talearnt.admin.agree;
 
+import com.talearnt.admin.agree.request.AgreeCodeMarketingReqDTO;
 import com.talearnt.admin.agree.request.AgreeCodeReqDTO;
 import com.talearnt.admin.agree.response.AgreeCodeListResDTO;
 import com.talearnt.util.response.CommonResponse;
@@ -12,10 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,8 +24,6 @@ public class AgreeController implements AgreeApi {
 
     private final AgreeService agreeService;
 
-
-
     //@PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/agree-codes")
     public ResponseEntity<CommonResponse<String>> addAgreeCode(@RequestBody @Valid AgreeCodeReqDTO agreeCodeReqDTO){
@@ -37,7 +33,14 @@ public class AgreeController implements AgreeApi {
 
     @GetMapping("/agree-codes/active")
     public ResponseEntity<CommonResponse<List<AgreeCodeListResDTO>>> getActiveTerms(){
-        return agreeService.getAcivatedAgreeCodeList();
+        return agreeService.getActivatedAgreeCodeList();
+    }
+
+
+    @PatchMapping("/agree-codes/marketing")
+    public ResponseEntity<CommonResponse<Void>> switchMarketingAgreeCode(@RequestBody AgreeCodeMarketingReqDTO agreeCodeMarketingReqDTO){
+        agreeService.switchMarketingAgreeCode(agreeCodeMarketingReqDTO.isMarketingAgree(), agreeCodeMarketingReqDTO.getUserInfo());
+        return CommonResponse.success(null);
     }
 
 }
