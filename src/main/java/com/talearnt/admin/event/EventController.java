@@ -1,6 +1,7 @@
 package com.talearnt.admin.event;
 
 import com.talearnt.admin.event.request.EventInsertReqDTO;
+import com.talearnt.admin.event.response.EventBannerListResDTO;
 import com.talearnt.admin.event.response.EventDetailResDTO;
 import com.talearnt.admin.event.response.EventListResDTO;
 import com.talearnt.enums.common.ClientPathType;
@@ -40,6 +41,11 @@ public class EventController implements EventApi{
     public ResponseEntity<CommonResponse<Void>> createEvent(@RequestBody EventInsertReqDTO insertReqDTO) {
         eventService.createEvent(insertReqDTO);
         return CommonResponse.success(null);
+    }
+
+    @GetMapping("/events/banners")
+    public ResponseEntity<CommonResponse<List<EventBannerListResDTO>>> getEventBanner(){
+        return CommonResponse.success(eventService.getEventBanner());
     }
 
 }

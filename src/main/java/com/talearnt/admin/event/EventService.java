@@ -5,6 +5,7 @@ import com.talearnt.admin.event.entity.Event;
 import com.talearnt.admin.event.repository.EventQueryRepository;
 import com.talearnt.admin.event.repository.EventRepository;
 import com.talearnt.admin.event.request.EventInsertReqDTO;
+import com.talearnt.admin.event.response.EventBannerListResDTO;
 import com.talearnt.admin.event.response.EventDetailResDTO;
 import com.talearnt.admin.event.response.EventListResDTO;
 import com.talearnt.admin.notice.response.NoticeListResDTO;
@@ -108,6 +109,15 @@ public class EventService {
 
         log.info("이벤트 작성하기 끝");
 
+    }
+
+    public List<EventBannerListResDTO> getEventBanner() {
+        log.info("이벤트 배너 불러오기 시작");
+
+        List<EventBannerListResDTO> eventBanners = eventQueryRepository.getEventBannerList();
+
+        log.info("이벤트 배너 불러오기 끝 - size : {}", eventBanners.size());
+        return eventBanners;
     }
 
 }
