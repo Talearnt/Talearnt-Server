@@ -39,4 +39,9 @@ public class AgreeCode {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;  // 약관 등록일
+
+
+    public AgreeCode(Long agreeCodeId){
+        this.agreeCodeId = agreeCodeId;
+    }
 }
