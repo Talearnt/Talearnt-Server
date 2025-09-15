@@ -71,5 +71,5 @@ public class CommunityPostController implements CommunityPostApi{
         communityPostService.likeCommunityPost(postNo, communityPostLikeStatusReqDTO.getIsLike(), communityPostLikeStatusReqDTO.getUserInfo());
         return CommonResponse.success(null);
     }
-    
+
 }

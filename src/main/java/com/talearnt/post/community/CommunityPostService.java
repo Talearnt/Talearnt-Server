@@ -252,6 +252,8 @@ public class CommunityPostService {
     public void likeCommunityPost(Long postNo, Boolean isLike, UserInfo userInfo) {
         log.info("커뮤니티 게시글 좋아요 시작 : {} - {} - {}", userInfo.getNickname() ,postNo,isLike);
 
+        //값이 null 이거나 false 일 경우 false 로 변경
+        isLike = isLike != null && isLike;
 
         if (!limiter.isAllowed(userInfo.getUserNo())){
             log.error("커뮤니티 게시글 좋아요 실패 - 요청 제한 초과 : {} - {}",userInfo.getUserNo(), ErrorCode.TOO_MANY_REQUESTS);
