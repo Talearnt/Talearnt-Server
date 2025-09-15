@@ -267,7 +267,7 @@ public interface ExchangePostApi {
     @Operation(summary = "재능 교환 게시글 상태(모집) 변경",
             description = "<h2>내용</h2>" +
                     "<p>재능 교환 게시글 상태 변경입니다.</p>" +
-                    "<p>모집중(NOW_RECRUITING), 모집 완료(RECRUITMENT_CLOSED) 상태로 변경 가능합니다.</p>" +
+                    "<p>모집중(NOW_RECRUITING), 모집 마감(RECRUITMENT_CLOSED) 상태로 변경 가능합니다.</p>" +
                     "<p>status 데이터가 변경되면서 문제가 발생할 수 있습니다.</p>" +
                     "<p>말씀해주시면 데이터 변경으로 제대로 넘어갈 수 있도록 하겠습니다.</p>" +
                     "<hr>" +
@@ -275,7 +275,7 @@ public interface ExchangePostApi {
                     "<p>1분에 최대 10개의 요청을 보낼 수 있습니다.</p>"+
                     "<hr>" +
                     "<h2>Request</h2>"+
-                    "<p>status : 모집중(NOW_RECRUITING), 모집 완료(RECRUITMENT_CLOSED)</p>"
+                    "<p>status : 모집중(NOW_RECRUITING), 모집 마감(RECRUITMENT_CLOSED)</p>"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200"),

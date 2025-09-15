@@ -276,7 +276,7 @@ public class CommunityPostService {
         //좋아요을 누른 경우
         if (likeCommunity != null){
             //좋아요 토글                        삭제가 되었는데                    좋아요 누르면 좋아요로 변경
-            LocalDateTime isCanceled = likeCommunity.getCanceledAt() != null && isLike ? null: LocalDateTime.now();
+            LocalDateTime isCanceled = isLike ? null: LocalDateTime.now();
             likeCommunity.setCanceledAt(isCanceled);
         }else{
             //좋아요 엔티티 생성
