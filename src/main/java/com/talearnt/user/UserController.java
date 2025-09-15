@@ -3,6 +3,7 @@ package com.talearnt.user;
 
 import com.talearnt.admin.agree.AgreeService;
 import com.talearnt.admin.agree.request.AgreeMarketingAndAdReqDTO;
+import com.talearnt.admin.agree.response.AgreeMarketingAndAdvertisingResDTO;
 import com.talearnt.comment.community.CommentService;
 import com.talearnt.comment.community.response.MyCommentsResDTO;
 import com.talearnt.enums.common.ClientPathType;
@@ -161,14 +162,19 @@ public class UserController implements UserApi{
         return CommonResponse.success(replyService.getMyReplies(authentication, lastNo, path.name(), page,size));
     }
 
+    @GetMapping("/users/agreements")
+    public ResponseEntity<CommonResponse<AgreeMarketingAndAdvertisingResDTO>> getAgreeMarketingAndAdvertising(Authentication authentication){
+        return CommonResponse.success(agreeService.getAgreeMarketingAndAdvertising(authentication));
 
-    @PatchMapping("/users/marketing")
+    }
+
+    @PatchMapping("/users/agreements/marketing")
     public ResponseEntity<CommonResponse<Void>> switchMarketingAgreeCode(@RequestBody AgreeMarketingAndAdReqDTO agreeCodeMarketingReqDTO){
         agreeService.switchMarketingAgreeCode(agreeCodeMarketingReqDTO.isAgree(), agreeCodeMarketingReqDTO.getUserInfo());
         return CommonResponse.success(null);
     }
 
-    @PatchMapping("/users/advertising")
+    @PatchMapping("/users/agreements/advertising")
     public ResponseEntity<CommonResponse<Void>> switchAdvertisingAgreeCode(@RequestBody AgreeMarketingAndAdReqDTO agreeCodeMarketingReqDTO){
         agreeService.switchAdvertisingAgreeCode(agreeCodeMarketingReqDTO.isAgree(), agreeCodeMarketingReqDTO.getUserInfo());
         return CommonResponse.success(null);

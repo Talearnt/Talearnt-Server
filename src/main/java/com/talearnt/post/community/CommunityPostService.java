@@ -250,7 +250,7 @@ public class CommunityPostService {
     @LogRunningTime
     @Transactional
     public void likeCommunityPost(Long postNo, boolean isLike, UserInfo userInfo) {
-        log.info("커뮤니티 게시글 좋아요 시작 : {}", postNo);
+        log.info("커뮤니티 게시글 좋아요 시작 : {} - {}", postNo,isLike);
 
 
         if (!limiter.isAllowed(userInfo.getUserNo())){
