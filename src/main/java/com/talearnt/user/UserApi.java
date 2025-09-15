@@ -1,6 +1,7 @@
 package com.talearnt.user;
 
 import com.talearnt.admin.agree.request.AgreeMarketingAndAdReqDTO;
+import com.talearnt.admin.agree.response.AgreeMarketingAndAdvertisingResDTO;
 import com.talearnt.comment.community.response.MyCommentsResDTO;
 import com.talearnt.enums.common.ClientPathType;
 import com.talearnt.post.community.response.CommunityPostListResDTO;
@@ -401,6 +402,21 @@ public interface UserApi {
             Authentication authentication,
             HttpServletRequest request,
             HttpServletResponse response);
+
+    @Operation(summary = "마케팅 목적의 개인정보 수집 동의 여부 및 광고성 정보 수신 동의 여부 조회",
+            description = "<h2>내용</h2>" +
+                    "<p>마케팅 목적의 개인정보 수집 동의 여부 및 광고성 정보 수신 동의 여부를 조회합니다.</p>" +
+                    "<h2>Response</h2>" +
+                    "<ul>" +
+                        "<li>isMarketing : 마케팅 목적의 개인정보 수집 동의 여부 (true - 동의, false - 미동의)</li>" +
+                        "<li>isAAdvertising : 광고성 정보 수신 동의 여부 (true - 동의, false - 미동의)</li>" +
+                    "</ul>")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", ref = "EXPIRED_TOKEN")
+    })
+    ResponseEntity<CommonResponse<AgreeMarketingAndAdvertisingResDTO>> getAgreeMarketingAndAdvertising(Authentication authentication);
+
 
     @Operation(summary = "마케팅 목적의 개인정보 수집 동의 여부 변경",
             description = "<h2>내용</h2>" +
