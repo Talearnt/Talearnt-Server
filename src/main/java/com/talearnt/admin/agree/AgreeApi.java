@@ -1,6 +1,7 @@
 package com.talearnt.admin.agree;
 
 import com.talearnt.admin.agree.request.AgreeCodeReqDTO;
+import com.talearnt.admin.agree.request.AgreeMarketingAndAdReqDTO;
 import com.talearnt.admin.agree.response.AgreeCodeListResDTO;
 import com.talearnt.util.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,4 +57,5 @@ public interface AgreeApi {
                     "</ul>" +
                     "<p><a target='_blank' href='https://jin02014.atlassian.net/jira/software/projects/TALEARNT/boards/1/timeline?selectedIssue=TALEARNT-68&text=%EC%9D%B4%EC%9A%A9'>이용 약관 문서 보러 가기</a></p>")
     public ResponseEntity<CommonResponse<List<AgreeCodeListResDTO>>> getActiveTerms();
+
 }

@@ -84,4 +84,29 @@ public class AgreeService {
         log.info("마케팅 이용 약관 동의 여부 변경 완료 : {}",changedAgree);
     }
 
+    @Async
+    @LogRunningTime
+    @Transactional
+    public void switchAdvertisingAgreeCode(boolean isAdvertisingAgree, UserInfo userInfo){
+        log.info("광고성 정보 수신 동의 여부 변경 시작 : {} - {}", isAdvertisingAgree,userInfo);
+
+        //요청 제한 체크
+        if (!limiter.isAllowed(userInfo.getUserNo())){
+            log.error("광고성 정보 수신 동의 여부 변경 실패 - 요청 제한 초과 : {} - {}",userInfo.getUserNo(), ErrorCode.TOO_MANY_REQUESTS);
+            throw new CustomRuntimeException(ErrorCode.TOO_MANY_REQUESTS);
+        }
+
+        //광고성 정보 수신 동의 약관 조회
+        Agree agree = agreeQueryRepository.findByUserNoAndAgreeCode(userInfo.getUserNo(), 4L)
+                .orElse(new Agree(null,new AgreeCode(4L), new User(userInfo.getUserNo()),isAdvertisingAgree, LocalDateTime.now(),LocalDateTime.now()));
+
+        //광고성 정보 수신 동의 여부 변경
+        agree.setAgree(isAdvertisingAgree);
+        agree.setAgreeDate(LocalDateTime.now());
+
+        //변경된 광고성 정보 수신 동의 약관 저장
+        Agree changedAgree = agreeRepository.save(agree);
+        log.info("광고성 정보 수신 동의 여부 변경 완료 : {}",changedAgree);
+    }
+
 }

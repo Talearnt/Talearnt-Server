@@ -1,6 +1,8 @@
 package com.talearnt.user;
 
 
+import com.talearnt.admin.agree.AgreeService;
+import com.talearnt.admin.agree.request.AgreeMarketingAndAdReqDTO;
 import com.talearnt.comment.community.CommentService;
 import com.talearnt.comment.community.response.MyCommentsResDTO;
 import com.talearnt.enums.common.ClientPathType;
@@ -55,6 +57,7 @@ public class UserController implements UserApi{
     private final CommunityPostService communityPostService;
     private final CommentService commentService;
     private final ReplyService replyService;
+    private final AgreeService agreeService;
 
 
     //회원의 기본 정보를 가져오는 API
@@ -156,6 +159,19 @@ public class UserController implements UserApi{
                                                                                                  @RequestParam(required = false, defaultValue = "1") String page,
                                                                                                  @RequestParam(required = false, defaultValue = "10") String size) {
         return CommonResponse.success(replyService.getMyReplies(authentication, lastNo, path.name(), page,size));
+    }
+
+
+    @PatchMapping("/users/marketing")
+    public ResponseEntity<CommonResponse<Void>> switchMarketingAgreeCode(@RequestBody AgreeMarketingAndAdReqDTO agreeCodeMarketingReqDTO){
+        agreeService.switchMarketingAgreeCode(agreeCodeMarketingReqDTO.isAgree(), agreeCodeMarketingReqDTO.getUserInfo());
+        return CommonResponse.success(null);
+    }
+
+    @PatchMapping("/users/advertising")
+    public ResponseEntity<CommonResponse<Void>> switchAdvertisingAgreeCode(@RequestBody AgreeMarketingAndAdReqDTO agreeCodeMarketingReqDTO){
+        agreeService.switchAdvertisingAgreeCode(agreeCodeMarketingReqDTO.isAgree(), agreeCodeMarketingReqDTO.getUserInfo());
+        return CommonResponse.success(null);
     }
 
 

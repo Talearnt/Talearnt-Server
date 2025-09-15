@@ -1,5 +1,6 @@
 package com.talearnt.admin.agree.request;
 
+import com.talearnt.util.common.RequiredJwtValueDTO;
 import com.talearnt.util.jwt.UserInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -10,8 +11,9 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class AgreeCodeMarketingReqDTO {
+@RequiredJwtValueDTO
+public class AgreeMarketingAndAdReqDTO {
     @Schema(hidden = true)
     private UserInfo userInfo;
-    private boolean isMarketingAgree;
+    private boolean isAgree;
 }
