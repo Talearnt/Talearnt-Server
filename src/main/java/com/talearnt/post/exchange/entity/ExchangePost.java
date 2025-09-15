@@ -55,7 +55,7 @@ public class ExchangePost {
 
     @Enumerated(EnumType.STRING)
     @Convert(converter = ExchangePostStatusConverter.class)
-    @Column(nullable = false, length = 10, columnDefinition = "VARCHAR(10) DEFAULT '모집중'")
+    @Column(nullable = false, length = 30, columnDefinition = "VARCHAR(30) DEFAULT 'NOW_RECRUITING'")
     private ExchangePostStatus status;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
@@ -80,7 +80,7 @@ public class ExchangePost {
     public void prePersist() {
 
         if (this.status == null) {
-            this.status = ExchangePostStatus.모집중;
+            this.status = ExchangePostStatus.NOW_RECRUITING;
         }
     }
     public ExchangePost(Long exchangePostNo){

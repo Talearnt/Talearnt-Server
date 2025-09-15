@@ -6,8 +6,8 @@ import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.util.exception.CustomRuntimeException;
 
 public enum ExchangePostStatus {
-    모집중("모집중"),
-    모집_완료("모집 완료");
+    NOW_RECRUITING("모집중"),
+    RECRUITMENT_CLOSED("모집 마감");
 
     private final String status;
 

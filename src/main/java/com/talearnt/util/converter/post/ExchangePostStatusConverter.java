@@ -14,9 +14,9 @@ public class ExchangePostStatusConverter implements AttributeConverter<ExchangeP
             return null;
 
         switch (exchangePostStatus) {
-            case 모집중 :
+            case NOW_RECRUITING:
                 return "모집중";
-            case 모집_완료:
+            case RECRUITMENT_CLOSED:
                 return "모집 완료";
             default:
                 throw new CustomRuntimeException(ErrorCode.ILLEGAL_ARGUMENT_EXCEPTION);
@@ -27,9 +27,9 @@ public class ExchangePostStatusConverter implements AttributeConverter<ExchangeP
     public ExchangePostStatus convertToEntityAttribute(String s) {
         switch (s){
             case "모집중":
-                return ExchangePostStatus.모집중;
+                return ExchangePostStatus.NOW_RECRUITING;
             case "모집 완료":
-                return ExchangePostStatus.모집_완료;
+                return ExchangePostStatus.RECRUITMENT_CLOSED;
             default:
                 throw new CustomRuntimeException(ErrorCode.ILLEGAL_ARGUMENT_EXCEPTION);
         }
