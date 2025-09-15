@@ -249,8 +249,8 @@ public class CommunityPostService {
     @Async
     @LogRunningTime
     @Transactional
-    public void likeCommunityPost(Long postNo, boolean isLike, UserInfo userInfo) {
-        log.info("커뮤니티 게시글 좋아요 시작 : {} - {}", postNo,isLike);
+    public void likeCommunityPost(Long postNo, Boolean isLike, UserInfo userInfo) {
+        log.info("커뮤니티 게시글 좋아요 시작 : {} - {} - {}", userInfo.getNickname() ,postNo,isLike);
 
 
         if (!limiter.isAllowed(userInfo.getUserNo())){

@@ -68,9 +68,8 @@ public class CommunityPostController implements CommunityPostApi{
     //커뮤니티 게시글 좋아요
     @PostMapping("/posts/communities/{postNo}/like")
     public ResponseEntity<CommonResponse<Void>> likeCommunityPost(@PathVariable Long postNo, @RequestBody CommunityPostLikeStatusReqDTO communityPostLikeStatusReqDTO){
-        communityPostService.likeCommunityPost(postNo, communityPostLikeStatusReqDTO.isLike(), communityPostLikeStatusReqDTO.getUserInfo());
+        communityPostService.likeCommunityPost(postNo, communityPostLikeStatusReqDTO.getIsLike(), communityPostLikeStatusReqDTO.getUserInfo());
         return CommonResponse.success(null);
     }
-
-
+    
 }

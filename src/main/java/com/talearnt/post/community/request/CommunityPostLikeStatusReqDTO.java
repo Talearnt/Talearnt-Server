@@ -15,5 +15,5 @@ public class CommunityPostLikeStatusReqDTO {
     @Schema(hidden = true)
     private UserInfo userInfo;
 
-    private boolean isLike;
+    private Boolean isLike;
 }
