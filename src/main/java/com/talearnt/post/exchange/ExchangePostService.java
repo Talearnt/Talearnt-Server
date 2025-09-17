@@ -464,14 +464,7 @@ public class ExchangePostService {
     @Async
     @Transactional
     @LogRunningTime
-    public void patchExchangePostStatus(Long postNo, ExchangePostStatus status, Authentication auth) {
-        //로그인 여부 확인
-        UserInfo userInfo = UserUtil.validateAuthentication("재능교환 게시글 상태 변경", auth);
-
-        if (!limiter.isAllowed(userInfo.getUserNo())){
-            log.error("재능 교환 게시글 상태 변경 실패 - 요청 제한 초과 : {} - {}",userInfo.getUserNo(), ErrorCode.TOO_MANY_REQUESTS);
-            throw new CustomRuntimeException(ErrorCode.TOO_MANY_REQUESTS);
-        }
+    public void patchExchangePostStatus(Long postNo, ExchangePostStatus status, UserInfo userInfo) {
 
         //나의 게시글이 맞는가?
         if(!exchangePostQueryRepository.isMyExchangePost(postNo, userInfo.getUserNo())){

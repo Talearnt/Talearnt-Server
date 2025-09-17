@@ -2,6 +2,7 @@ package com.talearnt.post.exchange;
 
 
 import com.talearnt.enums.common.ClientPathType;
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.post.exchange.request.ExchangePostReqDTO;
 import com.talearnt.post.exchange.request.ExchangePostStatusReqDTO;
 import com.talearnt.post.exchange.response.ExchangePostDetailResDTO;
@@ -10,6 +11,10 @@ import com.talearnt.stomp.notification.NotificationService;
 import com.talearnt.user.talent.MyTalentService;
 import com.talearnt.user.talent.response.MyTalentsResDTO;
 import com.talearnt.util.common.ClientPath;
+import com.talearnt.util.common.UserUtil;
+import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.filter.UserRequestLimiter;
+import com.talearnt.util.jwt.UserInfo;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.version.RestControllerV1;
@@ -30,6 +35,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExchangePostController implements ExchangePostApi{
 
+    //Async Limiter
+    private final UserRequestLimiter limiter;
     private final MyTalentService myTalentService;
     private final ExchangePostService exchangePostService;
     private final NotificationService notificationService;
@@ -91,7 +98,15 @@ public class ExchangePostController implements ExchangePostApi{
     public ResponseEntity<CommonResponse<Void>> patchExchangePostStatus(@PathVariable Long postNo,
                                                                         @RequestBody ExchangePostStatusReqDTO exchangePostStatusReqDTO,
                                                                         Authentication auth) {
-        exchangePostService.patchExchangePostStatus(postNo, exchangePostStatusReqDTO.getStatus(), auth);
+
+        UserInfo userInfo = UserUtil.validateAuthentication("재능 교환 게시글 상태 조회", auth);
+
+        if (!limiter.isAllowed(userInfo.getUserNo())){
+            log.error("재능 교환 게시글 상태 변경 실패 - 요청 제한 초과 : {} - {}",userInfo.getUserNo(), ErrorCode.TOO_MANY_REQUESTS);
+            throw new CustomRuntimeException(ErrorCode.TOO_MANY_REQUESTS);
+        }
+
+        exchangePostService.patchExchangePostStatus(postNo, exchangePostStatusReqDTO.getStatus(), userInfo);
         return CommonResponse.success(null);
     }
 

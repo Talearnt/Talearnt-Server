@@ -1,11 +1,14 @@
 package com.talearnt.post.community;
 
 import com.talearnt.enums.common.ClientPathType;
+import com.talearnt.enums.common.ErrorCode;
 import com.talearnt.post.community.request.CommunityPostLikeStatusReqDTO;
 import com.talearnt.post.community.request.CommunityPostReqDTO;
 import com.talearnt.post.community.response.CommunityPostDetailResDTO;
 import com.talearnt.post.community.response.CommunityPostListResDTO;
 import com.talearnt.util.common.ClientPath;
+import com.talearnt.util.exception.CustomRuntimeException;
+import com.talearnt.util.filter.UserRequestLimiter;
 import com.talearnt.util.response.CommonResponse;
 import com.talearnt.util.response.PaginatedResponse;
 import com.talearnt.util.version.RestControllerV1;
@@ -25,6 +28,8 @@ import java.util.List;
 @Tag(name = "Post-Community")
 public class CommunityPostController implements CommunityPostApi{
 
+
+    private final UserRequestLimiter limiter;
     private final CommunityPostService communityPostService;
 
     //커뮤니티 게시글 목록
@@ -68,6 +73,12 @@ public class CommunityPostController implements CommunityPostApi{
     //커뮤니티 게시글 좋아요
     @PostMapping("/posts/communities/{postNo}/like")
     public ResponseEntity<CommonResponse<Void>> likeCommunityPost(@PathVariable Long postNo, @RequestBody CommunityPostLikeStatusReqDTO communityPostLikeStatusReqDTO){
+
+        if (!limiter.isAllowed(communityPostLikeStatusReqDTO.getUserInfo().getUserNo())){
+            log.error("커뮤니티 게시글 좋아요 실패 - 요청 제한 초과 : {} - {}",communityPostLikeStatusReqDTO.getUserInfo(), ErrorCode.TOO_MANY_REQUESTS);
+            throw new CustomRuntimeException(ErrorCode.TOO_MANY_REQUESTS);
+        }
+
         communityPostService.likeCommunityPost(postNo, communityPostLikeStatusReqDTO.getIsLike(), communityPostLikeStatusReqDTO.getUserInfo());
         return CommonResponse.success(null);
     }

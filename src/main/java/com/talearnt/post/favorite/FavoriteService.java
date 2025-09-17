@@ -36,7 +36,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FavoriteService {
 
-    private final UserRequestLimiter limiter;
 
     private final ExchangePostRepository exchangePostRepository;
     private final FavoriteExchangePostRepository favoriteExchangePostRepository;
@@ -92,10 +91,6 @@ public class FavoriteService {
     public void favoriteExchangePost(Long postNo, boolean favoriteStatus, UserInfo userInfo){
         log.info("재능 교환 게시글 찜하기 시작 - {}",postNo);
 
-        if (!limiter.isAllowed(userInfo.getUserNo())){
-            log.error("재능 교환 게시글 찜하기 실패 - 요청 제한 초과 : {} - {}",userInfo.getUserNo(), ErrorCode.TOO_MANY_REQUESTS);
-            throw new CustomRuntimeException(ErrorCode.TOO_MANY_REQUESTS);
-        }
 
         //게시글이 존재하는가?
         ExchangePost exchangePost = exchangePostRepository.findById(postNo)

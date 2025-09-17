@@ -40,7 +40,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommunityPostService {
 
-    private final UserRequestLimiter limiter;
     private final CommunityPostRepository communityPostRepository;
     private final FileUploadService fileUploadService;
     private final CommunityPostQueryRepository communityPostQueryRepository;
@@ -254,11 +253,6 @@ public class CommunityPostService {
 
         //값이 null 이거나 false 일 경우 false 로 변경
         isLike = isLike != null && isLike;
-
-        if (!limiter.isAllowed(userInfo.getUserNo())){
-            log.error("커뮤니티 게시글 좋아요 실패 - 요청 제한 초과 : {} - {}",userInfo.getUserNo(), ErrorCode.TOO_MANY_REQUESTS);
-            throw new CustomRuntimeException(ErrorCode.TOO_MANY_REQUESTS);
-        }
 
         //게시글 존재 여부 확인
         CommunityPost communityPost = communityPostRepository.findById(postNo).orElseThrow(()->{
