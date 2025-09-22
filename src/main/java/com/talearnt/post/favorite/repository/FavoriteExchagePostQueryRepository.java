@@ -92,6 +92,7 @@ public class FavoriteExchagePostQueryRepository {
                         .from(favoriteExchangePost)
                         .leftJoin(exchangePost).on(favoriteExchangePost.exchangePostNo.eq(exchangePost.exchangePostNo))
                         .where(
+                                favoriteExchangePost.deletedAt.isNull(),//게시글이 삭제되지 않았고
                                 favoriteExchangePost.userNo.eq(userNo),
                                 exchangePost.deletedAt.isNull()//게시글이 삭제되지 않았고
                         ).fetchOne()
