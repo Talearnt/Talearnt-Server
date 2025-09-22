@@ -23,6 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "https://api.talearnt.net",
                         "http://talearnt.net",
                         "https://talearnt.net",
+                        "https://www.talearnt.net",
                         "https://doe331l0de5w8.cloudfront.net/" // FE TEST 개발계 주소
                 ) // 허용할 도메인
                 .allowedMethods("GET", "POST", "PUT", "PATCH","DELETE") // 허용할 HTTP 메서드
