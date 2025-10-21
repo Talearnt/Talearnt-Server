@@ -59,7 +59,6 @@ public class ExchangePostController implements ExchangePostApi{
                                                                                             @RequestParam(value = "receiveTalents",required = false,defaultValue = "") List<String> receiveTalents,//Integer로 변환 필요
                                                                                             @RequestParam(value = "order", required = false,defaultValue = "recent") String order,//recent,popular 로 변환 필요
                                                                                             @RequestParam(value = "duration",required = false) String duration,// 이상한 값이 넘어올 경우 duration 없이 조건
-                                                                                            @RequestParam(value = "type", required = false) String type, //ExchangeType으로 변환 필요, ExchangeType 으로 변환 실패 시 null로 변환
                                                                                             @RequestParam(value = "badge",required = false) String requiredBadge, // Boolean 값으로 넘어오지 않을 경우 null로 변환
                                                                                             @RequestParam(value = "status",required = false) String status, //ExchangePostStatus으로 변환 필요, ExchangePostStatus 으로 변환 실패시  으로 변환 실패 시 null로 변환
                                                                                             @RequestParam(value = "page",required = false,defaultValue = "1") String page,
@@ -67,7 +66,7 @@ public class ExchangePostController implements ExchangePostApi{
                                                                                             @RequestParam(value = "lastNo", required = false) String lastNo,
                                                                                             @ClientPath ClientPathType path,
                                                                                             Authentication auth){
-        return CommonResponse.success(exchangePostService.getExchangePostList(giveTalents,receiveTalents,order,duration,type,requiredBadge,status,page,size,lastNo, auth, path.name()));
+        return CommonResponse.success(exchangePostService.getExchangePostList(giveTalents,receiveTalents,order,duration,requiredBadge,status,page,size,lastNo, auth, path.name()));
     }
 
     //게시글 작성

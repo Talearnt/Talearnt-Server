@@ -36,13 +36,11 @@ public class ExchangePostReqDTO {
     @ListValid(errorCode = ErrorCode.POST_KEYWORD_LENGTH_OVER, maxLength = 5)
     private List<Integer> receiveTalents;
 
-    @Valid
-    @DynamicValid(errorCode = ErrorCode.POST_BAD_REQUEST, pattern = Regex.EXCHANGE_TYPE)
-    private ExchangeType exchangeType;
-
     private boolean requiredBadge;
     @DynamicValid(errorCode = ErrorCode.POST_DURATION_MISSING, pattern = Regex.EXCHANGE_DURATION)
     private String duration;
 
     private List<String> imageUrls; //S3에서 삭제할 파일 경로 PresignedURL 옵션 제거 경로
+
+    private String hyperLink;
 }

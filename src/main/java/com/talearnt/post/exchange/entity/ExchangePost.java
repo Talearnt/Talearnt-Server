@@ -47,11 +47,8 @@ public class ExchangePost {
     @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
     private int count;
 
-
-    @Enumerated(EnumType.STRING)
-    @Convert(converter = ExchangeTypeConverter.class)
-    @Column(nullable = false, length = 6)
-    private ExchangeType exchangeType;
+    @Column(length = 255)
+    private String hyperLink;
 
     @Enumerated(EnumType.STRING)
     @Convert(converter = ExchangePostStatusConverter.class)

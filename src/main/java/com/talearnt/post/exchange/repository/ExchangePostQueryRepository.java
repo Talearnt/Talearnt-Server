@@ -12,7 +12,6 @@ import com.talearnt.admin.category.entity.QTalentCategory;
 import com.talearnt.chat.entity.QChatRequest;
 import com.talearnt.chat.entity.QChatRoom;
 import com.talearnt.enums.post.ExchangePostStatus;
-import com.talearnt.enums.post.ExchangeType;
 import com.talearnt.enums.post.PostType;
 import com.talearnt.post.exchange.entity.QExchangePost;
 import com.talearnt.post.exchange.entity.QGiveTalent;
@@ -166,14 +165,14 @@ public class ExchangePostQueryRepository {
     /**
      * ExchangePost 수정
      */
-    public long updateExchangePost(Long postNo, String title, String content, ExchangeType exchangeType, boolean requiredBadge, String duration) {
+    public long updateExchangePost(Long postNo, String title, String content, String hyperLink ,boolean requiredBadge, String duration) {
         return factory.update(exchangePost)
                 .set(exchangePost.title, title)
                 .set(exchangePost.content, content)
-                .set(exchangePost.exchangeType, exchangeType)
                 .set(exchangePost.requiredBadge, requiredBadge)
                 .set(exchangePost.duration, duration)
                 .set(exchangePost.updatedAt, LocalDateTime.now())
+                .set(exchangePost.hyperLink, hyperLink)
                 .where(exchangePost.exchangePostNo.eq(postNo)).execute();
     }
 
@@ -241,7 +240,6 @@ public class ExchangePostQueryRepository {
                                 exchangePost.exchangePostNo,
                                 Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", giveCategory.talentName),
                                 Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", receiveCategory.talentName),
-                                exchangePost.exchangeType,
                                 exchangePost.status,
                                 exchangePost.createdAt,
                                 exchangePost.updatedAt,
@@ -254,7 +252,8 @@ public class ExchangePostQueryRepository {
                                 exchangePost.count,
                                 favoriteExchangePost.countDistinct(),
                                 chatRequest.countDistinct(),
-                                Expressions.numberTemplate(Long.class, "MAX({0})", chatRoom.roomNo)
+                                Expressions.numberTemplate(Long.class, "MAX({0})", chatRoom.roomNo),
+                                exchangePost.hyperLink
                         ))
                         .from(exchangePost)
                         .leftJoin(user).on(user.eq(exchangePost.user))
@@ -285,7 +284,6 @@ public class ExchangePostQueryRepository {
                         giveTalentsCodeEq(searchConditionDTO.getGiveTalents()),//주고 싶은 재능 분류의 코드가 일치하고,
                         receiveTalentCodesEq(searchConditionDTO.getReceiveTalents()),//받고 싶은 재능 분류의 코드가 일치할 경우
                         durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
-                        exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
                         requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
                         exchangePostStatusEq(searchConditionDTO.getStatus()),// 모집 상태가 일치하고
                         lastNoLt(searchConditionDTO.getLastNo()) //마지막 번째 번호보다 작고
@@ -303,7 +301,6 @@ public class ExchangePostQueryRepository {
                                 giveTalentsCodeEq(searchConditionDTO.getGiveTalents()),//대분류 코드가 일치하고,
                                 receiveTalentCodesEq(searchConditionDTO.getReceiveTalents()),//재능 분류의 코드가 일치할 경우
                                 durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
-                                exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
                                 requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
                                 exchangePostStatusEq(searchConditionDTO.getStatus()), // 모집 상태가 일치하고
                                 lastNoLt(searchConditionDTO.getLastNo()) //마지막 번째 번호보다 작고
@@ -324,7 +321,6 @@ public class ExchangePostQueryRepository {
                         giveTalentsCodeEq(searchConditionDTO.getGiveTalents()),//주고 싶은 재능 분류의 코드가 일치하고,
                         receiveTalentCodesEq(searchConditionDTO.getReceiveTalents()),//받고 싶은 재능 분류의 코드가 일치할 경우
                         durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
-                        exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
                         requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
                         exchangePostStatusEq(searchConditionDTO.getStatus()) // 모집 상태가 일치하고
                 )
@@ -347,7 +343,6 @@ public class ExchangePostQueryRepository {
                                 giveTalentsCodeEq(searchConditionDTO.getGiveTalents()),//대분류 코드가 일치하고,
                                 receiveTalentCodesEq(searchConditionDTO.getReceiveTalents()),//재능 분류의 코드가 일치할 경우
                                 durationEq(searchConditionDTO.getDuration()),//진행 기간이 일치하고
-                                exchangeTypeEq(searchConditionDTO.getType()), //진행 방식이 일치하고
                                 requiredBadgeEq(searchConditionDTO.getRequiredBadge()), //인증 뱃지 여부가 일치하고
                                 exchangePostStatusEq(searchConditionDTO.getStatus()) // 모집 상태가 일치하고
                         ).fetchOne()
@@ -366,7 +361,6 @@ public class ExchangePostQueryRepository {
                         exchangePost.deletedAt.isNull(),
                         exchangePost.user.userNo.eq(userNo), // 본인 게시글만
                         durationEq(condition.getDuration()),
-                        exchangeTypeEq(condition.getType()),
                         requiredBadgeEq(condition.getRequiredBadge()),
                         exchangePostStatusEq(condition.getStatus())
                 )
@@ -384,7 +378,6 @@ public class ExchangePostQueryRepository {
                         exchangePost.deletedAt.isNull(),
                         exchangePost.user.userNo.eq(userNo),
                         durationEq(condition.getDuration()),
-                        exchangeTypeEq(condition.getType()),
                         requiredBadgeEq(condition.getRequiredBadge()),
                         exchangePostStatusEq(condition.getStatus())
                 ).fetchOne();
@@ -402,7 +395,6 @@ public class ExchangePostQueryRepository {
                         exchangePost.deletedAt.isNull(),
                         exchangePost.user.userNo.eq(userNo), // 본인 게시글만
                         durationEq(condition.getDuration()),
-                        exchangeTypeEq(condition.getType()),
                         requiredBadgeEq(condition.getRequiredBadge()),
                         exchangePostStatusEq(condition.getStatus()),
                         lastNoLt(condition.getLastNo())
@@ -420,7 +412,6 @@ public class ExchangePostQueryRepository {
                                 exchangePost.deletedAt.isNull(),
                                 exchangePost.user.userNo.eq(userNo), // 본인 게시글만
                                 durationEq(condition.getDuration()),
-                                exchangeTypeEq(condition.getType()),
                                 requiredBadgeEq(condition.getRequiredBadge()),
                                 exchangePostStatusEq(condition.getStatus()),
                                 lastNoLt(condition.getLastNo())
@@ -446,7 +437,6 @@ public class ExchangePostQueryRepository {
                                 user.authority,
                                 exchangePost.exchangePostNo,
                                 exchangePost.status,
-                                exchangePost.exchangeType,
                                 exchangePost.duration,
                                 exchangePost.requiredBadge,
                                 exchangePost.title,
@@ -533,15 +523,6 @@ public class ExchangePostQueryRepository {
      */
     private BooleanExpression durationEq(String duration) {
         return duration != null ? exchangePost.duration.eq(duration) : null;
-    }
-
-    /**
-     * 재능 교환 진행 방식 (Exchange Type)이 일치하는 게시글 가져오기<br>
-     * PostUtil 의 filterValidExchangeType 에서 정제를 커친 후 사용함<br>
-     * 온라인,오프라인,온_오프라인 외 null 값
-     */
-    private BooleanExpression exchangeTypeEq(ExchangeType type) {
-        return type != null ? exchangePost.exchangeType.eq(type) : null;
     }
 
     /**

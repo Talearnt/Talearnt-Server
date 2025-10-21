@@ -57,8 +57,8 @@ public interface ExchangePostApi {
                     "<li><strong>content :</strong> 20자 이상</li>" +
                     "<li><strong>giveTalents :</strong> 1개 이상, 5개 이하</li>" +
                     "<li><strong>receiveTalents :</strong> 1개 이상, 5개 이하</li>" +
-                    "<li><strong>exchangeType :</strong> 진행 방식(온라인,오프라인,온/오프라인)</li>" +
                     "<li><strong>requiredBadge :</strong> 인증 뱃지 필수 여부 - 기본 false</li>" +
+                    "<li><strong>hyperLink :</strong> 하이퍼 링크 주소</li>" +
                     "<li><strong>duration :</strong> 진행 기간(기간 미정,1개월,2개월,3개월,3개월 이상)</li>" +
                     "<li><strong>imageUrls :</strong> S3에 저장된 이미지 경로 목록 - Presigned URL 에서 ?의 뒷 부분은 제거하고 보내주세요.</li>" +
                     "</ul>" +
@@ -67,7 +67,6 @@ public interface ExchangePostApi {
                     "<p>로그인을 하지 않으면 오류가 발생합니다.</p>" +
                     "<p>키워드 등록을 하지 않으면 오류가 발생합니다. (나의 주고 싶은 재능 등록 필요)</p>" +
                     "<p>아래는 Enum Class 및 Regex 규칙이 적용되었습니다.</p>" +
-                    "<p>ExchangeType : 온라인,오프라인,온/오프라인 이렇게 보내주셔야 합니다.</p>" +
                     "<p>Duration : 기간 미정,1개월,2개월,3개월,3개월 이상 이렇게 보내주셔야 합니다.</p>" +
                     "<hr/>" +
                     "<h2>업로드할 경우 FE에서 해야 할 업무</h2>" +
@@ -120,7 +119,6 @@ public interface ExchangePostApi {
             "<li>exchangePostNo : 게시글 번호</li>" +
             "<li>giveTalents : 주고 싶은 재능 목록 (이름)</li>" +
             "<li>receiveTalents : 받고 싶은 재능 목록 (이름)</li>" +
-            "<li>exchangeType : 온라인,오프라인,온/오프라인</li>" +
             "<li>status : 모집중,모집 완료</li>" +
             "<li>createdAt : 게시글 등록 일시</li>" +
             "<li>updatedAt : 게시글 수정 일시</li>" +
@@ -134,6 +132,7 @@ public interface ExchangePostApi {
             "<li>favoriteCount : 게시글의 찜 개수</li>" +
             "<li>openedChatRoomCount : 해당 게시글에 열린 채팅방 개수</li>" +
             "<li>chatRoomNo : 채팅방에 연결할 번호</li>" +
+            "<li>hyperLink : 하이퍼 링크 주소</li>" +
             "</ul>")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200")
@@ -171,7 +170,6 @@ public interface ExchangePostApi {
                 "<li>authority : 작성자의 권한 (인증 유저)</li>" +
                 "<li>exchangePostNo : 게시글 번호</li>" +
                 "<li>status : 게시글 모집 상태</li>" +
-                "<li>exchangeType : 게시글 진행 방식</li>" +
                 "<li>duration : 게시글 진행 기간</li>" +
                 "<li>title : 게시글 제목</li>" +
                 "<li>content : 게시글 내용 (태그를 제외한 100자 이내)</li>" +
@@ -207,7 +205,6 @@ public interface ExchangePostApi {
                                                                                                                @RequestParam(value = "receiveTalents", required = false, defaultValue = "") @Schema(description = "받고 싶은 재능 코드 List") List<String> receiveTalents,
                                                                                                                @RequestParam(value = "order", required = false, defaultValue = "recent") @Schema(description = "정렬(기본) - recent : 최신순, popular : 인기순") String order,
                                                                                                                @RequestParam(value = "duration", required = false) @Schema(description = "진행 기간 - 기간 미정, 1개월,2개월,3개월, 3개월 이상 만 가능 - null일 경우 전체") String duration,
-                                                                                                               @RequestParam(value = "type", required = false) @Schema(description = "진행 방식 - 온라인, 오프라인, 온/오프라인(온_오프라인) 만 가능 - null일 경우 전체") String type,
                                                                                                                @RequestParam(value = "badge", required = false) @Schema(description = "인증 뱃지 필요 여부 - true, false 만 가능 - null 일 경우 전체") String requiredBadge,
                                                                                                                @RequestParam(value = "status", required = false) @Schema(description = "모집 상태 - 모집중, 모집 완료(모집_완료) 만 가능 - null일 경우 전체") String status,
                                                                                                                @RequestParam(value = "page",required = false,defaultValue = "1") @Schema(description = "모바일 사용 X (모바일은 언제나 1이어야 함), 웹만 사용") String page,
@@ -238,8 +235,8 @@ public interface ExchangePostApi {
                     "<li><strong>content :</strong> 20자 이상</li>" +
                     "<li><strong>giveTalents :</strong> 1개 이상, 5개 이하</li>" +
                     "<li><strong>receiveTalents :</strong> 1개 이상, 5개 이하</li>" +
-                    "<li><strong>exchangeType :</strong> 진행 방식(온라인,오프라인,온/오프라인)</li>" +
                     "<li><strong>requiredBadge :</strong> 인증 뱃지 필수 여부 - 기본 false</li>" +
+                    "<li><strong>hyperLink :</strong> 하이퍼 링크 주소</li>" +
                     "<li><strong>duration :</strong> 진행 기간(기간 미정,1개월,2개월,3개월,3개월 이상)</li>" +
                     "<li><strong>imageUrls :</strong> S3에 저장된 이미지 경로 목록 - Presigned URL 에서 ?의 뒷 부분은 제거하고 보내주세요.</li>" +
                     "</ul>")

@@ -29,7 +29,6 @@ public class ExchangePostDetailResDTO {
     private List<String> giveTalents;
     private List<String> receiveTalents;
     private ExchangeType exchangeType;
-    private ExchangePostStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String duration;
@@ -43,9 +42,11 @@ public class ExchangePostDetailResDTO {
     private Long favoriteCount; //찜(좋아요)수
     private Long openedChatRoomCount; // 진행중인 채팅 방 수
     private Long chatRoomNo; //채팅방 접속할 ID
+    private String hyperLink;
+
 
     @Builder
-    public ExchangePostDetailResDTO(Long userNo, String nickname, String profileImg, UserRole authority, Long exchangePostNo, String giveTalents, String receiveTalents, ExchangeType exchangeType, ExchangePostStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, String duration, Boolean requiredBadge, Boolean isFavorite,String title, String content, String imageUrls, int count, Long favoriteCount, Long openedChatRoomCount, Long chatRoomNo) {
+    public ExchangePostDetailResDTO(Long userNo, String nickname, String profileImg, UserRole authority, Long exchangePostNo, String giveTalents, String receiveTalents, ExchangePostStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, String duration, Boolean requiredBadge, Boolean isFavorite,String title, String content, String imageUrls, int count, Long favoriteCount, Long openedChatRoomCount, Long chatRoomNo, String hyperLink) {
         this.userNo = userNo;
         this.nickname = nickname;
         this.profileImg = profileImg;
@@ -54,7 +55,6 @@ public class ExchangePostDetailResDTO {
         this.giveTalents = SplitUtil.splitStringToList(giveTalents);
         this.receiveTalents = SplitUtil.splitStringToList(receiveTalents);
         this.exchangeType = exchangeType;
-        this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.duration = duration;
@@ -67,5 +67,6 @@ public class ExchangePostDetailResDTO {
         this.favoriteCount = favoriteCount;
         this.openedChatRoomCount = openedChatRoomCount==null?0:openedChatRoomCount;
         this.chatRoomNo = chatRoomNo;
+        this.hyperLink = hyperLink;
     }
 }

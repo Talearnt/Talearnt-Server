@@ -23,7 +23,6 @@ public class  ExchangePostListResDTO {
 
     private Long exchangePostNo;
     private ExchangePostStatus status;
-    private ExchangeType exchangeType;
     private String duration;
     private boolean requiredBadge;
 
@@ -39,13 +38,12 @@ public class  ExchangePostListResDTO {
     private Boolean isFavorite;
 
     @Builder
-    public ExchangePostListResDTO(String profileImg, String nickname, UserRole authority, Long exchangePostNo, ExchangePostStatus status, ExchangeType exchangeType, String duration, boolean requiredBadge, String title, String content, String giveTalents, String receiveTalents, LocalDateTime createdAt, Integer count, Long openedChatRoomCount, Long favoriteCount, Boolean isFavorite) {
+    public ExchangePostListResDTO(String profileImg, String nickname, UserRole authority, Long exchangePostNo, ExchangePostStatus status, String duration, boolean requiredBadge, String title, String content, String giveTalents, String receiveTalents, LocalDateTime createdAt, Integer count, Long openedChatRoomCount, Long favoriteCount, Boolean isFavorite) {
         this.profileImg = profileImg;
         this.nickname = nickname;
         this.authority = authority;
         this.exchangePostNo = exchangePostNo;
         this.status = status;
-        this.exchangeType = exchangeType;
         this.duration = duration;
         this.requiredBadge = requiredBadge;
         this.title = title;

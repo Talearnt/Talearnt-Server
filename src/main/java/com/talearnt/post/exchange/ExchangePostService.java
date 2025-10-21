@@ -170,12 +170,11 @@ public class ExchangePostService {
      * - 재능 분류 : Integer 로 변환 필요 ( length 가 0일 경우 null ) - 검증 완료<br>
      * - 정렬 기준 : 기본 recent, (recent, popular 가 아니라면 recent 로 변경) (커뮤니티 공통) - 검증 완료<br>
      * - 기간 : 이상한 값(Regex 에 맞지 않는)이 넘어왔을 경우에는 null로 변경 - 검증 완료<br>
-     * - 진행 방식 : ExchangeType 값이 아닐 경우 null - 검증 완료<br>
      * - 인증 뱃지 필수 여부 : Boolean 값이 아닐 경우 null - 검증 완료<br>
      * - 모집 상태 : ExchangePostStatus 값이 아닐 경우 null - 검증 완료<br>
      * - 페이지 번호 : Integer 가 아닐 경우 기본 값 1 (커뮤니티 공통)<br>
      * */
-    public PaginatedResponse<List<ExchangePostListResDTO>> getExchangePostList(List<String> giveTalents, List<String> receiveTalents, String order, String duration, String type, String requiredBadge, String status, String page, String size, String lastNo, Authentication auth, String path){
+    public PaginatedResponse<List<ExchangePostListResDTO>> getExchangePostList(List<String> giveTalents, List<String> receiveTalents, String order, String duration, String requiredBadge, String status, String page, String size, String lastNo, Authentication auth, String path){
         log.info("재능 교환 게시글 목록 불러오기 시작");
 
         //유저가 로그인 했는 지 확인, 안했을 경우 찜 게시글 표시 False
@@ -187,7 +186,6 @@ public class ExchangePostService {
                 .receiveTalents(receiveTalents)
                 .order(order)
                 .duration(duration)
-                .type(type)
                 .requiredBadge(requiredBadge)
                 .status(status)
                 .page(page)
@@ -283,7 +281,7 @@ public class ExchangePostService {
         }
 
         //게시글 업데이트
-        long updatedPostCount = exchangePostQueryRepository.updateExchangePost(postNo,exchangePostReqDTO.getTitle(),exchangePostReqDTO.getContent(),exchangePostReqDTO.getExchangeType(),exchangePostReqDTO.isRequiredBadge(),exchangePostReqDTO.getDuration());
+        long updatedPostCount = exchangePostQueryRepository.updateExchangePost(postNo,exchangePostReqDTO.getTitle(),exchangePostReqDTO.getContent(), exchangePostReqDTO.getHyperLink() ,exchangePostReqDTO.isRequiredBadge(),exchangePostReqDTO.getDuration());
         if(updatedPostCount == 0 || updatedPostCount > 1){
             log.error("재능 교환 게시글 수정 실패 - 수정된 게시글이 0개 또는 여러 개입니다. : {} - {}",postNo,ErrorCode.POST_FAILED_UPDATE);
             throw new CustomRuntimeException(ErrorCode.POST_FAILED_UPDATE);
