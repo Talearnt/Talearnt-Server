@@ -28,7 +28,7 @@ public class ExchangePostDetailResDTO {
     private Long exchangePostNo; //채팅방 연결
     private List<String> giveTalents;
     private List<String> receiveTalents;
-    private ExchangeType exchangeType;
+    private ExchangePostStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String duration;
@@ -54,7 +54,7 @@ public class ExchangePostDetailResDTO {
         this.exchangePostNo = exchangePostNo;
         this.giveTalents = SplitUtil.splitStringToList(giveTalents);
         this.receiveTalents = SplitUtil.splitStringToList(receiveTalents);
-        this.exchangeType = exchangeType;
+        this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.duration = duration;
