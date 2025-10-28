@@ -170,13 +170,13 @@ public class UserController implements UserApi{
 
     @PatchMapping("/users/agreements/marketing")
     public ResponseEntity<CommonResponse<Void>> switchMarketingAgreeCode(@RequestBody AgreeMarketingAndAdReqDTO agreeCodeMarketingReqDTO){
-        agreeService.switchMarketingAgreeCode(agreeCodeMarketingReqDTO.isAgree(), agreeCodeMarketingReqDTO.getUserInfo());
+        agreeService.switchMarketingAgreeCode(agreeCodeMarketingReqDTO.getIsAgree(), agreeCodeMarketingReqDTO.getUserInfo());
         return CommonResponse.success(null);
     }
 
     @PatchMapping("/users/agreements/advertising")
     public ResponseEntity<CommonResponse<Void>> switchAdvertisingAgreeCode(@RequestBody AgreeMarketingAndAdReqDTO agreeCodeMarketingReqDTO){
-        agreeService.switchAdvertisingAgreeCode(agreeCodeMarketingReqDTO.isAgree(), agreeCodeMarketingReqDTO.getUserInfo());
+        agreeService.switchAdvertisingAgreeCode(agreeCodeMarketingReqDTO.getIsAgree(), agreeCodeMarketingReqDTO.getUserInfo());
         return CommonResponse.success(null);
     }
 

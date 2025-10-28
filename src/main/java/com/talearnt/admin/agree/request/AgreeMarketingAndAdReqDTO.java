@@ -15,5 +15,5 @@ import lombok.*;
 public class AgreeMarketingAndAdReqDTO {
     @Schema(hidden = true)
     private UserInfo userInfo;
-    private boolean isAgree;
+    private Boolean isAgree;
 }

@@ -99,7 +99,7 @@ public class AgreeService {
     @Async
     @LogRunningTime
     @Transactional
-    public void switchMarketingAgreeCode(boolean isMarketingAgree, UserInfo userInfo){
+    public void switchMarketingAgreeCode(Boolean isMarketingAgree, UserInfo userInfo){
         log.info("마케팅 이용 약관 동의 여부 변경 시작 : {} - {}", isMarketingAgree,userInfo);
 
         //요청 제한 체크
@@ -124,7 +124,7 @@ public class AgreeService {
     @Async
     @LogRunningTime
     @Transactional
-    public void switchAdvertisingAgreeCode(boolean isAdvertisingAgree, UserInfo userInfo){
+    public void switchAdvertisingAgreeCode(Boolean isAdvertisingAgree, UserInfo userInfo){
         log.info("광고성 정보 수신 동의 여부 변경 시작 : {} - {}", isAdvertisingAgree,userInfo);
 
         //요청 제한 체크
