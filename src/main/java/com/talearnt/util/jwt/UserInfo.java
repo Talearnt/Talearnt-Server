@@ -18,7 +18,7 @@ public class UserInfo implements UserDetails {
     private String userId;
     private String nickname;
     private String profileImg;
-    private UserRole authority;;
+    private UserRole authority;
 
 
     // UserDetails 인터페이스 메서드 구현
@@ -55,6 +55,14 @@ public class UserInfo implements UserDetails {
     @Override
     public boolean isEnabled() {
         return !(authority == UserRole.ROLE_WITHDRAWN || authority == UserRole.ROLE_SUSPENDED);
+    }
+
+    public boolean hasHigherOrEqual(UserRole requiredRole) {
+        return authority.isHigherOrEqual(requiredRole);
+    }
+
+    public boolean isActiveUser() {
+        return isEnabled() && authority.getLevel() > 0;
     }
 
 }
