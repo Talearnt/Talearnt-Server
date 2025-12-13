@@ -118,9 +118,19 @@ public class LoginService {
 
         // 리프레시 토큰 쿠키에 설정
         ResponseCookie refreshTokenCookie = null;
+        ResponseCookie isLoginFlag= null;
         if (isAutoLogin){
             refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                     .httpOnly(true)   // HttpOnly 속성 적용
+                    .secure(true)     // HTTPS에서만 전송
+                    .sameSite("None") // CORS 요청에서도 쿠키 전송 허용
+                    .domain(domain)
+                    .path("/")        // 쿠키 경로 설정
+                    .maxAge(Duration.ofSeconds(cookieExpirationMilliseconds))
+                    .build();
+
+            isLoginFlag = ResponseCookie.from("isLogin", "true")
+                    .httpOnly(false)   // HttpOnly 속성 미적용
                     .secure(true)     // HTTPS에서만 전송
                     .sameSite("None") // CORS 요청에서도 쿠키 전송 허용
                     .domain(domain)
@@ -135,10 +145,19 @@ public class LoginService {
                     .domain(domain)
                     .path("/")        // 쿠키 경로 설정
                     .build();
+
+            isLoginFlag = ResponseCookie.from("isLogin", "true")
+                    .httpOnly(false)   // HttpOnly 속성 미적용
+                    .secure(true)     // HTTPS에서만 전송
+                    .sameSite("None") // CORS 요청에서도 쿠키 전송 허용
+                    .domain(domain)
+                    .path("/")        // 쿠키 경로 설정
+                    .build();
         }
 
         // SameSite 속성을 추가하기 위해 Set-Cookie 헤더 수정
         response.setHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, isLoginFlag.toString());
 
         log.info("Refresh Cookie : {}",refreshTokenCookie);
         return userInfo;
@@ -160,6 +179,16 @@ public class LoginService {
                 .maxAge(0)
                 .build();
 
+        ResponseCookie expiredLoginFlag = ResponseCookie.from("isLogin", "false")
+                .httpOnly(false)
+                .secure(true)
+                .sameSite("None")
+                .domain(domain)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        response.setHeader(HttpHeaders.SET_COOKIE, expiredLoginFlag.toString());
         response.setHeader(HttpHeaders.SET_COOKIE, expiredCookie.toString());
     }
 
