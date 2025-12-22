@@ -89,7 +89,8 @@ jobs:
             docker run -d \
               --name talearnt-server \
               -e FIREBASE_ENABLED=true \
-              -p 8080:8080 \
+              -p 127.0.0.1:8080:8080 \
+              --restart always \
               ${{ steps.login-ecr.outputs.registry }}/talearnt-server:latest
 
       - name: GitHub Actions IP 삭제
