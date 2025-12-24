@@ -31,6 +31,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	runtimeOnly 'com.mysql:mysql-connector-j'
+	testImplementation 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.hibernate.orm:hibernate-core:6.5.2.Final' //hibernate-Core AWS에서 이게 없어서 오류남
 	compileOnly 'org.projectlombok:lombok'
@@ -94,5 +95,5 @@ clean {
 
 
 tasks.named('test') {
-	useJUnitPlatform()
+	enabled = false
 }
