@@ -17,6 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**") // 모든 경로에 대해 CORS 허용
                 .allowedOrigins(
                         "http://localhost:80",
+                        "http://localhost:8080",
                         "http://localhost:5173",
                         "http://localhost:5555",
                         "http://api.talearnt.net",
@@ -24,7 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://talearnt.net",
                         "https://talearnt.net",
                         "https://www.talearnt.net",
-                        "https://doe331l0de5w8.cloudfront.net/" // FE TEST 개발계 주소
+                        "https://doe331l0de5w8.cloudfront.net" // FE TEST 개발계 주소
                 ) // 허용할 도메인
                 .allowedMethods("GET", "POST", "PUT", "PATCH","DELETE") // 허용할 HTTP 메서드
                 .allowedHeaders("*") // 허용할 헤더
