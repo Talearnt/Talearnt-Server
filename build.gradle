@@ -18,8 +18,12 @@ java {
 	}
 }
 
-repositories {
-	mavenCentral()
+
+allprojects {
+	repositories {
+		mavenCentral()
+		gradlePluginPortal()
+	}
 }
 
 dependencies {

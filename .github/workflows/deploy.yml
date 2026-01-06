@@ -19,6 +19,11 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.10.2
+
       - name: resources 디렉토리 생성
         run: mkdir -p ./src/main/resources
 
