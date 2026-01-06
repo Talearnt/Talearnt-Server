@@ -38,7 +38,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: 테스트 및 빌드하기
-        run: ./gradlew clean build
+        run: ./gradlew clean build -Dhttp.userAgent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         env:
           SPRING_PROFILES_ACTIVE: test
           FIREBASE_ENABLED: false
