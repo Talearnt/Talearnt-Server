@@ -1,7 +1,6 @@
 # jdk-17 버전 설치 경량화 버전
 FROM eclipse-temurin:17-jdk-alpine
 
-
 WORKDIR /app
 
 # jar 파일, 컨테이너 최상위 경로로 복사
@@ -10,14 +9,13 @@ COPY src/main/resources/firebaseServiceAccountKey.json /app/firebaseServiceAccou
 
 # Docker 시간대 설정
 ENV TZ=Asia/Seoul
-ENV JAVA_OPTS="-Duser.timezone=Asia/Seoul"
 
 # 환경변수 기반 Spring Profile, Firebase 활성화
 ENV SPRING_PROFILES_ACTIVE=prod
 ENV FIREBASE_ENABLED=true
 
 # 컨테이너 최초 실행 시에 app.jar 실행
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app.jar"]
 
 # 이 프로젝트의 최상위 경로에서 ./gradlew clean build 실행
 # 빌드를 한 파일을 기반으로

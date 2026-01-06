@@ -89,6 +89,7 @@ jobs:
             docker run -d \
               --name talearnt-server \
               -e FIREBASE_ENABLED=true \
+              -e JAVA_OPTS="-Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m -Duser.timezone=Asia/Seoul" \
               -p 8080:8080 \
               ${{ steps.login-ecr.outputs.registry }}/talearnt-server:latest
 
