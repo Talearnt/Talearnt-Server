@@ -93,8 +93,9 @@ jobs:
             docker pull ${{ steps.login-ecr.outputs.registry }}/talearnt-server:latest
             docker run -d \
               --name talearnt-server \
+              --memory="800m" \
               -e FIREBASE_ENABLED=true \
-              -e JAVA_OPTS="-Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m -Duser.timezone=Asia/Seoul" \
+              -e JAVA_OPTS="-Xms256m -Xmx400m -XX:MaxMetaspaceSize=128m -Duser.timezone=Asia/Seoul" \
               -p 8080:8080 \
               ${{ steps.login-ecr.outputs.registry }}/talearnt-server:latest
 
