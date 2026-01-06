@@ -40,16 +40,19 @@ public class FileUploadService {
 
         //entity 저장
         String sql = "INSERT INTO FILE_UPLOAD (post_no, post_type, url, user_no,created_at) values (?,?,?,?,?)";
-        int [][] added = jdbcTemplate.batchUpdate(sql,fileUploadEntities,10,
-                (ps,entity)-> {
-                    ps.setLong(1,entity.getPostNo());
-                    ps.setString(2,entity.getPostType().name());
-                    ps.setString(3,entity.getUrl());
-                    ps.setLong(4,entity.getUserNo());
-                    ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-                });
+        List<Object[]> batchArgs = fileUploadEntities.stream()
+                .map(entity -> new Object[]{
+                        entity.getPostNo(),
+                        entity.getPostType().name(),
+                        entity.getUrl(),
+                        entity.getUserNo(),
+                        Timestamp.valueOf(LocalDateTime.now())
+                })
+                .toList();
 
-        return added.length;
+        int[] updateCounts = jdbcTemplate.batchUpdate(sql, batchArgs);
+
+        return updateCounts.length;
     }
 
     /** 이미지 파일 목록 불러오기*/
