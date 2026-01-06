@@ -1,5 +1,3 @@
-rootProject.name = 'talearnt'
-
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -12,3 +10,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
+rootProject.name = 'talearnt'
