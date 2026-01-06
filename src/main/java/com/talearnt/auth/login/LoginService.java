@@ -87,12 +87,22 @@ public class LoginService {
      * @param response Cookie에 Refresh토큰 셋팅
      */
     public UserInfo checkLoginValueAndSetRefreshToekn(User user,boolean isAutoLogin, HttpServletRequest request,HttpServletResponse response){
-        String domain = request.getServerName();
+        String domain;
 
-        if (domain.contains("talearnt.net")) {
-            domain = ".talearnt.net";  // 점으로 시작하여 모든 서브도메인 포함
+        String origin = request.getHeader("Origin");
+        if (origin == null || origin.isEmpty()) {
+            origin = request.getServerName(); // fallback
         }
 
+        if (origin.contains("localhost")) {
+            domain = "localhost";
+        } else if (origin.contains("cloudfront.net")) {
+            domain = "cloudfront.net";
+        } else {
+            // 프론트엔드가 CloudFront이든 다른 도메인이든 서버 쿠키는 최상위 도메인으로 설정
+            domain = ".talearnt.net";
+        }
+        
         user.setLastLogin(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
         userRepository.save(user);
 
@@ -115,6 +125,8 @@ public class LoginService {
 
         //리프레시 토큰 생성
         String refreshToken = jwtTokenUtil.createRefreshToken(userInfo,refreshTokenMilliseconds);
+
+
 
         // 리프레시 토큰 쿠키에 설정
         ResponseCookie refreshTokenCookie = null;
