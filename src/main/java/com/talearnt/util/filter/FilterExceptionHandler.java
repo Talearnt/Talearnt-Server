@@ -12,11 +12,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Component
 public class FilterExceptionHandler extends OncePerRequestFilter {
+
+    //JSON 직렬화
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try{
@@ -28,8 +34,6 @@ public class FilterExceptionHandler extends OncePerRequestFilter {
         }
     }
     private void setErrorResponse(HttpServletResponse response, ErrorCode errorCode){
-        //JSON 직렬화
-        ObjectMapper objectMapper = new ObjectMapper();
         // HTTP Status 설정
         response.setStatus(Integer.parseInt(errorCode.getCode().substring(0, 3)));
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

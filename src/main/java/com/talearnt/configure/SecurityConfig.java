@@ -28,6 +28,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final FilterExceptionHandler filterExceptionHandler;
     
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -56,7 +57,7 @@ public class SecurityConfig {
         );
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(new FilterExceptionHandler(), jwtFilter.getClass());
+        http.addFilterBefore(filterExceptionHandler, jwtFilter.getClass());
 
         return http.build();
     }
